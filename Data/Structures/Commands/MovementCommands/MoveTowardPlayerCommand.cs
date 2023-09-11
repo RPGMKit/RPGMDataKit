@@ -1,0 +1,12 @@
+using System;
+using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
+
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
+{
+    public class MoveTowardPlayerCommand : AbstractMoveCommand
+    {
+        public override int Code => MovementRouteCommandCodes.TowardPlayer;
+        public override string Name => "Move toward Player";
+    }
+}

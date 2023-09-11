@@ -1,0 +1,57 @@
+using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
+
+namespace RPGMakerLibCoreV2.Data.Structures.Commands
+{
+    public class ChangeEnemyStateCommand : NamedCommand
+    {
+        protected const int OPERATOR_INCREASE = 0;
+        protected const int OPERATOR_DECREASE = 1;
+
+        public int GetEnemy()
+        {
+            return (int)GetParameter(0);
+        }
+
+        public int GetOperator()
+        {
+            return (int)GetParameter(1);
+        }
+
+        public int GetState()
+        {
+            return (int)GetParameter(2);
+        }
+
+        public override int Code => CommandCodes.ChangeEnemyState;
+        public override string Name => "Change Enemy State";
+
+        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        {
+            var source = GetEnemy();
+            var str = "";
+            if (source == -1)
+                str = "Entire Troop";
+            else
+                str = $"#{source + 1}";
+
+            str += ", ";
+
+            switch (GetOperator())
+            {
+                case OPERATOR_INCREASE:
+                    str += "+";
+                    break;
+                case OPERATOR_DECREASE:
+                    str += "-";
+                    break;
+                default:
+                    throw new Exception($"Unknown change enemy state operator type '{GetOperator()}'");
+            }
+
+            str += $" {GetState()}";
+
+            return str;
+        }
+    }
+}

@@ -1,0 +1,51 @@
+﻿namespace RPGMakerLibCoreV2.Data.Enums;
+
+public static class MovementRouteCommandCodes
+{
+    public const int Empty = 0;
+    public const int Down = 1;
+    public const int Left = 2;
+    public const int Right = 3;
+    public const int Up = 4;
+    public const int LowerLeft = 5;
+    public const int LowerRight = 6;
+    public const int UpperLeft = 7;
+    public const int UpperRight = 8;
+    public const int AtRandom = 9;
+    public const int TowardPlayer = 10;
+    public const int AwayFromPlayer = 11;
+    public const int OneStepForward = 12;
+    public const int OneStepBackward = 13;
+    public const int Jump = 14;
+    public const int Wait = 15;
+    public const int TurnDown = 16;
+    public const int TurnLeft = 17;
+    public const int TurnRight = 18;
+    public const int TurnUp = 19;
+    public const int Turn90DegreesRight = 20;
+    public const int Turn90DegreesLeft = 21;
+    public const int Turn180Degrees = 22;
+    public const int Turn90DegreesRightOrLeft = 23;
+    public const int TurnAtRandom = 24;
+    public const int TurnTowardPlayer = 25;
+    public const int TurnAwayFromPlayer = 26;
+    public const int SwitchOn = 27;
+    public const int SwitchOff = 28;
+    public const int Speed = 29;
+    public const int Frequency = 30;
+    public const int WalkingAnimationOn = 31;
+    public const int WalkingAnimationOff = 32;
+    public const int SteppingAnimationOn = 33;
+    public const int SteppingAnimationOff = 34;
+    public const int DirectionFixOn = 35;
+    public const int DirectionFixOff = 36;
+    public const int ThroughOn = 37;
+    public const int ThroughOff = 38;
+    public const int TransparentOn = 39;
+    public const int TransparentOff = 40;
+    public const int Image = 41;
+    public const int Opacity = 42;
+    public const int BlendMode = 43;
+    public const int Se = 44;
+    public const int Script = 45;
+}

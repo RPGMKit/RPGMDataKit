@@ -1,0 +1,27 @@
+using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
+
+namespace RPGMakerLibCoreV2.Data.Structures.Commands
+{
+    public class ShowTextLineCommand : NamedCommand
+    {
+        public ShowTextLineCommand()
+        {
+            IsSecondary = true;
+        }
+
+        public override string Name => "    ";
+        
+        public override int Code => CommandCodes.ShowTextLine;
+
+        public string GetText()
+        {
+            return (string)GetParameter(0);
+        }
+
+        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        {
+            return GetText();
+        }
+    }
+}

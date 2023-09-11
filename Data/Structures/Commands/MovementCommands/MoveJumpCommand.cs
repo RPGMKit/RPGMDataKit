@@ -1,0 +1,25 @@
+using RPGMakerLibCoreV2.Data.Enums;
+
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
+{
+    public class MoveJumpCommand : AbstractMoveCommand
+    {
+        public override int Code => MovementRouteCommandCodes.Jump;
+        public override string Name => "Jump";
+        public int GetXDelta()
+        {
+            return (int)GetParameter(0);
+        }
+        public int GetYDelta()
+        {
+            return (int)GetParameter(1);
+        }
+        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        {
+            var x = GetXDelta() >= 0 ? $"+{GetXDelta()}" : GetXDelta().ToString();
+            var y = GetYDelta() >= 0 ? $"+{GetYDelta()}" : GetYDelta().ToString();
+    
+            return $"{x}, {y}";
+        }
+    }
+}

@@ -1,0 +1,23 @@
+using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
+
+namespace RPGMakerLibCoreV2.Data.Structures.Commands
+{
+    public class CallCommonEventCommand : NamedCommand
+    {
+        public override int Code => CommandCodes.CallCommonEvent;
+        public override string Name => "Common Event";
+
+        public int GetEventId()
+        {
+            return (int)GetParameter(0);
+        }
+
+        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        {
+            var cCommonEvent = storage.GetCommonEvent(GetEventId());
+
+            return $"#{GetEventId()}" + (cCommonEvent != null ? " " + cCommonEvent.Name : "");
+        }
+    }
+}
