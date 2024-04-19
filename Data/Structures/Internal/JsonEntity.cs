@@ -9,12 +9,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
         [JsonExtensionData]
         private IDictionary<string, JToken> _unknownFields;
 
-        public object Storage { get; private set; }
-
-        public virtual void Initialize(object storage)
-        {
-            Storage = storage;
-        }
+        // public object Storage { get; private set; }
+        //
+        // public virtual void Initialize(object storage)
+        // {
+        //     Storage = storage;
+        // }
 
         public virtual string Dump(Storage storage, DumpOptions options)
         {
