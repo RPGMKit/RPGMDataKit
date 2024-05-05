@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures;
+namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
-public class MapInfo : JsonEntity
+public class MapInfo : JsonEntity, IMapInfo
 {
     [JsonProperty(PropertyName = "id")]
     public int Id { get; set; }
@@ -21,8 +22,20 @@ public class MapInfo : JsonEntity
     public int Parent { get; set; }
 
     [JsonProperty(PropertyName = "scrollX")]
-    public float ScrollX { get; set; }
+    public float ScrollXFloat { get; set; }
 
     [JsonProperty(PropertyName = "scrollY")]
-    public float ScrollY { get; set; }
+    public float ScrollYFloat { get; set; }
+    
+    public int ScrollX
+    {
+        get => (int)ScrollXFloat;
+        set => ScrollXFloat = value;
+    }
+
+    public int ScrollY
+    {
+        get => (int)ScrollYFloat;
+        set => ScrollYFloat = value;
+    }
 }

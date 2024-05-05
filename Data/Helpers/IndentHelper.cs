@@ -1,19 +1,36 @@
 ﻿using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
-namespace RPGMakerLibCoreV2.Data.Structures;
+namespace RPGMakerLibCoreV2.Data.Helpers;
 
-public class CommandContainer : LookupList<EventCommand>
+public static class IndentHelper
 {
-    public IEnumerable<NamedCommand> Commands => this.Select(CommandFactory.Factory);
-
-    private delegate void IndentWalker(int currIndent, int commandIndex, EventCommand command);
+    public delegate void IndentWalker(int currIndent, int commandIndex, IEventCommand? prevCommand, IEventCommand currCommand);
     
-    private void WalkForIndents(IndentWalker walker)
+    public static void ValidateIndents(ICommandContainer container)
+    {
+        WalkForIndents(container, (indent, index, prevCommand, currCommand) =>
+        {
+            if (indent != currCommand.Indent)
+            {
+                throw new Exception(
+                    $"Wrong indent '{currCommand.Indent}' for command {currCommand.Code} at index {currCommand}, expected {indent}, prevCommand: {prevCommand?.Code}");
+            }
+        });
+    }
+
+    public static void SetupIndents(ICommandContainer container)
+    {
+        WalkForIndents(container, (indent, _, _, command) => { command.Indent = indent; });
+    }
+
+    private static void WalkForIndents(ICommandContainer container, IndentWalker walker)
     {
         int currIndent = 0;
+
+        IEventCommand? prevCommand = null;
         
-        foreach (var (i, c) in this.WithIndex())
+        foreach (var (i, c) in container.Commands.WithIndex())
         {
             switch (c.Code)
             {
@@ -43,7 +60,9 @@ public class CommandContainer : LookupList<EventCommand>
                     break;
             }
 
-            walker(currIndent, i, c);
+            walker(currIndent, i, prevCommand, c);
+
+            prevCommand = c;
 
             switch (c.Code)
             {
@@ -73,23 +92,5 @@ public class CommandContainer : LookupList<EventCommand>
                     break;
             }
         }
-    }
-
-    public void ValidateIndents()
-    {
-        WalkForIndents((indent, index, command) =>
-        {
-            if (indent != command.Indent)
-            {
-                var prevC = this[index - 1];
-                throw new Exception(
-                    $"Wrong indent '{command.Indent}' for command {command.Code} at index {command}, expected {indent}, prevCommand: {prevC.Code}");
-            }
-        });
-    }
-
-    public void SetupIndents()
-    {
-        WalkForIndents((indent, index, command) => { command.Indent = indent; });
     }
 }

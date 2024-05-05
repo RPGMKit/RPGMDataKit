@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data;
-using RPGMakerLibCoreV2.Data.Structures;
+using RPGMakerLibCoreV2.Data.Helpers;
+using RPGMakerLibCoreV2.Data.MV.Classes;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Diff;
 
@@ -10,12 +11,12 @@ public class Storage
 {
     public string ProjectPath { get; private set; }
 
-    public DataHolder<Animations> Animations;
-    public DataHolder<CommonEvents> CommonEvents;
-    public DataHolder<Data.Structures.System> System;
+    public DataHolder<LookupList<Animation>> Animations;
+    public DataHolder<LookupList<CommonEvent>> CommonEvents;
+    public DataHolder<Data.MV.Classes.System> System;
     public MapsHolder Maps;
-    public DataHolder<MapInfos> MapInfos;
-    public DataHolder<Tilesets> Tilesets;
+    public DataHolder<LookupList<MapInfo>> MapInfos;
+    public DataHolder<LookupList<Tileset>> Tilesets;
 
     public Storage(string projectPath)
     {
@@ -92,9 +93,9 @@ public class Storage
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
 
-        WalkCommonEvents((commonEventId, container) =>
+        CommonEventHelper.WalkCommonEvents(CommonEvents.Get(), (commonEventId, container) =>
         {
-            container.ValidateIndents();
+            IndentHelper.ValidateIndents(container);
 
             File.WriteAllText(Path.Combine(path, $"CommonEvent_{commonEventId:D4}.txt"),
                 GetCommonEvent(commonEventId).Dump(this, options));
@@ -107,9 +108,9 @@ public class Storage
             throw new Exception($"Directory {path} does not exist.");
 
 
-        WalkMapEvents((mapId, eventId, pageId, commands) =>
+        MapEventHelper.WalkMapEvents(this, (mapId, eventId, pageId, commands) =>
         {
-            commands.ValidateIndents();
+            IndentHelper.ValidateIndents(commands);
 
             var fileName = $"Map_{mapId:D3}_Event_{eventId:D3}_Page_{pageId}.txt";
             File.WriteAllText(Path.Combine(path, fileName),
@@ -125,45 +126,6 @@ public class Storage
     public Event.Page GetMapEventPage(int mapId, int eventId, int pageId)
     {
         return Maps.Get(mapId)?.Events.Get(eventId)?.Pages.Get(pageId);
-    }
-
-    public delegate void MapEventWalker(int mapId, int eventId, int pageId, CommandContainer container);
-
-    public void WalkMapEvents(MapEventWalker walker)
-    {
-        for (var i = 0; i < MapInfos.Get().Count; ++i)
-        {
-            var m = Maps.Get(i);
-            if (m == null)
-                continue;
-
-            foreach (var e in m.Events)
-            {
-                if (e == null)
-                    continue;
-
-                foreach (var (j, p) in e.Pages.WithIndex())
-                {
-                    if (p == null)
-                        continue;
-
-                    walker(i, e.Id, j, p.List);
-                }
-            }
-        }
-    }
-
-    public delegate void CommonEventWalker(int commonEventId, CommandContainer container);
-
-    public void WalkCommonEvents(CommonEventWalker walker)
-    {
-        foreach (var (i, c) in CommonEvents.Get().WithIndex())
-        {
-            if (c == null)
-                continue;
-
-            walker(i, c.List);
-        }
     }
 
     public class CommonEventContextData
@@ -189,8 +151,8 @@ public class Storage
 
     public class SearchInfo
     {
-        public List<Tuple<CommonEventContextData, CommandContainer>> CommonEventResults = new();
-        public List<Tuple<MapEventContextData, CommandContainer>> MapEventResults = new();
+        public List<Tuple<CommonEventContextData, ICommandContainer>> CommonEventResults = new();
+        public List<Tuple<MapEventContextData, ICommandContainer>> MapEventResults = new();
     }
 
     public delegate void CommandWalker(NamedCommand command, CommonEventContextData commonEventContext,
@@ -198,10 +160,10 @@ public class Storage
     
     public void SearchCommands(CommandWalker searcher)
     {
-        WalkCommonEvents((id, container) =>
+        CommonEventHelper.WalkCommonEvents(CommonEvents.Get(), (id, container) =>
         {
             int commandIndex = 0;
-            foreach (var command in container.Commands)
+            foreach (var command in container.NamedCommands)
             {
                 CommonEventContextData context = new() { CommonEvent = GetCommonEvent(id), Storage = this };
 
@@ -210,9 +172,9 @@ public class Storage
             }
         });
 
-        WalkMapEvents((mapId, eventId, pageId, container) =>
+        MapEventHelper.WalkMapEvents(this, (mapId, eventId, pageId, container) =>
         {
-            foreach (var command in container.Commands)
+            foreach (var command in container.NamedCommands)
             {
                 var map = Maps.Get(mapId);
                 var mapEvent = map.Events.Get(eventId);

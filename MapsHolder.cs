@@ -1,10 +1,10 @@
-﻿using RPGMakerLibCoreV2.Data.Structures;
+﻿using RPGMakerLibCoreV2.Data.MV.Classes;
 
 namespace RPGMakerLibCoreV2;
 
 public class MapsHolder
 {
-    private Dictionary<int, DataHolder<Map>> _maps = new();
+    private readonly Dictionary<int, DataHolder<Map>> _maps = new();
     private readonly Storage _storage;
 
     public MapsHolder(Storage storage)
@@ -14,7 +14,7 @@ public class MapsHolder
 
     private string MapPath(int index) => _storage.DataPath($"Map{index:D3}.json");
 
-    public Map Get(int index)
+    public Map? Get(int index)
     {
         if (!_maps.ContainsKey(index))
         {

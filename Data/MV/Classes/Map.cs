@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures;
+namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
 public class Map : JsonEntity
 {

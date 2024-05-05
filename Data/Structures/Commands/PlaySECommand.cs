@@ -1,4 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.MV.Classes;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
