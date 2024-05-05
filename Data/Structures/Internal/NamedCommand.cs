@@ -17,9 +17,12 @@ public abstract class NamedCommand
 
     public virtual string GetParametersDescription(Storage storage, DumpOptions options) => "";
 
+    public string PrefixSymbol { get; set; } = "◆"; 
+    public string SecondaryPrefixSymbol { get; set; } = ":"; 
+    
     protected virtual string GetStringPrefix()
     {
-        return !IsSecondary ? "◆" : ":";
+        return !IsSecondary ? PrefixSymbol : SecondaryPrefixSymbol;
     }
 
     public T? GetParameter<T>(int index)
@@ -47,7 +50,7 @@ public abstract class NamedCommand
             str += ((string.IsNullOrWhiteSpace(name) || !IsSecondary) ? " : " : " ") + paramDesc;
 
         if (options.AppendCommandCode)
-            str += $" ({Code})";
+            str = $"({Code:D3}) {str}";
 
         // str += $"Indent: " + (Indent != null ? Indent : "null");
 

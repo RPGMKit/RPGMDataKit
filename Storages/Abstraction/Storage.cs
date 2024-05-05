@@ -1,4 +1,5 @@
-﻿using RPGMakerLibCoreV2.Data.Helpers;
+﻿using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Diff;
@@ -8,6 +9,8 @@ namespace RPGMakerLibCoreV2.Storages.Abstraction;
 public abstract class Storage
 {
     public string ProjectPath { get; private set; }
+    
+    public StorageVersion Version { get; init; }
 
     public DataHolder<IEnumerable<IAnimation>> Animations;
     public DataHolder<IEnumerable<ICommonEvent>> CommonEvents;

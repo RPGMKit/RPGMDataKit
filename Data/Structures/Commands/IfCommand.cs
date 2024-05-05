@@ -1,4 +1,3 @@
-using Newtonsoft.Json.Linq;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
 using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
@@ -12,7 +11,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int TYPE_VARIABLE = 1;
         protected const int TYPE_SELF_SWITCH = 2;
         protected const int TYPE_TIMER = 3;
-        protected const int TYPE_ACTOR = 4;
+        protected const int TYPE_ACTOR = 4; 
         protected const int TYPE_ENEMY = 5;
         protected const int TYPE_CHARACTER = 6;
         protected const int TYPE_GOLD = 7;

@@ -1,17 +1,20 @@
 ﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes
 {
-    public class SoundData : JsonEntity
+    public class SoundData : IAudioFile
     {
         [JsonProperty(PropertyName = "name")]
-        public string Name;
+        public string Name { get; set; }
+
         [JsonProperty(PropertyName = "volume")]
-        public int Volume;
+        public int Volume { get; set; }
+
         [JsonProperty(PropertyName = "pitch")]
-        public int Pitch;
+        public int Pitch { get; set; }
+
         [JsonProperty(PropertyName = "pan")]
-        public int Pan;
+        public int Pan { get; set; }
     }
 }

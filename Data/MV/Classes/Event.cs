@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Storages.Abstraction;
@@ -20,7 +21,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
                 return base.Dump(storage, options);
             }
 
-            public IEnumerable<NamedCommand> NamedCommands => List.Select(CommandFactory.Factory);
+            public IEnumerable<NamedCommand> NamedCommands => List.Select(MVCommandFactory.Create);
             public IEnumerable<IEventCommand> Commands => List;
         }
         

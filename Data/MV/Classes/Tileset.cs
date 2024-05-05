@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
@@ -14,7 +13,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         public LookupList<int> Flags { get; set; }
         
         [JsonProperty(PropertyName = "mode")]
-        public TilesetMode Mode { get; set; }
+        public int Mode { get; set; }
         
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }

@@ -13,7 +13,7 @@ public interface IMap : IDumpable
     public int Width { get; set; }
 
     // ground 1 => ground 2? => bottom object => top object => shadow flags => region id
-    public LookupList<int> Data { get; set; }
+    public LookupList<int> Data { get; }
 
     public IEnumerable<IEvent> Events { get; }
 }

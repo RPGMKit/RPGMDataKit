@@ -1,13 +1,12 @@
 ﻿using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2;
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 
-public static class CommandFactory
+public static class GenericCommandFactory
 {
-    public static NamedCommand Factory(IEventCommand command)
+    public static NamedCommand Create(IEventCommand command)
     {
         NamedCommand returnCommand;
         var parameterProvider = command.ParameterProvider;
@@ -67,9 +66,6 @@ public static class CommandFactory
                 break;
             case CommandCodes.ChangeArmors:
                 returnCommand = new ChangeArmorsCommand();
-                break;
-            case CommandCodes.ChangePartyMember:
-                returnCommand = new ChangePartyMemberCommand();
                 break;
             case CommandCodes.ChangeSaveAccess:
                 returnCommand = new ChangeSaveAccessCommand();
@@ -260,9 +256,6 @@ public static class CommandFactory
             case CommandCodes.PlayMe:
                 returnCommand = new PlayMECommand();
                 break;
-            case CommandCodes.PlaySe:
-                returnCommand = new PlaySECommand();
-                break;
             case CommandCodes.ChangeBattleBackground:
                 returnCommand = new ChangeBattleBackground();
                 break;
@@ -280,9 +273,6 @@ public static class CommandFactory
                 break;
             case CommandCodes.SetMovementRoute:
                 returnCommand = new SetMovementRouteCommand();
-                break;
-            case CommandCodes.MovementRouteCommand:
-                returnCommand = new MovementRouteCommand();
                 break;
             case CommandCodes.BattleProcessingIfWin:
                 returnCommand = new BattleProcessingIfWinCommand();

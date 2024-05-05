@@ -1,18 +1,16 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.MV.Classes;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
 {
-    public class MoveSeCommand : AbstractMoveCommand
+    public abstract class MoveSeCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.Se;
         public override string Name => "SE";
 
-        public SoundData GetSEData()
-        {
-            return GetParameter<SoundData>(0);
-        }
+        public abstract IAudioFile GetSEData();
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

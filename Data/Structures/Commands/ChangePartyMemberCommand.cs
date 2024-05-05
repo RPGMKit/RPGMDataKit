@@ -4,7 +4,7 @@ using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
-    public class ChangePartyMemberCommand : NamedCommand
+    public abstract class ChangePartyMemberCommand : NamedCommand
     {
         protected const int ACTOR_ADD = 0;
         protected const int ACTOR_REMOVE = 1;
@@ -22,10 +22,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(1);
         }
 
-        public bool GetInitialize()
-        {
-            return GetParameter<bool>(2);
-        }
+        public abstract bool GetInitialize();
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
