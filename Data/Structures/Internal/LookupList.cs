@@ -14,7 +14,7 @@ public class LookupList<T> : List<T>, IDataLookup<T>
         return default;
     }
 
-    public void Set(int index, T value)
+    public void Set(int index, T? value)
     {
         while (index >= Count)
             Add(default);

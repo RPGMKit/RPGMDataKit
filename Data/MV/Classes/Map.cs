@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
-public class Map : JsonEntity
+public class Map : JsonEntity, IMap
 {
     [JsonProperty(PropertyName = "tilesetId")]
     public int TilesetId { get; set; }
@@ -22,5 +23,7 @@ public class Map : JsonEntity
     public LookupList<int> Data { get; set; } = new LookupList<int>();
 
     [JsonProperty(PropertyName = "events")]
-    public LookupList<Event> Events { get; set; }
+    public LookupList<Event> MapEvents { get; set; }
+
+    public IEnumerable<IEvent> Events => MapEvents;
 }

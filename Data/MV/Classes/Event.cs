@@ -4,33 +4,39 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes
 {
-    public class Event : JsonEntity
+    public class Event : JsonEntity, IEvent
     {
-        public class Page : JsonEntity, IPage<EventCommand>
+        public class Page : JsonEntity, IPage
         {
             [JsonProperty(PropertyName = "list")]
-            public CommandContainer<EventCommand> List { get; set; }
+            public LookupList<EventCommand> List { get; set; }
 
             public override string Dump(Storage storage, DumpOptions options)
             {
                 if (options.Format == DumpFormat.Text)
-                    return string.Join("\r\n", List.NamedCommands.Select(_ => _.AsString(storage, options)));
+                    return string.Join("\r\n", NamedCommands.Select(_ => _.AsString(storage, options)));
 
                 return base.Dump(storage, options);
             }
+
+            public IEnumerable<NamedCommand> NamedCommands => List.Select(CommandFactory.Factory);
+            public IEnumerable<IEventCommand> Commands => List;
         }
         
         [JsonProperty(PropertyName = "id")]
-        public int Id;
+        public int Id { get; set; }
         [JsonProperty(PropertyName = "name")]
-        public string Name;
+        public string Name { get; set; }
         [JsonProperty(PropertyName = "note")]
-        public string Note;
+        public string Note { get; set; }
         [JsonProperty(PropertyName = "pages")]
-        public LookupList<Page> Pages;
+        public LookupList<Page> _Pages { get; set; }
+
+        public IEnumerable<IPage> Pages => _Pages;
+
         [JsonProperty(PropertyName = "x")]
-        public int X;
+        public int X { get; set; }
         [JsonProperty(PropertyName = "y")]
-        public int Y;
+        public int Y { get; set; }
     }
 }

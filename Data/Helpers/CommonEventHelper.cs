@@ -10,15 +10,15 @@ public static class CommonEventHelper
     {
         WalkCommonEvents(storage.CommonEvents.Get(), walker);
     }
-    
-    public static void WalkCommonEvents<T>(IEnumerable<ICommonEvent<T>> commonEvents, CommonEventWalker walker) where T: IEventCommand
+
+    public static void WalkCommonEvents(IEnumerable<ICommonEvent> commonEvents, CommonEventWalker walker)
     {
         foreach (var (i, c) in commonEvents.WithIndex())
         {
             if (c == null)
                 continue;
 
-            walker(i, c.List);
+            walker(i, c);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace RPGMakerLibCoreV2;
+﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
+
+namespace RPGMakerLibCoreV2;
 
 public static class LibExtensions
 {
@@ -19,5 +21,14 @@ public static class LibExtensions
     public static IEnumerable<(int index, T item)> WithIndex<T>(this IEnumerable<T> source)
     {
         return source.Select((item, index) => (index, item));
+    }
+
+    public static LookupList<T> ToLookupList<T>(this IEnumerable<T> source)
+    {
+        var l = new LookupList<T>();
+
+        l.AddRange(source);
+
+        return l;
     }
 }

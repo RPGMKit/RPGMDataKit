@@ -1,30 +1,45 @@
 ﻿namespace RPGMakerLibCoreV2;
 
-public class DataHolder<T>
+public class DataHolder<TDataType>
 {
     private bool _isLoaded;
     private readonly Storage _storage;
-    private T _data;
-    private readonly string _path;
-
-    public DataHolder(Storage storage, string path)
+    private TDataType _data;
+    private readonly Func<HolderInfo> _loader;
+    private string _path;
+    
+    public class HolderInfo
+    {
+        public TDataType Data;
+        public string Path;
+    }
+    
+    public DataHolder(Storage storage, Func<HolderInfo> loader)
     {
         _storage = storage;
-        _path = path;
+        _loader = loader;
     }
 
-    public T Get()
+    public TDataType Get()
     {
         if (!_isLoaded)
         {
-            _data = _storage.LoadData<T>(_path);
+            Load();
+
             _isLoaded = true;
         }
 
         return _data;
     }
 
-    public void Set(T value)
+    public void Load()
+    {
+        var h = _loader();
+        _data = h.Data;
+        _path = h.Path;
+    }
+
+    public void Set(TDataType value)
     {
         _data = value;
         _isLoaded = true;

@@ -24,7 +24,7 @@ public static class MapEventHelper
                     if (p == null)
                         continue;
 
-                    walker(i, e.Id, j, p.List);
+                    walker(i, e.Id, j, p);
                 }
             }
         }

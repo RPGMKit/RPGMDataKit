@@ -1,22 +1,28 @@
 ﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes
 {
-    public class Tileset : JsonEntity
+    public class Tileset : JsonEntity, ITileSet
     {
         [JsonProperty(PropertyName = "id")]
-        public int Id;
+        public int Id { get; set; }
+        
         [JsonProperty(PropertyName = "flags")]
-        public LookupList<int> Flags;
+        public LookupList<int> Flags { get; set; }
+        
         [JsonProperty(PropertyName = "mode")]
-        public TilesetMode Mode;
+        public TilesetMode Mode { get; set; }
+        
         [JsonProperty(PropertyName = "name")]
-        public string Name;
+        public string Name { get; set; }
+        
         [JsonProperty(PropertyName = "note")]
-        public string Note;
+        public string Note { get; set; }
+        
         [JsonProperty(PropertyName = "tilesetNames")]
-        public LookupList<string> TilesetNames;
+        public LookupList<string> TilesetNames { get; set; }
     }
 }
