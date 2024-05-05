@@ -1,6 +1,7 @@
 using Newtonsoft.Json.Linq;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
@@ -22,9 +23,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int TYPE_SCRIPT = 12;
         protected const int TYPE_VEHICLE = 13;
 
-        public static NamedCommand IfFactory(LookupList<JToken> parameters)
+        public static NamedCommand IfFactory(IParameterProvider parameterProvider)
         {
-            var ifType = (int)parameters[0];
+            var ifType = parameterProvider.GetParameter<int>(0);
 
             switch (ifType)
             {
@@ -64,7 +65,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetIfType()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public override int Code => CommandCodes.If;

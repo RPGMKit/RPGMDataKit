@@ -13,14 +13,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.ChoiceCaseCancel;
         public override string Name => "When";
 
-        public object GetUnk0()
+        public T GetUnk0<T>()
         {
-            return GetParameter(0);
+            return GetParameter<T>(0);
         }
 
-        public object GetUnk1()
+        public T GetUnk1<T>()
         {
-            return GetParameter(1);
+            return GetParameter<T>(1);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

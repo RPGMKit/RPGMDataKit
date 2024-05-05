@@ -7,17 +7,17 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public int GetEnemyId()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetCheckType()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
-        public object GetCheckParameter()
+        public T? GetCheckParameter<T>()
         {
-            return GetParameter(3);
+            return GetParameter<T>(3);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
@@ -30,7 +30,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     str += " is appeared";
                     break;
                 case CHECK_STATE:
-                    str += $" is affected by #{GetCheckParameter()} state";
+                    str += $" is affected by #{GetCheckParameter<int>()} state";
                     break;
                 default:
                     throw new Exception($"Unknown check type '{GetCheckType()}' for '{Name}' enemy command");

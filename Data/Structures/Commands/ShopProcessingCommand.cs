@@ -11,27 +11,27 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetShopType()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetId()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public bool HasCustomPrice()
         {
-            return (int)GetParameter(2) != 0;
+            return GetParameter<int>(2) != 0;
         }
 
         public int GetCustomPrice()
         {
-            return (int)GetParameter(3);
+            return GetParameter<int>(3);
         }
 
         public bool GetPurchaseOnly()
         {
-            return (bool)GetParameter(4);
+            return GetParameter<bool>(4);
         }
 
         public override int Code => CommandCodes.ShopProcessing;

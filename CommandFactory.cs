@@ -1,15 +1,17 @@
 ﻿using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures;
 using RPGMakerLibCoreV2.Data.Structures.Commands;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2;
 
 public static class CommandFactory
 {
-    public static NamedCommand Factory(Command command)
+    public static NamedCommand Factory(IEventCommand command)
     {
         NamedCommand returnCommand;
+        var parameterProvider = command.ParameterProvider;
+        
         switch (command.Code)
         {
             case CommandCodes.Empty:
@@ -40,7 +42,7 @@ public static class CommandFactory
                 returnCommand = new ControlTimerCommand(); 
                 break;
             case CommandCodes.If:
-                returnCommand = IfCommand.IfFactory(command.Parameters);
+                returnCommand = IfCommand.IfFactory(parameterProvider);
                 break;
             case CommandCodes.Loop:
                 returnCommand = new LoopCommand();
@@ -311,7 +313,7 @@ public static class CommandFactory
                 break;
         }
 
-        returnCommand.Parameters = command.Parameters;
+        returnCommand.ParameterProvider = parameterProvider;
         returnCommand.Indent = command.Indent;
 
         return returnCommand;

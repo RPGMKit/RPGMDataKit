@@ -15,7 +15,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.MovementRouteCommand;
         public override string Name => "                  ";
 
-        public static NamedCommand MovementCommandFactory(Command command)
+        public static NamedCommand MovementCommandFactory(EventCommand command)
         {
             NamedCommand returnCommand;
             
@@ -163,21 +163,20 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     throw new Exception($"Unknown movement command code '{command.Code}'");
             }
 
-            returnCommand.Parameters = command.Parameters;
+            // returnCommand.Parameters = command.Parameters;
             returnCommand.Indent = command.Indent;
 
             return returnCommand;
         }
 
-        public JToken GetCommandData()
+        public EventCommand GetCommandData()
         {
-            return GetParameter(0);
+            return GetParameter<EventCommand>(0);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            var data = GetCommandData();
-            var command = data.ToObject<Command>();
+            var command = GetCommandData();
             
             var moveCommand = MovementCommandFactory(command);
 

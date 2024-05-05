@@ -14,32 +14,32 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetLayer()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public string GetPicture()
         {
-            return (string)GetParameter(1);
+            return GetParameter<string>(1);
         }
 
         public int GetReference()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public int GetPlaceType()
         {
-            return (int)GetParameter(3);
+            return GetParameter<int>(3);
         }
 
         public int GetX()
         {
-            return (int)GetParameter(4);
+            return GetParameter<int>(4);
         }
 
         public int GetY()
         {
-            return (int)GetParameter(5);
+            return GetParameter<int>(5);
         }
 
         public void SetY(int value)
@@ -49,22 +49,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetWidth()
         {
-            return (int)GetParameter(6);
+            return GetParameter<int>(6);
         }
 
         public int GetHeight()
         {
-            return (int)GetParameter(7);
+            return GetParameter<int>(7);
         }
 
         public int GetTransparency()
         {
-            return (int)GetParameter(8);
+            return GetParameter<int>(8);
         }
 
         public int GetBlendMode()
         {
-            return (int)GetParameter(9);
+            return GetParameter<int>(9);
         }
 
         public void SetLayer(int value)

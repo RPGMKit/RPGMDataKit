@@ -13,22 +13,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public int GetVariable()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetOperandType()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public int GetOperand()
         {
-            return (int)GetParameter(3);
+            return GetParameter<int>(3);
         }
 
         public int GetOperator()
         {
-            return (int)GetParameter(4);
+            return GetParameter<int>(4);
         }
 
         public void SetVariable(int value)

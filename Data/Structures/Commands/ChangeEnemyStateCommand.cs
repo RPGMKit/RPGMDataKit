@@ -10,17 +10,17 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetEnemy()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetOperator()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetState()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public override int Code => CommandCodes.ChangeEnemyState;

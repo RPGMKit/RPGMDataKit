@@ -14,27 +14,27 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetSourceType()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetSource()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetOperator()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public int GetOperandType()
         {
-            return (int)GetParameter(3);
+            return GetParameter<int>(3);
         }
 
         public int GetOperand()
         {
-            return (int)GetParameter(4);
+            return GetParameter<int>(4);
         }
 
         public override int Code => CommandCodes.ChangeMp;

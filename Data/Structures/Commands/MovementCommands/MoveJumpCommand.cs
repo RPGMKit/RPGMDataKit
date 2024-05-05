@@ -8,11 +8,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
         public override string Name => "Jump";
         public int GetXDelta()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
         public int GetYDelta()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

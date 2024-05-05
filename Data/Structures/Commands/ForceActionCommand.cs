@@ -16,22 +16,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetSubjectType()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetSubject()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
         
         public int GetSkill()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
         
         public int GetTarget()
         {
-            return (int)GetParameter(3);
+            return GetParameter<int>(3);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

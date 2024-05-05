@@ -11,12 +11,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetLayer()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetSpeed()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

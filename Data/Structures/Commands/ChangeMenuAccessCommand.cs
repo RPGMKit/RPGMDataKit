@@ -10,7 +10,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public bool GetIsOn()
         {
-            return (int)GetParameter(0) == 1;
+            return GetParameter<int>(0) == 1;
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

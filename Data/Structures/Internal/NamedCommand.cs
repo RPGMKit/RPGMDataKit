@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 
 public abstract class NamedCommand
 {
-    public LookupList<JToken> Parameters = new();
+    public IParameterProvider ParameterProvider { get; set; }
 
     public abstract int Code { get; }
     public abstract string Name { get; }
@@ -20,14 +21,14 @@ public abstract class NamedCommand
         return !IsSecondary ? "◆" : ":";
     }
 
-    public JToken? GetParameter(int index)
+    public T? GetParameter<T>(int index)
     {
-        return Parameters.Get(index);
+        return ParameterProvider.GetParameter<T>(index);
     }
 
     public void SetParameter(int index, JToken value)
     {
-        Parameters.Set(index, value);
+        ParameterProvider.SetParameter(index, value);
     }
 
     public string AsString(Storage storage, DumpOptions options)

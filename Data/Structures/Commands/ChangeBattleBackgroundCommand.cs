@@ -10,12 +10,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public string GetImage1()
         {
-            return (string)GetParameter(0);
+            return GetParameter<string>(0);
         }
         
         public string GetImage2()
         {
-            return (string)GetParameter(1);
+            return GetParameter<string>(1);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

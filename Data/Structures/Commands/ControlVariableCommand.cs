@@ -20,32 +20,32 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetStartVariable()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetEndVariable()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetOperator()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public int GetOperandType()
         {
-            return (int)GetParameter(3);
+            return GetParameter<int>(3);
         }
 
-        public JToken GetOperand1()
+        public T? GetOperand1<T>()
         {
-            return GetParameter(4);
+            return GetParameter<T>(4);
         }
 
-        public JToken GetOperand2()
+        public T? GetOperand2<T>()
         {
-            return GetParameter(5);
+            return GetParameter<T>(5);
         }
 
         public override int Code => CommandCodes.ControlVariables;
@@ -91,11 +91,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             switch (GetOperandType())
             {
                 case OPERAND_CONSTANT:
-                    str += $" {GetOperand1()}";
+                    str += $" {GetOperand1<int>()}";
                     break;
                 case OPERAND_VARIABLE:
-                    str += " {#" + GetOperand1();
-                    var tmp = GetOperand1();
+                    str += " {#" + GetOperand1<int>();
+                    var tmp = GetOperand1<int>();
                     var varId = (int)tmp;
                     var variableName = storage.GetVariable(varId);
                     if (!string.IsNullOrEmpty(variableName))
@@ -104,13 +104,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += "}";
                     break;
                 case OPERAND_RANDOM:
-                    str += $" Random ({GetOperand1()}, {GetOperand2()})";
+                    str += $" Random ({GetOperand1<int>()}, {GetOperand2<int>()})";
                     break;
                 case OPERAND_GAME_DATA:
-                    str += $" Game data ({GetOperand1()}, {GetOperand2()})";
+                    str += $" Game data ({GetOperand1<int>()}, {GetOperand2<int>()})";
                     break;
                 case OPERAND_SCENARIO:
-                    str += $" Scenario ('{GetOperand1()}', '{GetOperand2()}')";
+                    str += $" Scenario ('{GetOperand1<int>()}', '{GetOperand2<int>()}')";
                     break;
                 default:
                     throw new Exception($"Unknown operator type #{GetOperator()} for action #{Code} {Name}");

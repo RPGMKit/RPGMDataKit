@@ -13,7 +13,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetOnOffState()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

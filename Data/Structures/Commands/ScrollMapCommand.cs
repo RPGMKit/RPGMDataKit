@@ -15,17 +15,17 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetDirection()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetDistance()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetSpeed()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

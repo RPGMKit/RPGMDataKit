@@ -9,12 +9,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public int GetSourceType()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetOrientation()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

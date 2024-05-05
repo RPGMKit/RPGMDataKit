@@ -12,17 +12,17 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public int GetUnitId()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetCheckType()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
-        public object GetCheckParameter()
+        public T? GetCheckParameter<T>()
         {
-            return GetParameter(3);
+            return GetParameter<T>(3);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
@@ -35,22 +35,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     str += " is in the party";
                     break;
                 case CHECK_NAME:
-                    str += $" name is '{GetCheckParameter()}'";
+                    str += $" name is '{GetCheckParameter<string>()}'";
                     break;
                 case CHECK_CLASS:
-                    str += $" class is #{GetCheckParameter()}";
+                    str += $" class is #{GetCheckParameter<int>()}";
                     break;
                 case CHECK_SKILL:
-                    str += $" has learned #{GetCheckParameter()}";
+                    str += $" has learned #{GetCheckParameter<int>()}";
                     break;
                 case CHECK_WEAPON_EQUIPPED:
-                    str += $" has equipped weapon #{GetCheckParameter()}";
+                    str += $" has equipped weapon #{GetCheckParameter<int>()}";
                     break;
                 case CHECK_ARMOR_EQUIPPED:
-                    str += $" has equipped armor #{GetCheckParameter()}";
+                    str += $" has equipped armor #{GetCheckParameter<int>()}";
                     break;
                 case CHECK_STATE:
-                    str += $" is affected by #{GetCheckParameter()} state";
+                    str += $" is affected by #{GetCheckParameter<int>()} state";
                     break;
                 default:
                     throw new Exception($"Unknown check type '{GetCheckType()}' for '{Name}' actor command");

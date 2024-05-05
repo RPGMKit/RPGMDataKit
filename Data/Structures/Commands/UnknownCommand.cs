@@ -18,7 +18,8 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            return JsonConvert.SerializeObject(Parameters);
+            throw new Exception("not implemented");
+            // return JsonConvert.SerializeObject(Parameters);
         }
     }
 }

@@ -7,12 +7,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     {
         public bool GetOn()
         {
-            return (int)GetParameter(0) == 0;
+            return GetParameter<int>(0) == 0;
         }
 
         public int? GetSeconds()
         {
-            return (int?)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public override int Code => CommandCodes.ControlTimer;

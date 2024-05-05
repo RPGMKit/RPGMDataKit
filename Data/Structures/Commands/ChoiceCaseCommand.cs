@@ -15,12 +15,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetChoiceIndex()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public string GetChoiceName()
         {
-            return (string)GetParameter(1);
+            return GetParameter<string>(1);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

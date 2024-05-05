@@ -18,32 +18,32 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetTransferType()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetMap()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetX()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public int GetY()
         {
-            return (int)GetParameter(3);
+            return GetParameter<int>(3);
         }
 
         public int GetDirection()
         {
-            return (int)GetParameter(4);
+            return GetParameter<int>(4);
         }
 
         public int GetFade()
         {
-            return (int)GetParameter(5);
+            return GetParameter<int>(5);
         }
 
         public override int Code => CommandCodes.TransferPlayer;

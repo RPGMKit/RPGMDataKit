@@ -4,12 +4,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
     {
         public int GetWeapon()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public bool GetIncludeEquipment()
         {
-            return (bool)GetParameter(2);
+            return GetParameter<bool>(2);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

@@ -28,17 +28,17 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetSource()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetBalloonIcon()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public bool GetWaitForCompletion()
         {
-            return (bool)GetParameter(2);
+            return GetParameter<bool>(2);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

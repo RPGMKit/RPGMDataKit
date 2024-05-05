@@ -1,0 +1,22 @@
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
+
+namespace RPGMakerLibCoreV2.Data.Structures;
+
+public class EventCommand : JsonEntity, IEventCommand
+{
+    [JsonProperty(PropertyName = "code")]
+    public int Code { get; set; }
+
+    [JsonProperty(PropertyName = "indent")]
+    public int? Indent { get; set; }
+
+    [JsonProperty(PropertyName = "parameters")]
+    public LookupList<JToken> Parameters;
+
+    [JsonIgnore]
+    public IParameterProvider ParameterProvider => new JsonParameterProvider(Parameters);
+}

@@ -4,7 +4,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
     {
         public string GetButton()
         {
-            return (string)GetParameter(1);
+            return GetParameter<string>(1);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

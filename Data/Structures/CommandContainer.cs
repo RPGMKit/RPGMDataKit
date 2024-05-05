@@ -3,11 +3,11 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures;
 
-public class CommandContainer : LookupList<Command>
+public class CommandContainer : LookupList<EventCommand>
 {
     public IEnumerable<NamedCommand> Commands => this.Select(CommandFactory.Factory);
 
-    private delegate void IndentWalker(int currIndent, int commandIndex, Command command);
+    private delegate void IndentWalker(int currIndent, int commandIndex, EventCommand command);
     
     private void WalkForIndents(IndentWalker walker)
     {

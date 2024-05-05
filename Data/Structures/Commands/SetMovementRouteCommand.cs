@@ -13,12 +13,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetSource()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public Route GetRoute()
         {
-            return GetParameter(1)?.ToObject<Route>();
+            return GetParameter<Route>(1);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

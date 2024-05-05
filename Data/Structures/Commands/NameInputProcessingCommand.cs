@@ -7,12 +7,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     {
         public int GetActor()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetMaxCharacters()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public override int Code => CommandCodes.NameInputProcessing;

@@ -10,22 +10,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetLayer()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
         
         public List<int> GetColor()
         {
-            return GetParameter(1)?.ToObject<List<int>>();
+            return GetParameter<List<int>>(1);
         }
 
         public int GetDuration()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public bool GetWaitForCompletion()
         {
-            return (bool)GetParameter(3);
+            return GetParameter<bool>(3);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

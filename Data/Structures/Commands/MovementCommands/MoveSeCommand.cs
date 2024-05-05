@@ -9,7 +9,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
 
         public SoundData GetSEData()
         {
-            return GetParameter(0)?.ToObject<SoundData>();
+            return GetParameter<SoundData>(0);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

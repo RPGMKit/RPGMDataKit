@@ -11,22 +11,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetDesignationType()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetBattle()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public bool GetCanEscape()
         {
-            return (bool)GetParameter(2);
+            return GetParameter<bool>(2);
         }
 
         public bool GetCanLose()
         {
-            return (bool)GetParameter(3);
+            return GetParameter<bool>(3);
         }
 
         public override int Code => CommandCodes.BattleProcessing;

@@ -10,17 +10,17 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetStartSwitch()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetEndSwitch()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetOnOffState()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public override int Code => CommandCodes.ControlSwitches;

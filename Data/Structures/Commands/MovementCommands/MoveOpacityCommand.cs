@@ -9,7 +9,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
 
         public int GetOpacity()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

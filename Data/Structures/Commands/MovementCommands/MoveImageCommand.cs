@@ -9,12 +9,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
 
         public string GetImage()
         {
-            return (string)GetParameter(0);
+            return GetParameter<string>(0);
         }
 
         public int GetOffset()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

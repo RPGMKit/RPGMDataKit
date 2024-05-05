@@ -11,7 +11,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public string GetScript()
         {
-            return (string)GetParameter(0);
+            return GetParameter<string>(0);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

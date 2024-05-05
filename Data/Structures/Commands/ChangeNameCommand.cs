@@ -10,12 +10,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetActor()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public string GetName()
         {
-            return (string)GetParameter(1);
+            return GetParameter<string>(1);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

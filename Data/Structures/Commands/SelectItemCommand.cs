@@ -8,12 +8,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     {
         public int GetVariable()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public int GetItemType()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public override int Code => CommandCodes.SelectItem;

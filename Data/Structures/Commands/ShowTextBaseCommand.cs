@@ -17,22 +17,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public string GetFace()
         {
-            return (string)GetParameter(0);
+            return GetParameter<string>(0);
         }
 
         public int GetOffset()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetBackground()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public int GetPosition()
         {
-            return (int)GetParameter(3);
+            return GetParameter<int>(3);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)

@@ -10,32 +10,32 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public int GetActor()
         {
-            return (int)GetParameter(0);
+            return GetParameter<int>(0);
         }
 
         public string GetFaceImage()
         {
-            return (string)GetParameter(1);
+            return GetParameter<string>(1);
         }
 
         public int GetFaceImageOffset()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public string GetCharacterImage()
         {
-            return (string)GetParameter(3);
+            return GetParameter<string>(3);
         }
 
         public int GetCharacterImageOffset()
         {
-            return (int)GetParameter(4);
+            return GetParameter<int>(4);
         }
 
         public string GetSwBattler()
         {
-            var param = (string)GetParameter(5);
+            var param = GetParameter<string>(5);
 
             return param ?? "";
         }

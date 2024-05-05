@@ -24,27 +24,27 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public List<string> GetChoices()
         {
-            return GetParameter(0).ToObject<List<string>>();
+            return GetParameter<List<string>>(0);
         }
 
         public int GetCancelChoice()
         {
-            return (int)GetParameter(1);
+            return GetParameter<int>(1);
         }
 
         public int GetDefaultChoice()
         {
-            return (int)GetParameter(2);
+            return GetParameter<int>(2);
         }
 
         public int GetPosition()
         {
-            return (int)GetParameter(3);
+            return GetParameter<int>(3);
         }
 
         public int GetBackground()
         {
-            return (int)GetParameter(4);
+            return GetParameter<int>(4);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
