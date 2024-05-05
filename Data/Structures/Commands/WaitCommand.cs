@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class WaitCommand : NamedCommand
     {
         public override int Code => CommandCodes.Wait;
-        public override string Name => "Wait";
+        public override string GetCommandName(StorageVersion version) => "Wait";
 
         public int GetFrameCount()
         {

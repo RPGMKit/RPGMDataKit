@@ -7,6 +7,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class SaveBGMCommand : NamedCommand
     {
         public override int Code => CommandCodes.SaveBgm;
-        public override string Name => "Save BGM";
+        public override string GetCommandName(StorageVersion version) => "Save BGM";
     }
 }

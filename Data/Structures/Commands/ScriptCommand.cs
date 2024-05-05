@@ -8,7 +8,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ScriptCommand : NamedCommand
     {
         public override int Code => CommandCodes.Script;
-        public override string Name => "Script";
+        public override string GetCommandName(StorageVersion version) => "Script";
 
         public string GetScript()
         {

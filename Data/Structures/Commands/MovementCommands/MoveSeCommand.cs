@@ -5,20 +5,27 @@ using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
 {
-    public abstract class MoveSeCommand : AbstractMoveCommand
+    public class MoveSeCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.Se;
-        public override string Name => "SE";
+        public override string GetCommandName(StorageVersion version) => "SE";
 
-        public abstract IAudioFile GetSEData();
+        public IAudioFile GetSEData(StorageVersion version)
+        {
+            return version == StorageVersion.MV ? GetParameter<SoundData>(0) : GetParameter<IAudioFile>(0);
+        }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            var seData = GetSEData();
+            var seData = GetSEData(storage.Version);
             if (string.IsNullOrWhiteSpace(seData.Name))
                 return "None";
 
-            return $"{seData.Name} ({seData.Volume}, {seData.Pitch}, {seData.Pan})";
+            var str = $"{seData.Name} ({seData.Volume}, {seData.Pitch})";
+            if (storage.Version == StorageVersion.MV)
+                str += $", {seData.Pan})";
+
+            return str;
         }
     }
 }

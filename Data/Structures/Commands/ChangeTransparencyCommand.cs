@@ -10,7 +10,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int SET_OFF = 1;
 
         public override int Code => CommandCodes.ChangeTransparency;
-        public override string Name => "Change Transparency";
+        public override string GetCommandName(StorageVersion version) => "Change Transparency";
 
         public int GetOnOffState()
         {

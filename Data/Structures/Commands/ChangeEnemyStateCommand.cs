@@ -25,7 +25,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeEnemyState;
-        public override string Name => "Change Enemy State";
+        public override string GetCommandName(StorageVersion version) => "Change Enemy State";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

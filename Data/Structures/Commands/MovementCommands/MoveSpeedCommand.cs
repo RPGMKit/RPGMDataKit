@@ -6,7 +6,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveSpeedCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.Speed;
-        public override string Name => "Speed";
+        public override string GetCommandName(StorageVersion version) => "Speed";
 
         public int GetSpeed()
         {

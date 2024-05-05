@@ -32,7 +32,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeEnemyTp;
-        public override string Name => "Change enemy TP";
+        public override string GetCommandName(StorageVersion version) => "Change enemy TP";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

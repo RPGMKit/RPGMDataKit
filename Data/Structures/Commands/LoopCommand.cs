@@ -6,6 +6,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class LoopCommand : NamedCommand
     {
         public override int Code => CommandCodes.Loop;
-        public override string Name => "Loop";
+        public override string GetCommandName(StorageVersion version) => "Loop";
     }
 }

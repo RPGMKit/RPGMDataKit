@@ -10,7 +10,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int ACTOR_THIS_EVENT = 0;
 
         public override int Code => CommandCodes.ShowAnimation;
-        public override string Name => "Show Animation";
+        public override string GetCommandName(StorageVersion version) => "Show Animation";
 
         public int GetActor()
         {

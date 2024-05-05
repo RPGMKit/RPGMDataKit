@@ -6,7 +6,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveJumpCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.Jump;
-        public override string Name => "Jump";
+        public override string GetCommandName(StorageVersion version) => "Jump";
         public int GetXDelta()
         {
             return GetParameter<int>(0);

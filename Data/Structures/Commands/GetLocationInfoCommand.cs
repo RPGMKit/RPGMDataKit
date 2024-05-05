@@ -35,7 +35,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.GetLocationInfo;
-        public override string Name => "Get Location Info";
+        public override string GetCommandName(StorageVersion version) => "Get Location Info";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

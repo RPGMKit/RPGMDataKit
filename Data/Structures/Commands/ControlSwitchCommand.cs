@@ -25,7 +25,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ControlSwitches;
-        public override string Name => "Control Switches";
+        public override string GetCommandName(StorageVersion version) => "Control Switches";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
@@ -51,7 +51,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += " = OFF";
                     break;
                 default:
-                    throw new Exception($"Unknown on/off state {GetOnOffState()} for action #{Code} {Name}");
+                    throw new Exception($"Unknown on/off state {GetOnOffState()} for action #{Code} {GetCommandName(storage.Version)}");
             }
 
             return str;

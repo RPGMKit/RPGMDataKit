@@ -7,6 +7,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ReplayBGMCommand : NamedCommand
     {
         public override int Code => CommandCodes.ReplayBgm;
-        public override string Name => "Replay BGM";
+        public override string GetCommandName(StorageVersion version) => "Replay BGM";
     }
 }

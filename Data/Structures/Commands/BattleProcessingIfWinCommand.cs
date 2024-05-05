@@ -11,6 +11,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
         
         public override int Code => CommandCodes.BattleProcessingIfWin;
-        public override string Name => "If Win";
+        public override string GetCommandName(StorageVersion version) => "If Win";
     }
 }

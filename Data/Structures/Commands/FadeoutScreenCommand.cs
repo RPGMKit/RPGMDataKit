@@ -6,6 +6,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class FadeoutScreenCommand : NamedCommand
     {
         public override int Code => CommandCodes.FadeoutScreen;
-        public override string Name => "Fadeout Screen";
+        public override string GetCommandName(StorageVersion version) => "Fadeout Screen";
     }
 }

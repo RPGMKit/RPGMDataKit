@@ -9,7 +9,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
         protected const int BLEND_ADDITIVE = 1;
 
         public override int Code => MovementRouteCommandCodes.BlendMode;
-        public override string Name => "Blend Mode";
+        public override string GetCommandName(StorageVersion version) => "Blend Mode";
 
         public int GetBlendMode()
         {

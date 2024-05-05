@@ -11,6 +11,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChoicesEnd;
-        public override string Name => "End";
+        public override string GetCommandName(StorageVersion version) => "End";
     }
 }

@@ -27,7 +27,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeGold;
-        public override string Name => "Change gold";
+        public override string GetCommandName(StorageVersion version) => "Change gold";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

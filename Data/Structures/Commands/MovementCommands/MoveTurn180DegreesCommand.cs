@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveTurn180DegreesCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.Turn180Degrees;
-        public override string Name => "Turn 180°";
+        public override string GetCommandName(StorageVersion version) => "Turn 180°";
     }
 
 }

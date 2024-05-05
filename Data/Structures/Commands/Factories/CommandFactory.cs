@@ -4,7 +4,7 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 
-public static class GenericCommandFactory
+public static class CommandFactory
 {
     public static NamedCommand Create(IEventCommand command)
     {
@@ -18,6 +18,9 @@ public static class GenericCommandFactory
                 break;
             case CommandCodes.Comment:
                 returnCommand = new CommentCommand();
+                break;
+            case CommandCodes.If:
+                returnCommand = IfFactory.Create(command.ParameterProvider.GetParameter<int>(0));
                 break;
             case CommandCodes.CommentContinue:
                 returnCommand = new CommentContinueCommand();
@@ -63,6 +66,9 @@ public static class GenericCommandFactory
                 break;
             case CommandCodes.ChangeArmors:
                 returnCommand = new ChangeArmorsCommand();
+                break;
+            case CommandCodes.ChangePartyMember:
+                returnCommand = new ChangePartyMemberCommand();
                 break;
             case CommandCodes.ChangeSaveAccess:
                 returnCommand = new ChangeSaveAccessCommand();
@@ -187,6 +193,9 @@ public static class GenericCommandFactory
             case CommandCodes.EndLoop:
                 returnCommand = new EndLoopCommand();
                 break;
+            case CommandCodes.MovementRouteCommand:
+                returnCommand = new MovementRouteCommand();
+                break;
             case CommandCodes.CallCommonEvent:
                 returnCommand = new CallCommonEventCommand();
                 break;
@@ -252,6 +261,9 @@ public static class GenericCommandFactory
                 break;
             case CommandCodes.PlayMe:
                 returnCommand = new PlayMECommand();
+                break;
+            case CommandCodes.PlaySe:
+                returnCommand = new PlaySECommand();
                 break;
             case CommandCodes.ChangeBattleBackground:
                 returnCommand = new ChangeBattleBackground();

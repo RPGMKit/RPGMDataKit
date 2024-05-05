@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ErasePictureCommand : NamedCommand
     {
         public override int Code => CommandCodes.ErasePicture;
-        public override string Name => "Erase Picture";
+        public override string GetCommandName(StorageVersion version) => "Erase Picture";
 
         public int GetLayer()
         {

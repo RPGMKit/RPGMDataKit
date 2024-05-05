@@ -10,7 +10,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const string TYPE_NONE = "none";
 
         public override int Code => CommandCodes.SetWeatherEffect;
-        public override string Name => "Set Weather Effect";
+        public override string GetCommandName(StorageVersion version) => "Set Weather Effect";
 
         public string GetEffectType()
         {

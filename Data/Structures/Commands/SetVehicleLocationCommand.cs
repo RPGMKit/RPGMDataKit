@@ -36,7 +36,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.SetVehicleLocation;
-        public override string Name => "Set Vehicle Location";
+        public override string GetCommandName(StorageVersion version) => "Set Vehicle Location";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

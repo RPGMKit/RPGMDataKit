@@ -8,7 +8,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ShakeScreenCommand : NamedCommand
     {
         public override int Code => CommandCodes.ShakeScreen;
-        public override string Name => "Shake Screen";
+        public override string GetCommandName(StorageVersion version) => "Shake Screen";
 
         public int GetPower()
         {
@@ -32,11 +32,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            var str = $"{GetPower()}, {GetSpeed()}, {GetDuration()} frame(s)";
-            if (GetWaitForCompletion())
-                str += " (Wait)";
+            if (storage.Version == StorageVersion.VXAce)
+            {
+                var str = $"{GetPower()}, {GetSpeed()}, @{GetDuration()}";
+                if (GetWaitForCompletion())
+                    str += ", Wait";
 
-            return str;
+                return str;
+            }
+            else
+            {
+                var str = $"{GetPower()}, {GetSpeed()}, {GetDuration()} frame(s)";
+                if (GetWaitForCompletion())
+                    str += " (Wait)";
+
+                return str;
+            }
         }
     }
 }

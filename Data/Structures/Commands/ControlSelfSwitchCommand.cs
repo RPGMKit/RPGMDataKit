@@ -20,7 +20,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ControlSelfSwitch;
-        public override string Name => "Control Self Switch";
+        public override string GetCommandName(StorageVersion version) => "Control Self Switch";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
@@ -34,7 +34,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += " = OFF";
                     break;
                 default:
-                    throw new Exception($"Unknown on/off state {GetOnOffState()} for action #{Code} {Name}");
+                    throw new Exception($"Unknown on/off state {GetOnOffState()} for action #{Code} {nameof(ControlSelfSwitchCommand)}");
             }
 
             return str;

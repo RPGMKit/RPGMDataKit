@@ -6,7 +6,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveImageCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.Image;
-        public override string Name => "Image";
+        public override string GetCommandName(StorageVersion version) => "Image";
 
         public string GetImage()
         {

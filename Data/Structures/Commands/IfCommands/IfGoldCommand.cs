@@ -34,7 +34,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     str += "<";
                     break;
                 default:
-                    throw new Exception($"Unknown operator '{GetOperator()}' for '{Name}' gold command");
+                    throw new Exception($"Unknown operator '{GetOperator()}' for '{GetCommandName(storage.Version)}' gold command");
             }
 
             str += $" {GetAmount()}";

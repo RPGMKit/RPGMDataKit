@@ -69,7 +69,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.MovePicture;
-        public override string Name => "Move picture";
+        public override string GetCommandName(StorageVersion version) => "Move picture";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

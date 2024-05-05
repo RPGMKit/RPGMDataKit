@@ -32,7 +32,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeSkill;
-        public override string Name => "Change skill";
+        public override string GetCommandName(StorageVersion version) => "Change skill";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

@@ -17,7 +17,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.InputNumber;
-        public override string Name => "Input number";
+        public override string GetCommandName(StorageVersion version) => "Input number";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

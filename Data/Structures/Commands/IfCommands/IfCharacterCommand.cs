@@ -52,7 +52,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     break;
                 default:
                     throw new Exception(
-                        $"Unknown orientation '{GetOrientation()}' for '{Name}' orientation command");
+                        $"Unknown orientation '{GetOrientation()}' for '{GetCommandName(storage.Version)}' orientation command");
             }
 
             return str;

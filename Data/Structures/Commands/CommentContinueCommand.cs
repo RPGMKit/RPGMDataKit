@@ -12,7 +12,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.CommentContinue;
-        public override string Name => "       ";
+        public override string GetCommandName(StorageVersion version) => "       ";
 
         public string GetComment()
         {

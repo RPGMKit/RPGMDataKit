@@ -14,7 +14,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int POSITION_BOTTOM = 2;
 
         public override int Code => CommandCodes.ShowTextBase;
-        public override string Name => "Text";
+        public override string GetCommandName(StorageVersion version) => "Text";
 
         public string GetFace()
         {
@@ -40,18 +40,18 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         {
             var face = GetFace();
             if (string.IsNullOrWhiteSpace(face))
-                face = "None";
+                face = storage.Version == StorageVersion.VXAce ? "-, -" : "None";
             else
-                face = $"{face}({GetOffset()})";
+                face = storage.Version == StorageVersion.VXAce ? $"face, {GetOffset()}" : $"{face}({GetOffset()})";
 
             var background = "";
             switch (GetBackground())
             {
                 case BACKGROUND_WINDOW:
-                    background = "Window";
+                    background = storage.Version == StorageVersion.VXAce ? "Normal" : "Window";
                     break;
                 case BACKGROUND_DIM:
-                    background = "Dim";
+                    background = storage.Version == StorageVersion.VXAce ? "Dark" : "Dim";
                     break;
                 case BACKGROUND_TRANSPARENT:
                     background = "Transparent";

@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ChangeSaveAccessCommand : NamedCommand
     {
         public override int Code => CommandCodes.ChangeSaveAccess;
-        public override string Name => "Change Save Access";
+        public override string GetCommandName(StorageVersion version) => "Change Save Access";
 
         public bool GetIsOn()
         {

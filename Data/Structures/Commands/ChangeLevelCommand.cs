@@ -44,7 +44,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeLevel;
-        public override string Name => "Change level";
+        public override string GetCommandName(StorageVersion version) => "Change level";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

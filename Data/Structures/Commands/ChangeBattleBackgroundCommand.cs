@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ChangeBattleBackground : NamedCommand
     {
         public override int Code => CommandCodes.ChangeBattleBackground;
-        public override string Name => "Change Battle Back";
+        public override string GetCommandName(StorageVersion version) => "Change Battle Back";
 
         public string GetImage1()
         {

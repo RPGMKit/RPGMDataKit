@@ -5,7 +5,7 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.Factories.MovementCommands;
 
-public static class GenericMovementCommandFactory
+public static class MovementCommandFactory
 {
     public static NamedCommand Create(IEventCommand command)
     {
@@ -145,6 +145,9 @@ public static class GenericMovementCommandFactory
                 break;
             case MovementRouteCommandCodes.BlendMode:
                 returnCommand = new MoveBlendModeCommand();
+                break;
+            case MovementRouteCommandCodes.Se:
+                returnCommand = new MoveSeCommand();
                 break;
             case MovementRouteCommandCodes.Script:
                 returnCommand = new MoveScriptCommand();

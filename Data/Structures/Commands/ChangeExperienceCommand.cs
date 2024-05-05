@@ -44,7 +44,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeExp;
-        public override string Name => "Change experience";
+        public override string GetCommandName(StorageVersion version) => "Change experience";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

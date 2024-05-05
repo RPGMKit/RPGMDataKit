@@ -11,7 +11,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int SOURCE_THIS_EVENT = 0;
 
         public override int Code => CommandCodes.SetMovementRoute;
-        public override string Name => "Set Movement Route";
+        public override string GetCommandName(StorageVersion version) => "Set Movement Route";
 
         public int GetSource()
         {

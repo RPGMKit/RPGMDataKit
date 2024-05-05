@@ -37,7 +37,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeWeapons;
-        public override string Name => "Change weapons";
+        public override string GetCommandName(StorageVersion version) => "Change weapons";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

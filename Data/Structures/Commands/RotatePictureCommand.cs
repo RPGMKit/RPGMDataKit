@@ -8,7 +8,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class RotatePictureCommand : NamedCommand
     {
         public override int Code => CommandCodes.RotatePicture;
-        public override string Name => "Rotate Picture";
+        public override string GetCommandName(StorageVersion version) => "Rotate Picture";
 
         public int GetLayer()
         {

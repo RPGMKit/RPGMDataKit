@@ -14,7 +14,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        public IEnumerable<NamedCommand> NamedCommands => List.Select(MVCommandFactory.Create);
+        public IEnumerable<NamedCommand> NamedCommands => List.Select(CommandFactory.Create);
         public IEnumerable<IEventCommand> Commands => List;
 
         [JsonProperty(PropertyName = "list")]

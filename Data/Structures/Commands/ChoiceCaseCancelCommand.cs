@@ -12,7 +12,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChoiceCaseCancel;
-        public override string Name => "When";
+        public override string GetCommandName(StorageVersion version) => "When";
 
         public T GetUnk0<T>()
         {

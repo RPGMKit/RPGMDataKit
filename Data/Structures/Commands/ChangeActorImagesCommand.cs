@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ChangeActorImagesCommand : NamedCommand
     {
         public override int Code => CommandCodes.ChangeActorImages;
-        public override string Name => "Change Actor Images";
+        public override string GetCommandName(StorageVersion version) => "Change Actor Images";
 
         public int GetActor()
         {

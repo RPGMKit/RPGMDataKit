@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 
@@ -15,7 +16,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override int Code => _code;
 
-        public override string Name => $"Unknown ({Code})";
+        public override string GetCommandName(StorageVersion version) => $"Unknown ({Code})";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

@@ -5,6 +5,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveTurnRightCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.TurnRight;
-        public override string Name => "Turn Right";
+        public override string GetCommandName(StorageVersion version) => "Turn Right";
     }
 }

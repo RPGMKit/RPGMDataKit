@@ -11,7 +11,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ShopProcessingLine;
-        public override string Name => "               ";
+        public override string GetCommandName(StorageVersion version) => "               ";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

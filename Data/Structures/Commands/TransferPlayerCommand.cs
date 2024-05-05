@@ -48,7 +48,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.TransferPlayer;
-        public override string Name => "Transfer player";
+        public override string GetCommandName(StorageVersion version) => "Transfer player";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

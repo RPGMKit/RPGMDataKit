@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ChangeNameCommand : NamedCommand
     {
         public override int Code => CommandCodes.ChangeName;
-        public override string Name => "Change Name";
+        public override string GetCommandName(StorageVersion version) => "Change Name";
 
         public int GetActor()
         {

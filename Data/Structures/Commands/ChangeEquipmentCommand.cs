@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ChangeEquipmentCommand : NamedCommand
     {
         public override int Code => CommandCodes.ChangeEquipment;
-        public override string Name => "Change Equipment";
+        public override string GetCommandName(StorageVersion version) => "Change Equipment";
 
         public int GetActor()
         {

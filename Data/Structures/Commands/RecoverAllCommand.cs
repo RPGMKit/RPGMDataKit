@@ -21,7 +21,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.RecoverAll;
-        public override string Name => "Recover all";
+        public override string GetCommandName(StorageVersion version) => "Recover all";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

@@ -79,7 +79,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ShowPicture;
-        public override string Name => "Show picture";
+        public override string GetCommandName(StorageVersion version) => "Show picture";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

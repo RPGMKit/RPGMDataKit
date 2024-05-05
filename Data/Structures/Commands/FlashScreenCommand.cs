@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class FlashScreenCommand : NamedCommand
     {
         public override int Code => CommandCodes.FlashScreen;
-        public override string Name => "Flash Screen";
+        public override string GetCommandName(StorageVersion version) => "Flash Screen";
 
         public List<int> GetColor()
         {

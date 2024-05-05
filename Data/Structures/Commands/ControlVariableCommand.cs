@@ -50,7 +50,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ControlVariables;
-        public override string Name => "Control variable";
+        public override string GetCommandName(StorageVersion version) => "Control variable";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
@@ -86,7 +86,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += " %=";
                     break;
                 default:
-                    throw new Exception($"Unknown operator type #{GetOperator()} for action #{Code} {Name}");
+                    throw new Exception($"Unknown operator type #{GetOperator()} for action #{Code} {GetCommandName(storage.Version)}");
             }
 
             switch (GetOperandType())
@@ -114,7 +114,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += $" Scenario ('{GetOperand1<int>()}', '{GetOperand2<int>()}')";
                     break;
                 default:
-                    throw new Exception($"Unknown operator type #{GetOperator()} for action #{Code} {Name}");
+                    throw new Exception($"Unknown operator type #{GetOperator()} for action #{Code} {GetCommandName(storage.Version)}");
             }
 
             return str;

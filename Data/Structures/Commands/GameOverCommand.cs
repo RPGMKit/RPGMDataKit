@@ -6,6 +6,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class GameOverCommand : NamedCommand
     {
         public override int Code => CommandCodes.GameOver;
-        public override string Name => "Game Over";
+        public override string GetCommandName(StorageVersion version) => "Game Over";
     }
 }

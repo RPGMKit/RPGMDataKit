@@ -30,7 +30,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     str += "OFF";
                     break;
                 default:
-                    throw new Exception($"Unknown ON/OFF state for '{Name}' self switch command");
+                    throw new Exception($"Unknown ON/OFF state for '{GetCommandName(storage.Version)}' self switch command");
             }
 
             return str;

@@ -39,7 +39,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeMp;
-        public override string Name => "Change MP";
+        public override string GetCommandName(StorageVersion version) => "Change MP";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ChangeParallaxCommand : NamedCommand
     {
         public override int Code => CommandCodes.ChangeParallaxBackground;
-        public override string Name => "Change Parallax";
+        public override string GetCommandName(StorageVersion version) => "Change Parallax";
 
         public string GetImage()
         {

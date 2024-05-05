@@ -21,7 +21,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int CANCEL_CHOICE_DISALLOW = -1;
 
         public override int Code => CommandCodes.ShowChoices;
-        public override string Name => "Show Choices";
+        public override string GetCommandName(StorageVersion version) => "Show Choices";
 
         public List<string> GetChoices()
         {

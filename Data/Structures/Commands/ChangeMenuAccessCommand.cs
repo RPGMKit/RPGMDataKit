@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ChangeMenuAccessCommand : NamedCommand
     {
         public override int Code => CommandCodes.ChangeMenuAccess;
-        public override string Name => "Change Menu Access";
+        public override string GetCommandName(StorageVersion version) => "Change Menu Access";
 
         public bool GetIsOn()
         {

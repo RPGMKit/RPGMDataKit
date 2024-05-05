@@ -44,7 +44,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeHp;
-        public override string Name => "Change HP";
+        public override string GetCommandName(StorageVersion version) => "Change HP";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

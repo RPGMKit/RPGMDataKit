@@ -39,7 +39,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeTp;
-        public override string Name => "Change TP";
+        public override string GetCommandName(StorageVersion version) => "Change TP";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

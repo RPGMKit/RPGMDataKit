@@ -25,7 +25,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int ICON_USER_DEFINED_5 = 15;
 
         public override int Code => CommandCodes.ShowBaloonIcon;
-        public override string Name => "Show Balloon Icon";
+        public override string GetCommandName(StorageVersion version) => "Show Balloon Icon";
 
         public int GetSource()
         {

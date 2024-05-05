@@ -7,6 +7,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveLowerLeftCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.LowerLeft;
-        public override string Name => "Move Lower Left";
+        public override string GetCommandName(StorageVersion version) => "Move Lower Left";
     }
 }

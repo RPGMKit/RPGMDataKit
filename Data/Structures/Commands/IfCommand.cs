@@ -10,9 +10,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(0);
         }
 
-        public string NameProvider = "If";
+        public override string GetCommandName(StorageVersion version)
+        {
+            return version == StorageVersion.VXAce ? "Conditional Branch" : "If";
+        }
 
         public override int Code => CommandCodes.If;
-        public override string Name => NameProvider;
     }
 }

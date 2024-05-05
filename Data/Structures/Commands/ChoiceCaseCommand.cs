@@ -12,7 +12,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChoiceCase;
-        public override string Name => "When";
+        public override string GetCommandName(StorageVersion version) => "When";
 
         public int GetChoiceIndex()
         {

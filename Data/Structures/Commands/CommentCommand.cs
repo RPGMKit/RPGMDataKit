@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class CommentCommand : NamedCommand
     {
         public override int Code => CommandCodes.Comment;
-        public override string Name => "Comment";
+        public override string GetCommandName(StorageVersion version) => "Comment";
 
         public string GetComment()
         {

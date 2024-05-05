@@ -7,6 +7,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveThroughOnCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.ThroughOn;
-        public override string Name => "Through ON";
+        public override string GetCommandName(StorageVersion version) => "Through ON";
     }
 }

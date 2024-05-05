@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class LabelCommand : NamedCommand
     {
         public override int Code => CommandCodes.Label;
-        public override string Name => "Label";
+        public override string GetCommandName(StorageVersion version) => "Label";
 
         public string GetLabel()
         {

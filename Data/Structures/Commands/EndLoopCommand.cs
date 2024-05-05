@@ -11,6 +11,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.EndLoop;
-        public override string Name => "Repeat Above";
+        public override string GetCommandName(StorageVersion version) => "Repeat Above";
     }
 }

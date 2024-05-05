@@ -6,7 +6,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveFrequencyCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.Frequency;
-        public override string Name => "Frequency";
+        public override string GetCommandName(StorageVersion version) => "Frequency";
         
         public int GetFrequency()
         {

@@ -4,13 +4,13 @@ using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
-    public abstract class ChangePartyMemberCommand : NamedCommand
+    public class ChangePartyMemberCommand : NamedCommand
     {
         protected const int ACTOR_ADD = 0;
         protected const int ACTOR_REMOVE = 1;
 
         public override int Code => CommandCodes.ChangePartyMember;
-        public override string Name => "Change Party Member";
+        public override string GetCommandName(StorageVersion version) => "Change Party Member";
 
         public int GetActor()
         {
@@ -22,7 +22,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(1);
         }
 
-        public abstract bool GetInitialize();
+        public bool GetInitialize(StorageVersion version)
+        {
+            return version == StorageVersion.MV ? GetParameter<bool>(2) : GetParameter<int>(2) > 0;
+        }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
@@ -40,7 +43,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             }
 
             str += $" Actor #{GetActor()}";
-            if (GetInitialize())
+            if (GetInitialize(storage.Version))
             {
                 str += " (Initialize)";
             }

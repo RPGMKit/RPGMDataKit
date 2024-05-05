@@ -6,7 +6,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveOpacityCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.Opacity;
-        public override string Name => "Opacity";
+        public override string GetCommandName(StorageVersion version) => "Opacity";
 
         public int GetOpacity()
         {

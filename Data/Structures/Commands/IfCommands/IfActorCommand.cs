@@ -55,7 +55,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     str += $" is affected by #{GetCheckParameter<int>()} state";
                     break;
                 default:
-                    throw new Exception($"Unknown check type '{GetCheckType()}' for '{Name}' actor command");
+                    throw new Exception($"Unknown check type '{GetCheckType()}' for '{GetCommandName(storage.Version)}' actor command");
             }
 
             return str;

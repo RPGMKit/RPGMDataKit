@@ -6,6 +6,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class OpenMenuScreenCommand : NamedCommand
     {
         public override int Code => CommandCodes.OpenMenuScreen;
-        public override string Name => "Open Menu Screen";
+        public override string GetCommandName(StorageVersion version) => "Open Menu Screen";
     }
 }

@@ -17,7 +17,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.NameInputProcessing;
-        public override string Name => "Name Input Processing";
+        public override string GetCommandName(StorageVersion version) => "Name Input Processing";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

@@ -31,7 +31,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.BattleProcessing;
-        public override string Name => "Battle Processing";
+        public override string GetCommandName(StorageVersion version) => "Battle Processing";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

@@ -8,7 +8,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class PlayBGMCommand : NamedCommand
     {
         public override int Code => CommandCodes.PlayBgm;
-        public override string Name => "Play BGM";
+        public override string GetCommandName(StorageVersion version) => "Play BGM";
 
         public SoundData GetBGMData()
         {

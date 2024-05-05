@@ -37,7 +37,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.SetEventLocation;
-        public override string Name =>"Set Event Location";
+        public override string GetCommandName(StorageVersion version) =>"Set Event Location";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

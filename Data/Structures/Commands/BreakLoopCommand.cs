@@ -6,6 +6,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class BreakLoopCommand : NamedCommand
     {
         public override int Code => CommandCodes.BreakLoop;
-        public override string Name => "Break Loop";
+        public override string GetCommandName(StorageVersion version) => "Break Loop";
     }
 }

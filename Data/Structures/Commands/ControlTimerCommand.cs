@@ -17,7 +17,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ControlTimer;
-        public override string Name => "Control Timer";
+        public override string GetCommandName(StorageVersion version) => "Control Timer";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

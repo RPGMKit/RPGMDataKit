@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 
@@ -9,7 +10,8 @@ public abstract class NamedCommand
     public IParameterProvider ParameterProvider { get; set; }
 
     public abstract int Code { get; }
-    public abstract string Name { get; }
+    
+    public abstract string GetCommandName(StorageVersion version);
 
     public int? Indent { get; set; }
 
@@ -17,12 +19,35 @@ public abstract class NamedCommand
 
     public virtual string GetParametersDescription(Storage storage, DumpOptions options) => "";
 
-    public string PrefixSymbol { get; set; } = "◆"; 
-    public string SecondaryPrefixSymbol { get; set; } = ":"; 
-    
-    protected virtual string GetStringPrefix()
+    public string GetPrefixSymbol(StorageVersion version)
     {
-        return !IsSecondary ? PrefixSymbol : SecondaryPrefixSymbol;
+        switch (version)
+        {
+            case StorageVersion.MV:
+                return "◆";
+            case StorageVersion.VXAce:
+                return "@>";
+        }
+
+        return "";
+    }
+
+    public string GetSecondaryPrefixSymbol(StorageVersion version)
+    {
+        switch (version)
+        {
+            case StorageVersion.MV:
+                return ":";
+            case StorageVersion.VXAce:
+                return ": ";
+        }
+
+        return "";
+    }
+
+    protected virtual string GetStringPrefix(StorageVersion version)
+    {
+        return !IsSecondary ? GetPrefixSymbol(version) : GetSecondaryPrefixSymbol(version);
     }
 
     public T? GetParameter<T>(int index)
@@ -37,17 +62,28 @@ public abstract class NamedCommand
 
     public string AsString(Storage storage, DumpOptions options)
     {
-        var str = options.WithIndent && Indent > 0 ? string.Concat(Enumerable.Repeat(' ', (int)Indent)) : "";
+        string str = "";
+        if (options.WithIndent && Indent > 0)
+        {
+            var whiteSpace = storage.Version == StorageVersion.VXAce ? "  " : " ";
 
-        str += GetStringPrefix();
+            str = string.Concat(Enumerable.Repeat(whiteSpace, (int)Indent));
+        }
 
-        var name = Name;
+        str += GetStringPrefix(storage.Version);
+
+        var name = GetCommandName(storage.Version);
         str += name;
 
         var paramDesc = GetParametersDescription(storage, options);
 
         if (!string.IsNullOrEmpty(paramDesc))
-            str += ((string.IsNullOrWhiteSpace(name) || !IsSecondary) ? " : " : " ") + paramDesc;
+        {
+            if (string.IsNullOrWhiteSpace(name) || !IsSecondary)
+                str += storage.Version == StorageVersion.MV ? " : " : ": ";
+
+            str += paramDesc;
+        }
 
         if (options.AppendCommandCode)
             str = $"({Code:D3}) {str}";

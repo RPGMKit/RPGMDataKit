@@ -7,6 +7,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveTransparentOffCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.TransparentOff;
-        public override string Name => "Transparent OFF";
+        public override string GetCommandName(StorageVersion version) => "Transparent OFF";
     }
 }

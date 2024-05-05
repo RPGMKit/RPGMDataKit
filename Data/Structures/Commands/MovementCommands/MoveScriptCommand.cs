@@ -6,7 +6,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveScriptCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.Script;
-        public override string Name => "Script";
+        public override string GetCommandName(StorageVersion version) => "Script";
 
         public string GetScript()
         {

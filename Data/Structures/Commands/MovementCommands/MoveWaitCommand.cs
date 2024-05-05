@@ -6,7 +6,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveWaitCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.Wait;
-        public override string Name => "Wait";
+        public override string GetCommandName(StorageVersion version) => "Wait";
 
         public int GetFrames()
         {

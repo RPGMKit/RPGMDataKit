@@ -7,7 +7,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class CallCommonEventCommand : NamedCommand
     {
         public override int Code => CommandCodes.CallCommonEvent;
-        public override string Name => "Common Event";
+        public override string GetCommandName(StorageVersion version)
+        {
+            return version == StorageVersion.VXAce ? "Call Common Event" : "Common Event";
+        }
 
         public int GetEventId()
         {

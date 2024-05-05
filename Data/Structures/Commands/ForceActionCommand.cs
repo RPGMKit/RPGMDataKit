@@ -13,7 +13,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         private const int TARGET_RANDOM = -1;
         
         public override int Code => CommandCodes.ForceAction;
-        public override string Name => "Force Action";
+        public override string GetCommandName(StorageVersion version) => "Force Action";
 
         public int GetSubjectType()
         {

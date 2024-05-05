@@ -2,7 +2,7 @@
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 
-public static class GenericIfFactory
+public static class IfFactory
 {
     public const int TYPE_SWITCH = 0;
     public const int TYPE_VARIABLE = 1;
@@ -23,6 +23,8 @@ public static class GenericIfFactory
     {
         switch (ifType)
         {
+            case TYPE_VARIABLE:
+                return new IfVariableCommand();
             case TYPE_SWITCH:
                 return new IfSwitchCommand();
             case TYPE_SELF_SWITCH:

@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class TintScreenCommand : NamedCommand
     {
         public override int Code => CommandCodes.TintScreen;
-        public override string Name => "Tint Screen";
+        public override string GetCommandName(StorageVersion version) => "Tint Screen";
 
         public List<int> GetColor()
         {

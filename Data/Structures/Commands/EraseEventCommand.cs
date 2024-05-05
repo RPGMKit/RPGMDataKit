@@ -6,6 +6,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class EraseEventCommand : NamedCommand
     {
         public override int Code => CommandCodes.EraseEvent;
-        public override string Name => "Erase Event";
+        public override string GetCommandName(StorageVersion version) => "Erase Event";
     }
 }

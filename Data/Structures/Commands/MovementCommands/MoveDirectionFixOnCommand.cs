@@ -5,6 +5,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveDirectionFixOnCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.DirectionFixOn;
-        public override string Name => "Direction Fix ON";
+        public override string GetCommandName(StorageVersion version) => "Direction Fix ON";
     }
 }

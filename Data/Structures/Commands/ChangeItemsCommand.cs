@@ -32,7 +32,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeItems;
-        public override string Name => "Change items";
+        public override string GetCommandName(StorageVersion version) => "Change items";
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {

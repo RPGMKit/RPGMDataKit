@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class PluginCommand : NamedCommand
     {
         public override int Code => CommandCodes.PluginCommand;
-        public override string Name => "Plugin Command";
+        public override string GetCommandName(StorageVersion version) => "Plugin Command";
 
         public string GetCommand()
         {

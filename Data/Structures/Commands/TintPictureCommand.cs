@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class TintPictureCommand : NamedCommand
     {
         public override int Code => CommandCodes.TintPicture;
-        public override string Name => "Tint Picture";
+        public override string GetCommandName(StorageVersion version) => "Tint Picture";
 
         public int GetLayer()
         {

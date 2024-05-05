@@ -11,6 +11,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.Else;
-        public override string Name => "Else";
+        public override string GetCommandName(StorageVersion version) => "Else";
     }
 }

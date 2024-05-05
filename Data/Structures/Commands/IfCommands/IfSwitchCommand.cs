@@ -1,3 +1,4 @@
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
@@ -19,12 +20,20 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            var str = $"#{GetSwitch()}";
-            var switchName = storage.GetSwitch(GetSwitch());
-            if (!string.IsNullOrEmpty(switchName))
-                str += $" {switchName}";
+            string str;
 
-            str += " is ";
+            if (storage.Version == StorageVersion.VXAce)
+                str = $"Switch [{GetSwitch():D4}:{storage.GetSwitch(GetSwitch())}] == ";
+            else
+            {
+                str = $"#{GetSwitch()}";
+                var switchName = storage.GetSwitch(GetSwitch());
+                if (!string.IsNullOrEmpty(switchName))
+                    str += $" {switchName}";
+
+                str += " is ";
+            }
+
             switch (GetOnOff())
             {
                 case STATE_ON:
@@ -34,7 +43,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     str += "OFF";
                     break;
                 default:
-                    throw new Exception($"Unknown ON/OFF state for '{Name}' switch command");
+                    throw new Exception($"Unknown ON/OFF state for '{GetCommandName(storage.Version)}' switch command");
             }
 
             return str;

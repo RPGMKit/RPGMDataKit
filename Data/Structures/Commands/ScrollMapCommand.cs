@@ -12,7 +12,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int DIRECTION_UP = 8;
 
         public override int Code => CommandCodes.ScrollMap;
-        public override string Name => "Scroll Map";
+        public override string GetCommandName(StorageVersion version) => "Scroll Map";
 
         public int GetDirection()
         {

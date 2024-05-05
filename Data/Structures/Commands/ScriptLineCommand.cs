@@ -11,7 +11,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             IsSecondary = true;
         }
 
-        public override string Name => "      ";
+        public override string GetCommandName(StorageVersion version) => "      ";
         
         public override int Code => CommandCodes.ScriptLineCommand;
 

@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class FadeoutBGMCommand : NamedCommand
     {
         public override int Code => CommandCodes.FadeoutBgm;
-        public override string Name => "Fadeout BGM";
+        public override string GetCommandName(StorageVersion version) => "Fadeout BGM";
 
         public int GetSeconds()
         {

@@ -25,7 +25,7 @@ public class CommonEvent : RubySerializationEntity, ICommonEvent
     [RubyProperty("@list")]
     public List<EventCommand> List;
 
-    public IEnumerable<NamedCommand> NamedCommands => List.Select(VXAceCommandFactory.Create);
+    public IEnumerable<NamedCommand> NamedCommands => List.Select(CommandFactory.Create);
     public IEnumerable<IEventCommand> Commands => List;
 
     public string Dump(Storage storage, DumpOptions options)

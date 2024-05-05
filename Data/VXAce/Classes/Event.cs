@@ -124,7 +124,7 @@ public class Event : RubySerializationEntity, IEvent
         [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
         public object _1;
         
-        public IEnumerable<NamedCommand> NamedCommands => List.Select(VXAceCommandFactory.Create);
+        public IEnumerable<NamedCommand> NamedCommands => List.Select(CommandFactory.Create);
         public IEnumerable<IEventCommand> Commands => List;
         public string Dump(Storage storage, DumpOptions options)
         {
