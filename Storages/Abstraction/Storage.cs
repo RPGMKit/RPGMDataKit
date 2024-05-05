@@ -1,116 +1,41 @@
-﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Helpers;
-using RPGMakerLibCoreV2.Data.MV.Classes;
+﻿using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Diff;
 
-namespace RPGMakerLibCoreV2;
+namespace RPGMakerLibCoreV2.Storages.Abstraction;
 
-public class Storage
+public abstract class Storage
 {
     public string ProjectPath { get; private set; }
 
-    public DataHolder<LookupList<IAnimation>> Animations;
-    public DataHolder<LookupList<ICommonEvent>> CommonEvents;
+    public DataHolder<IEnumerable<IAnimation>> Animations;
+    public DataHolder<IEnumerable<ICommonEvent>> CommonEvents;
     public DataHolder<ISystem> System;
     public MapsHolder Maps;
-    public DataHolder<LookupList<IMapInfo>> MapInfos;
-    public DataHolder<LookupList<ITileSet>> Tilesets;
+    public DataHolder<IEnumerable<IMapInfo>> MapInfos;
+    public DataHolder<IEnumerable<ITileSet>> Tilesets;
 
     public Storage(string projectPath)
     {
         ProjectPath = projectPath;
-        Animations = new(this, () =>
-        {
-            var path = DataPath("Animations.json");
 
-            return new()
-            {
-                Path = path,
-                Data = LoadData<LookupList<Animation>>(path).Cast<IAnimation>().ToLookupList()
-            };
-        });
-        CommonEvents = new(this, () =>
-        {
-            var path = DataPath("CommonEvents.json");
-
-            return new()
-            {
-                Path = path,
-                Data = LoadData<LookupList<CommonEvent>>(path).Cast<ICommonEvent>().ToLookupList()
-            };
-        });
-        System = new(this, () =>
-        {
-            var path = DataPath("System.json");
-
-            return new()
-            {
-                Path = path,
-                Data = LoadData<Data.MV.Classes.System>(path)
-            };
-        });
-        Maps = new(this);
-        MapInfos = new(this, () =>
-        {
-            var path = DataPath("MapInfos.json");
-
-            return new()
-            {
-                Path = path,
-                Data = LoadData<LookupList<MapInfo>>(path).Cast<IMapInfo>().ToLookupList()
-            };
-        });
-        Tilesets = new(this, () =>
-        {
-            var path = DataPath("TileSets.json");
-
-            return new()
-            {
-                Path = path,
-                Data = LoadData<LookupList<Tileset>>(path).Cast<ITileSet>().ToLookupList()
-            };
-        });
+        Init();
     }
 
-    public string DataPath(string dataObject)
+    protected abstract void Init();
+
+    public abstract string DataPath(string dataObject);
+
+    public abstract T LoadData<T>(string relativePath);
+
+    public abstract void SaveData<T>(string relativePath, T data);
+
+    public abstract void SaveAll();
+
+    public ICommonEvent? GetCommonEvent(int id)
     {
-        return Path.Combine("data", dataObject);
-    }
-
-    public T LoadData<T>(string relativePath)
-    {
-        var path = Path.Combine(ProjectPath, relativePath);
-        if (!File.Exists(path))
-            throw new FileNotFoundException(path);
-
-        var contents = File.ReadAllText(path);
-        if (string.IsNullOrWhiteSpace(contents))
-            throw new FileLoadException(path);
-
-        return JsonConvert.DeserializeObject<T>(contents);
-    }
-
-    public void SaveData<T>(string relativePath, T data)
-    {
-        var path = Path.Combine(ProjectPath, relativePath);
-        File.WriteAllText(path, JsonConvert.SerializeObject(data));
-    }
-
-    public void SaveAll()
-    {
-        Animations.Save();
-        CommonEvents.Save();
-        System.Save();
-        Maps.Save();
-        MapInfos.Save();
-        Tilesets.Save();
-    }
-
-    public ICommonEvent GetCommonEvent(int id)
-    {
-        return CommonEvents.Get().Get(id);
+        return CommonEvents.Get().ElementAtOrDefault(id);
     }
 
     public string GetSwitch(int id)
@@ -123,14 +48,14 @@ public class Storage
         return System.Get().Variables.Get(id) ?? "";
     }
 
-    public IMapInfo GetMapInfo(int id)
+    public IMapInfo? GetMapInfo(int id)
     {
-        return MapInfos.Get().Get(id);
+        return MapInfos.Get().ElementAtOrDefault(id);
     }
 
-    public IAnimation GetAnimation(int id)
+    public IAnimation? GetAnimation(int id)
     {
-        return Animations.Get().Get(id);
+        return Animations.Get().ElementAtOrDefault(id);
     }
 
     public void DumpCommonEvents(string path, DumpOptions options)

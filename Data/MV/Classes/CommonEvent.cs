@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes
 {

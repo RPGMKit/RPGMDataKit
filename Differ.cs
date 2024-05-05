@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Diff;
 using RPGMakerLibCoreV2.Diff.Text;
+using RPGMakerLibCoreV2.Storages.Abstraction;
 using Patch = RPGMakerLibCoreV2.Diff.Patch;
 
 namespace RPGMakerLibCoreV2
@@ -49,7 +50,8 @@ namespace RPGMakerLibCoreV2
                     });
             }
 
-            for (var i = 0; i < Math.Max(left.CommonEvents.Get().Count, right.CommonEvents.Get().Count); ++i)
+            var evCount = Math.Max(left.CommonEvents.Get().Count(), right.CommonEvents.Get().Count());
+            for (var i = 0; i < evCount; ++i)
             {
                 var commonEventA = left.GetCommonEvent(i);
                 var commonEventB = right.GetCommonEvent(i);
@@ -125,7 +127,8 @@ namespace RPGMakerLibCoreV2
                 }
             }
 
-            for (var i = 0; i < Math.Max(left.MapInfos.Get().Count, right.MapInfos.Get().Count); ++i)
+            var infoCount = Math.Max(left.MapInfos.Get().Count(), right.MapInfos.Get().Count());
+            for (var i = 0; i < infoCount; ++i)
             {
                 var m = right.Maps.Get(i);
                 if (m == null)

@@ -1,4 +1,6 @@
-﻿namespace RPGMakerLibCoreV2;
+﻿using RPGMakerLibCoreV2.Storages.Abstraction;
+
+namespace RPGMakerLibCoreV2;
 
 public class DataHolder<TDataType>
 {

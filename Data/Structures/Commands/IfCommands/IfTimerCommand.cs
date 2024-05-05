@@ -1,3 +1,5 @@
+using RPGMakerLibCoreV2.Storages.Abstraction;
+
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
     public class IfTimerCommand : IfCommand

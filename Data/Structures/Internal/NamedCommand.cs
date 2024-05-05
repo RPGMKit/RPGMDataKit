@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
+using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 

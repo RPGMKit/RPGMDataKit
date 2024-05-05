@@ -1,4 +1,5 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Helpers;
 
@@ -8,9 +9,9 @@ public static class MapEventHelper
 
     public static void WalkMapEvents(Storage storage, MapEventWalker walker)
     {
-        for (var i = 0; i < storage.MapInfos.Get().Count; ++i)
+        foreach (var info in storage.MapInfos.Get())
         {
-            var m = storage.Maps.Get(i);
+            var m = storage.Maps.Get(info.Id);
             if (m == null)
                 continue;
 
@@ -24,7 +25,7 @@ public static class MapEventHelper
                     if (p == null)
                         continue;
 
-                    walker(i, e.Id, j, p);
+                    walker(info.Id, e.Id, j, p);
                 }
             }
         }

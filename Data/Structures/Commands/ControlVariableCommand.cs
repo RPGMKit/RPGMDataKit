@@ -1,6 +1,7 @@
 using Newtonsoft.Json.Linq;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
