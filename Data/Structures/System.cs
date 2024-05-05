@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Structures;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data;
+namespace RPGMakerLibCoreV2.Data.Structures;
 
 public class System : JsonEntity
 {

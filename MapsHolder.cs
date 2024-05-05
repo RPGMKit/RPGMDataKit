@@ -1,4 +1,4 @@
-﻿using RPGMakerLibCoreV2.Data;
+﻿using RPGMakerLibCoreV2.Data.Structures;
 
 namespace RPGMakerLibCoreV2;
 

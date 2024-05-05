@@ -1,10 +1,12 @@
-﻿namespace RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 
-public class LookupList<T> : List<T>
+namespace RPGMakerLibCoreV2.Data.Structures.Internal;
+
+public class LookupList<T> : List<T>, IDataLookup<T>
 {
     public bool HasIndex(int index) => index < Count;
     
-    public T Get(int index)
+    public T? Get(int index)
     {
         if (HasIndex(index))
             return this[index];

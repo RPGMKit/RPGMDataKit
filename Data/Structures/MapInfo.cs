@@ -6,23 +6,23 @@ namespace RPGMakerLibCoreV2.Data.Structures;
 public class MapInfo : JsonEntity
 {
     [JsonProperty(PropertyName = "id")]
-    public int Id;
+    public int Id { get; set; }
 
     [JsonProperty(PropertyName = "expanded")]
-    public bool Expanded;
+    public bool Expanded { get; set; }
 
     [JsonProperty(PropertyName = "name")]
-    public string Name;
+    public string Name { get; set; }
 
     [JsonProperty(PropertyName = "order")]
-    public int Order;
+    public int Order { get; set; }
     
     [JsonProperty(PropertyName = "parentId")]
-    public int Parent;
+    public int Parent { get; set; }
 
     [JsonProperty(PropertyName = "scrollX")]
-    public float ScrollX;
+    public float ScrollX { get; set; }
 
     [JsonProperty(PropertyName = "scrollY")]
-    public float ScrollY;
+    public float ScrollY { get; set; }
 }

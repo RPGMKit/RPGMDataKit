@@ -12,7 +12,7 @@ public class Storage
 
     public DataHolder<Animations> Animations;
     public DataHolder<CommonEvents> CommonEvents;
-    public DataHolder<Data.System> System;
+    public DataHolder<Data.Structures.System> System;
     public MapsHolder Maps;
     public DataHolder<MapInfos> MapInfos;
     public DataHolder<Tilesets> Tilesets;
@@ -117,12 +117,12 @@ public class Storage
         });
     }
 
-    public MapEvent GetMapEvent(int mapId, int eventId)
+    public Event GetMapEvent(int mapId, int eventId)
     {
         return Maps.Get(mapId)?.Events.Get(eventId);
     }
 
-    public EventPage GetMapEventPage(int mapId, int eventId, int pageId)
+    public Event.Page GetMapEventPage(int mapId, int eventId, int pageId)
     {
         return Maps.Get(mapId)?.Events.Get(eventId)?.Pages.Get(pageId);
     }
@@ -179,9 +179,9 @@ public class Storage
         public Storage Storage;
         public int MapId;
         public Map Map;
-        public MapEvent Event;
+        public Event Event;
         public int PageId;
-        public EventPage Page;
+        public Event.Page Page;
 
         public override string ToString() =>
             $"Map {MapId}, Event {Event.Id}, Page {PageId}, X {Event.X}, Y {Event.X}";
@@ -339,7 +339,7 @@ public class Storage
             else if (p.MapEvent != null)
             {
                 var obj = !string.IsNullOrWhiteSpace(text)
-                    ? JsonConvert.DeserializeObject<MapEvent>(text)
+                    ? JsonConvert.DeserializeObject<Event>(text)
                     : null;
 
                 Maps.Get(p.MapEvent.MapId)?.Events.Set(p.MapEvent.EventId, obj);
@@ -353,7 +353,7 @@ public class Storage
             }
             else if (p.MapEventPage != null)
             {
-                var obj = !string.IsNullOrWhiteSpace(text) ? JsonConvert.DeserializeObject<EventPage>(text) : null;
+                var obj = !string.IsNullOrWhiteSpace(text) ? JsonConvert.DeserializeObject<Event.Page>(text) : null;
 
                 var e = GetMapEvent(p.MapEventPage.MapId, p.MapEventPage.EventId);
                 e?.Pages.Set(p.MapEventPage.PageId, obj);

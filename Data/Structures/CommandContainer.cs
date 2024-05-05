@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Enums;
+﻿using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures;
@@ -8,7 +7,9 @@ public class CommandContainer : LookupList<Command>
 {
     public IEnumerable<NamedCommand> Commands => this.Select(CommandFactory.Factory);
 
-    private void WalkForIndents(Action<int, int, Command> walker)
+    private delegate void IndentWalker(int currIndent, int commandIndex, Command command);
+    
+    private void WalkForIndents(IndentWalker walker)
     {
         int currIndent = 0;
         
