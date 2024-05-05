@@ -21,6 +21,9 @@ public static class MVCommandFactory
             case CommandCodes.ChangePartyMember:
                 returnCommand = new MVChangePartyMemberCommand();
                 break;
+            case CommandCodes.If:
+                returnCommand = MVIfFactory.Create(command.ParameterProvider.GetParameter<int>(0));
+                break;
             default:
                 returnCommand = GenericCommandFactory.Create(command);
                 break;

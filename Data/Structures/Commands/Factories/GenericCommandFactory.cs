@@ -40,9 +40,6 @@ public static class GenericCommandFactory
             case CommandCodes.ControlTimer:
                 returnCommand = new ControlTimerCommand(); 
                 break;
-            case CommandCodes.If:
-                returnCommand = IfCommand.IfFactory(parameterProvider);
-                break;
             case CommandCodes.Loop:
                 returnCommand = new LoopCommand();
                 break;
@@ -259,7 +256,7 @@ public static class GenericCommandFactory
             case CommandCodes.ChangeBattleBackground:
                 returnCommand = new ChangeBattleBackground();
                 break;
-            case CommandCodes.ChangeParallax:
+            case CommandCodes.ChangeParallaxBackground:
                 returnCommand = new ChangeParallaxCommand();
                 break;
             case CommandCodes.ExitEventProcessing:

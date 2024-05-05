@@ -21,6 +21,9 @@ public static class VXAceCommandFactory
             case CommandCodes.ChangePartyMember:
                 returnCommand = new VXAceChangePartyMemberCommand();
                 break;
+            case CommandCodes.If:
+                returnCommand = VXAceIfFactory.Create(command.ParameterProvider.GetParameter<int>(0));
+                break;
             default:
                 returnCommand = GenericCommandFactory.Create(command);
                 break;
