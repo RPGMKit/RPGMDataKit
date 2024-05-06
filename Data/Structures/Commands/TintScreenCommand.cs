@@ -1,6 +1,8 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Storages.Abstraction;
+using MVTone = RPGMakerLibCoreV2.Data.MV.Classes.Tone;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -9,9 +11,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.TintScreen;
         public override string GetCommandName(StorageVersion version) => "Tint Screen";
 
-        public List<int> GetColor()
+        public ITone GetColor(StorageVersion version)
         {
-            return GetParameter<List<int>>(0);
+            if (version == StorageVersion.MV)
+                return MVTone.FromArray(GetParameter<List<int>>(0));
+                
+            return GetParameter<ITone>(0);
         }
 
         public int GetDuration()
@@ -26,8 +31,8 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            var color = GetColor();
-            var str = $"({color[0]},{color[1]},{color[2]},{color[3]}), {GetDuration()} frame(s)";
+            var color = GetColor(storage.Version);
+            var str = $"({color.Red},{color.Green},{color.Blue},{color.Gray}), {GetDuration()} frame(s)";
             if (GetWaitForCompletion())
                 str += " (Wait)";
 

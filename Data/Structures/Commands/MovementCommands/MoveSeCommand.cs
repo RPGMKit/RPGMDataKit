@@ -21,9 +21,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
             if (string.IsNullOrWhiteSpace(seData.Name))
                 return "None";
 
-            var str = $"{seData.Name} ({seData.Volume}, {seData.Pitch})";
+            var str = $"{seData.Name} ({seData.Volume}, {seData.Pitch}";
             if (storage.Version == StorageVersion.MV)
-                str += $", {seData.Pan})";
+                str += $", {seData.Pan}";
+            str += ")";
 
             return str;
         }

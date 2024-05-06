@@ -18,4 +18,6 @@ public class LookupMap<T> : Dictionary<int, T>, IDataLookup<T>
     {
         this[index] = value;
     }
+
+    public IEnumerator<T> GetEnumerator() => Values.GetEnumerator();
 }

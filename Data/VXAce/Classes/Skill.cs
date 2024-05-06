@@ -1,9 +1,10 @@
-﻿using RubyMarshalCS.Serialization.Attributes;
+﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::Skill")]
-public class Skill : UsableItem
+public class Skill : UsableItem, ISkill
 {
     [RubyProperty("@stype_id")]
     public int STypeId;

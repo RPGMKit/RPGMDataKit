@@ -1,6 +1,9 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Storages.Abstraction;
+using MVColor = RPGMakerLibCoreV2.Data.MV.Classes.Color;
+using VXAceColor = RPGMakerLibCoreV2.Data.VXAce.Classes.Custom.Color;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -9,9 +12,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.FlashScreen;
         public override string GetCommandName(StorageVersion version) => "Flash Screen";
 
-        public List<int> GetColor()
+        public IColor GetColor(StorageVersion version)
         {
-            return GetParameter<List<int>>(0);
+            if (version == StorageVersion.VXAce)
+                return GetParameter<VXAceColor>(0);
+
+
+            return MVColor.FromArray(GetParameter<List<int>>(0));
         }
 
         public int GetDuration()
@@ -26,8 +33,8 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            var color = GetColor();
-            var str = $"({color[0]},{color[1]},{color[2]},{color[3]}), {GetDuration()} frame(s)";
+            var color = GetColor(storage.Version);
+            var str = $"({color.Red},{color.Green},{color.Blue},{color.Alpha}), {GetDuration()} frame(s)";
             if (GetWaitForCompletion())
                 str += " (Wait)";
 

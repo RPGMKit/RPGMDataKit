@@ -8,9 +8,6 @@ namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 [RubyObject("RPG::MapInfo")]
 class MapInfo : RubySerializationEntity, IMapInfo
 {
-    [RubyProperty("@id")]
-    public int Id { get; set; }
-
     [RubyProperty("@expanded")]
     public bool Expanded { get; set; }
 

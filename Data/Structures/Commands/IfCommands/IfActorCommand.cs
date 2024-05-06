@@ -1,3 +1,4 @@
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
@@ -29,36 +30,48 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            var str = $"Unit #{GetUnitId()}";
+            var unitName = storage.NameFormatter.FormatActor(GetUnitId());
 
             switch (GetCheckType())
             {
                 case CHECK_IN_PARTY:
-                    str += " is in the party";
-                    break;
+                    return storage.Version == StorageVersion.VXAce
+                        ? $"{unitName} is In the Party"
+                        : $"{unitName} is in the party";
                 case CHECK_NAME:
-                    str += $" name is '{GetCheckParameter<string>()}'";
-                    break;
+                    var name = GetCheckParameter<string>();
+                    return storage.Version == StorageVersion.VXAce
+                        ? $"{unitName} is Name '{name}' Applied"
+                        : $"{unitName} name is '{name}'";
                 case CHECK_CLASS:
-                    str += $" class is #{GetCheckParameter<int>()}";
-                    break;
+                    var className = storage.NameFormatter.FormatClass(GetCheckParameter<int>());
+                    return storage.Version == StorageVersion.VXAce
+                        ? $"{unitName} is {className}"
+                        : $"Class of {unitName} is {className}";
                 case CHECK_SKILL:
-                    str += $" has learned #{GetCheckParameter<int>()}";
-                    break;
+                    var skillName = storage.NameFormatter.FormatSkill(GetCheckParameter<int>());
+                    return storage.Version == StorageVersion.VXAce
+                        ? $"{unitName} is {skillName} Learned"
+                        : $"{unitName} has learned {skillName}";
                 case CHECK_WEAPON_EQUIPPED:
-                    str += $" has equipped weapon #{GetCheckParameter<int>()}";
-                    break;
+                    var weaponName = storage.NameFormatter.FormatWeapon(GetCheckParameter<int>());
+                    return storage.Version == StorageVersion.VXAce
+                        ? $"{unitName} is {weaponName} Equipped"
+                        : $"{unitName} has equipped {weaponName}";
                 case CHECK_ARMOR_EQUIPPED:
-                    str += $" has equipped armor #{GetCheckParameter<int>()}";
-                    break;
+                    var armorName = storage.NameFormatter.FormatArmor(GetCheckParameter<int>());
+                    return storage.Version == StorageVersion.VXAce
+                        ? $"{unitName} is {armorName} Equipped"
+                        : $"{unitName} has equipped {armorName}";
                 case CHECK_STATE:
-                    str += $" is affected by #{GetCheckParameter<int>()} state";
-                    break;
+                    var stateName = storage.NameFormatter.FormatState(GetCheckParameter<int>());
+                    return storage.Version == StorageVersion.VXAce
+                        ? $"{unitName} is {stateName} Inflicted"
+                        : $"{unitName} is affected by {stateName}";
                 default:
-                    throw new Exception($"Unknown check type '{GetCheckType()}' for '{GetCommandName(storage.Version)}' actor command");
+                    throw new Exception(
+                        $"Unknown check type '{GetCheckType()}' for '{GetCommandName(storage.Version)}' actor command");
             }
-
-            return str;
         }
     }
 }

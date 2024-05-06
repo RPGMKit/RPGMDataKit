@@ -1,20 +1,21 @@
-﻿using RubyMarshalCS.Serialization;
+﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::MoveRoute")]
-public class MoveRoute : RubySerializationEntity
+public class MoveRoute : RubySerializationEntity, IRoute
 {
     [RubyProperty("@repeat")]
-    public bool Repeat;
+    public bool Repeat { get; set; }
 
     [RubyProperty("@skippable")]
-    public bool Skippable;
+    public bool Skippable { get; set; }
 
     [RubyProperty("@wait")]
-    public bool Wait;
+    public bool Wait { get; set; }
 
     [RubyProperty("@list")]
     public List<MoveCommand> List;

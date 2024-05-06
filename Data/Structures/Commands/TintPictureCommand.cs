@@ -1,6 +1,8 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Storages.Abstraction;
+using MVColor = RPGMakerLibCoreV2.Data.MV.Classes.Color;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -13,10 +15,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         {
             return GetParameter<int>(0);
         }
-        
-        public List<int> GetColor()
+
+        public IColor GetColor(StorageVersion version)
         {
-            return GetParameter<List<int>>(1);
+            if (version == StorageVersion.MV)
+                return MVColor.FromArray(GetParameter<List<int>>(1));
+
+            return GetParameter<IColor>(1);
         }
 
         public int GetDuration()
@@ -31,8 +36,8 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            var color = GetColor();
-            var str = $"#{GetLayer()}, ({color[0]},{color[1]},{color[2]},{color[3]}), {GetDuration()} frame(s)";
+            var color = GetColor(storage.Version);
+            var str = $"#{GetLayer()}, ({color.Red},{color.Green},{color.Blue},{color.Alpha}), {GetDuration()} frame(s)";
             if (GetWaitForCompletion())
                 str += " (Wait)";
 

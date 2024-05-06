@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
@@ -23,7 +24,7 @@ public class Map : JsonEntity, IMap
     public LookupList<int> Data { get; set; } = new LookupList<int>();
 
     [JsonProperty(PropertyName = "events")]
-    public LookupList<Event> MapEvents { get; set; }
+    public LookupList<Event> _Events { get; set; }
 
-    public IEnumerable<IEvent> Events => MapEvents;
+    public IDataLookup<IEvent> Events => _Events.Cast<IEvent>().ToLookupList(_ => _.Id);
 }

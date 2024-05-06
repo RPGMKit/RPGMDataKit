@@ -55,6 +55,9 @@ public static class CommandFactory
             case CommandCodes.SelectItem:
                 returnCommand = new SelectItemCommand();
                 break;
+            case CommandCodes.ShowScrollingTextBase:
+                returnCommand = new ShowScrollingTextBaseCommand();
+                break;
             case CommandCodes.ChangeGold:
                 returnCommand = new ChangeGoldCommand();
                 break;
@@ -166,6 +169,9 @@ public static class CommandFactory
             case CommandCodes.ChangeEnemyState:
                 returnCommand = new ChangeEnemyStateCommand();
                 break;
+            case CommandCodes.ShowBattleAnimation:
+                returnCommand = new ShowBattleAnimationCommand();
+                break;
             case CommandCodes.ForceAction:
                 returnCommand = new ForceActionCommand();
                 break;
@@ -177,6 +183,9 @@ public static class CommandFactory
                 break;
             case CommandCodes.OpenMenuScreen:
                 returnCommand = new OpenMenuScreenCommand();
+                break;
+            case CommandCodes.OpenSaveScreen:
+                returnCommand = new OpenSaveScreenCommand();
                 break;
             case CommandCodes.GameOver:
                 returnCommand = new GameOverCommand();
@@ -250,6 +259,9 @@ public static class CommandFactory
             case CommandCodes.ChoicesEnd:
                 returnCommand = new EndChoicesCommand();
                 break;
+            case CommandCodes.ShowScrollingTextLine:
+                returnCommand = new ShowScrollingTextLine();
+                break;
             case CommandCodes.Label:
                 returnCommand = new LabelCommand();
                 break;
@@ -265,6 +277,9 @@ public static class CommandFactory
             case CommandCodes.PlaySe:
                 returnCommand = new PlaySECommand();
                 break;
+            case CommandCodes.StopSE:
+                returnCommand = new StopSECommand();
+                break;
             case CommandCodes.ChangeBattleBackground:
                 returnCommand = new ChangeBattleBackground();
                 break;
@@ -279,6 +294,9 @@ public static class CommandFactory
                 break;
             case CommandCodes.EraseEvent:
                 returnCommand = new EraseEventCommand();
+                break;
+            case CommandCodes.ChangePlayerFollowers:
+                returnCommand = new ChangePlayerFollowers();
                 break;
             case CommandCodes.SetMovementRoute:
                 returnCommand = new SetMovementRouteCommand();

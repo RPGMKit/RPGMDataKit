@@ -109,7 +109,7 @@ public static class CommandCodes
     public const int ChoiceCase = 402; // : when "asd":; 0 - choice index; 1 - choice text
     public const int ChoiceCaseCancel = 403; // : when Cancel
     public const int ChoicesEnd = 404; // :end
-    public const int ShowTextAnimatedLine = 405; // 0 - text; related to 105
+    public const int ShowScrollingTextLine = 405; // 0 - text; related to 105
     public const int CommentContinue = 408; // 0 - text; related to 108
     public const int Else = 411;
     public const int EndIf = 412;

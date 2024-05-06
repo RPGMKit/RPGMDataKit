@@ -1,18 +1,27 @@
-﻿using RPGMakerLibCoreV2.Data.VXAce.Serializers;
+﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.VXAce.Serializers;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
 
 [RubyObject("Color")]
 [RubyUserSerializer(typeof(ColorSerializer))]
-public class Color
+public class Color : IColor
 {
     [RubyProperty("@red")]
-    public double Red;
+    public double _Red;
+
     [RubyProperty("@green")]
-    public double Green;
+    public double _Green;
+
     [RubyProperty("@blue")]
-    public double Blue;
+    public double _Blue;
+
     [RubyProperty("@alpha")]
-    public double Alpha;
+    public double _Alpha;
+
+    public int Red => (int)_Red;
+    public int Green => (int)_Green;
+    public int Blue => (int)_Blue;
+    public int Alpha => (int)_Alpha;
 }

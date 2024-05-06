@@ -19,7 +19,7 @@ public class SimpleParameterProvider : IParameterProvider
         if (value == null)
             return default;
 
-        return (T?)SerializationHelper.ManualCast(typeof(T), value);
+        return (T?)SerializationHelper.AssignmentConversion(typeof(T), value, true);
     }
 
     public void SetParameter<T>(int index, T? value)

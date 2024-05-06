@@ -7,20 +7,20 @@ namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 public class BaseItem : RubySerializationEntity
 {
     [RubyProperty("@id")]
-    public int Id;
+    public int Id { get; set; }
 
     [RubyProperty("@name")]
-    public string Name;
+    public string Name { get; set; }
 
     [RubyProperty("@icon_index")]
-    public int IconIndex;
+    public int IconIndex { get; set; }
 
     [RubyProperty("@description")]
-    public string Description;
+    public string Description { get; set; }
 
     [RubyProperty("@features")]
-    public List<Feature> Features;
+    public List<Feature> Features { get; set; }
 
     [RubyProperty("@note")]
-    public string Note;
+    public string Note { get; set; }
 }

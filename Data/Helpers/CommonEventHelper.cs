@@ -22,4 +22,18 @@ public static class CommonEventHelper
             walker(i, c);
         }
     }
+
+    public static void DumpCommonEvents(Storage storage, string path, DumpOptions options)
+    {
+        if (!Directory.Exists(path))
+            throw new Exception($"Directory {path} does not exist.");
+
+        WalkCommonEvents(storage, (commonEventId, container) =>
+        {
+            IndentHelper.ValidateIndents(container, storage.Version);
+
+            File.WriteAllText(Path.Combine(path, $"CommonEvent_{commonEventId:D4}.txt"),
+                storage.GetCommonEvent(commonEventId).Dump(storage, options));
+        });
+    }
 }

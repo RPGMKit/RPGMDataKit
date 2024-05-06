@@ -7,9 +7,9 @@ public static class IndentHelper
 {
     public delegate void IndentWalker(int currIndent, int commandIndex, IEventCommand? prevCommand, IEventCommand currCommand);
     
-    public static void ValidateIndents(ICommandContainer container)
+    public static void ValidateIndents(ICommandContainer container, StorageVersion version)
     {
-        WalkForIndents(container, (indent, index, prevCommand, currCommand) =>
+        WalkForIndents(container, version, (indent, index, prevCommand, currCommand) =>
         {
             if (indent != currCommand.Indent)
             {
@@ -19,12 +19,12 @@ public static class IndentHelper
         });
     }
 
-    public static void SetupIndents(ICommandContainer container)
+    public static void SetupIndents(ICommandContainer container, StorageVersion version)
     {
-        WalkForIndents(container, (indent, _, _, command) => { command.Indent = indent; });
+        WalkForIndents(container, version, (indent, _, _, command) => { command.Indent = indent; });
     }
 
-    private static void WalkForIndents(ICommandContainer container, IndentWalker walker)
+    private static void WalkForIndents(ICommandContainer container, StorageVersion version, IndentWalker walker)
     {
         int currIndent = 0;
 

@@ -40,7 +40,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             switch (GetDesignationType())
             {
                 case DESIGNATION_TYPE_DIRECT:
-                    str = "#{source}";
+                    str = $"#{source}";
                     break;
                 case DESIGNATION_TYPE_BY_VARIABLE:
                     str = "{#" + source;

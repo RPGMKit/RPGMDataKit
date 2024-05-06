@@ -14,27 +14,19 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public IAudioFile GetSEData(StorageVersion version)
         {
-            return version == StorageVersion.MV ? GetParameter<SoundData>(0) : GetParameter<SE>(0);
+            return version == StorageVersion.MV ? GetParameter<SoundData>(0) : GetParameter<IAudioFile>(0);
         }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
             var seData = GetSEData(storage.Version);
             
-            if (storage.Version == StorageVersion.VXAce)
-            {
-                if (string.IsNullOrWhiteSpace(seData.Name))
-                    return "(None)";
-                
-                return  $"'{seData.Name}', {seData.Volume}, {seData.Pitch}";
-            }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(seData.Name))
-                    return "None";
-                
-                return $"{seData.Name} ({seData.Volume}, {seData.Pitch}), {seData.Pan})";
-            }
+            var str = $"{seData.Name} ({seData.Volume}, {seData.Pitch}";
+            if (storage.Version == StorageVersion.MV)
+                str += $", {seData.Pan}";
+            str += ")";
+
+            return str;
         }
     }
 }

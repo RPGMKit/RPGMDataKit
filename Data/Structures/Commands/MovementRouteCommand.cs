@@ -3,8 +3,7 @@ using RPGMakerLibCoreV2.Data.Structures.Commands.Factories.MovementCommands;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Storages.Abstraction;
-using EventCommandMV = RPGMakerLibCoreV2.Data.MV.Classes.EventCommand;
-using EventCommandVXAce = RPGMakerLibCoreV2.Data.VXAce.Classes.EventCommand;
+using MoveCommandMV = RPGMakerLibCoreV2.Data.MV.Classes.MoveCommand;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -20,9 +19,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public NamedCommand Factory(StorageVersion version)
         {
-            IEventCommand eventCommand = version == StorageVersion.MV
-                ? GetParameter<EventCommandMV>(0)
-                : GetParameter<EventCommandVXAce>(0);
+            IMoveCommand eventCommand = version == StorageVersion.MV
+                ? GetParameter<MoveCommandMV>(0)
+                : GetParameter<IMoveCommand>(0);
 
             return MovementCommandFactory.Create(eventCommand);
         }

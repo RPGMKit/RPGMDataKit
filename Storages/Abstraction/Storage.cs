@@ -12,13 +12,22 @@ public abstract class Storage
     
     public StorageVersion Version { get; init; }
 
+    public DataHolder<IEnumerable<IActor>> Actors;
     public DataHolder<IEnumerable<IAnimation>> Animations;
+    public DataHolder<IEnumerable<IArmor>> Armors;
+    public DataHolder<IEnumerable<IClass>> Classes;
     public DataHolder<IEnumerable<ICommonEvent>> CommonEvents;
+    public DataHolder<IEnumerable<IItem>> Items;
+    public DataHolder<IEnumerable<ISkill>> Skills;
+    public DataHolder<IEnumerable<IState>> States;
     public DataHolder<ISystem> System;
     public MapsHolder Maps;
     public DataHolder<IEnumerable<IMapInfo>> MapInfos;
     public DataHolder<IEnumerable<ITileSet>> Tilesets;
+    public DataHolder<IEnumerable<IWeapon>> Weapons;
 
+    public NameFormatter NameFormatter => new(this, true);
+    
     public Storage(string projectPath)
     {
         ProjectPath = projectPath;
@@ -28,6 +37,8 @@ public abstract class Storage
 
     protected abstract void Init();
 
+    protected abstract string MapPath(int index);
+    
     public abstract string DataPath(string dataObject);
 
     public abstract T LoadData<T>(string relativePath);
@@ -61,44 +72,14 @@ public abstract class Storage
         return Animations.Get().ElementAtOrDefault(id);
     }
 
-    public void DumpCommonEvents(string path, DumpOptions options)
+    public IEvent? GetMapEvent(int mapId, int eventId)
     {
-        if (!Directory.Exists(path))
-            throw new Exception($"Directory {path} does not exist.");
-
-        CommonEventHelper.WalkCommonEvents(this, (commonEventId, container) =>
-        {
-            IndentHelper.ValidateIndents(container);
-
-            File.WriteAllText(Path.Combine(path, $"CommonEvent_{commonEventId:D4}.txt"),
-                GetCommonEvent(commonEventId).Dump(this, options));
-        });
+        return Maps.Get(mapId)?.Events.Get(eventId);
     }
 
-    public void DumpMapEvents(string path, DumpOptions options)
+    public IPage? GetMapEventPage(int mapId, int eventId, int pageId)
     {
-        if (!Directory.Exists(path))
-            throw new Exception($"Directory {path} does not exist.");
-
-
-        MapEventHelper.WalkMapEvents(this, (mapId, eventId, pageId, commands) =>
-        {
-            IndentHelper.ValidateIndents(commands);
-
-            var fileName = $"Map_{mapId:D3}_Event_{eventId:D3}_Page_{pageId}.txt";
-            File.WriteAllText(Path.Combine(path, fileName),
-                GetMapEventPage(mapId, eventId, pageId).Dump(this, options));
-        });
-    }
-
-    public IEvent GetMapEvent(int mapId, int eventId)
-    {
-        return Maps.Get(mapId)?.Events.ElementAt(eventId);
-    }
-
-    public IPage GetMapEventPage(int mapId, int eventId, int pageId)
-    {
-        return Maps.Get(mapId)?.Events.ElementAt(eventId)?.Pages.ElementAt(pageId);
+        return GetMapEvent(mapId, eventId)?.Pages.ElementAt(pageId);
     }
 
     public class CommonEventContextData
@@ -150,7 +131,7 @@ public abstract class Storage
             foreach (var command in container.NamedCommands)
             {
                 var map = Maps.Get(mapId);
-                var mapEvent = map.Events.ElementAt(eventId);
+                var mapEvent = map.Events.Get(eventId);
                 var page = mapEvent.Pages.ElementAt(pageId);
 
                 MapEventContextData context = new()

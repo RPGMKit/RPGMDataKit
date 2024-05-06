@@ -39,6 +39,7 @@ public class DataHolder<TDataType>
         var h = _loader();
         _data = h.Data;
         _path = h.Path;
+        _isLoaded = true;
     }
 
     public void Set(TDataType value)

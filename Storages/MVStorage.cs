@@ -13,8 +13,21 @@ public class MVStorage : Storage
         Version = StorageVersion.MV;
     }
 
+    protected override string MapPath(int index) => DataPath($"Map{index:D3}.json");
+    
     protected override void Init()
     {
+        Actors = new(this, () =>
+        {
+            var path = DataPath("Actors.json");
+
+            return new()
+            {
+                Path = path,
+                Data = LoadData<LookupList<Actor>>(path)
+            };
+        });
+        
         Animations = new(this, () =>
         {
             var path = DataPath("Animations.json");
@@ -23,6 +36,28 @@ public class MVStorage : Storage
             {
                 Path = path,
                 Data = LoadData<LookupList<Animation>>(path)
+            };
+        });
+        
+        Armors = new(this, () =>
+        {
+            var path = DataPath("Armors.json");
+
+            return new()
+            {
+                Path = path,
+                Data = LoadData<LookupList<Armor>>(path)
+            };
+        });
+        
+        Classes = new(this, () =>
+        {
+            var path = DataPath("Classes.json");
+
+            return new()
+            {
+                Path = path,
+                Data = LoadData<List<Class>>(path)
             };
         });
         
@@ -37,6 +72,39 @@ public class MVStorage : Storage
             };
         });
         
+        Items = new(this, () =>
+        {
+            var path = DataPath("Items.json");
+
+            return new()
+            {
+                Path = path,
+                Data = LoadData<LookupList<Item>>(path)
+            };
+        });
+        
+        Skills = new(this, () =>
+        {
+            var path = DataPath("Skills.json");
+
+            return new()
+            {
+                Path = path,
+                Data = LoadData<LookupList<Skill>>(path)
+            };
+        });
+        
+        States = new(this, () =>
+        {
+            var path = DataPath("States.json");
+
+            return new()
+            {
+                Path = path,
+                Data = LoadData<LookupList<State>>(path)
+            };
+        });
+        
         System = new(this, () =>
         {
             var path = DataPath("System.json");
@@ -48,7 +116,15 @@ public class MVStorage : Storage
             };
         });
         
-        Maps = new(this, LoadData<Map>);
+        Maps = new(this, (mapIndex) =>
+        {
+            var path = MapPath(mapIndex);
+            return new()
+            {
+                Path = path,
+                Data = LoadData<Map>(path)
+            };
+        });
         
         MapInfos = new(this, () =>
         {
@@ -69,6 +145,17 @@ public class MVStorage : Storage
             {
                 Path = path,
                 Data = LoadData<LookupList<Tileset>>(path)
+            };
+        });
+        
+        Weapons = new(this, () =>
+        {
+            var path = DataPath("Weapons.json");
+
+            return new()
+            {
+                Path = path,
+                Data = LoadData<LookupList<Weapon>>(path)
             };
         });
     }
@@ -99,11 +186,18 @@ public class MVStorage : Storage
 
     public override void SaveAll()
     {
+        Actors.Save();
         Animations.Save();
+        Armors.Save();
+        Classes.Save();
         CommonEvents.Save();
+        Items.Save();
+        Skills.Save();
+        States.Save();
         System.Save();
         Maps.Save();
         MapInfos.Save();
         Tilesets.Save();
+        Weapons.Save();
     }
 }

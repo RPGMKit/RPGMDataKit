@@ -1,5 +1,6 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 using RubyMarshalCS.Serialization;
@@ -85,7 +86,7 @@ public class Map : RubySerializationEntity, IMap
     [RubyProperty("@events")]
     public Dictionary<int, Event> _Events { get; set; }
 
-    public IEnumerable<IEvent> Events => _Events.Values;
+    public IDataLookup<IEvent> Events => _Events.Values.Cast<IEvent>().ToLookupList(_ => _.Id);
 
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1 { get; set; }

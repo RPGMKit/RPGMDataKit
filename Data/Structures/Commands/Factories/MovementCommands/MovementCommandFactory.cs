@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.Factories.MovementCommands;
 
 public static class MovementCommandFactory
 {
-    public static NamedCommand Create(IEventCommand command)
+    public static NamedCommand Create(IMoveCommand command)
     {
         NamedCommand returnCommand;
 
@@ -157,7 +157,7 @@ public static class MovementCommandFactory
         }
 
         returnCommand.ParameterProvider = command.ParameterProvider;
-        returnCommand.Indent = command.Indent;
+        returnCommand.Indent = null;
 
         return returnCommand;
     }

@@ -2,8 +2,6 @@
 
 public interface IMapInfo
 {
-    public int Id { get; set; }
-
     public bool Expanded { get; set; }
 
     public string Name { get; set; }

@@ -42,7 +42,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             if (string.IsNullOrWhiteSpace(face))
                 face = storage.Version == StorageVersion.VXAce ? "-, -" : "None";
             else
-                face = storage.Version == StorageVersion.VXAce ? $"face, {GetOffset()}" : $"{face}({GetOffset()})";
+                face = storage.Version == StorageVersion.MV ? $"{face}({GetOffset()})" : $"'{face}', {GetOffset()}";
 
             var background = "";
             switch (GetBackground())

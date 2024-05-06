@@ -1,4 +1,5 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
@@ -15,5 +16,5 @@ public interface IMap : IDumpable
     // ground 1 => ground 2? => bottom object => top object => shadow flags => region id
     public LookupList<int> Data { get; }
 
-    public IEnumerable<IEvent> Events { get; }
+    public IDataLookup<IEvent> Events { get; }
 }

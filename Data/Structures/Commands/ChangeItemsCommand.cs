@@ -11,7 +11,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int OPERAND_CONSTANT = 0;
         protected const int OPERAND_VARIABLE = 1;
 
-        public int GetItem()
+        public int GetItemId()
         {
             return GetParameter<int>(0);
         }
@@ -32,25 +32,31 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeItems;
-        public override string GetCommandName(StorageVersion version) => "Change items";
+        public override string GetCommandName(StorageVersion version)
+        {
+            if (version == StorageVersion.MV)
+                return "Change items";
+            else
+                return "Change Items";
+        }
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            var str = $"#{GetItem()} ";
+            var str = storage.NameFormatter.FormatItem(GetItemId());
+            if (storage.Version != StorageVersion.MV)
+                str += ",";
 
             switch (GetOperator())
             {
                 case OPERATOR_ADD:
-                    str += "+";
+                    str += " + ";
                     break;
                 case OPERATOR_TAKE:
-                    str += "-";
+                    str += " - ";
                     break;
                 default:
                     throw new Exception($"Unknown change items operator type '{GetOperator()}'");
             }
-
-            str += " ";
 
             switch (GetOperandType())
             {
@@ -58,12 +64,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    str += "{#" + GetOperand();
-                    var variableName = storage.GetVariable(GetOperand());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += $" {variableName}";
-
-                    str += "}";
+                    if (storage.Version == StorageVersion.MV)
+                        str += "{" + storage.NameFormatter.FormatVariable(GetOperand()) + "}";
+                    else
+                        str += $"Variable {storage.NameFormatter.FormatVariable(GetOperand())}";
                     break;
                 default:
                     throw new Exception($"Unknown change items operand type '{GetOperandType()}'");

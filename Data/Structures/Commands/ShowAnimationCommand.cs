@@ -29,7 +29,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            var str = "";
+            string str;
             switch (GetActor())
             {
                 case ACTOR_PLAYER:
@@ -40,17 +40,15 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     break;
                 default:
                     str = $"Event #{GetActor()}";
+                    if (storage.Version != StorageVersion.MV)
+                        str = $"[{str}]";
                     break;
             }
 
-            var animation = storage.GetAnimation(GetAnimation());
-            if (animation != null)
-                str += ", " + animation.Name;
-            else
-                str += $", Animation #{GetAnimation()}";
+            str += ", " + storage.NameFormatter.FormatAnimation(GetAnimation());
 
             if (GetWaitForCompletion())
-                str += " (Wait)";
+                str += storage.Version == StorageVersion.MV ? " (Wait)" : ", Wait";
 
             return str;
         }

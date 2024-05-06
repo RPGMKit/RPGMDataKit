@@ -1,34 +1,35 @@
-﻿using RubyMarshalCS.Serialization.Attributes;
+﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::Actor")]
-class Actor : BaseItem
+class Actor : BaseItem, IActor
 {
     [RubyProperty("@face_index")]
-    public int FaceIndex;
+    public int FaceIndex { get; set; }
 
     [RubyProperty("@character_index")]
-    public int CharacterIndex;
+    public int CharacterIndex { get; set; }
 
     [RubyProperty("@initial_level")]
-    public int InitialLevel;
+    public int InitialLevel { get; set; }
 
     [RubyProperty("@face_name")]
-    public string FaceName;
+    public string FaceName { get; set; }
 
     [RubyProperty("@class_id")]
-    public int ClassId;
+    public int ClassId { get; set; }
 
     [RubyProperty("@character_name")]
-    public string CharacterName;
+    public string CharacterName { get; set; }
 
     [RubyProperty("@equips")]
-    public List<int> Equips;
+    public List<int> Equips { get; set; }
 
     [RubyProperty("@nickname")]
-    public string NickName;
+    public string NickName { get; set; }
 
     [RubyProperty("@max_level")]
-    public int MaxLevel;
+    public int MaxLevel { get; set; }
 }

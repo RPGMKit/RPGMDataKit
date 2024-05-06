@@ -7,17 +7,17 @@ class ToneSerializer : AbstractRubyUserSerializer<Tone>
 {
     public override void Read(Tone obj, BinaryReader reader)
     {
-        obj.Red = reader.ReadDouble();
-        obj.Green = reader.ReadDouble();
-        obj.Blue = reader.ReadDouble();
-        obj.Gray = reader.ReadDouble();
+        obj._Red = reader.ReadDouble();
+        obj._Green = reader.ReadDouble();
+        obj._Blue = reader.ReadDouble();
+        obj._Gray = reader.ReadDouble();
     }
 
     public override void Write(Tone obj, BinaryWriter writer)
     {
-        writer.Write((double)obj.Red);
-        writer.Write((double)obj.Green);
-        writer.Write((double)obj.Blue);
-        writer.Write((double)obj.Gray);
+        writer.Write((double)obj._Red);
+        writer.Write((double)obj._Green);
+        writer.Write((double)obj._Blue);
+        writer.Write((double)obj._Gray);
     }
 }

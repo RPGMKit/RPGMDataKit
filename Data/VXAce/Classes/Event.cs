@@ -128,7 +128,10 @@ public class Event : RubySerializationEntity, IEvent
         public IEnumerable<IEventCommand> Commands => List;
         public string Dump(Storage storage, DumpOptions options)
         {
-            throw new NotImplementedException();
+            if (options.Format == DumpFormat.Text)
+                return string.Join("\r\n", NamedCommands.Select(_ => _.AsString(storage, options)));
+
+            throw new NotImplementedException($"{options.Format} not supported");
         }
     }
 

@@ -1,10 +1,11 @@
-﻿using RubyMarshalCS.Serialization.Attributes;
+﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::State")]
-public class State : BaseItem
+public class State : BaseItem, IState
 {
     [RubyProperty("@restriction")]
     public int Restriction;

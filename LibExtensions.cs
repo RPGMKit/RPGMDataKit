@@ -23,11 +23,17 @@ public static class LibExtensions
         return source.Select((item, index) => (index, item));
     }
 
-    public static LookupList<T> ToLookupList<T>(this IEnumerable<T> source)
+    public static LookupList<T> ToLookupList<T>(this IEnumerable<T> source, Func<T, int>? indexer = null)
     {
         var l = new LookupList<T>();
 
-        l.AddRange(source);
+        if (indexer != null)
+        {
+            foreach (var e in source)
+                l.Set(indexer(e), e);
+        }
+        else
+            l.AddRange(source);
 
         return l;
     }

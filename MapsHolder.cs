@@ -7,15 +7,13 @@ public class MapsHolder
 {
     private readonly Dictionary<int, DataHolder<IMap>> _maps = new();
     private readonly Storage _storage;
-    private readonly Func<string, IMap> _loader;
+    private readonly Func<int, DataHolder<IMap>.HolderInfo> _loader;
 
-    public MapsHolder(Storage storage, Func<string, IMap> loader)
+    public MapsHolder(Storage storage, Func<int, DataHolder<IMap>.HolderInfo> loader)
     {
         _storage = storage;
         _loader = loader;
     }
-
-    private string MapPath(int index) => _storage.DataPath($"Map{index:D3}.json");
 
     public IMap? Get(int index)
     {
@@ -38,14 +36,7 @@ public class MapsHolder
 
     private DataHolder<IMap> CreateSubHolder(int mapIndex)
     {
-        var path = MapPath(mapIndex);
-        DataHolder<IMap> holder = new(_storage, () => new()
-        {
-            Path = path,
-            Data = _loader(path)
-        });
-
-        return holder;
+        return new(_storage, () => _loader(mapIndex));
     }
 
     public void Set(int index, IMap data)
