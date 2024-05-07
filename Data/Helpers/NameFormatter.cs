@@ -22,7 +22,7 @@ public class NameFormatter
         opt ??= new();
 
         opt.BracketType ??= BracketsForVersion;
-        if (_extendedFormat)
+        if (_extendedFormat && opt.HasExtendedFormat)
         {
             opt.SkipId = false;
             opt.SkipName = false;
@@ -36,6 +36,8 @@ public class NameFormatter
             opt.Literal = "";
         }
 
+        opt.IdLength ??= 3;
+
         return opt;
     }
 
@@ -43,11 +45,13 @@ public class NameFormatter
     {
         opt = InitOptions(opt);
 
+        var doExtended = _extendedFormat && opt.HasExtendedFormat;
+
         if (string.IsNullOrEmpty(name))
         {
             name = "?";
             opt.SkipId = false;
-            if (!_extendedFormat)
+            if (!doExtended)
                 opt.Prefix = "#";
         }
 
@@ -55,14 +59,14 @@ public class NameFormatter
 
         if (!opt.SkipId!.Value)
             parts.Add(string.Format("{0:D" + opt.IdLength + "}", id));
-        if (_extendedFormat && opt.Literal != "")
+        if (doExtended && opt.Literal != "")
             parts.Add(opt.Literal);
         if (!opt.SkipName!.Value && !string.IsNullOrEmpty(name))
             parts.Add(name);
 
         var str = string.Join(opt.Separator, parts);
 
-        if (_extendedFormat || opt.BracketType != BracketType.None)
+        if (doExtended || opt.BracketType != BracketType.None)
         {
             if (opt.BracketType == BracketType.None || opt.BracketType == BracketType.Square)
                 str = $"[{str}]";
@@ -101,7 +105,7 @@ public class NameFormatter
     {
         var @class = _context.Storage.Classes.Get().Get(classId);
 
-        return FormatSimple(classId, @class?.Name ?? "");
+        return FormatSimple(classId, @class?.Name);
     }
 
     public string FormatCommonEvent(int commonEventId)
@@ -111,6 +115,13 @@ public class NameFormatter
         return FormatSimple(commonEventId, commonEvent?.Name);
     }
 
+    public string FormatEnemy(int enemyId)
+    {
+        var enemy = _context.Storage.Enemies.Get().Get(enemyId);
+
+        return FormatSimple(enemyId, enemy?.Name);
+    }
+    
     public string FormatItem(int itemId)
     {
         var item = _context.Storage.Items.Get().Get(itemId);
@@ -151,6 +162,29 @@ public class NameFormatter
         var troop = _context.Storage.Troops.Get().Get(troopId);
 
         return FormatSimple(troopId, troop?.Name ?? "", new() { BracketType = BracketType.None });
+    }
+
+    public string FormatTroopMember(int troopMemberId)
+    {
+        FormatOptions opt = new();
+        opt.HasExtendedFormat = false;
+
+        string name = "?";
+        if (_context.TroopContext != null)
+        {
+            var member = _context.TroopContext.Troop.Members.Get(troopMemberId);
+            if (member != null)
+            {
+                var enemy = _context.Storage.Enemies.Get().Get(member.EnemyId);
+                if (enemy != null)
+                    name = enemy.Name;
+            }
+        }
+
+        if (_context.Version == StorageVersion.MV)
+            return FormatSimple(troopMemberId, $"#{troopMemberId + 1} {name}", opt);
+        else
+            return FormatSimple(troopMemberId, $"{troopMemberId + 1}. {name}", opt);
     }
 
     public string FormatVariable(int variableId, FormatOptions? options = null)

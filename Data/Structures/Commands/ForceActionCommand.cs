@@ -36,24 +36,27 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = "";
-            if (GetSubjectType() == SUBJECT_TYPE_ENEMY)
-                str += $"#{GetSubject() + 1}";
+            string str;
+            var subjectType = GetSubjectType(); 
+            if (subjectType == SUBJECT_TYPE_ENEMY)
+                str = context.NameFormatter.FormatTroopMember(GetSubject());
+            else if (subjectType == SUBJECT_TYPE_ACTOR)
+                str = context.NameFormatter.FormatActor(GetSubject());
             else
-                str += $"#{GetSubject()}";
+                throw new Exception($"Unknown subject type {subjectType}");
             
-            str += $", #{GetSkill()}, ";
+            str += $", {context.NameFormatter.FormatSkill(GetSkill())}";
 
             switch (GetTarget())
             {
                 case TARGET_LAST_TARGET:
-                    str += "Last Target";
+                    str += ", Last Target";
                     break;
                 case TARGET_RANDOM:
-                    str += "Random";
+                    str += ", Random";
                     break;
                 default:
-                    str += $"Index {GetTarget() + 1}";
+                    str += $", Index {GetTarget() + 1}";
                     break;
             }
 

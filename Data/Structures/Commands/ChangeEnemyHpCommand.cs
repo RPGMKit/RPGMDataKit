@@ -10,7 +10,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int OPERAND_CONSTANT = 0;
         protected const int OPERAND_VARIABLE = 1;
 
-        public int GetEnemy()
+        public int GetMember()
         {
             return GetParameter<int>(0);
         }
@@ -40,20 +40,20 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var source = GetEnemy();
+            var source = GetMember();
             var str = "";
             if (source == -1)
                 str = "Entire Troop";
             else
-                str = $"#{source + 1}";
+                str = context.NameFormatter.FormatTroopMember(source);
 
             switch (GetOperator())
             {
                 case OPERATOR_INCREASE:
-                    str += " + ";
+                    str += ", + ";
                     break;
                 case OPERATOR_DECREASE:
-                    str += " - ";
+                    str += ", - ";
                     break;
                 default:
                     throw new Exception($"Unknown modify enemy hp operator type '{GetOperator()}'");
@@ -65,12 +65,8 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    str += "{#" + GetOperand();
-                    var variableName = context.Storage.GetVariable(GetOperand());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += $" {variableName}";
-
-                    str += "}";
+                    str += context.NameFormatter.FormatVariable(GetOperand(),
+                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
                     break;
                 default:
                     throw new Exception($"Unknown modify enemy hp operand type '{GetOperandType()}'");
@@ -78,7 +74,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
             if (GetAllowKnockout())
             {
-                str += " (Allow Knockout)";
+                if (context.Version == StorageVersion.MV)
+                    str += " (Allow Knockout)";
+                else
+                    // custom
+                    str += ", Allow Knockout";
             }
 
             return str;

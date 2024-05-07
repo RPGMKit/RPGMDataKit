@@ -11,4 +11,5 @@ public class FormatOptions
     public bool? SkipName;
     public string Prefix = "";
     public string Separator = ":";
+    public bool HasExtendedFormat = true;
 }

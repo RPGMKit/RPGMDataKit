@@ -16,7 +16,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            return $"#{GetEnemy() + 1}";
+            return context.NameFormatter.FormatTroopMember(GetEnemy());
         }
     }
 }
