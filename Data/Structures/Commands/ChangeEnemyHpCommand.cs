@@ -47,21 +47,17 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             else
                 str = $"#{source + 1}";
 
-            str += ", ";
-
             switch (GetOperator())
             {
                 case OPERATOR_INCREASE:
-                    str += "+";
+                    str += " + ";
                     break;
                 case OPERATOR_DECREASE:
-                    str += "-";
+                    str += " - ";
                     break;
                 default:
                     throw new Exception($"Unknown modify enemy hp operator type '{GetOperator()}'");
             }
-
-            str += " ";
 
             switch (GetOperandType())
             {

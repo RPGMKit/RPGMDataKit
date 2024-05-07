@@ -14,43 +14,92 @@ public class NameFormatter
         _extendedFormat = extendedFormat;
     }
 
-    private string FormatSimple(int id, string name, bool brackets = true, string literal = "", int length = 3)
+    private BracketType BracketsForVersion =>
+        _context.Version == StorageVersion.MV ? BracketType.None : BracketType.Square;
+
+    private FormatOptions InitOptions(FormatOptions? opt)
     {
-        if (literal != "")
-            literal += ":";
+        opt ??= new();
 
-        var idFormatted = _extendedFormat ? string.Format("{0:D" + length + "}", id) : id.ToString();
-
-        if (_context.Version == StorageVersion.VXAce)
-            return _extendedFormat ? $"[{idFormatted}:{literal}{name}]" : (brackets ? $"[{name}]" : name);
+        opt.BracketType ??= BracketsForVersion;
+        if (_extendedFormat)
+        {
+            opt.SkipId = false;
+            opt.SkipName = false;
+            opt.Prefix = "";
+            opt.Separator = ":";
+        }
         else
-            return _extendedFormat ? $"[{idFormatted}:{literal}{name}]" : name;
+        {
+            opt.SkipId ??= true;
+            opt.SkipName ??= false;
+            opt.Literal = "";
+        }
+
+        return opt;
+    }
+
+    private string FormatSimple(int id, string? name, FormatOptions? opt = null)
+    {
+        opt = InitOptions(opt);
+
+        if (string.IsNullOrEmpty(name))
+        {
+            name = "?";
+            opt.SkipId = false;
+            if (!_extendedFormat)
+                opt.Prefix = "#";
+        }
+
+        List<string> parts = new();
+
+        if (!opt.SkipId!.Value)
+            parts.Add(string.Format("{0:D" + opt.IdLength + "}", id));
+        if (_extendedFormat && opt.Literal != "")
+            parts.Add(opt.Literal);
+        if (!opt.SkipName!.Value && !string.IsNullOrEmpty(name))
+            parts.Add(name);
+
+        var str = string.Join(opt.Separator, parts);
+
+        if (_extendedFormat || opt.BracketType != BracketType.None)
+        {
+            if (opt.BracketType == BracketType.None || opt.BracketType == BracketType.Square)
+                str = $"[{str}]";
+            else if (opt.BracketType == BracketType.Figure)
+                str = $"{{{str}}}";
+        }
+
+        if (opt.Prefix != "")
+            str = opt.Prefix + str;
+
+        return str;
     }
 
     public string FormatActor(int actorId)
     {
-        var actor = _context.Storage.Actors.Get().ElementAt(actorId);
+        var actor = _context.Storage.Actors.Get().Get(actorId);
 
-        return FormatSimple(actorId, actor?.Name ?? "");
+        return FormatSimple(actorId, actor?.Name);
     }
 
     public string FormatAnimation(int animationId)
     {
-        var animation = _context.Storage.Animations.Get().ElementAt(animationId);
+        var animation = _context.Storage.Animations.Get().Get(animationId);
 
         return FormatSimple(animationId, animation?.Name ?? "");
     }
 
     public string FormatArmor(int armorId)
     {
-        var armor = _context.Storage.Armors.Get().ElementAt(armorId);
+        var armor = _context.Storage.Armors.Get().Get(armorId);
 
-        return FormatSimple(armorId, armor?.Name ?? "", literal: "A");
+        return FormatSimple(armorId, armor?.Name, new() { Literal = "A" });
     }
 
     public string FormatClass(int classId)
     {
-        var @class = _context.Storage.Classes.Get().ElementAt(classId);
+        var @class = _context.Storage.Classes.Get().Get(classId);
 
         return FormatSimple(classId, @class?.Name ?? "");
     }
@@ -59,48 +108,68 @@ public class NameFormatter
     {
         var commonEvent = _context.Storage.GetCommonEvent(commonEventId);
 
-        return FormatSimple(commonEventId, commonEvent?.Name ?? "", length: 4);
+        return FormatSimple(commonEventId, commonEvent?.Name);
     }
 
     public string FormatItem(int itemId)
     {
-        var item = _context.Storage.Items.Get().ElementAt(itemId);
+        var item = _context.Storage.Items.Get().Get(itemId);
 
-        return FormatSimple(itemId, item?.Name ?? "");
+        return FormatSimple(itemId, item?.Name);
     }
 
     public string FormatSkill(int skillId)
     {
-        var skill = _context.Storage.Skills.Get().ElementAt(skillId);
+        var skill = _context.Storage.Skills.Get().Get(skillId);
 
-        return FormatSimple(skillId, skill?.Name ?? "");
+        return FormatSimple(skillId, skill?.Name);
     }
 
     public string FormatState(int stateId)
     {
-        var state = _context.Storage.States.Get().ElementAt(stateId);
+        var state = _context.Storage.States.Get().Get(stateId);
 
-        return FormatSimple(stateId, state?.Name ?? "");
+        return FormatSimple(stateId, state?.Name);
+    }
+
+    public string FormatSwitch(int switchId, FormatOptions? options = null)
+    {
+        if (options == null)
+            options = new();
+
+        options.SkipId ??= _context.Version == StorageVersion.MV;
+        options.IdLength ??= 4;
+
+        var sw = _context.Storage.GetSwitch(switchId);
+
+        return FormatSimple(switchId, sw, options);
+    }
+
+    // TODO: without bracket check
+    public string FormatTroop(int troopId)
+    {
+        var troop = _context.Storage.Troops.Get().Get(troopId);
+
+        return FormatSimple(troopId, troop?.Name ?? "", new() { BracketType = BracketType.None });
+    }
+
+    public string FormatVariable(int variableId, FormatOptions? options = null)
+    {
+        if (options == null)
+            options = new();
+
+        options.SkipId ??= _context.Version == StorageVersion.MV;
+        options.IdLength ??= 4;
+
+        var v = _context.Storage.GetVariable(variableId);
+
+        return FormatSimple(variableId, v, options);
     }
 
     public string FormatWeapon(int weaponId)
     {
-        var weapon = _context.Storage.Weapons.Get().ElementAt(weaponId);
+        var weapon = _context.Storage.Weapons.Get().Get(weaponId);
 
-        return FormatSimple(weaponId, weapon?.Name ?? "", literal: "W");
-    }
-
-    public string FormatSwitch(int switchId)
-    {
-        var sw = _context.Storage.GetSwitch(switchId);
-
-        return FormatSimple(switchId, sw, length: 4);
-    }
-
-    public string FormatVariable(int variableId)
-    {
-        var v = _context.Storage.GetVariable(variableId);
-
-        return FormatSimple(variableId, v, length: 4);
+        return FormatSimple(weaponId, weapon?.Name, new() { Literal = "W" });
     }
 }

@@ -36,25 +36,27 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeArmors;
-        public override string GetCommandName(StorageVersion version) => "Change armors";
+
+        public override string GetCommandName(StorageVersion version)
+        {
+            return version == StorageVersion.MV ? "Change Armors" : "Change Armor";
+        }
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"#{GetArmor()} ";
+            var str = context.NameFormatter.FormatArmor(GetArmor());
 
             switch (GetOperator())
             {
                 case OPERATOR_ADD:
-                    str += "+";
+                    str += " + ";
                     break;
                 case OPERATOR_TAKE:
-                    str += "-";
+                    str += " - ";
                     break;
                 default:
                     throw new Exception($"Unknown change armors operator type '{GetOperator()}'");
             }
-
-            str += " ";
 
             switch (GetOperandType())
             {
@@ -62,23 +64,18 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    str += "{#" + GetOperand();
-                    var variableName = context.Storage.GetVariable(GetOperand());
-                    if (!string.IsNullOrEmpty(variableName))
-                    {
-                        str += $" {variableName}";
-                    }
-
-                    str += "}";
+                    if (context.Version == StorageVersion.MV)
+                        str += context.NameFormatter.FormatVariable(GetOperand(),
+                            new() { BracketType = BracketType.Figure });
+                    else
+                        str += $"Variable {context.NameFormatter.FormatVariable(GetOperand())}";
                     break;
                 default:
                     throw new Exception($"Unknown change armors operand type '{GetOperandType()}'");
             }
 
             if (GetIncludeEquipment())
-            {
-                str += " (Include Equipment)";
-            }
+                str += context.Version == StorageVersion.MV ? " (Include Equipment)" : ", Include Equipment";
 
             return str;
         }

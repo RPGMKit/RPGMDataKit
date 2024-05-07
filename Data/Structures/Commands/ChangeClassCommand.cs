@@ -25,9 +25,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"#{GetActor()}, #{GetClass()}";
-
-            return str;
+            return $"{context.NameFormatter.FormatActor(GetActor())}, {context.NameFormatter.FormatClass(GetClass())}";
         }
     }
 }

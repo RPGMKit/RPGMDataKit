@@ -9,8 +9,15 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         {
             IsSecondary = true;
         }
-        
+
         public override int Code => CommandCodes.BattleProcessingEnd;
-        public override string GetCommandName(StorageVersion version) => "End";
+
+        public override string GetCommandName(StorageVersion version)
+        {
+            if (version == StorageVersion.MV)
+                return "End";
+            else
+                return "Branch End";
+        }
     }
 }

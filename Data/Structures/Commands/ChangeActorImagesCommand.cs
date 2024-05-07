@@ -6,7 +6,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ChangeActorImagesCommand : NamedCommand
     {
         public override int Code => CommandCodes.ChangeActorImages;
-        public override string GetCommandName(StorageVersion version) => "Change Actor Images";
+
+        public override string GetCommandName(StorageVersion version)
+        {
+            if (version == StorageVersion.MV)
+                return "Change Actor Images";
+            else
+                return "Change Actor Images";
+        }
 
         public int GetActor()
         {
@@ -42,25 +49,31 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"Actor #{GetActor()}";
+            var str = context.NameFormatter.FormatActor(GetActor());
 
+            var format = context.Version != StorageVersion.MV ? ", {0}({1})" : ", '{0}', {1}";
+            var none = context.Version == StorageVersion.MV ? ", None" : ", (None)";
+            
             var faceImage = GetFaceImage();
             if (!string.IsNullOrEmpty(faceImage))
-                str += $", {faceImage}({GetFaceImageOffset()})";
+                str += string.Format(format, faceImage, GetFaceImageOffset());
             else
-                str += ", None";
+                str += none;
 
             var characterImage = GetCharacterImage();
             if (!string.IsNullOrEmpty(characterImage))
-                str += $", {characterImage}({GetCharacterImageOffset()})";
+                str += string.Format(format, characterImage, GetCharacterImageOffset());
             else
-                str += ", None";
+                str += none;
 
-            var swBattler = GetSwBattler();
-            if (!string.IsNullOrEmpty(swBattler))
-                str += $", {swBattler}";
-            else
-                str += ", None";
+            if (context.Version == StorageVersion.MV)
+            {
+                var swBattler = GetSwBattler();
+                if (!string.IsNullOrEmpty(swBattler))
+                    str += $", {swBattler}";
+                else
+                    str += none;
+            }
 
             return str;
         }
