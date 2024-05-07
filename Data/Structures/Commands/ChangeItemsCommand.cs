@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -40,10 +39,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                 return "Change Items";
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = storage.NameFormatter.FormatItem(GetItemId());
-            if (storage.Version != StorageVersion.MV)
+            var str = context.NameFormatter.FormatItem(GetItemId());
+            if (context.Version != StorageVersion.MV)
                 str += ",";
 
             switch (GetOperator())
@@ -64,10 +63,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    if (storage.Version == StorageVersion.MV)
-                        str += "{" + storage.NameFormatter.FormatVariable(GetOperand()) + "}";
+                    if (context.Version == StorageVersion.MV)
+                        str += "{" + context.NameFormatter.FormatVariable(GetOperand()) + "}";
                     else
-                        str += $"Variable {storage.NameFormatter.FormatVariable(GetOperand())}";
+                        str += $"Variable {context.NameFormatter.FormatVariable(GetOperand())}";
                     break;
                 default:
                     throw new Exception($"Unknown change items operand type '{GetOperandType()}'");

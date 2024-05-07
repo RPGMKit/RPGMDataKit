@@ -1,4 +1,4 @@
-using RPGMakerLibCoreV2.Storages.Abstraction;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
@@ -19,7 +19,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             return GetParameter<int>(2);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = "";
             switch (GetSourceType())
@@ -52,7 +52,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     break;
                 default:
                     throw new Exception(
-                        $"Unknown orientation '{GetOrientation()}' for '{GetCommandName(storage.Version)}' orientation command");
+                        $"Unknown orientation '{GetOrientation()}' for '{GetCommandName(context.Version)}' orientation command");
             }
 
             return str;

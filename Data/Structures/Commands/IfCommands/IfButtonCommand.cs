@@ -1,5 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Storages.Abstraction;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
@@ -32,11 +32,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             return GetParameter<string>(1);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            return storage.Version == StorageVersion.VXAce
-                ? $"The {GetButton(storage.Version)} Button is Being Pressed"
-                : $"Button [{GetButton(storage.Version)}] is pressed down";
+            return context.Version == StorageVersion.VXAce
+                ? $"The {GetButton(context.Version)} Button is Being Pressed"
+                : $"Button [{GetButton(context.Version)}] is pressed down";
         }
     }
 }

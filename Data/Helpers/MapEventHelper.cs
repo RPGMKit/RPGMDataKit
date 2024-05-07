@@ -49,7 +49,11 @@ public static class MapEventHelper
 
             var fileName = $"Map_{context.MapId:D3}_Event_{context.Event.Id:D3}_Page_{context.PageId}.txt";
             File.WriteAllText(Path.Combine(path, fileName),
-                context.Page.Dump(storage, options));
+                context.Page.Dump(new()
+                {
+                    Storage = storage,
+                    MapEventContext = context,
+                }, options));
         });
     }
 }

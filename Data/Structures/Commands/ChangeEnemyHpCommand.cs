@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -39,7 +38,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.ChangeEnemyHp;
         public override string GetCommandName(StorageVersion version) => "Change Enemy HP";
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var source = GetEnemy();
             var str = "";
@@ -71,7 +70,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     break;
                 case OPERAND_VARIABLE:
                     str += "{#" + GetOperand();
-                    var variableName = storage.GetVariable(GetOperand());
+                    var variableName = context.Storage.GetVariable(GetOperand());
                     if (!string.IsNullOrEmpty(variableName))
                         str += $" {variableName}";
 

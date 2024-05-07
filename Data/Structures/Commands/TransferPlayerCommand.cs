@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -50,14 +49,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.TransferPlayer;
         public override string GetCommandName(StorageVersion version) => "Transfer player";
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = "";
             switch (GetTransferType())
             {
                 case TRANSFER_DIRECT:
                     str = $"#{GetMap()} ";
-                    var mapInfo = storage.GetMapInfo(GetMap());
+                    var mapInfo = context.Storage.GetMapInfo(GetMap());
                     if (mapInfo != null)
                         str += $" '{mapInfo.Name}' ";
 
@@ -65,19 +64,19 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     break;
                 case TRANSFER_BY_VARIABLE:
                     str = "{#" + GetMap();
-                    var variableName = storage.GetVariable(GetMap());
+                    var variableName = context.Storage.GetVariable(GetMap());
                     if (!string.IsNullOrEmpty(variableName))
                         str += " " + variableName;
 
                     str += "} (";
                     str += "{#" + GetX();
-                    variableName = storage.GetVariable(GetX());
+                    variableName = context.Storage.GetVariable(GetX());
                     if (!string.IsNullOrEmpty(variableName))
                         str += " " + variableName;
 
                     str += "},";
                     str += "{#" + GetY();
-                    variableName = storage.GetVariable(GetY());
+                    variableName = context.Storage.GetVariable(GetY());
                     if (!string.IsNullOrEmpty(variableName))
                         str += " " + variableName;
 

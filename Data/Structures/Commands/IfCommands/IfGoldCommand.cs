@@ -1,4 +1,4 @@
-using RPGMakerLibCoreV2.Storages.Abstraction;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
@@ -18,7 +18,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             return GetParameter<int>(2);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = "Gold ";
 
@@ -34,7 +34,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     str += "<";
                     break;
                 default:
-                    throw new Exception($"Unknown operator '{GetOperator()}' for '{GetCommandName(storage.Version)}' gold command");
+                    throw new Exception($"Unknown operator '{GetOperator()}' for '{GetCommandName(context.Version)}' gold command");
             }
 
             str += $" {GetAmount()}";

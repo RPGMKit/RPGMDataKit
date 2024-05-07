@@ -1,5 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Storages.Abstraction;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
@@ -44,16 +44,16 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             SetParameter(3, value);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             string str = "";
 
-            if (storage.Version == StorageVersion.VXAce)
-                str = $"Variable [{GetVariable():D4}:{storage.GetVariable(GetVariable())}]";
+            if (context.Version == StorageVersion.VXAce)
+                str = $"Variable {context.NameFormatter.FormatVariable(GetVariable())}";
             else
             {
                 str = $"#{GetVariable()}";
-                var variableName = storage.GetVariable(GetVariable());
+                var variableName = context.Storage.GetVariable(GetVariable());
                 if (!string.IsNullOrEmpty(variableName))
                 {
                     str += $" {variableName}";
@@ -63,7 +63,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             switch (GetOperator())
             {
                 case OPERATOR_EQ:
-                    str += storage.Version == StorageVersion.VXAce ? " == " : " = ";
+                    str += context.Version == StorageVersion.VXAce ? " == " : " = ";
                     break;
                 case OPERATOR_GTE:
                     str += " >= ";
@@ -82,7 +82,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     break;
                 default:
                     throw new Exception(
-                        $"Unknown operator type {GetOperator()} for '{GetCommandName(storage.Version)}' variable command");
+                        $"Unknown operator type {GetOperator()} for '{GetCommandName(context.Version)}' variable command");
             }
 
             switch (GetOperandType())
@@ -91,22 +91,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    if (storage.Version == StorageVersion.MV)
+                    if (context.Version == StorageVersion.MV)
                     {
                         str += "#{" + GetOperand();
-                        var variableName = storage.GetVariable(GetOperand());
+                        var variableName = context.Storage.GetVariable(GetOperand());
                         if (!string.IsNullOrEmpty(variableName))
                             str += $" {variableName}";
 
                         str += "}";
                     }
                     else
-                        str += $"Variable [{GetOperand():D4}:{storage.GetVariable(GetOperand())}]";
+                        str += $"Variable {context.NameFormatter.FormatVariable(GetOperand())}";
 
                     break;
                 default:
                     throw new Exception(
-                        $"Unknown operand type '{GetOperandType()}' for '{GetCommandName(storage.Version)}' variable command");
+                        $"Unknown operand type '{GetOperandType()}' for '{GetCommandName(context.Version)}' variable command");
             }
 
             return str;

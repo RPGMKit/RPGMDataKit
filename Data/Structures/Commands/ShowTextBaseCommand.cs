@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -36,22 +35,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(3);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var face = GetFace();
             if (string.IsNullOrWhiteSpace(face))
-                face = storage.Version == StorageVersion.VXAce ? "-, -" : "None";
+                face = context.Version == StorageVersion.VXAce ? "-, -" : "None";
             else
-                face = storage.Version == StorageVersion.MV ? $"{face}({GetOffset()})" : $"'{face}', {GetOffset()}";
+                face = context.Version == StorageVersion.MV ? $"{face}({GetOffset()})" : $"'{face}', {GetOffset()}";
 
             var background = "";
             switch (GetBackground())
             {
                 case BACKGROUND_WINDOW:
-                    background = storage.Version == StorageVersion.VXAce ? "Normal" : "Window";
+                    background = context.Version == StorageVersion.VXAce ? "Normal" : "Window";
                     break;
                 case BACKGROUND_DIM:
-                    background = storage.Version == StorageVersion.VXAce ? "Dark" : "Dim";
+                    background = context.Version == StorageVersion.VXAce ? "Dark" : "Dim";
                     break;
                 case BACKGROUND_TRANSPARENT:
                     background = "Transparent";

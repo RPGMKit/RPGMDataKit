@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -71,7 +70,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.MovePicture;
         public override string GetCommandName(StorageVersion version) => "Move picture";
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = $"#{GetLayer()}, ";
             switch (GetReference())
@@ -93,13 +92,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     break;
                 case PLACE_BY_VARIABLE:
                     str += "({#" + GetX();
-                    var variableName = storage.GetVariable(GetX());
+                    var variableName = context.Storage.GetVariable(GetX());
                     if (!string.IsNullOrEmpty(variableName))
                         str += " " + variableName;
 
                     str += "},";
                     str += "{#" + GetY();
-                    variableName = storage.GetVariable(GetY());
+                    variableName = context.Storage.GetVariable(GetY());
                     if (!string.IsNullOrEmpty(variableName))
                         str += " " + variableName;
 

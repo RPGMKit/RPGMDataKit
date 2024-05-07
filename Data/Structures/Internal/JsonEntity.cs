@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal
 {
@@ -17,7 +16,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
         //     Storage = storage;
         // }
 
-        public virtual string Dump(Storage storage, DumpOptions options)
+        public virtual string Dump(EntityContext context, DumpOptions options)
         {
             switch (options.Format)
             {

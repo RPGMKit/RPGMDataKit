@@ -1,4 +1,4 @@
-using RPGMakerLibCoreV2.Storages.Abstraction;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
@@ -22,7 +22,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             return GetParameter<T>(3);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = $"Enemy #{GetEnemyId()}";
 
@@ -35,7 +35,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     str += $" is affected by #{GetCheckParameter<int>()} state";
                     break;
                 default:
-                    throw new Exception($"Unknown check type '{GetCheckType()}' for '{GetCommandName(storage.Version)}' enemy command");
+                    throw new Exception($"Unknown check type '{GetCheckType()}' for '{GetCommandName(context.Version)}' enemy command");
             }
 
             return str;

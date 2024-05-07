@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -52,7 +51,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                 return "Change EXP";
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var source = GetSource();
             var str = "";
@@ -62,13 +61,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     if (source == 0)
                         str = "Entire party";
                     else
-                        str = storage.NameFormatter.FormatActor(source);
+                        str = context.NameFormatter.FormatActor(source);
                     break;
                 case SOURCE_TYPE_VARIABLE:
-                    if (storage.Version == StorageVersion.MV)
-                        str = "{" + storage.NameFormatter.FormatVariable(source) + "}";
+                    if (context.Version == StorageVersion.MV)
+                        str = "{" + context.NameFormatter.FormatVariable(source) + "}";
                     else
-                        str = $"Variable {storage.NameFormatter.FormatVariable(source)}";
+                        str = $"Variable {context.NameFormatter.FormatVariable(source)}";
                     break;
                 default:
                     throw new Exception("Unknown change experience source type '{GetSourceType()}'");
@@ -96,10 +95,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    if (storage.Version == StorageVersion.MV)
-                        str += "{" + storage.NameFormatter.FormatVariable(GetOperand()) + "}";
+                    if (context.Version == StorageVersion.MV)
+                        str += "{" + context.NameFormatter.FormatVariable(GetOperand()) + "}";
                     else
-                        str += $"Variable {storage.NameFormatter.FormatVariable(GetOperand())}";
+                        str += $"Variable {context.NameFormatter.FormatVariable(GetOperand())}";
                     break;
                 default:
                     throw new Exception($"Unknown change experience operand type '{GetOperandType()}'");

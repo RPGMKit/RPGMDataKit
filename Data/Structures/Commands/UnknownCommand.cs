@@ -1,7 +1,5 @@
-using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -18,7 +16,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetCommandName(StorageVersion version) => $"Unknown ({Code})";
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             throw new Exception("not implemented");
             // return JsonConvert.SerializeObject(Parameters);

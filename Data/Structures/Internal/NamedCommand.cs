@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 
@@ -17,7 +16,7 @@ public abstract class NamedCommand
 
     public bool IsSecondary;
 
-    public virtual string GetParametersDescription(Storage storage, DumpOptions options) => "";
+    public virtual string GetParametersDescription(EntityContext context, DumpOptions options) => "";
 
     public string GetPrefixSymbol(StorageVersion version)
     {
@@ -60,27 +59,27 @@ public abstract class NamedCommand
         ParameterProvider.SetParameter(index, value);
     }
 
-    public string AsString(Storage storage, DumpOptions options)
+    public string AsString(EntityContext context, DumpOptions options)
     {
         string str = "";
         if (options.WithIndent && Indent > 0)
         {
-            var whiteSpace = storage.Version == StorageVersion.VXAce ? "  " : " ";
+            var whiteSpace = context.Version == StorageVersion.VXAce ? "  " : " ";
 
             str = string.Concat(Enumerable.Repeat(whiteSpace, (int)Indent));
         }
 
-        str += GetStringPrefix(storage.Version);
+        str += GetStringPrefix(context.Version);
 
-        var name = GetCommandName(storage.Version);
+        var name = GetCommandName(context.Version);
         str += name;
 
-        var paramDesc = GetParametersDescription(storage, options);
+        var paramDesc = GetParametersDescription(context, options);
 
         if (!string.IsNullOrEmpty(paramDesc))
         {
             if (string.IsNullOrWhiteSpace(name) || !IsSecondary)
-                str += storage.Version == StorageVersion.MV ? " : " : ": ";
+                str += context.Version == StorageVersion.MV ? " : " : ": ";
 
             str += paramDesc;
         }

@@ -1,5 +1,5 @@
-﻿using System.Web;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Diff;
 using RPGMakerLibCoreV2.Diff.Text;
 using RPGMakerLibCoreV2.Storages.Abstraction;
@@ -24,7 +24,7 @@ namespace RPGMakerLibCoreV2
                     continue;
 
                 var context = new Patch.VariableData() { VariableId = i };
-                
+
                 var diff = CalculateTextDiff(variableA, variableB);
                 if (diff.Item1 != DiffType.Equal)
                     d.Add(new()
@@ -59,8 +59,16 @@ namespace RPGMakerLibCoreV2
                 if (commonEventA == null && commonEventB == null)
                     continue;
 
-                var textA = commonEventA?.Dump(left, options);
-                var textB = commonEventB?.Dump(right, options);
+                var textA = commonEventA?.Dump(new()
+                {
+                    Storage = left,
+                    CommonEventContext = new() { CommonEvent = commonEventA },
+                }, options);
+                var textB = commonEventB?.Dump(new()
+                {
+                    Storage = right,
+                    CommonEventContext = new() { CommonEvent = commonEventB }
+                }, options);
 
                 var context = new Patch.CommonEvenData() { CommonEventId = i };
                 var diff = CalculateTextDiff(textA, textB);
@@ -71,119 +79,114 @@ namespace RPGMakerLibCoreV2
                     { Type = diff.Item1, CommonEvent = context, Patches = diff.Item2 });
             }
 
-            foreach (var i in Enumerable.Range(0, 1000))
+            MapEventHelper.WalkMapEventPages(left, context =>
             {
-                var m = left.Maps.Get(i);
-                if (m == null)
-                    continue;
-
-                foreach (var e in m.Events)
+                var otherMap = right.Maps.Get(context.MapId);
+                if (otherMap == null)
                 {
-                    if (e == null)
-                        continue;
-
-                    foreach (var (j, p) in e.Pages.WithIndex())
+                    d.Add(new Patch()
                     {
-                        if (p == null)
-                            continue;
-
-                        var otherMap = right.Maps.Get(i);
-                        if (otherMap == null)
-                        {
-                            d.Add(new Patch()
-                            {
-                                Type = DiffType.Removed, Map = new Patch.MapData() { MapId = i },
-                                // TODO: uncomment
-                                // Patches = CalculateTextDiff(
-                                //     m.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson }), "").Item2
-                            });
-                        }
-
-                        var otherEvent = right.GetMapEvent(i, e.Id);
-                        if (otherEvent == null)
-                        {
-                            d.Add(new Patch()
-                            {
-                                Type = DiffType.Removed,
-                                MapEvent = new Patch.MapEventData() { MapId = i, EventId = e.Id },
-                                // TODO: uncomment
-                                // Patches = CalculateTextDiff(
-                                //     e.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson }), "").Item2
-                            });
-                        }
-
-                        var pageB = right.GetMapEventPage(i, e.Id, j);
-
-                        var textA = p.Dump(left, options) ?? "";
-                        var textB = pageB?.Dump(right, options) ?? "";
-
-                        var context = new Patch.MapEventPageData() { MapId = i, EventId = e.Id, PageId = j };
-
-                        var diff = CalculateTextDiff(textA, textB);
-                        if (diff.Item1 == DiffType.Equal)
-                            continue;
-
-                        d.Add(new()
-                            { Type = diff.Item1, MapEventPage = context, Patches = diff.Item2 });
-                    }
+                        Type = DiffType.Removed, Map = new Patch.MapData() { MapId = context.MapId },
+                        // TODO: uncomment
+                        // Patches = CalculateTextDiff(
+                        //     m.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson }), "").Item2
+                    });
                 }
-            }
+                
+                var otherEvent = right.GetMapEvent(context.MapId, context.Event.Id);
+                if (otherEvent == null)
+                {
+                    d.Add(new Patch()
+                    {
+                        Type = DiffType.Removed,
+                        MapEvent = new Patch.MapEventData() { MapId = context.MapId, EventId = context.Event.Id },
+                        // TODO: uncomment
+                        // Patches = CalculateTextDiff(
+                        //     e.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson }), "").Item2
+                    });
+                }
+                
+                var pageB = otherEvent?.Pages.Get(context.PageId);
 
-            var infoCount = Math.Max(left.MapInfos.Get().Count(), right.MapInfos.Get().Count());
-            for (var i = 0; i < infoCount; ++i)
+                var textA = context.Page.Dump(new()
+                {
+                    Storage = left,
+                    MapEventContext = context,
+                }, options);
+                var textB = pageB?.Dump(new()
+                {
+                    Storage = right,
+                    MapEventContext = new()
+                    {
+                        MapId = context.MapId,
+                        Map = otherMap,
+                        Event = otherEvent,
+                        PageId = context.PageId,
+                        Page = pageB
+                    }
+                }, options) ?? "";
+
+                var patchData = new Patch.MapEventPageData() { MapId = context.MapId, EventId = context.Event.Id, PageId = context.PageId };
+
+                var diff = CalculateTextDiff(textA, textB);
+                if (diff.Item1 == DiffType.Equal)
+                    return;
+
+                d.Add(new()
+                    { Type = diff.Item1, MapEventPage = patchData, Patches = diff.Item2 });
+            });
+
+            MapEventHelper.WalkMapEventPages(right, context =>
             {
-                var m = right.Maps.Get(i);
-                if (m == null)
-                    continue;
-
-                foreach (var e in m.Events)
+                var otherMap = left.Maps.Get(context.MapId);
+                if (otherMap == null)
                 {
-                    if (e == null)
-                        continue;
-
-                    foreach (var (j, p) in e.Pages.WithIndex())
+                    d.Add(new Patch()
                     {
-                        if (p == null)
-                            continue;
-                        
-                        var otherMap = left.Maps.Get(i);
-                        if (otherMap == null)
-                        {
-                            d.Add(new Patch()
-                            {
-                                Type = DiffType.Added, Map = new Patch.MapData() { MapId = i },
-                                // TODO: uncomment
-                                // Patches = CalculateTextDiff(
-                                //     "", m.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson })).Item2
-                            });
-                        }
-
-                        var otherEvent = left.GetMapEvent(i, e.Id);
-                        if (otherEvent == null)
-                        {
-                            d.Add(new Patch()
-                            {
-                                Type = DiffType.Added,
-                                MapEvent = new Patch.MapEventData() { MapId = i, EventId = e.Id },
-                                // TODO: uncomment
-                                // Patches = CalculateTextDiff(
-                                //     "", e.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson })).Item2
-                            });
-                        }
-
-                        var pageA = left.GetMapEventPage(i, e.Id, j);
-                        if (pageA == null)
-                        {
-                            var diff = CalculateTextDiff("", p.Dump(right, options));
-                            if (diff.Item1 == DiffType.Equal)
-                                continue;
-
-                            d.Add(new()
-                                { Type = diff.Item1, MapEventPage = new () { MapId = i, EventId = e.Id, PageId = j }, Patches = diff.Item2 });
-                        }
-                    }
+                        Type = DiffType.Added, Map = new Patch.MapData() { MapId = context.MapId },
+                        // TODO: uncomment
+                        // Patches = CalculateTextDiff(
+                        //     "", m.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson })).Item2
+                    });
                 }
-            }
+
+                var otherEvent = left.GetMapEvent(context.MapId, context.Event.Id);
+                if (otherEvent == null)
+                {
+                    d.Add(new Patch()
+                    {
+                        Type = DiffType.Added,
+                        MapEvent = new Patch.MapEventData() { MapId = context.MapId, EventId = context.Event.Id },
+                        // TODO: uncomment
+                        // Patches = CalculateTextDiff(
+                        //     "", e.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson })).Item2
+                    });
+                }
+
+                var pageA = otherEvent?.Pages.Get(context.PageId);
+                if (pageA == null)
+                {
+                    var diff = CalculateTextDiff("", context.Page.Dump(new()
+                    {
+                        Storage = right,
+                        MapEventContext = context
+                    }, options));
+                    
+                    if (diff.Item1 == DiffType.Equal)
+                        return;
+
+                    d.Add(new()
+                    {
+                        Type = diff.Item1, MapEventPage = new()
+                        {
+                            MapId = context.MapId,
+                            EventId = context.Event.Id,
+                            PageId = context.PageId
+                        },
+                        Patches = diff.Item2
+                    });
+                }
+            });
 
             return d;
         }

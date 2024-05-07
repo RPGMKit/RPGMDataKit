@@ -2,7 +2,6 @@
 using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 
@@ -29,10 +28,10 @@ public class CommonEvent : RubySerializationEntity, ICommonEvent
     public IEnumerable<NamedCommand> NamedCommands => List.Select(CommandFactory.Create);
     public IEnumerable<IEventCommand> Commands => List;
 
-    public string Dump(Storage storage, DumpOptions options)
+    public string Dump(EntityContext context, DumpOptions options)
     {
         if (options.Format == DumpFormat.Text)
-            return CommandContainerHelper.Dump(this, storage, options);
+            return CommandContainerHelper.Dump(this, context, options);
 
         throw new NotImplementedException($"{options.Format} not supported");
     }

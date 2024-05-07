@@ -1,5 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Storages.Abstraction;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
 {
@@ -13,11 +13,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
             return GetParameter<int>(0);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = $"#{GetSwitch()}";
 
-            var switchName = storage.GetSwitch(GetSwitch());
+            var switchName = context.Storage.GetSwitch(GetSwitch());
             if (!string.IsNullOrEmpty(switchName))
                 str += $" {switchName}";
 

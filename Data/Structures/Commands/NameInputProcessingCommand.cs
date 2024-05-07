@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -19,7 +18,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.NameInputProcessing;
         public override string GetCommandName(StorageVersion version) => "Name Input Processing";
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = $"#{GetActor()}, {GetMaxCharacters()} character(s)";
 

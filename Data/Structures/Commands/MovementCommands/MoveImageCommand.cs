@@ -1,5 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Storages.Abstraction;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
 {
@@ -18,7 +18,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
             return GetParameter<int>(1);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var image = GetImage();
             if (string.IsNullOrWhiteSpace(image))

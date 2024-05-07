@@ -2,7 +2,6 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Factories.MovementCommands;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 using MoveCommandMV = RPGMakerLibCoreV2.Data.MV.Classes.MoveCommand;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
@@ -26,11 +25,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return MovementCommandFactory.Create(eventCommand);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var moveCommand = Factory(storage.Version);
+            var moveCommand = Factory(context.Version);
 
-            return moveCommand.AsString(storage, new DumpOptions() {AppendCommandCode = options.AppendCommandCode, WithIndent = false, EmphasiseStrings = options.EmphasiseStrings});
+            return moveCommand.AsString(context, new DumpOptions() {AppendCommandCode = options.AppendCommandCode, WithIndent = false, EmphasiseStrings = options.EmphasiseStrings});
         }
     }
 }

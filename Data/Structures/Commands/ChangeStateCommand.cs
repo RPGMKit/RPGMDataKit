@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -34,7 +33,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.ChangeState;
         public override string GetCommandName(StorageVersion version) => "Change State";
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var source = GetSource();
             var str = "";
@@ -49,7 +48,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     break;
                 case SOURCE_TYPE_VARIABLE:
                     str = "{#" + source;
-                    var variableName = storage.GetVariable(source);
+                    var variableName = context.Storage.GetVariable(source);
                     if (!string.IsNullOrEmpty(variableName))
                         str += $" {variableName}";
                     str += "}";

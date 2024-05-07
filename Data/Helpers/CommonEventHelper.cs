@@ -34,7 +34,11 @@ public static class CommonEventHelper
             IndentHelper.ValidateIndents(context.CommonEvent, storage.Version);
 
             File.WriteAllText(Path.Combine(path, $"CommonEvent_{context.CommonEvent.Id:D3}.txt"),
-                context.CommonEvent.Dump(storage, options));
+                context.CommonEvent.Dump(new()
+                {
+                    Storage = storage,
+                    CommonEventContext = context,
+                }, options));
         });
     }
 }

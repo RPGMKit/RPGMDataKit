@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -27,7 +26,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<bool>(2);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             string str;
             switch (GetActor())
@@ -40,15 +39,15 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     break;
                 default:
                     str = $"Event #{GetActor()}";
-                    if (storage.Version != StorageVersion.MV)
+                    if (context.Version != StorageVersion.MV)
                         str = $"[{str}]";
                     break;
             }
 
-            str += ", " + storage.NameFormatter.FormatAnimation(GetAnimation());
+            str += ", " + context.NameFormatter.FormatAnimation(GetAnimation());
 
             if (GetWaitForCompletion())
-                str += storage.Version == StorageVersion.MV ? " (Wait)" : ", Wait";
+                str += context.Version == StorageVersion.MV ? " (Wait)" : ", Wait";
 
             return str;
         }

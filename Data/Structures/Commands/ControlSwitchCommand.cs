@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -27,7 +26,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.ControlSwitches;
         public override string GetCommandName(StorageVersion version) => "Control Switches";
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = "";
             if (GetStartSwitch() != GetEndSwitch())
@@ -35,7 +34,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             else
             {
                 str = $"#{GetStartSwitch()}";
-                var switchName = storage.GetSwitch(GetStartSwitch());
+                var switchName = context.Storage.GetSwitch(GetStartSwitch());
                 if (!string.IsNullOrEmpty(switchName))
                 {
                     str += $" {switchName}";
@@ -51,7 +50,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += " = OFF";
                     break;
                 default:
-                    throw new Exception($"Unknown on/off state {GetOnOffState()} for action #{Code} {GetCommandName(storage.Version)}");
+                    throw new Exception($"Unknown on/off state {GetOnOffState()} for action #{Code} {GetCommandName(context.Version)}");
             }
 
             return str;

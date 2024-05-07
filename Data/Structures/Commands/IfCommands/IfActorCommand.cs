@@ -1,5 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Storages.Abstraction;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
@@ -28,49 +28,49 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             return GetParameter<T>(3);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var unitName = storage.NameFormatter.FormatActor(GetUnitId());
+            var unitName = context.NameFormatter.FormatActor(GetUnitId());
 
             switch (GetCheckType())
             {
                 case CHECK_IN_PARTY:
-                    return storage.Version == StorageVersion.VXAce
+                    return context.Version == StorageVersion.VXAce
                         ? $"{unitName} is In the Party"
                         : $"{unitName} is in the party";
                 case CHECK_NAME:
                     var name = GetCheckParameter<string>();
-                    return storage.Version == StorageVersion.VXAce
+                    return context.Version == StorageVersion.VXAce
                         ? $"{unitName} is Name '{name}' Applied"
                         : $"{unitName} name is '{name}'";
                 case CHECK_CLASS:
-                    var className = storage.NameFormatter.FormatClass(GetCheckParameter<int>());
-                    return storage.Version == StorageVersion.VXAce
+                    var className = context.NameFormatter.FormatClass(GetCheckParameter<int>());
+                    return context.Version == StorageVersion.VXAce
                         ? $"{unitName} is {className}"
                         : $"Class of {unitName} is {className}";
                 case CHECK_SKILL:
-                    var skillName = storage.NameFormatter.FormatSkill(GetCheckParameter<int>());
-                    return storage.Version == StorageVersion.VXAce
+                    var skillName = context.NameFormatter.FormatSkill(GetCheckParameter<int>());
+                    return context.Version == StorageVersion.VXAce
                         ? $"{unitName} is {skillName} Learned"
                         : $"{unitName} has learned {skillName}";
                 case CHECK_WEAPON_EQUIPPED:
-                    var weaponName = storage.NameFormatter.FormatWeapon(GetCheckParameter<int>());
-                    return storage.Version == StorageVersion.VXAce
+                    var weaponName = context.NameFormatter.FormatWeapon(GetCheckParameter<int>());
+                    return context.Version == StorageVersion.VXAce
                         ? $"{unitName} is {weaponName} Equipped"
                         : $"{unitName} has equipped {weaponName}";
                 case CHECK_ARMOR_EQUIPPED:
-                    var armorName = storage.NameFormatter.FormatArmor(GetCheckParameter<int>());
-                    return storage.Version == StorageVersion.VXAce
+                    var armorName = context.NameFormatter.FormatArmor(GetCheckParameter<int>());
+                    return context.Version == StorageVersion.VXAce
                         ? $"{unitName} is {armorName} Equipped"
                         : $"{unitName} has equipped {armorName}";
                 case CHECK_STATE:
-                    var stateName = storage.NameFormatter.FormatState(GetCheckParameter<int>());
-                    return storage.Version == StorageVersion.VXAce
+                    var stateName = context.NameFormatter.FormatState(GetCheckParameter<int>());
+                    return context.Version == StorageVersion.VXAce
                         ? $"{unitName} is {stateName} Inflicted"
                         : $"{unitName} is affected by {stateName}";
                 default:
                     throw new Exception(
-                        $"Unknown check type '{GetCheckType()}' for '{GetCommandName(storage.Version)}' actor command");
+                        $"Unknown check type '{GetCheckType()}' for '{GetCommandName(context.Version)}' actor command");
             }
         }
     }

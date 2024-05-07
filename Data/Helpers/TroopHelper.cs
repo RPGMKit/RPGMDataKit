@@ -40,7 +40,11 @@ public static class TroopHelper
 
             var fileName = $"Troop_{context.Troop.Id:D3}_Page_{context.PageId}.txt";
             File.WriteAllText(Path.Combine(path, fileName),
-                CommandContainerHelper.Dump(context.Page, storage, options));
+                CommandContainerHelper.Dump(context.Page, new()
+                {
+                    Storage = storage,
+                    TroopContext = context,
+                }, options));
         });
     }
 }

@@ -1,7 +1,5 @@
-using System;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -20,10 +18,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.SelectItem;
         public override string GetCommandName(StorageVersion version) => "Select item";
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = $"#{GetVariable()}";
-            var variableName = storage.GetVariable(GetVariable());
+            var variableName = context.Storage.GetVariable(GetVariable());
             if (!string.IsNullOrEmpty(variableName))
                 str += $" {variableName}";
 

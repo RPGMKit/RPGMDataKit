@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -19,7 +18,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.ShowBattleAnimation;
         public override string GetCommandName(StorageVersion version) => "Show Battle Animation";
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var source = GetEnemy();
             var str = "";
@@ -28,7 +27,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             else
                 str = $"#{source + 1}";
 
-            str += $", {storage.NameFormatter.FormatAnimation(GetAnimationId())}";
+            str += $", {context.NameFormatter.FormatAnimation(GetAnimationId())}";
 
             return str;
         }

@@ -1,9 +1,10 @@
 ﻿using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 
-public class CommandContext
+public class EntityContext
 {
     public Storage Storage { get; set; }
     
@@ -14,6 +15,8 @@ public class CommandContext
     public MapEventContext? MapEventContext { get; set; }
     
     public TroopContext? TroopContext { get; set; }
+
+    public NameFormatter NameFormatter => new (this, true);
 
     public override string ToString()
     {

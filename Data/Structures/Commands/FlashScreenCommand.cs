@@ -1,7 +1,6 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 using MVColor = RPGMakerLibCoreV2.Data.MV.Classes.Color;
 using VXAceColor = RPGMakerLibCoreV2.Data.VXAce.Classes.Custom.Color;
 
@@ -31,9 +30,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<bool>(2);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var color = GetColor(storage.Version);
+            var color = GetColor(context.Version);
             var str = $"({color.Red},{color.Green},{color.Blue},{color.Alpha}), {GetDuration()} frame(s)";
             if (GetWaitForCompletion())
                 str += " (Wait)";

@@ -1,7 +1,5 @@
-using Newtonsoft.Json.Linq;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -52,7 +50,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.ControlVariables;
         public override string GetCommandName(StorageVersion version) => "Control variable";
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = "";
             if (GetStartVariable() != GetEndVariable())
@@ -60,7 +58,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             else
             {
                 str = $"#{GetStartVariable()}";
-                var variableName = storage.GetVariable(GetStartVariable());
+                var variableName = context.Storage.GetVariable(GetStartVariable());
                 if (!string.IsNullOrEmpty(variableName))
                     str += $" {variableName}";
             }
@@ -86,7 +84,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += " %=";
                     break;
                 default:
-                    throw new Exception($"Unknown operator type #{GetOperator()} for action #{Code} {GetCommandName(storage.Version)}");
+                    throw new Exception($"Unknown operator type #{GetOperator()} for action #{Code} {GetCommandName(context.Version)}");
             }
 
             switch (GetOperandType())
@@ -98,7 +96,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += " {#" + GetOperand1<int>();
                     var tmp = GetOperand1<int>();
                     var varId = (int)tmp;
-                    var variableName = storage.GetVariable(varId);
+                    var variableName = context.Storage.GetVariable(varId);
                     if (!string.IsNullOrEmpty(variableName))
                         str += $" {variableName}";
 
@@ -114,7 +112,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += $" Scenario ('{GetOperand1<int>()}', '{GetOperand2<int>()}')";
                     break;
                 default:
-                    throw new Exception($"Unknown operator type #{GetOperator()} for action #{Code} {GetCommandName(storage.Version)}");
+                    throw new Exception($"Unknown operator type #{GetOperator()} for action #{Code} {GetCommandName(context.Version)}");
             }
 
             return str;

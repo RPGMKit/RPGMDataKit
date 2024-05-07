@@ -1,7 +1,5 @@
-using System;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -30,9 +28,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<bool>(3);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            if (storage.Version == StorageVersion.VXAce)
+            if (context.Version == StorageVersion.VXAce)
             {
                 var str = $"{GetPower()}, {GetSpeed()}, @{GetDuration()}";
                 if (GetWaitForCompletion())

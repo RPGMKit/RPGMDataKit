@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -41,7 +40,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                 return "Change Skills";
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var source = GetSource();
             var str = "";
@@ -51,13 +50,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     if (source == 0)
                         str = "Entire party";
                     else
-                        str = storage.NameFormatter.FormatActor(source);
+                        str = context.NameFormatter.FormatActor(source);
                     break;
                 case SOURCE_TYPE_VARIABLE:
-                    if (storage.Version == StorageVersion.MV)
-                        str = "{" + storage.NameFormatter.FormatVariable(source) + "}";
+                    if (context.Version == StorageVersion.MV)
+                        str = "{" + context.NameFormatter.FormatVariable(source) + "}";
                     else
-                        str = $"Variable {storage.NameFormatter.FormatVariable(source)}";
+                        str = $"Variable {context.NameFormatter.FormatVariable(source)}";
                     break;
                 default:
                     throw new Exception($"Unknown change skill source type '{GetSourceType()}'");
@@ -75,7 +74,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     throw new Exception($"Unknown change skill operator type '{GetOperator()}'");
             }
 
-            str += $" {storage.NameFormatter.FormatSkill(GetSkillId())}";
+            str += $" {context.NameFormatter.FormatSkill(GetSkillId())}";
 
             return str;
         }

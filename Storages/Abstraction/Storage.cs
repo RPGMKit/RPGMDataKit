@@ -28,8 +28,6 @@ public abstract class Storage
     public DataHolder<IByIdGetter<ITroop>> Troops;
     public DataHolder<IByIdGetter<IWeapon>> Weapons;
 
-    public NameFormatter NameFormatter => new(this, true);
-    
     public Storage(string projectPath)
     {
         ProjectPath = projectPath;
@@ -90,7 +88,7 @@ public abstract class Storage
         public List<MapEventContext> MapEventResults = new();
     }
 
-    public delegate void CommandWalker(NamedCommand command, CommandContext context);
+    public delegate void CommandWalker(NamedCommand command, EntityContext context);
     
     public void SearchCommands(CommandWalker searcher)
     {

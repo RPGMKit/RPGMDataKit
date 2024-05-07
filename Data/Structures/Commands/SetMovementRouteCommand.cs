@@ -2,7 +2,6 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.MV.Classes;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -27,9 +26,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<IRoute>(1);
         }
 
-        public override string GetParametersDescription(Storage storage, DumpOptions options)
+        public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var route = GetRoute(storage.Version);
+            var route = GetRoute(context.Version);
             var str = "";
 
             switch (GetSource())
