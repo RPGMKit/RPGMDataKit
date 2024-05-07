@@ -1,5 +1,4 @@
-﻿using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 

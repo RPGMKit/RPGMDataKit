@@ -1,15 +1,15 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Helpers;
 
 public static class MapEventHelper
 {
-    public delegate void MapEventWalker(int mapId, int eventId, int pageId, ICommandContainer container);
+    public delegate void MapEventPageWalker(MapEventContext context);
 
-    public static void WalkMapEvents(Storage storage, MapEventWalker walker)
+    public static void WalkMapEventPages(Storage storage, MapEventPageWalker pageWalker)
     {
-        foreach (var (id,info) in storage.MapInfos.Get().WithIndex())
+        foreach (var (id, info) in storage.MapInfos.Get().WithIndex())
         {
             var m = storage.Maps.Get(id);
             if (m == null)
@@ -20,29 +20,36 @@ public static class MapEventHelper
                 if (e == null)
                     continue;
 
-                foreach (var (j, p) in e.Pages.WithIndex())
+                foreach (var (i, p) in e.Pages.WithIndex())
                 {
                     if (p == null)
                         continue;
 
-                    walker(id, e.Id, j, p);
+                    pageWalker(new()
+                    {
+                        MapId = id,
+                        Map = m,
+                        Event = e,
+                        PageId = i,
+                        Page = p,
+                    });
                 }
             }
         }
     }
 
-    public static void DumpMapEvents(Storage storage, string path, DumpOptions options)
+    public static void DumpMapEventCommands(Storage storage, string path, DumpOptions? options = null)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
 
-        WalkMapEvents(storage, (mapId, eventId, pageId, commands) =>
+        WalkMapEventPages(storage, (context) =>
         {
-            IndentHelper.ValidateIndents(commands, storage.Version);
+            IndentHelper.ValidateIndents(context.Page, storage.Version);
 
-            var fileName = $"Map_{mapId:D3}_Event_{eventId:D3}_Page_{pageId}.txt";
+            var fileName = $"Map_{context.MapId:D3}_Event_{context.Event.Id:D3}_Page_{context.PageId}.txt";
             File.WriteAllText(Path.Combine(path, fileName),
-                storage.GetMapEventPage(mapId, eventId, pageId).Dump(storage, options));
+                context.Page.Dump(storage, options));
         });
     }
 }

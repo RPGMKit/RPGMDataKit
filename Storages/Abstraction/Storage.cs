@@ -2,6 +2,7 @@
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 using RPGMakerLibCoreV2.Diff;
 
 namespace RPGMakerLibCoreV2.Storages.Abstraction;
@@ -12,19 +13,20 @@ public abstract class Storage
     
     public StorageVersion Version { get; init; }
 
-    public DataHolder<IEnumerable<IActor>> Actors;
-    public DataHolder<IEnumerable<IAnimation>> Animations;
-    public DataHolder<IEnumerable<IArmor>> Armors;
-    public DataHolder<IEnumerable<IClass>> Classes;
-    public DataHolder<IEnumerable<ICommonEvent>> CommonEvents;
-    public DataHolder<IEnumerable<IItem>> Items;
-    public DataHolder<IEnumerable<ISkill>> Skills;
-    public DataHolder<IEnumerable<IState>> States;
+    public DataHolder<IByIdGetter<IActor>> Actors;
+    public DataHolder<IByIdGetter<IAnimation>> Animations;
+    public DataHolder<IByIdGetter<IArmor>> Armors;
+    public DataHolder<IByIdGetter<IClass>> Classes;
+    public DataHolder<IByIdGetter<ICommonEvent>> CommonEvents;
+    public DataHolder<IByIdGetter<IItem>> Items;
+    public DataHolder<IByIdGetter<ISkill>> Skills;
+    public DataHolder<IByIdGetter<IState>> States;
     public DataHolder<ISystem> System;
     public MapsHolder Maps;
-    public DataHolder<IEnumerable<IMapInfo>> MapInfos;
-    public DataHolder<IEnumerable<ITileSet>> Tilesets;
-    public DataHolder<IEnumerable<IWeapon>> Weapons;
+    public DataHolder<IByIdGetter<IMapInfo>> MapInfos;
+    public DataHolder<IByIdGetter<ITileSet>> Tilesets;
+    public DataHolder<IByIdGetter<ITroop>> Troops;
+    public DataHolder<IByIdGetter<IWeapon>> Weapons;
 
     public NameFormatter NameFormatter => new(this, true);
     
@@ -82,69 +84,38 @@ public abstract class Storage
         return GetMapEvent(mapId, eventId)?.Pages.ElementAt(pageId);
     }
 
-    public class CommonEventContextData
-    {
-        public Storage Storage;
-        public ICommonEvent CommonEvent;
-
-        public override string ToString() => $"Common Event #{CommonEvent.Id}";
-    }
-
-    public class MapEventContextData
-    {
-        public Storage Storage;
-        public int MapId;
-        public IMap Map;
-        public IEvent Event;
-        public int PageId;
-        public IPage Page;
-
-        public override string ToString() =>
-            $"Map {MapId}, Event {Event.Id}, Page {PageId}, X {Event.X}, Y {Event.X}";
-    }
-
     public class SearchInfo
     {
-        public List<Tuple<CommonEventContextData, ICommandContainer>> CommonEventResults = new();
-        public List<Tuple<MapEventContextData, ICommandContainer>> MapEventResults = new();
+        public List<CommonEventContext> CommonEventResults = new();
+        public List<MapEventContext> MapEventResults = new();
     }
 
-    public delegate void CommandWalker(NamedCommand command, CommonEventContextData commonEventContext,
-        MapEventContextData mapEventContext);
+    public delegate void CommandWalker(NamedCommand command, CommandContext context);
     
     public void SearchCommands(CommandWalker searcher)
     {
-        CommonEventHelper.WalkCommonEvents(CommonEvents.Get(), (id, container) =>
+        CommonEventHelper.WalkCommonEvents(CommonEvents.Get(), (context) =>
         {
             int commandIndex = 0;
-            foreach (var command in container.NamedCommands)
+            foreach (var command in context.CommonEvent.NamedCommands)
             {
-                CommonEventContextData context = new() { CommonEvent = GetCommonEvent(id), Storage = this };
-
-                searcher(command, context, null);
+                searcher(command, new()
+                {
+                    Storage = this,
+                    CommonEventContext = context,
+                });
                 ++commandIndex;
             }
         });
 
-        MapEventHelper.WalkMapEvents(this, (mapId, eventId, pageId, container) =>
+        MapEventHelper.WalkMapEventPages(this, (context) => 
         {
-            foreach (var command in container.NamedCommands)
+            foreach (var command in context.Page.NamedCommands)
             {
-                var map = Maps.Get(mapId);
-                var mapEvent = map.Events.Get(eventId);
-                var page = mapEvent.Pages.ElementAt(pageId);
-
-                MapEventContextData context = new()
+                searcher(command, new()
                 {
-                    Storage = this,
-                    MapId = mapId,
-                    Map = map,
-                    Event = mapEvent,
-                    PageId = pageId,
-                    Page = page
-                };
-
-                searcher(command, null, context);
+                    MapEventContext = context
+                });
             }
         });
     }

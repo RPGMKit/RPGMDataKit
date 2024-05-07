@@ -1,4 +1,5 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
+﻿using RPGMakerLibCoreV2.Data.Helpers;
+using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Storages.Abstraction;
@@ -31,7 +32,7 @@ public class CommonEvent : RubySerializationEntity, ICommonEvent
     public string Dump(Storage storage, DumpOptions options)
     {
         if (options.Format == DumpFormat.Text)
-            return string.Join("\r\n", NamedCommands.Select(_ => _.AsString(storage, options)));
+            return CommandContainerHelper.Dump(this, storage, options);
 
         throw new NotImplementedException($"{options.Format} not supported");
     }

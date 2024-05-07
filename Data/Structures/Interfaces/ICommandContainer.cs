@@ -2,7 +2,7 @@
 
 namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
-public interface ICommandContainer
+public interface ICommandContainer : IDumpable
 {
     public IEnumerable<NamedCommand> NamedCommands { get; }
 

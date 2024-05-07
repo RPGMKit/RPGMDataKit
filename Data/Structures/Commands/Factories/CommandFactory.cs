@@ -169,6 +169,9 @@ public static class CommandFactory
             case CommandCodes.ChangeEnemyState:
                 returnCommand = new ChangeEnemyStateCommand();
                 break;
+            case CommandCodes.EnemyAppear:
+                returnCommand = new EnemyAppearCommand();
+                break;
             case CommandCodes.ShowBattleAnimation:
                 returnCommand = new ShowBattleAnimationCommand();
                 break;

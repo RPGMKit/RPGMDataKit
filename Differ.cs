@@ -93,8 +93,9 @@ namespace RPGMakerLibCoreV2
                             d.Add(new Patch()
                             {
                                 Type = DiffType.Removed, Map = new Patch.MapData() { MapId = i },
-                                Patches = CalculateTextDiff(
-                                    m.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson }), "").Item2
+                                // TODO: uncomment
+                                // Patches = CalculateTextDiff(
+                                //     m.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson }), "").Item2
                             });
                         }
 
@@ -105,8 +106,9 @@ namespace RPGMakerLibCoreV2
                             {
                                 Type = DiffType.Removed,
                                 MapEvent = new Patch.MapEventData() { MapId = i, EventId = e.Id },
-                                Patches = CalculateTextDiff(
-                                    e.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson }), "").Item2
+                                // TODO: uncomment
+                                // Patches = CalculateTextDiff(
+                                //     e.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson }), "").Item2
                             });
                         }
 
@@ -150,8 +152,9 @@ namespace RPGMakerLibCoreV2
                             d.Add(new Patch()
                             {
                                 Type = DiffType.Added, Map = new Patch.MapData() { MapId = i },
-                                Patches = CalculateTextDiff(
-                                    "", m.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson })).Item2
+                                // TODO: uncomment
+                                // Patches = CalculateTextDiff(
+                                //     "", m.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson })).Item2
                             });
                         }
 
@@ -162,8 +165,9 @@ namespace RPGMakerLibCoreV2
                             {
                                 Type = DiffType.Added,
                                 MapEvent = new Patch.MapEventData() { MapId = i, EventId = e.Id },
-                                Patches = CalculateTextDiff(
-                                    "", e.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson })).Item2
+                                // TODO: uncomment
+                                // Patches = CalculateTextDiff(
+                                //     "", e.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson })).Item2
                             });
                         }
 
@@ -262,14 +266,10 @@ namespace RPGMakerLibCoreV2
                 if (p.CommonEvent != null || p.MapEventPage != null)
                 {
                     var fileName = p.CommonEvent != null
-                        ? $"CommonEvent_{p.CommonEvent.CommonEventId:D4}.patch"
+                        ? $"CommonEvent_{p.CommonEvent.CommonEventId:D3}.patch"
                         : $"Map_{p.MapEventPage.MapId:D3}_Event_{p.MapEventPage.EventId:D3}_Page_{p.MapEventPage.PageId}.patch";
 
-                    // var patchText = _dmp.patch_toText(p.Patches);
-                    
                     var patchText = string.Concat(p.Patches.Select(_ => _.ToString() + "\r\n"));
-                    // patchText = patchText.Replace("+", "%2b");
-                    // patchText = HttpUtility.UrlDecode(patchText);
                     File.WriteAllText(Path.Combine(directoryName, fileName), patchText);
                 }
             }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
@@ -23,7 +24,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         public override string Dump(Storage storage, DumpOptions options)
         {
             if (options.Format == DumpFormat.Text)
-                return string.Join("\r\n", NamedCommands.Select(_ => _.AsString(storage, options)));
+                return CommandContainerHelper.Dump(this, storage, options);
 
             return base.Dump(storage, options);
         }

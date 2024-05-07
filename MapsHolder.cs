@@ -7,11 +7,13 @@ public class MapsHolder
 {
     private readonly Dictionary<int, DataHolder<IMap>> _maps = new();
     private readonly Storage _storage;
-    private readonly Func<int, DataHolder<IMap>.HolderInfo> _loader;
+    private readonly Func<int, string> _pathLoader;
+    private readonly Func<string, IMap> _loader;
 
-    public MapsHolder(Storage storage, Func<int, DataHolder<IMap>.HolderInfo> loader)
+    public MapsHolder(Storage storage, Func<int, string> pathLoader, Func<string, IMap> loader)
     {
         _storage = storage;
+        _pathLoader = pathLoader;
         _loader = loader;
     }
 
@@ -36,7 +38,7 @@ public class MapsHolder
 
     private DataHolder<IMap> CreateSubHolder(int mapIndex)
     {
-        return new(_storage, () => _loader(mapIndex));
+        return new(_storage, _pathLoader(mapIndex), _loader);
     }
 
     public void Set(int index, IMap data)

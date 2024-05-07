@@ -2,7 +2,6 @@
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
-using RPGMakerLibCoreV2.Storages.Abstraction;
 using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
@@ -84,15 +83,10 @@ public class Map : RubySerializationEntity, IMap
     public LookupList<int> Data => _Data.Elements.Cast<int>().ToLookupList();
 
     [RubyProperty("@events")]
-    public Dictionary<int, Event> _Events { get; set; }
+    public LookupMap<Event> _Events { get; set; }
 
-    public IDataLookup<IEvent> Events => _Events.Values.Cast<IEvent>().ToLookupList(_ => _.Id);
+    public IByIdGetter<IEvent> Events => _Events;
 
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1 { get; set; }
-
-    public string Dump(Storage storage, DumpOptions options)
-    {
-        throw new NotImplementedException();
-    }
 }

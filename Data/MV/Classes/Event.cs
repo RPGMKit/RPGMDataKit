@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
+using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes
@@ -16,7 +18,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
             public override string Dump(Storage storage, DumpOptions options)
             {
                 if (options.Format == DumpFormat.Text)
-                    return string.Join("\r\n", NamedCommands.Select(_ => _.AsString(storage, options)));
+                    return CommandContainerHelper.Dump(this, storage, options);
 
                 return base.Dump(storage, options);
             }
@@ -34,7 +36,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         [JsonProperty(PropertyName = "pages")]
         public LookupList<Page> _Pages { get; set; }
 
-        public IEnumerable<IPage> Pages => _Pages;
+        public IByIdGetter<IPage> Pages => _Pages;
 
         [JsonProperty(PropertyName = "x")]
         public int X { get; set; }

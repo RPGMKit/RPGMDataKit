@@ -1,6 +1,8 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
+﻿using RPGMakerLibCoreV2.Data.Helpers;
+using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
@@ -129,7 +131,7 @@ public class Event : RubySerializationEntity, IEvent
         public string Dump(Storage storage, DumpOptions options)
         {
             if (options.Format == DumpFormat.Text)
-                return string.Join("\r\n", NamedCommands.Select(_ => _.AsString(storage, options)));
+                return CommandContainerHelper.Dump(this, storage, options);
 
             throw new NotImplementedException($"{options.Format} not supported");
         }
@@ -148,15 +150,10 @@ public class Event : RubySerializationEntity, IEvent
     public int Y { get; set; }
 
     [RubyProperty("@pages")]
-    public List<Page> _Pages { get; set; }
+    public LookupList<Page> _Pages { get; set; }
 
-    public IEnumerable<IPage> Pages => _Pages;
+    public IByIdGetter<IPage> Pages => _Pages;
 
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1 { get; set; }
-
-    public string Dump(Storage storage, DumpOptions options)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -12,16 +12,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return version == StorageVersion.VXAce ? "Call Common Event" : "Common Event";
         }
 
-        public int GetEventId()
-        {
-            return GetParameter<int>(0);
-        }
+        public int GetEventId() => GetParameter<int>(0);
 
         public override string GetParametersDescription(Storage storage, DumpOptions options)
         {
-            var cCommonEvent = storage.GetCommonEvent(GetEventId());
-
-            return $"#{GetEventId()}" + (cCommonEvent != null ? " " + cCommonEvent.Name : "");
+            return storage.NameFormatter.FormatCommonEvent(GetEventId());
         }
     }
 }

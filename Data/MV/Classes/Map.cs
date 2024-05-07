@@ -21,10 +21,12 @@ public class Map : JsonEntity, IMap
 
     // ground 1 => ground 2? => bottom object => top object => shadow flags => region id
     [JsonProperty(PropertyName = "data")]
-    public LookupList<int> Data { get; set; } = new LookupList<int>();
+    public LookupList<int> _Data { get; set; }
 
     [JsonProperty(PropertyName = "events")]
     public LookupList<Event> _Events { get; set; }
 
-    public IDataLookup<IEvent> Events => _Events.Cast<IEvent>().ToLookupList(_ => _.Id);
+    public LookupList<int> Data => _Data;
+
+    public IByIdGetter<IEvent> Events => _Events;
 }

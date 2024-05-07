@@ -1,26 +1,35 @@
-﻿using RubyMarshalCS.Serialization;
+﻿using RPGMakerLibCoreV2.Data.Helpers;
+using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
+using RPGMakerLibCoreV2.Storages.Abstraction;
+using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::Troop")]
-public class Troop : RubySerializationEntity
+public class Troop : RubySerializationEntity, ITroop
 {
     [RubyObject("RPG::Troop::Member")]
     public class Member : RubySerializationEntity
     {
         [RubyProperty("@enemy_id")]
         public int EnemyId;
+
         [RubyProperty("@x")]
         public int X;
+
         [RubyProperty("@y")]
         public int Y;
+
         [RubyProperty("@hidden")]
         public bool Hidden;
     }
 
     [RubyObject("RPG::Troop::Page")]
-    public class Page : RubySerializationEntity
+    public class Page : RubySerializationEntity, IPage
     {
         [RubyObject("RPG::Troop::Page::Condition")]
         public class PageCondition : RubySerializationEntity
@@ -64,21 +73,37 @@ public class Troop : RubySerializationEntity
 
         [RubyProperty("@condition")]
         public PageCondition Condition;
+
         [RubyProperty("@span")]
         public int Span;
+
         [RubyProperty("@list")]
         public List<EventCommand> List;
+
+        public IEnumerable<NamedCommand> NamedCommands => List.Select(CommandFactory.Create);
+
+        public IEnumerable<IEventCommand> Commands => List;
+
+        public string Dump(Storage storage, DumpOptions options)
+        {
+            if (options.Format == DumpFormat.Text)
+                return CommandContainerHelper.Dump(this, storage, options);
+
+            throw new NotImplementedException($"{options.Format} not supported");
+        }
     }
 
     [RubyProperty("@id")]
-    public int Id;
+    public int Id { get; set; }
 
     [RubyProperty("@name")]
-    public string Name;
+    public string Name { get; set; }
 
     [RubyProperty("@members")]
-    public List<object> Members;
+    public List<object> Members { get; set; }
 
     [RubyProperty("@pages")]
-    public List<Page> Pages;
+    public LookupList<Page> _Pages { get; set; }
+
+    public IByIdGetter<IPage> Pages => _Pages;
 }

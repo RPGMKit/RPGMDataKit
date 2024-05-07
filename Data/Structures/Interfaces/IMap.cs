@@ -3,7 +3,7 @@ using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
-public interface IMap : IDumpable
+public interface IMap
 {
     public int TilesetId { get; set; }
 
@@ -16,5 +16,5 @@ public interface IMap : IDumpable
     // ground 1 => ground 2? => bottom object => top object => shadow flags => region id
     public LookupList<int> Data { get; }
 
-    public IDataLookup<IEvent> Events { get; }
+    public IByIdGetter<IEvent> Events { get; }
 }

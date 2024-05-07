@@ -22,7 +22,7 @@ public class NameFormatter
             literal += ":";
 
         var idFormatted = _extendedFormat ? string.Format("{0:D" + length + "}", id) : id.ToString();
-        
+
         if (_version == StorageVersion.VXAce)
             return _extendedFormat ? $"[{idFormatted}:{literal}{name}]" : (brackets ? $"[{name}]" : name);
         else
@@ -32,29 +32,36 @@ public class NameFormatter
     public string FormatActor(int actorId)
     {
         var actor = _storage.Actors.Get().ElementAt(actorId);
-        
+
         return FormatSimple(actorId, actor?.Name ?? "");
     }
-    
+
     public string FormatAnimation(int animationId)
     {
         var animation = _storage.Animations.Get().ElementAt(animationId);
-        
+
         return FormatSimple(animationId, animation?.Name ?? "");
     }
-    
+
     public string FormatArmor(int armorId)
     {
         var armor = _storage.Armors.Get().ElementAt(armorId);
-        
+
         return FormatSimple(armorId, armor?.Name ?? "", literal: "A");
     }
 
     public string FormatClass(int classId)
     {
         var @class = _storage.Classes.Get().ElementAt(classId);
-        
+
         return FormatSimple(classId, @class?.Name ?? "");
+    }
+
+    public string FormatCommonEvent(int commonEventId)
+    {
+        var commonEvent = _storage.GetCommonEvent(commonEventId);
+
+        return FormatSimple(commonEventId, commonEvent?.Name ?? "", length: 4);
     }
 
     public string FormatItem(int itemId)
@@ -67,21 +74,21 @@ public class NameFormatter
     public string FormatSkill(int skillId)
     {
         var skill = _storage.Skills.Get().ElementAt(skillId);
-        
+
         return FormatSimple(skillId, skill?.Name ?? "");
     }
-    
+
     public string FormatState(int stateId)
     {
         var state = _storage.States.Get().ElementAt(stateId);
-        
+
         return FormatSimple(stateId, state?.Name ?? "");
     }
 
     public string FormatWeapon(int weaponId)
     {
         var weapon = _storage.Weapons.Get().ElementAt(weaponId);
-        
+
         return FormatSimple(weaponId, weapon?.Name ?? "", literal: "W");
     }
 
@@ -91,7 +98,7 @@ public class NameFormatter
 
         return FormatSimple(switchId, sw, length: 4);
     }
-    
+
     public string FormatVariable(int variableId)
     {
         var v = _storage.GetVariable(variableId);

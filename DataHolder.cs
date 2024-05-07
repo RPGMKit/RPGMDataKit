@@ -7,18 +7,13 @@ public class DataHolder<TDataType>
     private bool _isLoaded;
     private readonly Storage _storage;
     private TDataType _data;
-    private readonly Func<HolderInfo> _loader;
+    private readonly Func<string, TDataType> _loader;
     private string _path;
-    
-    public class HolderInfo
-    {
-        public TDataType Data;
-        public string Path;
-    }
-    
-    public DataHolder(Storage storage, Func<HolderInfo> loader)
+
+    public DataHolder(Storage storage, string path, Func<string, TDataType> loader)
     {
         _storage = storage;
+        _path = path;
         _loader = loader;
     }
 
@@ -36,9 +31,7 @@ public class DataHolder<TDataType>
 
     public void Load()
     {
-        var h = _loader();
-        _data = h.Data;
-        _path = h.Path;
+        _data = _loader(_path);
         _isLoaded = true;
     }
 
@@ -52,7 +45,7 @@ public class DataHolder<TDataType>
     {
         if (!_isLoaded)
             return;
-        
+
         _storage.SaveData(_path, _data);
     }
 }
