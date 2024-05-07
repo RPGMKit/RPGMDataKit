@@ -22,6 +22,7 @@ public class VXAceStorage : Storage
         Armors = new(this, DataPath("Armors.rvdata2"), LoadData<LookupList<Armor>>);
         Classes = new(this, DataPath("Classes.rvdata2"), LoadData<LookupList<Class>>);
         CommonEvents = new(this, DataPath("CommonEvents.rvdata2"), LoadData<LookupList<CommonEvent>>);
+        Enemies = new(this, DataPath("Enemies.rvdata2"), LoadData<LookupList<Enemy>>);
         Items = new(this, DataPath("Items.rvdata2"), LoadData<LookupList<Item>>);
         Skills = new(this, DataPath("Skills.rvdata2"), LoadData<LookupList<Skill>>);
         States = new(this, DataPath("States.rvdata2"), LoadData<LookupList<State>>);

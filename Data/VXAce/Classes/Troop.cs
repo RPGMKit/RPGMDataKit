@@ -12,19 +12,19 @@ namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 public class Troop : RubySerializationEntity, ITroop
 {
     [RubyObject("RPG::Troop::Member")]
-    public class Member : RubySerializationEntity
+    public class Member : RubySerializationEntity, IMember
     {
         [RubyProperty("@enemy_id")]
-        public int EnemyId;
+        public int EnemyId { get; set; }
 
         [RubyProperty("@x")]
-        public int X;
+        public int X { get; set; }
 
         [RubyProperty("@y")]
-        public int Y;
+        public int Y { get; set; }
 
         [RubyProperty("@hidden")]
-        public bool Hidden;
+        public bool Hidden { get; set; }
     }
 
     [RubyObject("RPG::Troop::Page")]
@@ -99,7 +99,9 @@ public class Troop : RubySerializationEntity, ITroop
     public string Name { get; set; }
 
     [RubyProperty("@members")]
-    public List<object> Members { get; set; }
+    public LookupList<Member> _Members { get; set; }
+
+    public IByIdGetter<IMember> Members => _Members;
 
     [RubyProperty("@pages")]
     public LookupList<Page> _Pages { get; set; }

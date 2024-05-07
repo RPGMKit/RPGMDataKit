@@ -8,6 +8,21 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
 public class Troop : JsonEntity, ITroop
 {
+    public class Member : JsonEntity, IMember
+    {
+        [JsonProperty("enemyId")]
+        public int EnemyId { get; set; }
+
+        [JsonProperty("x")]
+        public int X { get; set; }
+
+        [JsonProperty("y")]
+        public int Y { get; set; }
+
+        [JsonProperty("hidden")]
+        public bool Hidden { get; set; }
+    }
+
     public class Page : JsonEntity, IPage
     {
         [JsonProperty(PropertyName = "list")]
@@ -23,6 +38,12 @@ public class Troop : JsonEntity, ITroop
     [JsonProperty("name")]
     public string Name { get; set; }
 
+    [JsonProperty("members")]
+    public LookupList<Member> _Members { get; set; }
+
+    public IByIdGetter<IMember> Members => _Members;
+
+    [JsonProperty("pages")]
     public LookupList<Page> _Pages { get; set; }
 
     public IByIdGetter<IPage> Pages => _Pages;

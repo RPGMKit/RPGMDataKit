@@ -22,6 +22,7 @@ public class MVStorage : Storage
         Armors = new(this, DataPath("Armors.json"), LoadData<LookupList<Armor>>);
         Classes = new(this, DataPath("Classes.json"), LoadData<LookupList<Class>>);
         CommonEvents = new(this, DataPath("CommonEvents.json"), LoadData<LookupList<CommonEvent>>);
+        Enemies = new(this, DataPath("Enemies.json"), LoadData<LookupList<Enemy>>);
         Items = new(this, DataPath("Items.json"), LoadData<LookupList<Item>>);
         Skills = new(this, DataPath("Skills.json"), LoadData<LookupList<Skill>>);
         States = new(this, DataPath("States.json"), LoadData<LookupList<State>>);

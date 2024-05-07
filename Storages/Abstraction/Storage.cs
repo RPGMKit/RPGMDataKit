@@ -18,6 +18,7 @@ public abstract class Storage
     public DataHolder<IByIdGetter<IArmor>> Armors;
     public DataHolder<IByIdGetter<IClass>> Classes;
     public DataHolder<IByIdGetter<ICommonEvent>> CommonEvents;
+    public DataHolder<IByIdGetter<IEnemy>> Enemies;
     public DataHolder<IByIdGetter<IItem>> Items;
     public DataHolder<IByIdGetter<ISkill>> Skills;
     public DataHolder<IByIdGetter<IState>> States;

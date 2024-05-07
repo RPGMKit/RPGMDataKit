@@ -1,4 +1,5 @@
-﻿using RubyMarshalCS.Serialization;
+﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 using RubyMarshalCS.SpecialTypes;
@@ -6,7 +7,7 @@ using RubyMarshalCS.SpecialTypes;
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::Enemy")]
-public class Enemy : BaseItem
+public class Enemy : BaseItem, IEnemy
 {
     [RubyObject("RPG::Enemy::DropItem")]
     public class DropItem : RubySerializationEntity
