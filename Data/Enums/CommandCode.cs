@@ -26,12 +26,14 @@ public static class CommandCodes
     public const int ChangeArmors = 128;
     public const int ChangePartyMember = 129;
     public const int ChangeBattleBGM = 132;
-    public const int ChangeBattleEndME = 133;
+    public const int ChangeVictoryME = 133;
     public const int ChangeSaveAccess = 134;
     public const int ChangeMenuAccess = 135;
-    public const int ChangeEncounterDisable = 136;
+    public const int ChangeEncounter = 136;
     public const int ChangeFormationAccess = 137;
     public const int ChangeWindowColor = 138;
+    public const int ChangeDefeatME = 139;
+    public const int ChangeVehicleBGM = 140;
     public const int TransferPlayer = 201;
     public const int SetVehicleLocation = 202;
     public const int SetEventLocation = 203;
@@ -43,7 +45,7 @@ public static class CommandCodes
     public const int ShowBaloonIcon = 213;
     public const int EraseEvent = 214;
     public const int ChangePlayerFollowers = 216;
-    public const int GatherFollower = 217;
+    public const int GatherFollowers = 217;
     public const int FadeoutScreen = 221;
     public const int FadeinScreen = 222;
     public const int TintScreen = 223;
@@ -86,8 +88,8 @@ public static class CommandCodes
     public const int ChangeName = 320;
     public const int ChangeClass = 321;
     public const int ChangeActorImages = 322;
-    public const int ChangeVehicleImages = 323;
-    public const int ChangeNickname = 324;
+    public const int ChangeVehicleImage = 323;
+    public const int ChangeActorNickname = 324;
     public const int ChangeTp = 326;
     public const int ChangeEnemyHp = 331;
     public const int ChangeEnemyMp = 332;

@@ -32,7 +32,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         {
             var color = GetColor(context.Version);
             var fmt = context.Version == StorageVersion.MV
-                ? "#({0},{1},{2},{3}), {4} frame(s)"
+                ? "({0},{1},{2},{3}), {4} frame(s)"
                 : "({0},{1},{2},{3}), @{4}";
 
             var str = string.Format(fmt, color.Red, color.Green, color.Blue, color.Gray, GetDuration());

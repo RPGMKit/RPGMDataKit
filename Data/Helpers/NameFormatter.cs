@@ -203,7 +203,14 @@ public class NameFormatter
         else
             return string.Format($"[{switchStart:D4}..{switchEnd:D4}]");
     }
-    
+
+    public string FormatTileset(int tilesetId)
+    {
+        var tileSet = _context.Storage.Tilesets.Get().Get(tilesetId);
+
+        return FormatSimple(tilesetId, tileSet?.Name, new() { BracketType = BracketType.None });
+    }
+
     // TODO: without bracket check
     public string FormatTroop(int troopId)
     {

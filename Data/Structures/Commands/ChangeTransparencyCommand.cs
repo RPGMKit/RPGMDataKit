@@ -1,32 +1,11 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Commands.Abstraction;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
-    public class ChangeTransparencyCommand : NamedCommand
+    public class ChangeTransparencyCommand : AbstractOnOffCommand
     {
-        protected const int SET_ON = 0;
-        protected const int SET_OFF = 1;
-
         public override int Code => CommandCodes.ChangeTransparency;
         public override string GetCommandName(StorageVersion version) => "Change Transparency";
-
-        public int GetOnOffState()
-        {
-            return GetParameter<int>(0);
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            switch (GetOnOffState())
-            {
-                case SET_ON:
-                    return "ON";
-                case SET_OFF:
-                    return "OFF";
-                default:
-                    throw new Exception($"Unknown on/off state for change transparency command");
-            }
-        }
     }
 }

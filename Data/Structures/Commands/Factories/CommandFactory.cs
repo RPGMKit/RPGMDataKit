@@ -73,11 +73,32 @@ public static class CommandFactory
             case CommandCodes.ChangePartyMember:
                 returnCommand = new ChangePartyMemberCommand();
                 break;
+            case CommandCodes.ChangeBattleBGM:
+                returnCommand = new ChangeBattleBGMCommand();
+                break;
+            case CommandCodes.ChangeVictoryME:
+                returnCommand = new ChangeVictoryMECommand();
+                break;
             case CommandCodes.ChangeSaveAccess:
                 returnCommand = new ChangeSaveAccessCommand();
                 break;
             case CommandCodes.ChangeMenuAccess:
                 returnCommand = new ChangeMenuAccessCommand();
+                break;
+            case CommandCodes.ChangeEncounter:
+                returnCommand = new ChangeEncounterCommand();
+                break;
+            case CommandCodes.ChangeFormationAccess:
+                returnCommand = new ChangeFormationAccessCommand();
+                break;
+            case CommandCodes.ChangeWindowColor:
+                returnCommand = new ChangeWindowColorCommand();
+                break;
+            case CommandCodes.ChangeDefeatME:
+                returnCommand = new ChangeDefeatME();
+                break;
+            case CommandCodes.ChangeVehicleBGM:
+                returnCommand = new ChangeVehicleBGMCommand();
                 break;
             case CommandCodes.ChangeHp:
                 returnCommand = new ChangeHpCommand();
@@ -117,6 +138,12 @@ public static class CommandFactory
                 break;
             case CommandCodes.ChangeActorImages:
                 returnCommand = new ChangeActorImagesCommand();
+                break;
+            case CommandCodes.ChangeVehicleImage:
+                returnCommand = new ChangeVehicleImageCommand();
+                break;
+            case CommandCodes.ChangeActorNickname:
+                returnCommand = new ChangeActorNicknameCommand();
                 break;
             case CommandCodes.TransferPlayer:
                 returnCommand = new TransferPlayerCommand();
@@ -169,8 +196,14 @@ public static class CommandFactory
             case CommandCodes.ChangeEnemyState:
                 returnCommand = new ChangeEnemyStateCommand();
                 break;
+            case CommandCodes.EnemyRecoverAll:
+                returnCommand = new EnemyRecoverAllCommand();
+                break;
             case CommandCodes.EnemyAppear:
                 returnCommand = new EnemyAppearCommand();
+                break;
+            case CommandCodes.EnemyTransform:
+                returnCommand = new EnemyTransformCommand();
                 break;
             case CommandCodes.ShowBattleAnimation:
                 returnCommand = new ShowBattleAnimationCommand();
@@ -283,6 +316,15 @@ public static class CommandFactory
             case CommandCodes.StopSE:
                 returnCommand = new StopSECommand();
                 break;
+            case CommandCodes.PlayMovie:
+                returnCommand = new PlayMovieCommand();
+                break;
+            case CommandCodes.ChangeMapNameDisplay:
+                returnCommand = new ChangeMapNameDisplayCommand();
+                break;
+            case CommandCodes.ChangeTileset:
+                returnCommand = new ChangeTilesetCommand();
+                break;
             case CommandCodes.ChangeBattleBackground:
                 returnCommand = new ChangeBattleBackground();
                 break;
@@ -301,8 +343,14 @@ public static class CommandFactory
             case CommandCodes.ChangePlayerFollowers:
                 returnCommand = new ChangePlayerFollowers();
                 break;
+            case CommandCodes.GatherFollowers:
+                returnCommand = new GatherFollowersCommand();
+                break;
             case CommandCodes.SetMovementRoute:
                 returnCommand = new SetMovementRouteCommand();
+                break;
+            case CommandCodes.GetOnOffVehicle:
+                returnCommand = new GetOnOffVehicleCommand();
                 break;
             case CommandCodes.BattleProcessingIfWin:
                 returnCommand = new BattleProcessingIfWinCommand();
