@@ -7,9 +7,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class SetMovementRouteCommand : NamedCommand
     {
-        protected const int SOURCE_PLAYER = -1;
-        protected const int SOURCE_THIS_EVENT = 0;
-
         public override int Code => CommandCodes.SetMovementRoute;
         public override string GetCommandName(StorageVersion version) => "Set Movement Route";
 
@@ -29,20 +26,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var route = GetRoute(context.Version);
-            var str = "";
-
-            switch (GetSource())
-            {
-                case SOURCE_PLAYER:
-                    str = "Player";
-                    break;
-                case SOURCE_THIS_EVENT:
-                    str = "This Event";
-                    break;
-                default:
-                    str = $"Event #{GetSource()}";
-                    break;
-            }
+            var str = context.NameFormatter.FormatEvent(GetSource());
 
             var parts = new List<string>();
             if (route.Repeat)

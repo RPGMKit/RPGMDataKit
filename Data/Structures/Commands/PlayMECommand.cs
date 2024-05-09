@@ -17,16 +17,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var seData = GetSEData(context.Version);
-            if (string.IsNullOrWhiteSpace(seData.Name))
-                return "None";
-
-            var str = $"{seData.Name} ({seData.Volume}, {seData.Pitch}";
+            var meData = GetSEData(context.Version);
+            
             if (context.Version == StorageVersion.MV)
-                str += $", {seData.Pan}";
-            str += ")";
+            {
+                if (string.IsNullOrWhiteSpace(meData.Name))
+                    return "None";
 
-            return str;
+                return $"{meData.Name} ({meData.Volume}, {meData.Pitch}, {meData.Pan})";
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(meData.Name))
+                    return "(None)";
+
+                return $"'{meData.Name}', {meData.Volume}, {meData.Pitch}";
+            }
         }
     }
 }

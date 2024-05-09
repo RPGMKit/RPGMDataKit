@@ -1,4 +1,5 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+﻿using RPGMakerLibCoreV2.Data.Structures.Exceptions;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RubyMarshalCS.Serialization;
 using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
@@ -137,4 +138,6 @@ class System : RubySerializationEntity, ISystem
     
     [RubyProperty("@opt_floor_death")]
     public bool OptFloorDeath { get; set; }
+
+    public LookupList<string> EquipmentTypes => throw new DoesNotExistInVersionException($"{nameof(EquipmentTypes)}");
 }

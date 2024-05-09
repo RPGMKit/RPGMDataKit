@@ -20,7 +20,16 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            return $"#{GetLayer()}, {GetSpeed()}";
+            if (context.Version == StorageVersion.MV)
+                return $"#{GetLayer()}, {GetSpeed()}";
+            else
+            {
+                var speed = GetSpeed();
+                if (speed >= 0)
+                    return $"{GetLayer()}, +{speed}";
+                else
+                    return $"{GetLayer()}, {speed}";
+            }
         }
     }
 }

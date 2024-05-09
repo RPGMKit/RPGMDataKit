@@ -4,6 +4,7 @@ namespace RPGMakerLibCoreV2.Data.Helpers;
 
 public class FormatOptions
 {
+    public FormatStyle? Style;
     public int? IdLength;
     public BracketType? BracketType = null;
     public string Literal = "";
@@ -11,5 +12,5 @@ public class FormatOptions
     public bool? SkipName;
     public string Prefix = "";
     public string Separator = ":";
-    public bool HasExtendedFormat = true;
+    public bool SkipTitle = false;
 }

@@ -7,12 +7,15 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     {
         protected const int TRANSFER_DIRECT = 0;
         protected const int TRANSFER_BY_VARIABLE = 1;
+        
         protected const int DIRECTION_RETAIN = 0;
         protected const int DIRECTION_DOWN = 2;
         protected const int DIRECTION_LEFT = 4;
         protected const int DIRECTION_RIGHT = 6;
         protected const int DIRECTION_UP = 8;
+        
         protected const int FADE_BLACK = 0;
+        protected const int FADE_NORMAL = 0; // alias
         protected const int FADE_WHITE = 1;
         protected const int FADE_NONE = 2;
 
@@ -21,17 +24,17 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(0);
         }
 
-        public int GetMap()
+        public int GetParam1()
         {
             return GetParameter<int>(1);
         }
 
-        public int GetX()
+        public int GetParam2()
         {
             return GetParameter<int>(2);
         }
 
-        public int GetY()
+        public int GetParam3()
         {
             return GetParameter<int>(3);
         }
@@ -47,7 +50,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.TransferPlayer;
-        public override string GetCommandName(StorageVersion version) => "Transfer player";
+        public override string GetCommandName(StorageVersion version) => "Transfer Player";
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
@@ -55,83 +58,86 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             switch (GetTransferType())
             {
                 case TRANSFER_DIRECT:
-                    str = $"#{GetMap()} ";
-                    var mapInfo = context.Storage.GetMapInfo(GetMap());
-                    if (mapInfo != null)
-                        str += $" '{mapInfo.Name}' ";
+                    str = context.NameFormatter.FormatMap(GetParam1());
 
-                    str += $"({GetX()},{GetY()})";
+                    if (context.Version == StorageVersion.MV)
+                        str += $" ({GetParam2()},{GetParam3()})";
+                    else
+                        str += $" ({GetParam2():D3},{GetParam3():D3})";
                     break;
                 case TRANSFER_BY_VARIABLE:
-                    str = "{#" + GetMap();
-                    var variableName = context.Storage.GetVariable(GetMap());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += " " + variableName;
+                    string var1, var2, var3;
+                    if (context.Version == StorageVersion.MV)
+                    {
+                        var1 = context.NameFormatter.FormatVariable(GetParam1(),
+                            new() { BracketType = BracketType.Figure });
+                        var2 = context.NameFormatter.FormatVariable(GetParam2(),
+                            new() { BracketType = BracketType.Figure });
+                        var3 = context.NameFormatter.FormatVariable(GetParam3(),
+                            new() { BracketType = BracketType.Figure });
 
-                    str += "} (";
-                    str += "{#" + GetX();
-                    variableName = context.Storage.GetVariable(GetX());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += " " + variableName;
+                        str = $"{var1} ({var2},{var3})";
+                    }
+                    else
+                    {
+                        var1 = context.NameFormatter.FormatVariable(GetParam1(), new()
+                        {
+                            SkipTitle = true,
+                            SkipName = true,
+                        });
+                        var2 = context.NameFormatter.FormatVariable(GetParam2(), new()
+                        {
+                            SkipTitle = true,
+                            SkipName = true,
+                        });
+                        var3 = context.NameFormatter.FormatVariable(GetParam3(), new()
+                        {
+                            SkipTitle = true,
+                            SkipName = true,
+                        });
 
-                    str += "},";
-                    str += "{#" + GetY();
-                    variableName = context.Storage.GetVariable(GetY());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += " " + variableName;
+                        str = $"Variable {var1}{var2}{var3}";
+                    }
 
-                    str += "})";
                     break;
                 default:
                     throw new Exception($"Unknown transfer player transfer type '{GetTransferType()}'");
             }
 
-            var parts = new List<string>();
-            if (GetDirection() != DIRECTION_RETAIN)
+            var direction = GetDirection();
+            List<string> subPart = new();
+            if (direction != DIRECTION_RETAIN)
             {
-                var direction = "Direction: ";
-                switch (GetDirection())
+                var directionFmt = context.Version == StorageVersion.MV ? "Direction: {0}" : "{0}";
+                subPart.Add(direction switch
                 {
-                    case DIRECTION_DOWN:
-                        direction += "Down";
-                        break;
-                    case DIRECTION_LEFT:
-                        direction += "Left";
-                        break;
-                    case DIRECTION_RIGHT:
-                        direction += "Right";
-                        break;
-                    case DIRECTION_UP:
-                        direction += "Up";
-                        break;
-                    default:
-                        throw new Exception($"Unknown direction '{GetDirection()}'");
-                }
-
-                parts.Add(direction);
+                    DIRECTION_DOWN => string.Format(directionFmt, "Down"),
+                    DIRECTION_LEFT => string.Format(directionFmt, "Left"),
+                    DIRECTION_RIGHT => string.Format(directionFmt, "Right"),
+                    DIRECTION_UP => string.Format(directionFmt, "Up"),
+                    _ => throw new Exception($"Unknown direction {direction}")
+                });
             }
 
-            if (GetFade() != FADE_BLACK)
+            var fade = GetFade();
+            if (fade != FADE_BLACK)
             {
-                var fade = "Fade: ";
-                switch (GetFade())
+                var fadeFmt = context.Version == StorageVersion.MV ? "Fade: {0}" : "{0}";
+                subPart.Add(fade switch
                 {
-                    case FADE_WHITE:
-                        fade += "White";
-                        break;
-                    case FADE_NONE:
-                        fade += "None";
-                        break;
-                    default:
-                        throw new Exception($"Unknown fade '{GetFade()}'");
-                }
-
-                parts.Add(fade);
+                    FADE_WHITE => string.Format(fadeFmt, "White"),
+                    FADE_NONE => string.Format(fadeFmt, "None"),
+                    _ => throw new Exception($"Unknown fade '{fade}'")
+                });
             }
 
-            if (parts.Count > 0)
+            if (subPart.Count > 0)
             {
-                str += " (" + string.Join(", ", parts) + ")";
+                var joined = string.Join(", ", subPart);
+                if (context.Version == StorageVersion.MV)
+                    str += $" ({joined})";
+                else
+                    str += $", {joined}";
             }
 
             return str;

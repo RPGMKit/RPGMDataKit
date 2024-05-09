@@ -31,9 +31,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var color = GetColor(context.Version);
-            var str = $"({color.Red},{color.Green},{color.Blue},{color.Gray}), {GetDuration()} frame(s)";
+            var fmt = context.Version == StorageVersion.MV
+                ? "#({0},{1},{2},{3}), {4} frame(s)"
+                : "({0},{1},{2},{3}), @{4}";
+
+            var str = string.Format(fmt, color.Red, color.Green, color.Blue, color.Gray, GetDuration());
             if (GetWaitForCompletion())
-                str += " (Wait)";
+                str += context.Version == StorageVersion.MV ? " (Wait)" : ", Wait";
 
             return str;
         }

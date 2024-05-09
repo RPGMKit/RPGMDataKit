@@ -36,25 +36,23 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeWeapons;
-        public override string GetCommandName(StorageVersion version) => "Change weapons";
+        public override string GetCommandName(StorageVersion version) => "Change Weapons";
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"#{GetWeapon()} ";
+            var str = context.NameFormatter.FormatWeapon(GetWeapon());
 
             switch (GetOperator())
             {
                 case OPERATOR_ADD:
-                    str += "+";
+                    str += " + ";
                     break;
                 case OPERATOR_TAKE:
-                    str += "-";
+                    str += " - ";
                     break;
                 default:
                     throw new Exception($"Unknown change weapons operator type '{GetOperator()}'");
             }
-
-            str += " ";
 
             switch (GetOperandType())
             {
@@ -62,19 +60,15 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    str += "{#" + GetOperand();
-                    var variableName = context.Storage.GetVariable(GetOperand());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += $" {variableName}";
-
-                    str += "}";
+                    str += context.NameFormatter.FormatVariable(GetOperand(),
+                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
                     break;
                 default:
                     throw new Exception($"Unknown change weapons operand type '{GetOperandType()}'");
             }
 
             if (GetIncludeEquipment())
-                str += " (Include Equipment)";
+                str += context.Version == StorageVersion.MV ? " (Include Equipment)" : ", Include Equipment";
 
             return str;
         }

@@ -9,7 +9,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int TYPE_WEAPON = 1;
         protected const int TYPE_ARMOR = 2;
 
-        public int GetShopType()
+        public int GetItemType()
         {
             return GetParameter<int>(0);
         }
@@ -39,7 +39,18 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            return $"#{GetId()}";
+            var str = GetItemType() switch
+            {
+                TYPE_ITEM => context.NameFormatter.FormatItem(GetId()),
+                TYPE_WEAPON => context.NameFormatter.FormatWeapon(GetId()),
+                TYPE_ARMOR => context.NameFormatter.FormatArmor(GetId()),
+                _ => throw new Exception($"Unknown item type {GetItemType()} in shop processing command")
+            };
+
+            if (HasCustomPrice())
+                str += " (" + GetCustomPrice() + ")";
+
+            return str;
         }
     }
 }

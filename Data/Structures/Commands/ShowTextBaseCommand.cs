@@ -39,7 +39,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         {
             var face = GetFace();
             if (string.IsNullOrWhiteSpace(face))
-                face = context.Version == StorageVersion.VXAce ? "-, -" : "None";
+                face = context.Version == StorageVersion.MV ? "None" : "-, -";
             else
                 face = context.Version == StorageVersion.MV ? $"{face}({GetOffset()})" : $"'{face}', {GetOffset()}";
 
@@ -47,10 +47,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             switch (GetBackground())
             {
                 case BACKGROUND_WINDOW:
-                    background = context.Version == StorageVersion.VXAce ? "Normal" : "Window";
+                    background = context.Version == StorageVersion.MV ? "Window" : "Normal";
                     break;
                 case BACKGROUND_DIM:
-                    background = context.Version == StorageVersion.VXAce ? "Dark" : "Dim";
+                    background = context.Version == StorageVersion.MV ? "Dim" : "Dark";
                     break;
                 case BACKGROUND_TRANSPARENT:
                     background = "Transparent";

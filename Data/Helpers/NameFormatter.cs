@@ -21,8 +21,10 @@ public class NameFormatter
     {
         opt ??= new();
 
+        opt.Style ??= _extendedFormat ? FormatStyle.Extended : FormatStyle.Simple;
         opt.BracketType ??= BracketsForVersion;
-        if (_extendedFormat && opt.HasExtendedFormat)
+        
+        if (opt.Style == FormatStyle.Extended)
         {
             opt.SkipId = false;
             opt.SkipName = false;
@@ -45,7 +47,7 @@ public class NameFormatter
     {
         opt = InitOptions(opt);
 
-        var doExtended = _extendedFormat && opt.HasExtendedFormat;
+        var doExtended = opt.Style == FormatStyle.Extended;
 
         if (string.IsNullOrEmpty(name))
         {
@@ -80,11 +82,14 @@ public class NameFormatter
         return str;
     }
 
-    public string FormatActor(int actorId)
+    public string FormatActor(int actorId, FormatOptions? options = null)
     {
+        if (actorId == 0)
+            return "Entire party";
+
         var actor = _context.Storage.Actors.Get().Get(actorId);
 
-        return FormatSimple(actorId, actor?.Name);
+        return FormatSimple(actorId, actor?.Name, options);
     }
 
     public string FormatAnimation(int animationId)
@@ -115,13 +120,35 @@ public class NameFormatter
         return FormatSimple(commonEventId, commonEvent?.Name);
     }
 
-    public string FormatEnemy(int enemyId)
+    public string FormatEnemy(int enemyId, FormatOptions? options = null)
     {
         var enemy = _context.Storage.Enemies.Get().Get(enemyId);
 
-        return FormatSimple(enemyId, enemy?.Name);
+        return FormatSimple(enemyId, enemy?.Name, options);
     }
-    
+
+    public string FormatEvent(int eventId, FormatOptions? options = null)
+    {
+        string eventName;
+        switch (eventId)
+        {
+            case -1:
+                return "Player";
+                break;
+            case 0:
+                return "This Event";
+                break;
+            default:
+                eventName = _context.MapEventContext?.Map.Events.Get(eventId)?.Name;
+                break;
+        }
+
+        if (string.IsNullOrWhiteSpace(eventName))
+            return FormatSimple(eventId, $"EV{eventId:D3}", options);
+
+        return FormatSimple(eventId, eventName, options);
+    }
+
     public string FormatItem(int itemId)
     {
         var item = _context.Storage.Items.Get().Get(itemId);
@@ -129,6 +156,16 @@ public class NameFormatter
         return FormatSimple(itemId, item?.Name);
     }
 
+    public string FormatMap(int mapId, FormatOptions? options = null)
+    {
+        options ??= new();
+        options.SkipId ??= _context.Version == StorageVersion.MV;
+
+        var mapInfo = _context.Storage.MapInfos.Get().Get(mapId);
+
+        return FormatSimple(mapId, mapInfo?.Name, options);
+    }
+    
     public string FormatSkill(int skillId)
     {
         var skill = _context.Storage.Skills.Get().Get(skillId);
@@ -145,17 +182,28 @@ public class NameFormatter
 
     public string FormatSwitch(int switchId, FormatOptions? options = null)
     {
-        if (options == null)
-            options = new();
+        options ??= new();
 
         options.SkipId ??= _context.Version == StorageVersion.MV;
         options.IdLength ??= 4;
 
         var sw = _context.Storage.GetSwitch(switchId);
 
-        return FormatSimple(switchId, sw, options);
+        var str = FormatSimple(switchId, sw, options);
+        if (_context.Version != StorageVersion.MV && !options.SkipTitle)
+            str = $"Switch {str}";
+
+        return str;
     }
 
+    public string FormatSwitchSpan(int switchStart, int switchEnd, FormatOptions? options = null)
+    {
+        if (_context.Version == StorageVersion.MV)
+            return string.Format($"#{switchStart:D4}..{switchEnd:D4}");
+        else
+            return string.Format($"[{switchStart:D4}..{switchEnd:D4}]");
+    }
+    
     // TODO: without bracket check
     public string FormatTroop(int troopId)
     {
@@ -166,8 +214,11 @@ public class NameFormatter
 
     public string FormatTroopMember(int troopMemberId)
     {
+        if (troopMemberId == -1)
+            return "Entire Troop";
+
         FormatOptions opt = new();
-        opt.HasExtendedFormat = false;
+        opt.Style = FormatStyle.Simple;
 
         string name = "?";
         if (_context.TroopContext != null)
@@ -175,9 +226,12 @@ public class NameFormatter
             var member = _context.TroopContext.Troop.Members.Get(troopMemberId);
             if (member != null)
             {
-                var enemy = _context.Storage.Enemies.Get().Get(member.EnemyId);
-                if (enemy != null)
-                    name = enemy.Name;
+                name = _context.NameFormatter.FormatEnemy(member.EnemyId, new()
+                {
+                    Style = FormatStyle.Simple,
+                    SkipId = !_extendedFormat,
+                    BracketType = BracketType.None
+                });
             }
         }
 
@@ -189,15 +243,26 @@ public class NameFormatter
 
     public string FormatVariable(int variableId, FormatOptions? options = null)
     {
-        if (options == null)
-            options = new();
-
+        options ??= new();
         options.SkipId ??= _context.Version == StorageVersion.MV;
         options.IdLength ??= 4;
 
         var v = _context.Storage.GetVariable(variableId);
 
-        return FormatSimple(variableId, v, options);
+        var str = FormatSimple(variableId, v, options);
+
+        if (_context.Version != StorageVersion.MV && !options.SkipTitle)
+            str = $"Variable {str}";
+
+        return str;
+    }
+    
+    public string FormatVariableSpan(int variableStart, int variableEnd, FormatOptions? options = null)
+    {
+        if (_context.Version == StorageVersion.MV)
+            return string.Format($"#{variableStart:D4}..{variableEnd:D4}");
+        else
+            return string.Format($"[{variableStart:D4}..{variableEnd:D4}]");
     }
 
     public string FormatWeapon(int weaponId)

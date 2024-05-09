@@ -16,18 +16,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.InputNumber;
-        public override string GetCommandName(StorageVersion version) => "Input number";
+        public override string GetCommandName(StorageVersion version) => "Input Number";
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"#{GetVariable()}";
-            var variableName = context.Storage.GetVariable(GetVariable());
-            if (!string.IsNullOrEmpty(variableName))
-            {
-                str += $" {variableName}";
-            }
-
-            str += $", {GetDigitsCount()} digits";
+            var str = $"{context.NameFormatter.FormatVariable(GetVariable())}, {GetDigitsCount()} digits";
 
             return str;
         }

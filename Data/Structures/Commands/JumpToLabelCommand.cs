@@ -6,7 +6,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class JumpToLabelCommand : NamedCommand
     {
         public override int Code => CommandCodes.JumpToLabel;
-        public override string GetCommandName(StorageVersion version) => "Jump to label";
+        public override string GetCommandName(StorageVersion version) => "Jump to Label";
 
         public string GetLabel()
         {

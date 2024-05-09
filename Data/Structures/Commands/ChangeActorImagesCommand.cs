@@ -12,7 +12,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             if (version == StorageVersion.MV)
                 return "Change Actor Images";
             else
-                return "Change Actor Images";
+                return "Change Actor Graphic";
         }
 
         public int GetActor()
@@ -22,22 +22,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public string GetFaceImage()
         {
-            return GetParameter<string>(1);
+            return GetParameter<string>(3);
         }
 
         public int GetFaceImageOffset()
         {
-            return GetParameter<int>(2);
+            return GetParameter<int>(4);
         }
 
         public string GetCharacterImage()
         {
-            return GetParameter<string>(3);
+            return GetParameter<string>(1);
         }
 
         public int GetCharacterImageOffset()
         {
-            return GetParameter<int>(4);
+            return GetParameter<int>(2);
         }
 
         public string GetSwBattler()
@@ -51,7 +51,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         {
             var str = context.NameFormatter.FormatActor(GetActor());
 
-            var format = context.Version != StorageVersion.MV ? ", {0}({1})" : ", '{0}', {1}";
+            var format = context.Version == StorageVersion.MV ? ", {0}({1})" : ", '{0}', {1}";
             var none = context.Version == StorageVersion.MV ? ", None" : ", (None)";
             
             var faceImage = GetFaceImage();

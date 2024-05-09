@@ -40,38 +40,29 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             switch (GetSourceType())
             {
                 case SOURCE_TYPE_ACTOR:
-                    if (source == 0)
-                        str = "Entire party";
-                    else
-                        str = $"#{GetSource()}";
-
+                    str = context.NameFormatter.FormatActor(source);
                     break;
                 case SOURCE_TYPE_VARIABLE:
-                    str = "{#" + source;
-                    var variableName = context.Storage.GetVariable(source);
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += $" {variableName}";
-                    str += "}";
+                    str = context.NameFormatter.FormatVariable(source,
+                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
                     break;
                 default:
-                    throw new Exception($"Unknown modify state source type '{GetSourceType()}'");
+                    throw new Exception($"Unknown change state source type '{GetSourceType()}'");
             }
-
-            str += ", ";
 
             switch (GetOperator())
             {
                 case OPERATOR_ADD:
-                    str += "+";
+                    str += ", + ";
                     break;
                 case OPERATOR_REMOVE:
-                    str += "-";
+                    str += ", - ";
                     break;
                 default:
                     throw new Exception($"Unknown modify state operator type '{GetOperator()}'");
             }
 
-            str += $" #{GetState()}";
+            str += context.NameFormatter.FormatState(GetState());
 
             return str;
         }

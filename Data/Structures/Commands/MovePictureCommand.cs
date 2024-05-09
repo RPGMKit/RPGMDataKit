@@ -7,10 +7,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     {
         protected const int REFERENCE_UPPERLEFT = 0;
         protected const int REFERENCE_CENTER = 1;
-        protected const int PLACE_DIRECT = 0;
-        protected const int PLACE_BY_VARIABLE = 1;
+        
+        protected const int DESIGNATION_DIRECT = 0;
+        protected const int DESIGNATION_BY_VARIABLE = 1;
+        
         protected const int BLEND_NORMAL = 0;
         protected const int BLEND_ADDITIVE = 1;
+        protected const int BLEND_SUB = 2;
 
         public int GetLayer()
         {
@@ -22,17 +25,17 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(2);
         }
 
-        public int GetPlaceType()
+        public int GetDesignation()
         {
             return GetParameter<int>(3);
         }
 
-        public int GetX()
+        public int GetParam1()
         {
             return GetParameter<int>(4);
         }
 
-        public int GetY()
+        public int GetParam2()
         {
             return GetParameter<int>(5);
         }
@@ -72,58 +75,77 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"#{GetLayer()}, ";
+            var str = $"{GetLayer()}";
+            if (context.Version == StorageVersion.MV)
+                str = "#" + str;
+            
             switch (GetReference())
             {
                 case REFERENCE_UPPERLEFT:
-                    str += "Upper left";
+                    str += ", Upper left";
                     break;
                 case REFERENCE_CENTER:
-                    str += "Center";
+                    str += ", Center";
                     break;
                 default:
                     throw new Exception($"Unknown show picture reference type '{GetReference()}'");
             }
 
-            switch (GetPlaceType())
+            switch (GetDesignation())
             {
-                case PLACE_DIRECT:
-                    str += $"({GetX()},{GetY()})";
+                case DESIGNATION_DIRECT:
+                    str += $" ({GetParam1()},{GetParam2()})";
                     break;
-                case PLACE_BY_VARIABLE:
-                    str += "({#" + GetX();
-                    var variableName = context.Storage.GetVariable(GetX());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += " " + variableName;
+                case DESIGNATION_BY_VARIABLE:
+                    string var1, var2;
+                    if (context.Version == StorageVersion.MV)
+                    {
+                        var1 = context.NameFormatter.FormatVariable(GetParam1(),
+                            new() { BracketType = BracketType.Figure });
+                        var2 = context.NameFormatter.FormatVariable(GetParam2(),
+                            new() { BracketType = BracketType.Figure });
 
-                    str += "},";
-                    str += "{#" + GetY();
-                    variableName = context.Storage.GetVariable(GetY());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += " " + variableName;
+                        str += $" ({var1},{var2})";
+                    }
+                    else
+                    {
+                        var1 = context.NameFormatter.FormatVariable(GetParam1(), new()
+                        {
+                            SkipTitle = true,
+                            SkipName = true,
+                        });
+                        var2 = context.NameFormatter.FormatVariable(GetParam2(), new()
+                        {
+                            SkipTitle = true,
+                            SkipName = true,
+                        });
 
-                    str += "})";
+                        str += $" (Variable {var1}{var2})";
+                    }
                     break;
                 default:
-                    throw new Exception($"Unknown show picture place by type '{GetPlaceType()}'");
+                    throw new Exception($"Unknown show picture place by type '{GetDesignation()}'");
             }
 
-            str += $" ({GetWidth()}%,{GetHeight()}%), {GetTransparency()}, ";
+            str += $", ({GetWidth()}%,{GetHeight()}%), {GetTransparency()}, ";
             switch (GetBlendMode())
             {
                 case BLEND_NORMAL:
                     str += "Normal";
                     break;
                 case BLEND_ADDITIVE:
-                    str += "Additive";
+                    str += context.Version == StorageVersion.MV ? "Additive" : "Add";
+                    break;
+                case BLEND_SUB:
+                    str += context.Version == StorageVersion.MV ? throw new Exception($"Unknown show picture blend mode '{GetBlendMode()}'") : "Sub";
                     break;
                 default:
                     throw new Exception($"Unknown show picture blend mode '{GetBlendMode()}'");
             }
 
-            str += $", {GetFrames()} frames";
+            str += context.Version == StorageVersion.MV ? $", {GetFrames()} frames" : $", @{GetFrames()}";
             if (GetWaitCompletion())
-                str += " (Wait)";
+                str += context.Version == StorageVersion.MV ? " (Wait)" : ", Wait";
 
             return str;
         }

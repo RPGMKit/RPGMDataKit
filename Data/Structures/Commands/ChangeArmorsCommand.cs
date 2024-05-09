@@ -64,11 +64,8 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    if (context.Version == StorageVersion.MV)
-                        str += context.NameFormatter.FormatVariable(GetOperand(),
-                            new() { BracketType = BracketType.Figure });
-                    else
-                        str += $"Variable {context.NameFormatter.FormatVariable(GetOperand())}";
+                    str += context.NameFormatter.FormatVariable(GetOperand(),
+                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
                     break;
                 default:
                     throw new Exception($"Unknown change armors operand type '{GetOperandType()}'");

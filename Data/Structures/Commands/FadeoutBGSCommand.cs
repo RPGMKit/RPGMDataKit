@@ -15,7 +15,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            return $"{GetSeconds()} second(s)";
+            return context.Version == StorageVersion.MV ? $"{GetSeconds()} second(s)" : $"{GetSeconds()} sec.";
         }
     }
 }

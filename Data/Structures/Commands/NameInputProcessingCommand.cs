@@ -20,7 +20,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"#{GetActor()}, {GetMaxCharacters()} character(s)";
+            var actorName = context.NameFormatter.FormatActor(GetActor(), new()
+            {
+                BracketType = BracketType.None
+            });
+
+            var str = $"{actorName}, {GetMaxCharacters()} character(s)";
 
             return str;
         }

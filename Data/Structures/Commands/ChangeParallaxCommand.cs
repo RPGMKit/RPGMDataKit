@@ -6,7 +6,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
     public class ChangeParallaxCommand : NamedCommand
     {
         public override int Code => CommandCodes.ChangeParallaxBackground;
-        public override string GetCommandName(StorageVersion version) => "Change Parallax";
+
+        public override string GetCommandName(StorageVersion version)
+        {
+            if (version == StorageVersion.MV)
+                return "Change Parallax";
+            else
+                return "Change Parallax Back";
+        }
 
         public string GetImage()
         {
@@ -35,8 +42,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = GetImage();
+            var str = context.Version == StorageVersion.MV ? GetImage() : $"'{GetImage()}'"; 
 
+            // only in MV down here
             List<string> p = new();
             if (GetLoopHorizontally())
                 p.Add("Loop Horizontally");

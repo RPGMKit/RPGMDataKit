@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
@@ -30,6 +31,14 @@ public class Troop : JsonEntity, ITroop
 
         public IEnumerable<NamedCommand> NamedCommands => List.Select(CommandFactory.Create);
         public IEnumerable<IEventCommand> Commands => List;
+        
+        public override string Dump(EntityContext context, DumpOptions options)
+        {
+            if (options.Format == DumpFormat.Text)
+                return CommandContainerHelper.Dump(this, context, options);
+
+            return base.Dump(context, options);
+        }
     }
 
     [JsonProperty("id")]

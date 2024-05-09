@@ -30,15 +30,21 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         {
             var str = "";
             if (GetStartSwitch() != GetEndSwitch())
-                str = $"#{GetStartSwitch()}..{GetEndSwitch()}";
+                str = context.NameFormatter.FormatSwitchSpan(GetStartSwitch(), GetEndSwitch());
             else
             {
-                str = $"#{GetStartSwitch()}";
-                var switchName = context.Storage.GetSwitch(GetStartSwitch());
-                if (!string.IsNullOrEmpty(switchName))
+                if (context.Version == StorageVersion.MV)
                 {
-                    str += $" {switchName}";
+                    str = context.NameFormatter.FormatSwitch(GetStartSwitch(), new()
+                    {
+                        Separator = " ",
+                        Prefix = "#",
+                        SkipId = false,
+                        SkipTitle = true,
+                    });
                 }
+                else
+                    context.NameFormatter.FormatSwitch(GetStartSwitch(), new() { SkipTitle = true });
             }
 
             switch (GetOnOffState())

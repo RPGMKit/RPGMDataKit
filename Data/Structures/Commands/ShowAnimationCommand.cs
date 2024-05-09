@@ -11,7 +11,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override int Code => CommandCodes.ShowAnimation;
         public override string GetCommandName(StorageVersion version) => "Show Animation";
 
-        public int GetActor()
+        public int GetEvent()
         {
             return GetParameter<int>(0);
         }
@@ -28,21 +28,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            string str;
-            switch (GetActor())
-            {
-                case ACTOR_PLAYER:
-                    str = "Player";
-                    break;
-                case ACTOR_THIS_EVENT:
-                    str = "This Event";
-                    break;
-                default:
-                    str = $"Event #{GetActor()}";
-                    if (context.Version != StorageVersion.MV)
-                        str = $"[{str}]";
-                    break;
-            }
+            var str = context.NameFormatter.FormatEvent(GetEvent());
 
             str += ", " + context.NameFormatter.FormatAnimation(GetAnimation());
 

@@ -17,17 +17,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var bgmData = GetBGSData(context.Version);
+            var bgsData = GetBGSData(context.Version);
 
-            if (string.IsNullOrWhiteSpace(bgmData.Name))
-                return "None";
-
-            var str = $"{bgmData.Name} ({bgmData.Volume}, {bgmData.Pitch}";
             if (context.Version == StorageVersion.MV)
-                str += $", {bgmData.Pan}";
-            str += ")";
+            {
+                if (string.IsNullOrWhiteSpace(bgsData.Name))
+                    return "None";
 
-            return str;
+                return $"{bgsData.Name} ({bgsData.Volume}, {bgsData.Pitch}, {bgsData.Pan})";
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(bgsData.Name))
+                    return "(None)";
+
+                return $"'{bgsData.Name}', {bgsData.Volume}, {bgsData.Pitch}";
+            }
         }
     }
 }

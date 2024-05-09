@@ -9,14 +9,14 @@ public class EntityContext
     public Storage Storage { get; set; }
     
     public StorageVersion Version => Storage.Version;
-    
+
     public CommonEventContext? CommonEventContext { get; set; }
-    
+
     public MapEventContext? MapEventContext { get; set; }
-    
+
     public TroopContext? TroopContext { get; set; }
 
-    public NameFormatter NameFormatter => new (this, true);
+    public NameFormatter NameFormatter => new(this, false);
 
     public override string ToString()
     {

@@ -8,7 +8,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const string TYPE_NONE = "none";
 
         public override int Code => CommandCodes.SetWeatherEffect;
-        public override string GetCommandName(StorageVersion version) => "Set Weather Effect";
+
+        public override string GetCommandName(StorageVersion version)
+        {
+            if (version == StorageVersion.MV)
+                return "Set Weather Effect";
+            else
+                return "Set Weather Effects";
+        }
 
         public string GetEffectType()
         {
@@ -38,9 +45,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             else
                 str = GetEffectType().UcFirst() + $", {GetPower()}";
 
-            str += $", {GetDuration()} frame(s)";
+            str += context.Version == StorageVersion.MV ? $", {GetDuration()} frame(s)" : $", @{GetDuration()}";
             if (GetWaitForCompletion())
-                str += " (Wait)";
+                str += context.Version == StorageVersion.MV ? " (Wait)" : ", Wait";
 
             return str;
         }

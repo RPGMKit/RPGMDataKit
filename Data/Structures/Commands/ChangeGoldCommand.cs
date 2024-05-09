@@ -34,16 +34,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             switch (GetOperator())
             {
                 case OPERATOR_ADD:
-                    str = "+";
+                    str = "+ ";
                     break;
                 case OPERATOR_TAKE:
-                    str = "-";
+                    str = "- ";
                     break;
                 default:
                     throw new Exception($"Unknown modify gold operator type '{GetOperator()}'");
             }
-
-            str += " ";
 
             switch (GetOperandType())
             {
@@ -51,12 +49,8 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    str += "{#" + GetOperand();
-                    var variableName = context.Storage.GetVariable(GetOperand());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += $" {variableName}";
-
-                    str += "}";
+                    str += context.NameFormatter.FormatVariable(GetOperand(),
+                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
                     break;
                 default:
                     throw new Exception($"Unknown modify gold operand type '{GetOperandType()}'");

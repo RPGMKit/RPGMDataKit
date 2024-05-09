@@ -12,6 +12,9 @@ public class System : JsonEntity, ISystem
     [JsonProperty(PropertyName = "switches")]
     public LookupList<string> Switches { get; set; }
 
+    [JsonProperty(PropertyName = "equipTypes")]
+    public LookupList<string> EquipmentTypes { get; set; }
+    
     [JsonProperty(PropertyName = "variables")]
     public LookupList<string> Variables { get; set; }
 }

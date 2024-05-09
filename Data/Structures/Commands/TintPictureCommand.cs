@@ -1,7 +1,7 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.MV.Classes;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using MVColor = RPGMakerLibCoreV2.Data.MV.Classes.Color;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -15,12 +15,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(0);
         }
 
-        public IColor GetColor(StorageVersion version)
+        public ITone GetColor(StorageVersion version)
         {
             if (version == StorageVersion.MV)
-                return MVColor.FromArray(GetParameter<List<int>>(1));
+                return Tone.FromArray(GetParameter<List<int>>(1));
 
-            return GetParameter<IColor>(1);
+            return GetParameter<ITone>(1);
         }
 
         public int GetDuration()
@@ -36,9 +36,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var color = GetColor(context.Version);
-            var str = $"#{GetLayer()}, ({color.Red},{color.Green},{color.Blue},{color.Alpha}), {GetDuration()} frame(s)";
+            
+            var fmt = context.Version == StorageVersion.MV
+                ? "#{0}, ({1},{2},{3},{4}), {5} frame(s)"
+                : "{0}, ({1},{2},{3},{4}), @{5}";
+
+            var str = string.Format(fmt, GetLayer(), color.Red, color.Green, color.Blue, color.Gray, GetDuration());
             if (GetWaitForCompletion())
-                str += " (Wait)";
+                str += context.Version == StorageVersion.MV ? " (Wait)" : ", Wait";
 
             return str;
         }

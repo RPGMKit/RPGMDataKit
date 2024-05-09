@@ -19,7 +19,7 @@ public class JsonParameterProvider : IParameterProvider
             return default;
 
         if (value is JValue jv)
-            return (T)jv.Value;
+            return jv.ToObject<T>();
 
         if (value is JObject jo)
             return jo.ToObject<T>();

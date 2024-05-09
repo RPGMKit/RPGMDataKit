@@ -46,7 +46,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     if (context.Version == StorageVersion.MV)
                         str = context.NameFormatter.FormatVariable(source, new() { BracketType = BracketType.Figure });
                     else
-                        str = "Variable " + context.NameFormatter.FormatVariable(source, new() { SkipName = true });
+                        str = context.NameFormatter.FormatVariable(source, new() { SkipName = true });
                     break;
                 case DESIGNATION_TYPE_SAME_AS_RANDOM_ENCOUNTER:
                     str = "Same as Random Encounter";

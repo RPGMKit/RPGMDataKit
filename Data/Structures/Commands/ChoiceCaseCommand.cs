@@ -25,7 +25,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            return $"{GetChoiceName()}";
+            return context.Version == StorageVersion.MV ? GetChoiceName() : $"[{GetChoiceName()}]";
         }
     }
 }

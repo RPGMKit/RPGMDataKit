@@ -15,7 +15,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            return $"#{GetLayer()}";
+            return context.Version == StorageVersion.MV ? $"#{GetLayer()}" : GetLayer().ToString();
         }
     }
 }

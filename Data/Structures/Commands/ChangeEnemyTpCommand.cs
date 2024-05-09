@@ -35,28 +35,19 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var source = GetEnemy();
-            var str = "";
-            if (source == -1)
-                str = "Entire Troop";
-            else
-                str = $"#{source + 1}";
-
-            str += ", ";
+            var str = context.NameFormatter.FormatTroopMember(GetEnemy());
 
             switch (GetOperator())
             {
                 case OPERATOR_INCREASE:
-                    str += "+";
+                    str += ", + ";
                     break;
                 case OPERATOR_DECREASE:
-                    str += "-";
+                    str += ", - ";
                     break;
                 default:
                     throw new Exception($"Unknown modify enemy tp operator type '{GetOperator()}'");
             }
-
-            str += " ";
 
             switch (GetOperandType())
             {
@@ -64,12 +55,8 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    str += "{#" + GetOperand();
-                    var variableName = context.Storage.GetVariable(GetOperand());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += $" {variableName}";
-
-                    str += "}";
+                    str += context.NameFormatter.FormatVariable(GetOperand(),
+                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
                     break;
                 default:
                     throw new Exception($"Unknown modify enemy tp operand type '{GetOperandType()}'");

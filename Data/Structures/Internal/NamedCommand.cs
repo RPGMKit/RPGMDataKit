@@ -80,6 +80,8 @@ public abstract class NamedCommand
         {
             if (string.IsNullOrWhiteSpace(name) || !IsSecondary)
                 str += context.Version == StorageVersion.MV ? " : " : ": ";
+            else
+                str += " ";
 
             str += paramDesc;
         }

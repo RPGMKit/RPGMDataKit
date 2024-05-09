@@ -40,12 +40,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var source = GetMember();
-            var str = "";
-            if (source == -1)
-                str = "Entire Troop";
-            else
-                str = context.NameFormatter.FormatTroopMember(source);
+            var str = context.NameFormatter.FormatTroopMember(GetMember());
 
             switch (GetOperator())
             {

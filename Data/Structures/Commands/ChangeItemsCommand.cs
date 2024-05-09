@@ -42,8 +42,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = context.NameFormatter.FormatItem(GetItemId());
-            if (context.Version != StorageVersion.MV)
-                str += ",";
 
             switch (GetOperator())
             {
@@ -63,10 +61,8 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    if (context.Version == StorageVersion.MV)
-                        str += "{" + context.NameFormatter.FormatVariable(GetOperand()) + "}";
-                    else
-                        str += $"Variable {context.NameFormatter.FormatVariable(GetOperand())}";
+                    str += context.NameFormatter.FormatVariable(GetOperand(),
+                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
                     break;
                 default:
                     throw new Exception($"Unknown change items operand type '{GetOperandType()}'");

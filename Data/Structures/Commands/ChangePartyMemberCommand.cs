@@ -41,11 +41,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     throw new Exception($"Unknown add/remove state for party member");
             }
 
-            str += $" Actor #{GetActor()}";
+            str += context.NameFormatter.FormatActor(GetActor());
             if (GetInitialize(context.Version))
-            {
-                str += " (Initialize)";
-            }
+                str += context.Version == StorageVersion.MV ? " (Initialize)" : ", Initialize";
 
             return str;
         }

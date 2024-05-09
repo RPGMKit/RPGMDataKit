@@ -8,6 +8,17 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int DESIGNATION_TYPE_DIRECT = 0;
         protected const int DESIGNATION_TYPE_BY_VARIABLES = 1;
 
+        private static Dictionary<int, Tuple<string, string>> InfoTypeIdsMap = new()
+        {
+            [0] = new("Terrain Tag", "Terrain Tag"),
+            [1] = new("Event ID", "Event ID"),
+            [2] = new("Tile ID (Layer 1)", "Tile ID (Layer 1)"),
+            [3] = new("Tile ID (Layer 2)", "Tile ID (Layer 2)"),
+            [4] = new("Tile ID (Layer 3)", "Tile ID (Layer 3)"),
+            [5] = new("Tile ID (Layer 4)", "Region ID"),
+            [6] = new("Region ID", ""),
+        };
+
         public int GetVariable()
         {
             return GetParameter<int>(0);
@@ -23,12 +34,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(2);
         }
 
-        public int GetX()
+        public int GetParam1()
         {
             return GetParameter<int>(3);
         }
 
-        public int GetY()
+        public int GetParam2()
         {
             return GetParameter<int>(4);
         }
@@ -38,31 +49,59 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"#{GetVariable()}";
-            var variableName = context.Storage.GetVariable(GetVariable());
-            if (!string.IsNullOrEmpty(variableName))
-                str += $" {variableName}";
+            string str;
+            if (context.Version == StorageVersion.MV)
+                str = context.NameFormatter.FormatVariable(GetVariable());
+            else
+                str = context.NameFormatter.FormatVariable(GetVariable(), new()
+                {
+                    SkipName = true,
+                    SkipTitle = true,
+                });
 
-            str += $", Type {GetInfoType()}, ";
+            if (!InfoTypeIdsMap.TryGetValue(GetInfoType(), out var infoTypeName))
+                throw new Exception($"Unknown info type id {GetInfoType()} for get location info command");
+
+            var infoName = context.Version == StorageVersion.MV ? infoTypeName.Item1 : infoTypeName.Item2;
+            if (string.IsNullOrEmpty(infoName))
+                throw new Exception($"Unknown info type id {GetInfoType()} for get location info command");
+            
+            str += $", {infoName}";
 
             switch (GetDesignationType())
             {
                 case DESIGNATION_TYPE_DIRECT:
-                    str += $"({GetX()},{GetY()})";
+                    if (context.Version == StorageVersion.MV)
+                        str += $", ({GetParam1()},{GetParam2()})";
+                    else
+                        str += $", ({GetParam1():D3},{GetParam2():D3})";
                     break;
                 case DESIGNATION_TYPE_BY_VARIABLES:
-                    str += "({#" + GetX();
-                    variableName = context.Storage.GetVariable(GetX());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += " " + variableName;
+                    string var1, var2;
+                    if (context.Version == StorageVersion.MV)
+                    {
+                        var1 = context.NameFormatter.FormatVariable(GetParam1(),
+                            new() { BracketType = BracketType.Figure });
+                        var2 = context.NameFormatter.FormatVariable(GetParam2(),
+                            new() { BracketType = BracketType.Figure });
 
-                    str += "},";
-                    str += "{#" + GetY();
-                    variableName = context.Storage.GetVariable(GetY());
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += " " + variableName;
+                        str += $", ({var1},{var2})";
+                    }
+                    else
+                    {
+                        var1 = context.NameFormatter.FormatVariable(GetParam1(), new()
+                        {
+                            SkipTitle = true,
+                            SkipName = true,
+                        });
+                        var2 = context.NameFormatter.FormatVariable(GetParam2(), new()
+                        {
+                            SkipTitle = true,
+                            SkipName = true,
+                        });
 
-                    str += "})";
+                        str += $", Variable {var1}{var2}";
+                    }
                     break;
                 default:
                     throw new Exception($"Unknown get location info designation type '{GetDesignationType()}'");

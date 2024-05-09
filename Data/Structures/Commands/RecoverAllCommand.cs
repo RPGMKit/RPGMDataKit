@@ -19,7 +19,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.RecoverAll;
-        public override string GetCommandName(StorageVersion version) => "Recover all";
+        public override string GetCommandName(StorageVersion version) => "Recover All";
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
@@ -28,18 +28,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             switch (GetSourceType())
             {
                 case SOURCE_TYPE_ACTOR:
-                    if (source == 0)
-                        str = "Entire party";
-                    else
-                        str = $"#{GetSource()}";
-
+                    str = context.NameFormatter.FormatActor(source);
                     break;
                 case SOURCE_TYPE_VARIABLE:
-                    str = "{#" + source;
-                    var variableName = context.Storage.GetVariable(source);
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += $" {variableName}";
-                    str += "}";
+                    str = context.NameFormatter.FormatVariable(source,
+                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
                     break;
                 default:
                     throw new Exception($"Unknown recover all source type '{GetSourceType()}'");

@@ -25,7 +25,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                 case SET_OFF:
                     return "OFF";
                 default:
-                    throw new Exception($"Unknown on/off state for change transparancy command");
+                    throw new Exception($"Unknown on/off state for change transparency command");
             }
         }
     }

@@ -28,28 +28,21 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var source = GetEnemy();
-            var str = "";
-            if (source == -1)
-                str = "Entire Troop";
-            else
-                str = $"#{source + 1}";
-
-            str += ", ";
+            var str = context.NameFormatter.FormatTroopMember(GetEnemy());
 
             switch (GetOperator())
             {
                 case OPERATOR_INCREASE:
-                    str += "+";
+                    str += ", + ";
                     break;
                 case OPERATOR_DECREASE:
-                    str += "-";
+                    str += ", - ";
                     break;
                 default:
                     throw new Exception($"Unknown change enemy state operator type '{GetOperator()}'");
             }
 
-            str += $" {GetState()}";
+            str += context.NameFormatter.FormatState(GetState());
 
             return str;
         }

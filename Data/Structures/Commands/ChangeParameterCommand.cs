@@ -12,6 +12,18 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         protected const int OPERAND_CONSTANT = 0;
         protected const int OPERAND_VARIABLE = 1;
 
+        private static readonly Dictionary<int, Tuple<string,string>> ParameterNamesMap = new()
+        {
+            [0] = new("Max HP", "MHP"),
+            [1] = new("Max MP", "MMP"),
+            [2] = new("Attack","ATK"),
+            [3] = new("Defense", "DEF"),
+            [4] = new("M.Attack","MAT"),
+            [5] = new("M.Defense", "MDF"),
+            [6] = new("Agility", "AGI"),
+            [7] = new("Luck", "LUK"),
+        };
+        
         public int GetSourceType()
         {
             return GetParameter<int>(0);
@@ -43,7 +55,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         }
 
         public override int Code => CommandCodes.ChangeParameter;
-        public override string GetCommandName(StorageVersion version) => "Change parameter";
+
+        public override string GetCommandName(StorageVersion version)
+        {
+            if (version == StorageVersion.MV)
+                return "Change Parameter";
+            else
+                return "Change Parameters";
+        }
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
@@ -52,38 +71,32 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             switch (GetSourceType())
             {
                 case SOURCE_TYPE_ACTOR:
-                    if (source == 0)
-                        str = "Entire party";
-                    else
-                        str = $"#{GetSource()}";
-
+                    str = context.NameFormatter.FormatActor(source);
                     break;
                 case SOURCE_TYPE_VARIABLE:
-                    str = "{#" + source;
-                    var variableName = context.Storage.GetVariable(source);
-                    if (!string.IsNullOrEmpty(variableName))
-                        str += $" {variableName}";
-                    str += "}";
+                    str = context.NameFormatter.FormatVariable(source,
+                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
                     break;
                 default:
                     throw new Exception($"Unknown change parameter source type '{GetSourceType()}'");
             }
 
-            str += $", #{GetActionParameter()} ";
+            if (!ParameterNamesMap.TryGetValue(GetActionParameter(), out var actionName))
+                throw new Exception($"Unknown parameter type {GetActionParameter()} for change parameter command");
+            
+            str += ", " + (context.Version == StorageVersion.MV ? actionName.Item1 : actionName.Item2);
 
             switch (GetOperator())
             {
                 case OPERATOR_INCREASE:
-                    str += "+";
+                    str += " + ";
                     break;
                 case OPERATOR_DECREASE:
-                    str += "-";
+                    str += " - ";
                     break;
                 default:
                     throw new Exception($"Unknown change parameter operator type '{GetOperator()}'");
             }
-
-            str += " ";
 
             switch (GetOperandType())
             {
@@ -91,14 +104,8 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    str += "{#" + GetOperand();
-                    var variableName = context.Storage.GetVariable(GetOperand());
-                    if (!string.IsNullOrEmpty(variableName))
-                    {
-                        str += $" {variableName}";
-                    }
-
-                    str += "}";
+                    str += context.NameFormatter.FormatVariable(GetOperand(),
+                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
                     break;
                 default:
                     throw new Exception($"Unknown change parameter operand type '{GetOperandType()}'");

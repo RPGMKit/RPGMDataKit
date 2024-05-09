@@ -20,19 +20,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            string str;
+            string str = context.NameFormatter.FormatSwitch(GetSwitch());
 
             if (context.Version == StorageVersion.VXAce)
-                str = $"Switch {context.NameFormatter.FormatSwitch(GetSwitch())} == ";
+                str += " == ";
             else
-            {
-                str = $"#{GetSwitch()}";
-                var switchName = context.Storage.GetSwitch(GetSwitch());
-                if (!string.IsNullOrEmpty(switchName))
-                    str += $" {switchName}";
-
                 str += " is ";
-            }
 
             switch (GetOnOff())
             {

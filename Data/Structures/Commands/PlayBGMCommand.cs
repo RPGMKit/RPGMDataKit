@@ -19,15 +19,20 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         {
             var bgmData = GetBGMData(context.Version);
 
-            if (string.IsNullOrWhiteSpace(bgmData.Name))
-                return "None";
-
-            var str = $"{bgmData.Name} ({bgmData.Volume}, {bgmData.Pitch}";
             if (context.Version == StorageVersion.MV)
-                str += $", {bgmData.Pan}";
-            str += ")";
+            {
+                if (string.IsNullOrWhiteSpace(bgmData.Name))
+                    return "None";
 
-            return str;
+                return $"{bgmData.Name} ({bgmData.Volume}, {bgmData.Pitch}, {bgmData.Pan})";
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(bgmData.Name))
+                    return "(None)";
+
+                return $"'{bgmData.Name}', {bgmData.Volume}, {bgmData.Pitch}";
+            }
         }
     }
 }

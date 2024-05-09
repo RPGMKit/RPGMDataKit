@@ -5,8 +5,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ShowBalloonCommand : NamedCommand
     {
-        protected const int SOURCE_PLAYER = -1;
-        protected const int SOURCE_THIS_EVENT = 0;
         protected const int ICON_EXCLAMATION = 1;
         protected const int ICON_QUESTION = 2;
         protected const int ICON_MUSIC_NOTE = 3;
@@ -43,19 +41,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = "";
-            switch (GetSource())
-            {
-                case SOURCE_PLAYER:
-                    str = "Player";
-                    break;
-                case SOURCE_THIS_EVENT:
-                    str = "This Event";
-                    break;
-                default:
-                    str = $"Event #{GetSource()}";
-                    break;
-            }
+            var str = context.NameFormatter.FormatEvent(GetSource());
 
             str += ", ";
 
@@ -111,9 +97,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             }
 
             if (GetWaitForCompletion())
-            {
-                str += " (Wait)";
-            }
+                str += context.Version == StorageVersion.MV ? " (Wait)" : ", Wait";
 
             return str;
         }

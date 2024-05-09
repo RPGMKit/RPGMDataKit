@@ -46,19 +46,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            string str = "";
-
-            if (context.Version == StorageVersion.VXAce)
-                str = $"Variable {context.NameFormatter.FormatVariable(GetVariable())}";
-            else
-            {
-                str = $"#{GetVariable()}";
-                var variableName = context.Storage.GetVariable(GetVariable());
-                if (!string.IsNullOrEmpty(variableName))
-                {
-                    str += $" {variableName}";
-                }
-            }
+            var str = context.NameFormatter.FormatVariable(GetVariable());
 
             switch (GetOperator())
             {
@@ -91,18 +79,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     str += GetOperand();
                     break;
                 case OPERAND_VARIABLE:
-                    if (context.Version == StorageVersion.MV)
-                    {
-                        str += "#{" + GetOperand();
-                        var variableName = context.Storage.GetVariable(GetOperand());
-                        if (!string.IsNullOrEmpty(variableName))
-                            str += $" {variableName}";
-
-                        str += "}";
-                    }
-                    else
-                        str += $"Variable {context.NameFormatter.FormatVariable(GetOperand())}";
-
+                    str += context.NameFormatter.FormatVariable(GetOperand());
                     break;
                 default:
                     throw new Exception(

@@ -35,7 +35,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override string GetCommandName(StorageVersion version)
         {
             if (version == StorageVersion.MV)
-                return "Change skill";
+                return "Change Skill";
             else
                 return "Change Skills";
         }
@@ -47,16 +47,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             switch (GetSourceType())
             {
                 case SOURCE_TYPE_ACTOR:
-                    if (source == 0)
-                        str = "Entire party";
-                    else
-                        str = context.NameFormatter.FormatActor(source);
+                    str = context.NameFormatter.FormatActor(source);
                     break;
                 case SOURCE_TYPE_VARIABLE:
-                    if (context.Version == StorageVersion.MV)
-                        str = "{" + context.NameFormatter.FormatVariable(source) + "}";
-                    else
-                        str = $"Variable {context.NameFormatter.FormatVariable(source)}";
+                    str = context.NameFormatter.FormatVariable(source,
+                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
                     break;
                 default:
                     throw new Exception($"Unknown change skill source type '{GetSourceType()}'");
@@ -65,16 +60,16 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             switch (GetOperator())
             {
                 case OPERATOR_LEARN:
-                    str += ", +";
+                    str += ", + ";
                     break;
                 case OPERATOR_FORGET:
-                    str += ", -";
+                    str += ", - ";
                     break;
                 default:
                     throw new Exception($"Unknown change skill operator type '{GetOperator()}'");
             }
 
-            str += $" {context.NameFormatter.FormatSkill(GetSkillId())}";
+            str += context.NameFormatter.FormatSkill(GetSkillId());
 
             return str;
         }
