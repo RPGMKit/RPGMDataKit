@@ -1,3 +1,4 @@
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
@@ -7,7 +8,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
         protected const int CHECK_APPEARED = 0;
         protected const int CHECK_STATE = 1;
 
-        public int GetEnemyId()
+        public int GetTroopMemberId()
         {
             return GetParameter<int>(1);
         }
@@ -24,18 +25,24 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"Enemy #{GetEnemyId()}";
+            var str = context.NameFormatter.FormatTroopMember(GetTroopMemberId());
 
             switch (GetCheckType())
             {
                 case CHECK_APPEARED:
-                    str += " is appeared";
+                    if (context.Version == StorageVersion.MV)
+                        str += " is appeared";
+                    str += " is Appeared";
                     break;
                 case CHECK_STATE:
-                    str += $" is affected by #{GetCheckParameter<int>()} state";
+                    if (context.Version == StorageVersion.MV)
+                        str += $" is affected by {context.NameFormatter.FormatState(GetCheckParameter<int>())}";
+                    else
+                        str += $" is {context.NameFormatter.FormatState(GetCheckParameter<int>())} Inflicted";
                     break;
                 default:
-                    throw new Exception($"Unknown check type '{GetCheckType()}' for '{GetCommandName(context.Version)}' enemy command");
+                    throw new Exception(
+                        $"Unknown check type '{GetCheckType()}' for '{GetCommandName(context.Version)}' enemy command");
             }
 
             return str;

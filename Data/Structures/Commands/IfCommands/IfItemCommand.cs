@@ -1,3 +1,4 @@
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
@@ -11,7 +12,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            return $"Party has item #{GetItem()}";
+            var item = context.NameFormatter.FormatItem(GetItem());
+            
+            return context.Version == StorageVersion.MV ? $"Party has {item}" : $"{item} in Inventory";
         }
     }
 }

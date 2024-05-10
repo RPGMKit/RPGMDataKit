@@ -30,19 +30,19 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            if (context.Version == StorageVersion.VXAce)
+            if (context.Version == StorageVersion.MV)
             {
-                var str = $"{GetPower()}, {GetSpeed()}, @{GetDuration()}";
+                var str = $"{GetPower()}, {GetSpeed()}, {GetDuration()} frame(s)";
                 if (GetWaitForCompletion())
-                    str += ", Wait";
+                    str += " (Wait)";
 
                 return str;
             }
             else
             {
-                var str = $"{GetPower()}, {GetSpeed()}, {GetDuration()} frame(s)";
+                var str = $"{GetPower()}, {GetSpeed()}, @{GetDuration()}";
                 if (GetWaitForCompletion())
-                    str += " (Wait)";
+                    str += ", Wait";
 
                 return str;
             }

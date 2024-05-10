@@ -28,7 +28,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = "";
+            string str;
             if (GetStartSwitch() != GetEndSwitch())
                 str = context.NameFormatter.FormatSwitchSpan(GetStartSwitch(), GetEndSwitch());
             else
@@ -44,7 +44,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     });
                 }
                 else
-                    context.NameFormatter.FormatSwitch(GetStartSwitch(), new() { SkipTitle = true });
+                    str = context.NameFormatter.FormatSwitch(GetStartSwitch(), new() { SkipTitle = true });
             }
 
             switch (GetOnOffState())

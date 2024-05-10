@@ -6,7 +6,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
     public class MoveImageCommand : AbstractMoveCommand
     {
         public override int Code => MovementRouteCommandCodes.Image;
-        public override string GetCommandName(StorageVersion version) => "Image";
+
+        public override string GetCommandName(StorageVersion version)
+        {
+            if (version == StorageVersion.MV)
+                return "Image";
+            else
+                return "Graphic";
+        }
 
         public string GetImage()
         {
@@ -22,9 +29,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
         {
             var image = GetImage();
             if (string.IsNullOrWhiteSpace(image))
-                return "None";
-            else
+                return context.Version == StorageVersion.MV ? "None" : "(None)";
+
+            if (context.Version == StorageVersion.MV)
                 return $"{image}({GetOffset()})";
+            else
+                return $"'{image}', {GetOffset()}";
         }
     }
 }

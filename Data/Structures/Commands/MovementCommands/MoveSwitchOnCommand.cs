@@ -15,13 +15,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"#{GetSwitch()}";
-
-            var switchName = context.Storage.GetSwitch(GetSwitch());
-            if (!string.IsNullOrEmpty(switchName))
-                str += $" {switchName}";
-
-            return str;
+            return $"{GetSwitch():D4}";
         }
     }
 }

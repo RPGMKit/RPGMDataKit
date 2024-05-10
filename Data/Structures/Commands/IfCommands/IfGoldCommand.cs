@@ -1,45 +1,43 @@
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
+
+public class IfGoldCommand : IfCommand
 {
-    public class IfGoldCommand : IfCommand
+    protected const int OPERATOR_GTE = 0;
+    protected const int OPERATOR_LTE = 1;
+    protected const int OPERATOR_LT = 2;
+
+    public int GetAmount()
     {
-        protected const int OPERATOR_GTE = 0;
-        protected const int OPERATOR_LTE = 1;
-        protected const int OPERATOR_LT = 2;
+        return GetParameter<int>(1);
+    }
 
-        public int GetAmount()
+    public int GetOperator()
+    {
+        return GetParameter<int>(2);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        string fmt;
+        switch (GetOperator())
         {
-            return GetParameter<int>(1);
+            case OPERATOR_GTE:
+                fmt = context.Version == StorageVersion.MV ? "≥ {0}" : "{0} or more";
+                break;
+            case OPERATOR_LTE:
+                fmt = context.Version == StorageVersion.MV ? "≤ {0}" : "{0} or less";
+                break;
+            case OPERATOR_LT:
+                fmt = context.Version == StorageVersion.MV ? "< {0}" : "is under {0}";
+                break;
+            default:
+                throw new Exception(
+                    $"Unknown operator '{GetOperator()}' for '{GetCommandName(context.Version)}' gold command");
         }
 
-        public int GetOperator()
-        {
-            return GetParameter<int>(2);
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = "Gold ";
-
-            switch (GetOperator())
-            {
-                case OPERATOR_GTE:
-                    str += ">=";
-                    break;
-                case OPERATOR_LTE:
-                    str += "<=";
-                    break;
-                case OPERATOR_LT:
-                    str += "<";
-                    break;
-                default:
-                    throw new Exception($"Unknown operator '{GetOperator()}' for '{GetCommandName(context.Version)}' gold command");
-            }
-
-            str += $" {GetAmount()}";
-
-            return str;
-        }
+        return "Gold " + string.Format(fmt, GetAmount());
     }
 }

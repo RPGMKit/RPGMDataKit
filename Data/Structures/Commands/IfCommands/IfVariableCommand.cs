@@ -51,13 +51,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             switch (GetOperator())
             {
                 case OPERATOR_EQ:
-                    str += context.Version == StorageVersion.VXAce ? " == " : " = ";
+                    str += context.Version == StorageVersion.MV ? " = " : " == ";
                     break;
                 case OPERATOR_GTE:
-                    str += " >= ";
+                    str += context.Version == StorageVersion.MV ? " ≥ " : " >= ";
                     break;
                 case OPERATOR_LTE:
-                    str += " <= ";
+                    str += context.Version == StorageVersion.MV ? " ≤ " : " <= ";
                     break;
                 case OPERATOR_GT:
                     str += " > ";
@@ -66,7 +66,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                     str += " < ";
                     break;
                 case OPERATOR_NEQ:
-                    str += " != ";
+                    str += context.Version == StorageVersion.MV ? " ≠ " : " != ";
                     break;
                 default:
                     throw new Exception(

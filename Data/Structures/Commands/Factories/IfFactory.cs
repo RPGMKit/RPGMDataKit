@@ -10,7 +10,7 @@ public static class IfFactory
     public const int TYPE_TIMER = 3;
     public const int TYPE_ACTOR = 4;
     public const int TYPE_ENEMY = 5;
-    public const int TYPE_CHARACTER = 6;
+    public const int TYPE_EVENT = 6;
     public const int TYPE_GOLD = 7;
     public const int TYPE_ITEM = 8;
     public const int TYPE_WEAPON = 9;
@@ -35,8 +35,8 @@ public static class IfFactory
                 return new IfActorCommand();
             case TYPE_ENEMY:
                 return new IfEnemyCommand();
-            case TYPE_CHARACTER:
-                return new IfCharacterCommand();
+            case TYPE_EVENT:
+                return new IfEventCommand();
             case TYPE_GOLD:
                 return new IfGoldCommand();
             case TYPE_ITEM:

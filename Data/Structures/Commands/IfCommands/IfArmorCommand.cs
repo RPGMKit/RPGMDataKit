@@ -1,3 +1,4 @@
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
@@ -16,9 +17,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"Party has armor #{GetArmor()}";
+            var armor = context.NameFormatter.FormatArmor(GetArmor());
+            var str = context.Version == StorageVersion.MV ? $"Party has {armor}" : $"{armor} in Inventory";
             if (GetIncludeEquipment())
-                str += " (include Equipment)";
+                str += context.Version == StorageVersion.MV ? " (Include Equipment)" : ", Include Equipment";
 
             return str;
         }

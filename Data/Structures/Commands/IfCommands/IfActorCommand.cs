@@ -35,39 +35,39 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             switch (GetCheckType())
             {
                 case CHECK_IN_PARTY:
-                    return context.Version == StorageVersion.VXAce
-                        ? $"{unitName} is In the Party"
-                        : $"{unitName} is in the party";
+                    return context.Version == StorageVersion.MV
+                        ? $"{unitName} is in the party"
+                        : $"{unitName} is In the Party";
                 case CHECK_NAME:
                     var name = GetCheckParameter<string>();
-                    return context.Version == StorageVersion.VXAce
-                        ? $"{unitName} is Name '{name}' Applied"
-                        : $"{unitName} name is '{name}'";
+                    return context.Version == StorageVersion.MV
+                        ? $"Name of {unitName} is {name}"
+                        : $"{unitName} is Name '{name}' Applied";
                 case CHECK_CLASS:
                     var className = context.NameFormatter.FormatClass(GetCheckParameter<int>());
-                    return context.Version == StorageVersion.VXAce
-                        ? $"{unitName} is {className}"
-                        : $"Class of {unitName} is {className}";
+                    return context.Version == StorageVersion.MV
+                        ? $"Class of {unitName} is {className}"
+                        : $"{unitName} is {className}";
                 case CHECK_SKILL:
                     var skillName = context.NameFormatter.FormatSkill(GetCheckParameter<int>());
-                    return context.Version == StorageVersion.VXAce
-                        ? $"{unitName} is {skillName} Learned"
-                        : $"{unitName} has learned {skillName}";
+                    return context.Version == StorageVersion.MV
+                        ? $"{unitName} has learned {skillName}"
+                        : $"{unitName} is {skillName} Learned";
                 case CHECK_WEAPON_EQUIPPED:
                     var weaponName = context.NameFormatter.FormatWeapon(GetCheckParameter<int>());
-                    return context.Version == StorageVersion.VXAce
-                        ? $"{unitName} is {weaponName} Equipped"
-                        : $"{unitName} has equipped {weaponName}";
+                    return context.Version == StorageVersion.MV
+                        ? $"{unitName} has equipped {weaponName}"
+                        : $"{unitName} is {weaponName} Equipped";
                 case CHECK_ARMOR_EQUIPPED:
                     var armorName = context.NameFormatter.FormatArmor(GetCheckParameter<int>());
-                    return context.Version == StorageVersion.VXAce
-                        ? $"{unitName} is {armorName} Equipped"
-                        : $"{unitName} has equipped {armorName}";
+                    return context.Version == StorageVersion.MV
+                        ? $"{unitName} has equipped {armorName}"
+                        : $"{unitName} is {armorName} Equipped";
                 case CHECK_STATE:
                     var stateName = context.NameFormatter.FormatState(GetCheckParameter<int>());
-                    return context.Version == StorageVersion.VXAce
-                        ? $"{unitName} is {stateName} Inflicted"
-                        : $"{unitName} is affected by {stateName}";
+                    return context.Version == StorageVersion.MV
+                        ? $"{unitName} is affected by {stateName}"
+                        : $"{unitName} is {stateName} Inflicted";
                 default:
                     throw new Exception(
                         $"Unknown check type '{GetCheckType()}' for '{GetCommandName(context.Version)}' actor command");

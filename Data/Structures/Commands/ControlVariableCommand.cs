@@ -120,7 +120,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = "";
+            string str;
             if (GetStartVariable() != GetEndVariable())
                 str = context.NameFormatter.FormatVariableSpan(GetStartVariable(), GetEndVariable());
             else
@@ -136,7 +136,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     });
                 }
                 else
-                    context.NameFormatter.FormatVariable(GetStartVariable(), new() { SkipTitle = true });
+                    str = context.NameFormatter.FormatVariable(GetStartVariable(), new() { SkipTitle = true });
             }
 
             switch (GetOperator())

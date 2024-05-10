@@ -18,25 +18,23 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             [15] = "Y",
             [16] = "Z",
             [17] = "L",
-            [18] = "r",
+            [18] = "R",
         };
 
         public string GetButton(StorageVersion version)
         {
-            if (version == StorageVersion.VXAce)
-            {
-                var index = GetParameter<int>(1);
-                return buttonIdToName.ContainsKey(index) ? buttonIdToName[index] : $"#{index}";
-            }
+            if (version == StorageVersion.MV)
+                return GetParameter<string>(1).UcFirst();
 
-            return GetParameter<string>(1);
+            var index = GetParameter<int>(1);
+            return buttonIdToName.ContainsKey(index) ? buttonIdToName[index] : $"#{index}";
         }
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            return context.Version == StorageVersion.VXAce
-                ? $"The {GetButton(context.Version)} Button is Being Pressed"
-                : $"Button [{GetButton(context.Version)}] is pressed down";
+            return context.Version == StorageVersion.MV
+                ? $"Button [{GetButton(context.Version)}] is pressed down"
+                : $"The {GetButton(context.Version)} Button is Being Pressed";
         }
     }
 }

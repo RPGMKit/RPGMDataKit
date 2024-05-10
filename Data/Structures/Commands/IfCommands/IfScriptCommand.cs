@@ -4,14 +4,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
     public class IfScriptCommand : IfCommand
     {
-        public string GetScenario()
+        public string GetScript()
         {
             return GetParameter<string>(1);
         }
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            return $"Script: '{GetScenario()}'";
+            return $"Script: {GetScript()}";
         }
     }
 }

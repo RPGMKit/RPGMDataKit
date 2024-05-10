@@ -1,3 +1,4 @@
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
@@ -19,8 +20,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"Self Switch {GetSwitchName()} is ";
+            var str = $"Self Switch {GetSwitchName()}";
 
+            if (context.Version == StorageVersion.MV)
+                str += " is ";
+            else
+                str += " == ";
+            
             switch (GetOnOff())
             {
                 case STATE_ON:

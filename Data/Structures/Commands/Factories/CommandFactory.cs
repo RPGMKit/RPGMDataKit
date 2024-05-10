@@ -145,6 +145,9 @@ public static class CommandFactory
             case CommandCodes.ChangeActorNickname:
                 returnCommand = new ChangeActorNicknameCommand();
                 break;
+            case CommandCodes.ChangeActorProfile:
+                returnCommand = new ChangeActorProfileCommand();
+                break;
             case CommandCodes.TransferPlayer:
                 returnCommand = new TransferPlayerCommand();
                 break;

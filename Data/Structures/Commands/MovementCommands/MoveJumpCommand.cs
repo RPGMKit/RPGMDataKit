@@ -15,12 +15,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
         {
             return GetParameter<int>(1);
         }
+
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var x = GetXDelta() >= 0 ? $"+{GetXDelta()}" : GetXDelta().ToString();
-            var y = GetYDelta() >= 0 ? $"+{GetYDelta()}" : GetYDelta().ToString();
-    
-            return $"{x}, {y}";
+            return $"{GetXDelta():+#;-#;0}, {GetXDelta():+#;-#;0}";
         }
     }
 }

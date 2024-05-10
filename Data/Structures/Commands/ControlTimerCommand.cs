@@ -10,7 +10,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(0) == 0;
         }
 
-        public int? GetSeconds()
+        public int GetSeconds()
         {
             return GetParameter<int>(1);
         }
@@ -23,17 +23,15 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             if (!GetOn())
                 return "Stop";
 
-            var str = $"Start, " + SecondsToTimeStr(GetSeconds() ?? 0);
-            
-            return str;
-        }
+            var sec = GetSeconds();
+            var min = sec / 60;
+            sec %= 60;
 
-        private string SecondsToTimeStr(int value)
-        {
-            var min = value / 60;
-            var sec = value % 60;
 
-            return $"{min} min {sec} sec";
+            if (context.Version == StorageVersion.MV)
+                return $"Start, {min} min {sec} sec";
+            else
+                return $"Startup ({min} min. {sec} sec.)";
         }
     }
 }

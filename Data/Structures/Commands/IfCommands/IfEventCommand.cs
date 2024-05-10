@@ -1,15 +1,16 @@
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
-    public class IfCharacterCommand : IfCommand
+    public class IfEventCommand : IfCommand
     {
         protected const int ORIENTATION_DOWN = 2;
         protected const int ORIENTATION_LEFT = 4;
         protected const int ORIENTATION_RIGHT = 6;
         protected const int ORIENTATION_UP = 8;
 
-        public int GetSourceType()
+        public int GetEventId()
         {
             return GetParameter<int>(1);
         }
@@ -21,21 +22,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = "";
-            switch (GetSourceType())
-            {
-                case -1:
-                    str = "Player";
-                    break;
-                case 0:
-                    str = "This Event";
-                    break;
-                default:
-                    str = $"Event #{GetSourceType()}";
-                    break;
-            }
+            var str = context.NameFormatter.FormatEvent(GetEventId());
 
-            str += " is facing ";
+            if (context.Version == StorageVersion.MV)
+                str += " is facing ";
+            else
+                str += " is Facing ";
             switch (GetOrientation())
             {
                 case ORIENTATION_DOWN:

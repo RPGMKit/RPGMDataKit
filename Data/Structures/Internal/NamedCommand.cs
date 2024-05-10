@@ -64,7 +64,7 @@ public abstract class NamedCommand
         string str = "";
         if (options.WithIndent && Indent > 0)
         {
-            var whiteSpace = context.Version == StorageVersion.VXAce ? "  " : " ";
+            var whiteSpace = context.Version == StorageVersion.MV ? " " : "  ";
 
             str = string.Concat(Enumerable.Repeat(whiteSpace, (int)Indent));
         }

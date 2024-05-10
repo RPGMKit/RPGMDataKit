@@ -19,6 +19,6 @@ public class PlayMovieCommand : NamedCommand
         if (string.IsNullOrEmpty(movie))
             return "None";
 
-        return movie;
+        return $"'{movie}'";
     }
 }

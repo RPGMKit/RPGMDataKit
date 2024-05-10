@@ -90,6 +90,7 @@ public static class CommandCodes
     public const int ChangeActorImages = 322;
     public const int ChangeVehicleImage = 323;
     public const int ChangeActorNickname = 324;
+    public const int ChangeActorProfile = 325;
     public const int ChangeTp = 326;
     public const int ChangeEnemyHp = 331;
     public const int ChangeEnemyMp = 332;

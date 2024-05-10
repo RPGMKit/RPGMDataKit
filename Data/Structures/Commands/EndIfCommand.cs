@@ -14,7 +14,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetCommandName(StorageVersion version)
         {
-            return version == StorageVersion.VXAce ? "Branch End" : "End";
+            return version == StorageVersion.MV ? "End" : "Branch End";
         }
     }
 }

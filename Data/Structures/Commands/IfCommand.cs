@@ -12,7 +12,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetCommandName(StorageVersion version)
         {
-            return version == StorageVersion.VXAce ? "Conditional Branch" : "If";
+            return version == StorageVersion.MV ? "If" : "Conditional Branch";
         }
 
         public override int Code => CommandCodes.If;

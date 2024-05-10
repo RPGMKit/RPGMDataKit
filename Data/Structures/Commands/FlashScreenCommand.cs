@@ -2,7 +2,6 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using MVColor = RPGMakerLibCoreV2.Data.MV.Classes.Color;
-using VXAceColor = RPGMakerLibCoreV2.Data.VXAce.Classes.Custom.Color;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
@@ -13,11 +12,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public IColor GetColor(StorageVersion version)
         {
-            if (version == StorageVersion.VXAce)
-                return GetParameter<VXAceColor>(0);
+            if (version == StorageVersion.MV)
+                return MVColor.FromArray(GetParameter<List<int>>(0));
 
-
-            return MVColor.FromArray(GetParameter<List<int>>(0));
+            return GetParameter<IColor>(0);
         }
 
         public int GetDuration()
