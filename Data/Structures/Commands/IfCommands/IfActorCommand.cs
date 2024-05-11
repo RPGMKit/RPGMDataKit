@@ -5,22 +5,25 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
     public class IfActorCommand : IfCommand
     {
-        protected const int CHECK_IN_PARTY = 0;
-        protected const int CHECK_NAME = 1;
-        protected const int CHECK_CLASS = 2;
-        protected const int CHECK_SKILL = 3;
-        protected const int CHECK_WEAPON_EQUIPPED = 4;
-        protected const int CHECK_ARMOR_EQUIPPED = 5;
-        protected const int CHECK_STATE = 6;
+        public enum CheckType
+        {
+            InParty = 0,
+            Name = 1,
+            Class = 2,
+            Skill = 3,
+            WeaponEquipped = 4,
+            ArmorEquipped = 5,
+            State = 6,
+        }
 
         public int GetUnitId()
         {
             return GetParameter<int>(1);
         }
 
-        public int GetCheckType()
+        public CheckType GetCheckType()
         {
-            return GetParameter<int>(2);
+            return (CheckType)GetParameter<int>(2);
         }
 
         public T? GetCheckParameter<T>()
@@ -34,36 +37,36 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
             switch (GetCheckType())
             {
-                case CHECK_IN_PARTY:
+                case CheckType.InParty:
                     return context.Version == StorageVersion.MV
                         ? $"{unitName} is in the party"
                         : $"{unitName} is In the Party";
-                case CHECK_NAME:
+                case CheckType.Name:
                     var name = GetCheckParameter<string>();
                     return context.Version == StorageVersion.MV
                         ? $"Name of {unitName} is {name}"
                         : $"{unitName} is Name '{name}' Applied";
-                case CHECK_CLASS:
+                case CheckType.Class:
                     var className = context.NameFormatter.FormatClass(GetCheckParameter<int>());
                     return context.Version == StorageVersion.MV
                         ? $"Class of {unitName} is {className}"
                         : $"{unitName} is {className}";
-                case CHECK_SKILL:
+                case CheckType.Skill:
                     var skillName = context.NameFormatter.FormatSkill(GetCheckParameter<int>());
                     return context.Version == StorageVersion.MV
                         ? $"{unitName} has learned {skillName}"
                         : $"{unitName} is {skillName} Learned";
-                case CHECK_WEAPON_EQUIPPED:
+                case CheckType.WeaponEquipped:
                     var weaponName = context.NameFormatter.FormatWeapon(GetCheckParameter<int>());
                     return context.Version == StorageVersion.MV
                         ? $"{unitName} has equipped {weaponName}"
                         : $"{unitName} is {weaponName} Equipped";
-                case CHECK_ARMOR_EQUIPPED:
+                case CheckType.ArmorEquipped:
                     var armorName = context.NameFormatter.FormatArmor(GetCheckParameter<int>());
                     return context.Version == StorageVersion.MV
                         ? $"{unitName} has equipped {armorName}"
                         : $"{unitName} is {armorName} Equipped";
-                case CHECK_STATE:
+                case CheckType.State:
                     var stateName = context.NameFormatter.FormatState(GetCheckParameter<int>());
                     return context.Version == StorageVersion.MV
                         ? $"{unitName} is affected by {stateName}"

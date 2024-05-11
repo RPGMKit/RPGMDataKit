@@ -5,19 +5,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
     public class IfEventCommand : IfCommand
     {
-        protected const int ORIENTATION_DOWN = 2;
-        protected const int ORIENTATION_LEFT = 4;
-        protected const int ORIENTATION_RIGHT = 6;
-        protected const int ORIENTATION_UP = 8;
-
         public int GetEventId()
         {
             return GetParameter<int>(1);
         }
 
-        public int GetOrientation()
+        public Direction GetDirection()
         {
-            return GetParameter<int>(2);
+            return (Direction)GetParameter<int>(2);
         }
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
@@ -28,23 +23,23 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
                 str += " is facing ";
             else
                 str += " is Facing ";
-            switch (GetOrientation())
+            switch (GetDirection())
             {
-                case ORIENTATION_DOWN:
+                case Direction.Down:
                     str += "Down";
                     break;
-                case ORIENTATION_LEFT:
+                case Direction.Left:
                     str += "Left";
                     break;
-                case ORIENTATION_RIGHT:
+                case Direction.Right:
                     str += "Right";
                     break;
-                case ORIENTATION_UP:
+                case Direction.Up:
                     str += "Up";
                     break;
                 default:
                     throw new Exception(
-                        $"Unknown orientation '{GetOrientation()}' for '{GetCommandName(context.Version)}' orientation command");
+                        $"Unknown orientation '{GetDirection()}' for '{GetCommandName(context.Version)}' orientation command");
             }
 
             return str;

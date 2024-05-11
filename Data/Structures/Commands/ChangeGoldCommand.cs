@@ -5,19 +5,26 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ChangeGoldCommand : NamedCommand
     {
-        protected const int OPERATOR_ADD = 0;
-        protected const int OPERATOR_TAKE = 1;
-        protected const int OPERAND_CONSTANT = 0;
-        protected const int OPERAND_VARIABLE = 1;
-
-        public int GetOperator()
+        public enum OperatorType
         {
-            return GetParameter<int>(0);
+            Increase = 0,
+            Decrease = 1,
         }
 
-        public int GetOperandType()
+        public enum OperandType
         {
-            return GetParameter<int>(1);
+            Constant = 0,
+            Variable = 1,
+        }
+
+        public OperatorType GetOperator()
+        {
+            return (OperatorType)GetParameter<int>(0);
+        }
+
+        public OperandType GetOperandType()
+        {
+            return (OperandType)GetParameter<int>(1);
         }
 
         public int GetOperand()
@@ -33,10 +40,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var str = "";
             switch (GetOperator())
             {
-                case OPERATOR_ADD:
+                case OperatorType.Increase:
                     str = "+ ";
                     break;
-                case OPERATOR_TAKE:
+                case OperatorType.Decrease:
                     str = "- ";
                     break;
                 default:
@@ -45,12 +52,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
             switch (GetOperandType())
             {
-                case OPERAND_CONSTANT:
+                case OperandType.Constant:
                     str += GetOperand();
                     break;
-                case OPERAND_VARIABLE:
-                    str += context.NameFormatter.FormatVariable(GetOperand(),
-                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
+                case OperandType.Variable:
+                    str += context.NameFormatter.FormatVariable(GetOperand());
                     break;
                 default:
                     throw new Exception($"Unknown modify gold operand type '{GetOperandType()}'");

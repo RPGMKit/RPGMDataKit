@@ -5,13 +5,16 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ShopProcessingCommand : NamedCommand
     {
-        protected const int TYPE_ITEM = 0;
-        protected const int TYPE_WEAPON = 1;
-        protected const int TYPE_ARMOR = 2;
-
-        public int GetItemType()
+        public enum ItemType
         {
-            return GetParameter<int>(0);
+            Item = 0,
+            Weapon = 1,
+            Armor = 2,
+        }
+
+        public ItemType GetItemType()
+        {
+            return (ItemType)GetParameter<int>(0);
         }
 
         public int GetId()
@@ -41,9 +44,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         {
             var str = GetItemType() switch
             {
-                TYPE_ITEM => context.NameFormatter.FormatItem(GetId()),
-                TYPE_WEAPON => context.NameFormatter.FormatWeapon(GetId()),
-                TYPE_ARMOR => context.NameFormatter.FormatArmor(GetId()),
+                ItemType.Item => context.NameFormatter.FormatItem(GetId()),
+                ItemType.Weapon => context.NameFormatter.FormatWeapon(GetId()),
+                ItemType.Armor => context.NameFormatter.FormatArmor(GetId()),
                 _ => throw new Exception($"Unknown item type {GetItemType()} in shop processing command")
             };
 

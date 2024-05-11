@@ -5,23 +5,30 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
     public class IfVariableCommand : IfCommand
     {
-        protected const int OPERATOR_EQ = 0;
-        protected const int OPERATOR_GTE = 1;
-        protected const int OPERATOR_LTE = 2;
-        protected const int OPERATOR_GT = 3;
-        protected const int OPERATOR_LT = 4;
-        protected const int OPERATOR_NEQ = 5;
-        protected const int OPERAND_CONSTANT = 0;
-        protected const int OPERAND_VARIABLE = 1;
+        public enum OperatorType
+        {
+            Eq = 0,
+            Gte = 1,
+            Lte = 2,
+            Gt = 3,
+            Lt = 4,
+            NEq = 5,
+        }
+
+        public enum OperandType
+        {
+            Constant = 0,
+            Variable = 1,
+        }
 
         public int GetVariable()
         {
             return GetParameter<int>(1);
         }
 
-        public int GetOperandType()
+        public OperandType GetOperandType()
         {
-            return GetParameter<int>(2);
+            return (OperandType)GetParameter<int>(2);
         }
 
         public int GetOperand()
@@ -29,9 +36,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             return GetParameter<int>(3);
         }
 
-        public int GetOperator()
+        public OperatorType GetOperator()
         {
-            return GetParameter<int>(4);
+            return (OperatorType)GetParameter<int>(4);
         }
 
         public void SetVariable(int value)
@@ -46,26 +53,29 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = context.NameFormatter.FormatVariable(GetVariable());
+            var str = context.NameFormatter.FormatVariable(GetVariable(), new()
+            {
+                BracketType = context.Version == StorageVersion.MV ? BracketType.None : null
+            });
 
             switch (GetOperator())
             {
-                case OPERATOR_EQ:
+                case OperatorType.Eq:
                     str += context.Version == StorageVersion.MV ? " = " : " == ";
                     break;
-                case OPERATOR_GTE:
+                case OperatorType.Gte:
                     str += context.Version == StorageVersion.MV ? " ≥ " : " >= ";
                     break;
-                case OPERATOR_LTE:
+                case OperatorType.Lte:
                     str += context.Version == StorageVersion.MV ? " ≤ " : " <= ";
                     break;
-                case OPERATOR_GT:
+                case OperatorType.Gt:
                     str += " > ";
                     break;
-                case OPERATOR_LT:
+                case OperatorType.Lt:
                     str += " < ";
                     break;
-                case OPERATOR_NEQ:
+                case OperatorType.NEq:
                     str += context.Version == StorageVersion.MV ? " ≠ " : " != ";
                     break;
                 default:
@@ -75,11 +85,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
             switch (GetOperandType())
             {
-                case OPERAND_CONSTANT:
+                case OperandType.Constant:
                     str += GetOperand();
                     break;
-                case OPERAND_VARIABLE:
-                    str += context.NameFormatter.FormatVariable(GetOperand());
+                case OperandType.Variable:
+                    str += context.NameFormatter.FormatVariable(GetOperand(), new()
+                    {
+                        BracketType = context.Version == StorageVersion.MV ? BracketType.None : null
+                    });
                     break;
                 default:
                     throw new Exception(

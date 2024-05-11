@@ -5,10 +5,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands;
 
 public class ChangeVehicleImageCommand : NamedCommand
 {
-    protected const int VehicleTypeBoat = 0;
-    protected const int VehicleTypeShip = 1;
-    protected const int VehicleTypeAirship = 2;
-        
     public override int Code => CommandCodes.ChangeVehicleImage;
 
     public override string GetCommandName(StorageVersion version)
@@ -19,9 +15,9 @@ public class ChangeVehicleImageCommand : NamedCommand
             return "Change Vehicle Graphic";
     }
 
-    public int GetVehicle()
+    public VehicleType GetVehicleType()
     {
-        return GetParameter<int>(0);
+        return (VehicleType)GetParameter<int>(0);
     }
 
     public string GetImage()
@@ -36,12 +32,12 @@ public class ChangeVehicleImageCommand : NamedCommand
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
-        var str = GetVehicle() switch
+        var str = GetVehicleType() switch
         {
-            VehicleTypeBoat => "Boat",
-            VehicleTypeShip => "Ship",
-            VehicleTypeAirship => "Airship",
-            _ => throw new Exception($"Unknown vehicle type: {GetVehicle()}")
+            VehicleType.Boat => "Boat",
+            VehicleType.Ship => "Ship",
+            VehicleType.Airship => "Airship",
+            _ => throw new Exception($"Unknown vehicle type: {GetVehicleType()}")
         };
             
         var format = context.Version == StorageVersion.MV ? ", {0}({1})" : ", '{0}', {1}";

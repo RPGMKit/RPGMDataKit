@@ -1,31 +1,41 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.MV.Classes;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ControlVariableCommand : NamedCommand
     {
-        protected const int OPERATOR_SET = 0;
-        protected const int OPERATOR_ADD = 1;
-        protected const int OPERATOR_DEC = 2;
-        protected const int OPERATOR_MUL = 3;
-        protected const int OPERATOR_DIV = 4;
-        protected const int OPERATOR_MOD = 5;
+        public enum OperatorType
+        {
+            Set = 0,
+            Add = 1,
+            Dec = 2,
+            Mul = 3,
+            Div = 4,
+            Mod = 5,
+        }
 
-        protected const int OPERAND_CONSTANT = 0;
-        protected const int OPERAND_VARIABLE = 1;
-        protected const int OPERAND_RANDOM = 2;
-        protected const int OPERAND_GAME_DATA = 3;
-        protected const int OPERAND_SCRIPT = 4;
+        public enum OperandType
+        {
+            Constant = 0,
+            Variable = 1,
+            Random = 2,
+            GameData = 3,
+            Script = 4,
+        }
 
-        protected const int GameDataItemInInventory = 0;
-        protected const int GameDataWeaponInInventory = 1;
-        protected const int GameDataArmorInInventory = 2;
-        protected const int GameDataActor = 3;
-        protected const int GameDataEnemy = 4;
-        protected const int GameDataCharacter = 5;
-        protected const int GameDataParty = 6;
-        protected const int GameDataOther = 7;
+        public enum GameDataType
+        {
+            ItemInInventory = 0,
+            WeaponInInventory = 1,
+            ArmorInInventory = 2,
+            Actor = 3,
+            Enemy = 4,
+            Character = 5,
+            Party = 6,
+            Other = 7,
+        }
 
         private static Dictionary<int, Tuple<string, string>> GameDataActorParameters = new()
         {
@@ -90,14 +100,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(1);
         }
 
-        public int GetOperator()
+        public OperatorType GetOperator()
         {
-            return GetParameter<int>(2);
+            return (OperatorType)GetParameter<int>(2);
         }
 
-        public int GetOperandType()
+        public OperandType GetOperandType()
         {
-            return GetParameter<int>(3);
+            return (OperandType)GetParameter<int>(3);
         }
 
         public T GetOperand1<T>()
@@ -129,6 +139,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                 {
                     str = context.NameFormatter.FormatVariable(GetStartVariable(), new()
                     {
+                        BracketType = BracketType.None,
                         Separator = " ",
                         Prefix = "#",
                         SkipId = false,
@@ -141,22 +152,22 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
             switch (GetOperator())
             {
-                case OPERATOR_SET:
+                case OperatorType.Set:
                     str += " = ";
                     break;
-                case OPERATOR_ADD:
+                case OperatorType.Add:
                     str += " += ";
                     break;
-                case OPERATOR_DEC:
+                case OperatorType.Dec:
                     str += " -= ";
                     break;
-                case OPERATOR_MUL:
+                case OperatorType.Mul:
                     str += " *=";
                     break;
-                case OPERATOR_DIV:
+                case OperatorType.Div:
                     str += " /= ";
                     break;
-                case OPERATOR_MOD:
+                case OperatorType.Mod:
                     str += " %= ";
                     break;
                 default:
@@ -166,40 +177,43 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
             switch (GetOperandType())
             {
-                case OPERAND_CONSTANT:
+                case OperandType.Constant:
                     str += GetOperand1<int>();
                     break;
-                case OPERAND_VARIABLE:
-                    str += context.NameFormatter.FormatVariable(GetOperand1<int>());
+                case OperandType.Variable:
+                    str += context.NameFormatter.FormatVariable(GetOperand1<int>(), new()
+                    {
+                        BracketType = BracketType.None
+                    });
                     break;
-                case OPERAND_RANDOM:
+                case OperandType.Random:
                     if (context.Version == StorageVersion.MV)
                         str += $"Random {GetOperand1<int>()}..{GetOperand2<int>()}";
                     else
                         str += $"Random No. ({GetOperand1<int>()}...{GetOperand2<int>()})";
                     break;
-                case OPERAND_GAME_DATA:
-                    switch (GetOperand1<int>())
+                case OperandType.GameData:
+                    switch ((GameDataType)GetOperand1<int>())
                     {
-                        case GameDataItemInInventory:
+                        case GameDataType.ItemInInventory:
                             if (context.Version == StorageVersion.MV)
                                 str += $"The number of {context.NameFormatter.FormatItem(GetOperand2<int>())}";
                             else
                                 str += $"{context.NameFormatter.FormatItem(GetOperand2<int>())} in Inventory";
                             break;
-                        case GameDataWeaponInInventory:
+                        case GameDataType.WeaponInInventory:
                             if (context.Version == StorageVersion.MV)
                                 str += $"The number of {context.NameFormatter.FormatWeapon(GetOperand2<int>())}";
                             else
                                 str += $"{context.NameFormatter.FormatWeapon(GetOperand2<int>())} in Inventory";
                             break;
-                        case GameDataArmorInInventory:
+                        case GameDataType.ArmorInInventory:
                             if (context.Version == StorageVersion.MV)
                                 str += $"The number of {context.NameFormatter.FormatArmor(GetOperand2<int>())}";
                             else
                                 str += $"{context.NameFormatter.FormatArmor(GetOperand2<int>())} in Inventory";
                             break;
-                        case GameDataActor:
+                        case GameDataType.Actor:
                         {
                             var actorName = context.NameFormatter.FormatActor(GetOperand2<int>());
                             if (!GameDataActorParameters.TryGetValue(GetOperand3<int>(), out var paramName))
@@ -215,7 +229,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                                 str += $"{actorName}'s {name}";
                             break;
                         }
-                        case GameDataEnemy:
+                        case GameDataType.Enemy:
                         {
                             var enemyName = context.NameFormatter.FormatTroopMember(GetOperand2<int>());
                             if (!GameDataEnemyParameters.TryGetValue(GetOperand3<int>(), out var paramName))
@@ -231,10 +245,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                                 str += $"{enemyName}'s {name}";
                             break;
                         }
-                        case GameDataCharacter:
+                        case GameDataType.Character:
                         {
                             var eventName = context.NameFormatter.FormatEvent(GetOperand2<int>());
-                            
+
                             if (!GameDataCharacterParameters.TryGetValue(GetOperand3<int>(), out var paramName))
                                 throw new Exception($"Unknown game data character operand type {GetOperand3<int>()}");
 
@@ -248,13 +262,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                                 str += $"{eventName}'s {name}";
                             break;
                         }
-                        case GameDataParty:
+                        case GameDataType.Party:
                             if (context.Version == StorageVersion.MV)
                                 str += $"Actor ID of the party member #{GetOperand2<int>() + 1}";
                             else
                                 str += $"Member #{GetOperand2<int>() + 1}'s Actor ID";
                             break;
-                        case GameDataOther:
+                        case GameDataType.Other:
                         {
                             if (!GameDataOtherParameters.TryGetValue(GetOperand2<int>(), out var otherName))
                                 throw new Exception($"Unknown game data other operand type {GetOperand2<int>()}");
@@ -271,7 +285,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     }
 
                     break;
-                case OPERAND_SCRIPT:
+                case OperandType.Script:
                     str += GetOperand1<string>();
                     break;
                 default:

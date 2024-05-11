@@ -5,22 +5,18 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
     public class IfVehicleCommand : IfCommand
     {
-        protected const int VehicleTypeBoat = 0;
-        protected const int VehicleTypeShip = 1;
-        protected const int VehicleTypeAirship = 2;
-        
-        public int GetVehicle()
+        public VehicleType GetVehicle()
         {
-            return GetParameter<int>(1);
+            return (VehicleType)GetParameter<int>(1);
         }
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = GetVehicle() switch
             {
-                VehicleTypeBoat => "Boat",
-                VehicleTypeShip => "Ship",
-                VehicleTypeAirship => "Airship",
+                VehicleType.Boat => "Boat",
+                VehicleType.Ship => "Ship",
+                VehicleType.Airship => "Airship",
                 _ => throw new Exception($"Unknown vehicle type: {GetVehicle()}")
             };
 

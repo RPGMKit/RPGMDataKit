@@ -5,7 +5,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class SetWeatherEffectCommand : NamedCommand
     {
-        protected const string TYPE_NONE = "none";
+        protected const string TypeNone = "none";
 
         public override int Code => CommandCodes.SetWeatherEffect;
 
@@ -40,7 +40,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = "";
-            if (GetEffectType() == TYPE_NONE)
+            if (GetEffectType() == TypeNone)
                 str = "None";
             else
                 str = GetEffectType().UcFirst() + $", {GetPower()}";

@@ -5,12 +5,20 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class SelectItemCommand : NamedCommand
     {
-        private static Dictionary<int, string> KeyItemType = new()
+        public enum KeyItemType
         {
-            [1] = "Regular Item",
-            [2] = "Key Item",
-            [3] = "Hidden Item A",
-            [4] = "Hidden Item B",
+            Regular = 1,
+            Key = 2,
+            HiddenA = 3,
+            HiddenB = 4,
+        }
+
+        private static readonly Dictionary<KeyItemType, string> KeyItemTypeNames = new()
+        {
+            [KeyItemType.Regular] = "Regular Item",
+            [KeyItemType.Key] = "Key Item",
+            [KeyItemType.HiddenA] = "Hidden Item A",
+            [KeyItemType.HiddenB] = "Hidden Item B",
         };
 
         public int GetVariable()
@@ -18,9 +26,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(0);
         }
 
-        public int GetItemType()
+        public KeyItemType GetItemType()
         {
-            return GetParameter<int>(1);
+            return (KeyItemType)GetParameter<int>(1);
         }
 
         public override int Code => CommandCodes.SelectItem;
@@ -35,10 +43,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = context.NameFormatter.FormatVariable(GetVariable());
+            var str = context.NameFormatter.FormatVariable(GetVariable(), new()
+            {
+                BracketType = context.Version == StorageVersion.MV ? BracketType.None : null
+            });
+
             if (context.Version == StorageVersion.MV)
             {
-                if (!KeyItemType.TryGetValue(GetItemType(), out var itemType))
+                if (!KeyItemTypeNames.TryGetValue(GetItemType(), out var itemType))
                     throw new Exception($"Unknown item type for select item command: {GetItemType()}");
 
                 str += $", {itemType}";

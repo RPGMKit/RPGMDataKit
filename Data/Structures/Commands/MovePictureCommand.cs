@@ -5,29 +5,31 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class MovePictureCommand : NamedCommand
     {
-        protected const int REFERENCE_UPPERLEFT = 0;
-        protected const int REFERENCE_CENTER = 1;
-        
-        protected const int DESIGNATION_DIRECT = 0;
-        protected const int DESIGNATION_BY_VARIABLE = 1;
-        
-        protected const int BLEND_NORMAL = 0;
-        protected const int BLEND_ADDITIVE = 1;
-        protected const int BLEND_SUB = 2;
+        public enum ReferenceType
+        {
+            UpperLeft = 0,
+            Center = 1,
+        }
 
+        public enum DesignationType
+        {
+            Direct = 0,
+            ByVariable = 1,
+        }
+        
         public int GetLayer()
         {
             return GetParameter<int>(0);
         }
 
-        public int GetReference()
+        public ReferenceType GetReference()
         {
-            return GetParameter<int>(2);
+            return (ReferenceType)GetParameter<int>(2);
         }
 
-        public int GetDesignation()
+        public DesignationType GetDesignation()
         {
-            return GetParameter<int>(3);
+            return (DesignationType)GetParameter<int>(3);
         }
 
         public int GetParam1()
@@ -55,9 +57,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(8);
         }
 
-        public int GetBlendMode()
+        public BlendMode GetBlendMode()
         {
-            return GetParameter<int>(9);
+            return (BlendMode)GetParameter<int>(9);
         }
 
         public int GetFrames()
@@ -81,10 +83,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             
             switch (GetReference())
             {
-                case REFERENCE_UPPERLEFT:
+                case ReferenceType.UpperLeft:
                     str += ", Upper left";
                     break;
-                case REFERENCE_CENTER:
+                case ReferenceType.Center:
                     str += ", Center";
                     break;
                 default:
@@ -93,17 +95,15 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
             switch (GetDesignation())
             {
-                case DESIGNATION_DIRECT:
+                case DesignationType.Direct:
                     str += $" ({GetParam1()},{GetParam2()})";
                     break;
-                case DESIGNATION_BY_VARIABLE:
+                case DesignationType.ByVariable:
                     string var1, var2;
                     if (context.Version == StorageVersion.MV)
                     {
-                        var1 = context.NameFormatter.FormatVariable(GetParam1(),
-                            new() { BracketType = BracketType.Figure });
-                        var2 = context.NameFormatter.FormatVariable(GetParam2(),
-                            new() { BracketType = BracketType.Figure });
+                        var1 = context.NameFormatter.FormatVariable(GetParam1());
+                        var2 = context.NameFormatter.FormatVariable(GetParam2());
 
                         str += $" ({var1},{var2})";
                     }
@@ -130,13 +130,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             str += $", ({GetWidth()}%,{GetHeight()}%), {GetTransparency()}, ";
             switch (GetBlendMode())
             {
-                case BLEND_NORMAL:
+                case BlendMode.Normal:
                     str += "Normal";
                     break;
-                case BLEND_ADDITIVE:
+                case BlendMode.Add:
                     str += context.Version == StorageVersion.MV ? "Additive" : "Add";
                     break;
-                case BLEND_SUB:
+                case BlendMode.Sub:
                     str += context.Version == StorageVersion.MV ? throw new Exception($"Unknown show picture blend mode '{GetBlendMode()}'") : "Sub";
                     break;
                 default:

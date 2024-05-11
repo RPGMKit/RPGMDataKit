@@ -5,14 +5,21 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ChangeSkillCommand : NamedCommand
     {
-        protected const int SOURCE_TYPE_ACTOR = 0;
-        protected const int SOURCE_TYPE_VARIABLE = 1;
-        protected const int OPERATOR_LEARN = 0;
-        protected const int OPERATOR_FORGET = 1;
-
-        public int GetSourceType()
+        public enum SourceType
         {
-            return GetParameter<int>(0);
+            Actor = 0,
+            Variable = 1,
+        }
+        
+        public enum OperatorType
+        {
+            Learn = 0,
+            Forget = 1,
+        }
+        
+        public SourceType GetSourceType()
+        {
+            return (SourceType)GetParameter<int>(0);
         }
 
         public int GetSource()
@@ -20,9 +27,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(1);
         }
 
-        public int GetOperator()
+        public OperatorType GetOperator()
         {
-            return GetParameter<int>(2);
+            return (OperatorType)GetParameter<int>(2);
         }
 
         public int GetSkillId()
@@ -46,12 +53,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var str = "";
             switch (GetSourceType())
             {
-                case SOURCE_TYPE_ACTOR:
+                case SourceType.Actor:
                     str = context.NameFormatter.FormatActor(source);
                     break;
-                case SOURCE_TYPE_VARIABLE:
-                    str = context.NameFormatter.FormatVariable(source,
-                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
+                case SourceType.Variable:
+                    str = context.NameFormatter.FormatVariable(source);
                     break;
                 default:
                     throw new Exception($"Unknown change skill source type '{GetSourceType()}'");
@@ -59,10 +65,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
             switch (GetOperator())
             {
-                case OPERATOR_LEARN:
+                case OperatorType.Learn:
                     str += ", + ";
                     break;
-                case OPERATOR_FORGET:
+                case OperatorType.Forget:
                     str += ", - ";
                     break;
                 default:

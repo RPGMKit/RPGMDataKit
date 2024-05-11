@@ -5,9 +5,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ControlSwitchCommand : NamedCommand
     {
-        protected const int ON_STATE = 0;
-        protected const int OFF_STATE = 1;
-
         public int GetStartSwitch()
         {
             return GetParameter<int>(0);
@@ -18,9 +15,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(1);
         }
 
-        public int GetOnOffState()
+        public OnOffState GetOnOffState()
         {
-            return GetParameter<int>(2);
+            return (OnOffState)GetParameter<int>(2);
         }
 
         public override int Code => CommandCodes.ControlSwitches;
@@ -49,10 +46,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
             switch (GetOnOffState())
             {
-                case ON_STATE:
+                case OnOffState.On:
                     str += " = ON";
                     break;
-                case OFF_STATE:
+                case OnOffState.Off:
                     str += " = OFF";
                     break;
                 default:

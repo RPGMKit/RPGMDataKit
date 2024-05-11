@@ -254,6 +254,9 @@ public class NameFormatter
         options.SkipId ??= _context.Version == StorageVersion.MV;
         options.IdLength ??= 4;
 
+        if (_context.Version == StorageVersion.MV)
+            options.BracketType ??= BracketType.Figure;
+
         var v = _context.Storage.GetVariable(variableId);
 
         var str = FormatSimple(variableId, v, options);

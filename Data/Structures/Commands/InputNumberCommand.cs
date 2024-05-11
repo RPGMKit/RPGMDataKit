@@ -20,7 +20,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            var str = $"{context.NameFormatter.FormatVariable(GetVariable())}, {GetDigitsCount()} digits";
+            var variableName = context.NameFormatter.FormatVariable(GetVariable(), new()
+            {
+                BracketType = context.Version == StorageVersion.MV ? BracketType.None : null
+            });
+            
+            var str = $"{variableName}, {GetDigitsCount()} digits";
 
             return str;
         }

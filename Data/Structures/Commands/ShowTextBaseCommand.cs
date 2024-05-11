@@ -5,13 +5,20 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ShowTextBaseCommand : NamedCommand
     {
-        protected const int BACKGROUND_WINDOW = 0;
-        protected const int BACKGROUND_DIM = 1;
-        protected const int BACKGROUND_TRANSPARENT = 2;
-        protected const int POSITION_TOP = 0;
-        protected const int POSITION_MIDDLE = 1;
-        protected const int POSITION_BOTTOM = 2;
+        public enum BackgroundType
+        {
+            Window = 0,
+            Dim = 1,
+            Transparent = 2,
+        }
 
+        public enum PositionType
+        {
+            Top = 0,
+            Middle = 1,
+            Bottom = 2,
+        }
+        
         public override int Code => CommandCodes.ShowTextBase;
         public override string GetCommandName(StorageVersion version) => "Text";
 
@@ -25,14 +32,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(1);
         }
 
-        public int GetBackground()
+        public BackgroundType GetBackground()
         {
-            return GetParameter<int>(2);
+            return (BackgroundType)GetParameter<int>(2);
         }
 
-        public int GetPosition()
+        public PositionType GetPosition()
         {
-            return GetParameter<int>(3);
+            return (PositionType)GetParameter<int>(3);
         }
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
@@ -46,13 +53,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var background = "";
             switch (GetBackground())
             {
-                case BACKGROUND_WINDOW:
+                case BackgroundType.Window:
                     background = context.Version == StorageVersion.MV ? "Window" : "Normal";
                     break;
-                case BACKGROUND_DIM:
+                case BackgroundType.Dim:
                     background = context.Version == StorageVersion.MV ? "Dim" : "Dark";
                     break;
-                case BACKGROUND_TRANSPARENT:
+                case BackgroundType.Transparent:
                     background = "Transparent";
                     break;
                 default:
@@ -62,13 +69,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var position = "";
             switch (GetPosition())
             {
-                case POSITION_TOP:
+                case PositionType.Top:
                     position = "Top";
                     break;
-                case POSITION_MIDDLE:
+                case PositionType.Middle:
                     position = "Middle";
                     break;
-                case POSITION_BOTTOM:
+                case PositionType.Bottom:
                     position = "Bottom";
                     break;
                 default:

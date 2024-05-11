@@ -5,17 +5,20 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ChangeEnemyStateCommand : NamedCommand
     {
-        protected const int OPERATOR_INCREASE = 0;
-        protected const int OPERATOR_DECREASE = 1;
+        public enum OperatorType
+        {
+            Add = 0,
+            Remove = 1,
+        }
 
         public int GetEnemy()
         {
             return GetParameter<int>(0);
         }
 
-        public int GetOperator()
+        public OperatorType GetOperator()
         {
-            return GetParameter<int>(1);
+            return (OperatorType)GetParameter<int>(1);
         }
 
         public int GetState()
@@ -32,10 +35,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
             switch (GetOperator())
             {
-                case OPERATOR_INCREASE:
+                case OperatorType.Add:
                     str += ", + ";
                     break;
-                case OPERATOR_DECREASE:
+                case OperatorType.Remove:
                     str += ", - ";
                     break;
                 default:

@@ -6,13 +6,16 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class BattleProcessingCommand : NamedCommand
     {
-        protected const int DESIGNATION_TYPE_DIRECT = 0;
-        protected const int DESIGNATION_TYPE_BY_VARIABLE = 1;
-        protected const int DESIGNATION_TYPE_SAME_AS_RANDOM_ENCOUNTER = 2;
-
-        public int GetDesignationType()
+        public enum DesignationType
         {
-            return GetParameter<int>(0);
+            Direct = 0,
+            ByVariable = 1,
+            SameAsRandomEncounter = 2,
+        }
+
+        public DesignationType GetDesignationType()
+        {
+            return (DesignationType)GetParameter<int>(0);
         }
 
         public int GetSource()
@@ -39,16 +42,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var str = "";
             switch (GetDesignationType())
             {
-                case DESIGNATION_TYPE_DIRECT:
+                case DesignationType.Direct:
                     str = context.NameFormatter.FormatTroop(source);
                     break;
-                case DESIGNATION_TYPE_BY_VARIABLE:
-                    if (context.Version == StorageVersion.MV)
-                        str = context.NameFormatter.FormatVariable(source, new() { BracketType = BracketType.Figure });
-                    else
-                        str = context.NameFormatter.FormatVariable(source, new() { SkipName = true });
+                case DesignationType.ByVariable:
+                    str = context.NameFormatter.FormatVariable(source, new() { SkipName = context.Version != StorageVersion.MV });
                     break;
-                case DESIGNATION_TYPE_SAME_AS_RANDOM_ENCOUNTER:
+                case DesignationType.SameAsRandomEncounter:
                     str = "Same as Random Encounter";
                     break;
                 default:

@@ -5,17 +5,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ScrollMapCommand : NamedCommand
     {
-        protected const int DIRECTION_DOWN = 2;
-        protected const int DIRECTION_LEFT = 4;
-        protected const int DIRECTION_RIGHT = 6;
-        protected const int DIRECTION_UP = 8;
-
         public override int Code => CommandCodes.ScrollMap;
         public override string GetCommandName(StorageVersion version) => "Scroll Map";
 
-        public int GetDirection()
+        public Direction GetDirection()
         {
-            return GetParameter<int>(0);
+            return (Direction)GetParameter<int>(0);
         }
 
         public int GetDistance()
@@ -33,16 +28,16 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var str = "";
             switch (GetDirection())
             {
-                case DIRECTION_DOWN:
+                case Direction.Down:
                     str = "Down";
                     break;
-                case DIRECTION_LEFT:
+                case Direction.Left:
                     str = "Left";
                     break;
-                case DIRECTION_RIGHT:
+                case Direction.Right:
                     str = "Right";
                     break;
-                case DIRECTION_UP:
+                case Direction.Up:
                     str = "Up";
                     break;
                 default:

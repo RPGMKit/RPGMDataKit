@@ -1,21 +1,19 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.Abstraction;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ControlSelfSwitchCommand : NamedCommand
     {
-        protected const int ON_STATE = 0;
-        protected const int OFF_STATE = 1;
-
         public string GetSwitch()
         {
             return GetParameter<string>(0);
         }
 
-        public int GetOnOffState()
+        public OnOffState GetOnOffState()
         {
-            return GetParameter<int>(1);
+            return (OnOffState)GetParameter<int>(1);
         }
 
         public override int Code => CommandCodes.ControlSelfSwitch;
@@ -26,10 +24,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var str = GetSwitch();
             switch (GetOnOffState())
             {
-                case ON_STATE:
+                case OnOffState.On:
                     str += " = ON";
                     break;
-                case OFF_STATE:
+                case OnOffState.Off:
                     str += " = OFF";
                     break;
                 default:

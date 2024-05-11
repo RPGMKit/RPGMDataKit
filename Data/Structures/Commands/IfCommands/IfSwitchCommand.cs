@@ -5,17 +5,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
     public class IfSwitchCommand : IfCommand
     {
-        protected const int STATE_ON = 0;
-        protected const int STATE_OFF = 1;
-
         public int GetSwitch()
         {
             return GetParameter<int>(1);
         }
 
-        public int GetOnOff()
+        public OnOffState GetState()
         {
-            return GetParameter<int>(2);
+            return (OnOffState)GetParameter<int>(2);
         }
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
@@ -27,12 +24,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
             else
                 str += " == ";
 
-            switch (GetOnOff())
+            switch (GetState())
             {
-                case STATE_ON:
+                case OnOffState.On:
                     str += "ON";
                     break;
-                case STATE_OFF:
+                case OnOffState.Off:
                     str += "OFF";
                     break;
                 default:

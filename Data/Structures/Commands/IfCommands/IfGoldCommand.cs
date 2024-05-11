@@ -5,18 +5,21 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
 
 public class IfGoldCommand : IfCommand
 {
-    protected const int OPERATOR_GTE = 0;
-    protected const int OPERATOR_LTE = 1;
-    protected const int OPERATOR_LT = 2;
+    public enum OperatorType
+    {
+        Gte = 0,
+        Lte = 1,
+        Lt = 2,
+    }
 
     public int GetAmount()
     {
         return GetParameter<int>(1);
     }
 
-    public int GetOperator()
+    public OperatorType GetOperator()
     {
-        return GetParameter<int>(2);
+        return (OperatorType)GetParameter<int>(2);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
@@ -24,13 +27,13 @@ public class IfGoldCommand : IfCommand
         string fmt;
         switch (GetOperator())
         {
-            case OPERATOR_GTE:
+            case OperatorType.Gte:
                 fmt = context.Version == StorageVersion.MV ? "≥ {0}" : "{0} or more";
                 break;
-            case OPERATOR_LTE:
+            case OperatorType.Lte:
                 fmt = context.Version == StorageVersion.MV ? "≤ {0}" : "{0} or less";
                 break;
-            case OPERATOR_LT:
+            case OperatorType.Lt:
                 fmt = context.Version == StorageVersion.MV ? "< {0}" : "is under {0}";
                 break;
             default:

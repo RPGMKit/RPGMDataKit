@@ -5,8 +5,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ChangePartyMemberCommand : NamedCommand
     {
-        protected const int ACTOR_ADD = 0;
-        protected const int ACTOR_REMOVE = 1;
+        public enum ChangeType
+        {
+            Add = 0,
+            Remove = 1,
+        }
 
         public override int Code => CommandCodes.ChangePartyMember;
         public override string GetCommandName(StorageVersion version) => "Change Party Member";
@@ -16,9 +19,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(0);
         }
 
-        public int GetAddOrRemove()
+        public ChangeType GetChangeType()
         {
-            return GetParameter<int>(1);
+            return (ChangeType)GetParameter<int>(1);
         }
 
         public bool GetInitialize(StorageVersion version)
@@ -29,12 +32,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             var str = "";
-            switch (GetAddOrRemove())
+            switch (GetChangeType())
             {
-                case ACTOR_ADD:
+                case ChangeType.Add:
                     str = "Add";
                     break;
-                case ACTOR_REMOVE:
+                case ChangeType.Remove:
                     str = "Remove";
                     break;
                 default:

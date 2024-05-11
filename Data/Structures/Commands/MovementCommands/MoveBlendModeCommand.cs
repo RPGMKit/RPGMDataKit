@@ -5,10 +5,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
 {
     public class MoveBlendModeCommand : AbstractMoveCommand
     {
-        protected const int BLEND_NORMAL = 0;
-        protected const int BLEND_ADDITIVE = 1;
-        protected const int BLEND_SUB = 2;
-
         public override int Code => MovementRouteCommandCodes.BlendMode;
         public override string GetCommandName(StorageVersion version)
         {
@@ -18,20 +14,20 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
                 return "Change Blending";
         }
 
-        public int GetBlendMode()
+        public BlendMode GetBlendMode()
         {
-            return GetParameter<int>(0);
+            return (BlendMode)GetParameter<int>(0);
         }
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             switch (GetBlendMode())
             {
-                case BLEND_NORMAL:
+                case BlendMode.Normal:
                     return "Normal";
-                case BLEND_ADDITIVE:
+                case BlendMode.Add:
                     return context.Version == StorageVersion.MV ? "Additive" : "Add";
-                case BLEND_SUB:
+                case BlendMode.Sub:
                     return "Sub";
                 default:
                     return $"Unknown ({GetBlendMode()})";

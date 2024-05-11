@@ -5,15 +5,23 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ShowChoicesCommand : NamedCommand
     {
-        protected const int BACKGROUND_WINDOW = 0;
-        protected const int BACKGROUND_DIM = 1;
-        protected const int BACKGROUND_TRANSPARENT = 2;
-        protected const int POSITION_LEFT = 0;
-        protected const int POSITION_RIGHT = 2;
-        protected const int POSITION_MIDDLE = 1;
-        protected const int DEFAULT_CHOICE_NONE = -1;
-        protected const int CANCEL_CHOICE_BRANCH = -2;
-        protected const int CANCEL_CHOICE_DISALLOW = -1;
+        public enum BackgroundType
+        {
+            Window = 0,
+            Dim = 1,
+            Transparent = 2,
+        }
+
+        public enum PositionType
+        {
+            Left = 0,
+            Middle = 1,
+            Right = 2,
+        }
+
+        protected const int DefaultChoiceNone = -1;
+        protected const int CancelChoiceBranch = -2;
+        protected const int CancelChoiceDisallow = -1;
 
         public override int Code => CommandCodes.ShowChoices;
         public override string GetCommandName(StorageVersion version) => "Show Choices";
@@ -33,14 +41,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(2);
         }
 
-        public int GetPosition()
+        public PositionType GetPosition()
         {
-            return GetParameter<int>(3);
+            return (PositionType)GetParameter<int>(3);
         }
 
-        public int GetBackground()
+        public BackgroundType GetBackground()
         {
-            return GetParameter<int>(4);
+            return (BackgroundType)GetParameter<int>(4);
         }
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
@@ -48,13 +56,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var background = "";
             switch (GetBackground())
             {
-                case BACKGROUND_WINDOW:
+                case BackgroundType.Window:
                     background = "Window";
                     break;
-                case BACKGROUND_DIM:
+                case BackgroundType.Dim:
                     background = "Dim";
                     break;
-                case BACKGROUND_TRANSPARENT:
+                case BackgroundType.Transparent:
                     background = "Transparent";
                     break;
                 default:
@@ -64,13 +72,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var position = "";
             switch (GetPosition())
             {
-                case POSITION_RIGHT:
+                case PositionType.Right:
                     position = "Right";
                     break;
-                case POSITION_MIDDLE:
+                case PositionType.Middle:
                     position = "Middle";
                     break;
-                case POSITION_LEFT:
+                case PositionType.Left:
                     position = "Left";
                     break;
                 default:
@@ -80,7 +88,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var defaultChoice = "";
             switch (GetDefaultChoice())
             {
-                case DEFAULT_CHOICE_NONE:
+                case DefaultChoiceNone:
                     defaultChoice = "-";
                     break;
                 default:
@@ -91,8 +99,8 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var cancelChoice = "";
             switch (GetCancelChoice())
             {
-                case CANCEL_CHOICE_BRANCH:
-                case CANCEL_CHOICE_DISALLOW:
+                case CancelChoiceBranch:
+                case CancelChoiceDisallow:
                     cancelChoice = "-";
                     break;
                 default:

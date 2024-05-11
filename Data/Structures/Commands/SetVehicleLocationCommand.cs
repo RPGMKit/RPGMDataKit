@@ -5,21 +5,20 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class SetVehicleLocationCommand : NamedCommand
     {
-        protected const int TRANSFER_DIRECT = 0;
-        protected const int TRANSFER_BY_VARIABLE = 1;
-
-        protected const int VehicleTypeBoat = 0;
-        protected const int VehicleTypeShip = 1;
-        protected const int VehicleTypeAirship = 2;
-
-        public int GetVehicle()
+        public enum DesignationType
         {
-            return GetParameter<int>(0);
+            Direct = 0,
+            ByVariable = 1,
+        }
+        
+        public VehicleType GetVehicleType()
+        {
+            return (VehicleType)GetParameter<int>(0);
         }
 
-        public int GetDesignationType()
+        public DesignationType GetDesignationType()
         {
-            return GetParameter<int>(1);
+            return (DesignationType)GetParameter<int>(1);
         }
 
         public int GetParam1()
@@ -42,17 +41,17 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            string str = GetVehicle() switch
+            string str = GetVehicleType() switch
             {
-                VehicleTypeBoat => "Boat",
-                VehicleTypeShip => "Ship",
-                VehicleTypeAirship => "Airship",
-                _ => throw new Exception($"Unknown vehicle type: {GetVehicle()}")
+                VehicleType.Boat => "Boat",
+                VehicleType.Ship => "Ship",
+                VehicleType.Airship => "Airship",
+                _ => throw new Exception($"Unknown vehicle type: {GetVehicleType()}")
             };
 
             switch (GetDesignationType())
             {
-                case TRANSFER_DIRECT:
+                case DesignationType.Direct:
                     str += ", " + context.NameFormatter.FormatMap(GetParam1());
 
                     if (context.Version == StorageVersion.MV)
@@ -60,16 +59,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
                     else
                         str += $" ({GetParam2():D3},{GetParam3():D3})";
                     break;
-                case TRANSFER_BY_VARIABLE:
+                case DesignationType.ByVariable:
                     string var1, var2, var3;
                     if (context.Version == StorageVersion.MV)
                     {
-                        var1 = context.NameFormatter.FormatVariable(GetParam1(),
-                            new() { BracketType = BracketType.Figure });
-                        var2 = context.NameFormatter.FormatVariable(GetParam2(),
-                            new() { BracketType = BracketType.Figure });
-                        var3 = context.NameFormatter.FormatVariable(GetParam3(),
-                            new() { BracketType = BracketType.Figure });
+                        var1 = context.NameFormatter.FormatVariable(GetParam1());
+                        var2 = context.NameFormatter.FormatVariable(GetParam2());
+                        var3 = context.NameFormatter.FormatVariable(GetParam3());
 
                         str += $", {var1} ({var2},{var3})";
                     }

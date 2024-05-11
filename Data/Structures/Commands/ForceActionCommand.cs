@@ -5,18 +5,32 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ForceActionCommand : NamedCommand
     {
-        private const int SUBJECT_TYPE_ENEMY = 0; 
-        private const int SUBJECT_TYPE_ACTOR = 1;
+        public enum SubjectType
+        {
+            Enemy = 0,
+            Actor = 1,
+        }
 
-        private const int TARGET_LAST_TARGET = -2;
-        private const int TARGET_RANDOM = -1;
-        
+        public enum TargetType
+        {
+            LastTarget = -2,
+            Random = -1,
+            Index1 = 0,
+            Index2 = 1,
+            Index3 = 2,
+            Index4 = 3,
+            Index5 = 4,
+            Index6 = 5,
+            Index7 = 6,
+            Index8 = 7,
+        }
+
         public override int Code => CommandCodes.ForceAction;
         public override string GetCommandName(StorageVersion version) => "Force Action";
 
-        public int GetSubjectType()
+        public SubjectType GetSubjectType()
         {
-            return GetParameter<int>(0);
+            return (SubjectType)GetParameter<int>(0);
         }
 
         public int GetSubject()
@@ -29,18 +43,18 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(2);
         }
         
-        public int GetTarget()
+        public TargetType GetTarget()
         {
-            return GetParameter<int>(3);
+            return (TargetType)GetParameter<int>(3);
         }
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
             string str;
             var subjectType = GetSubjectType();
-            if (subjectType == SUBJECT_TYPE_ENEMY)
+            if (subjectType == SubjectType.Enemy)
                 str = context.NameFormatter.FormatTroopMember(GetSubject());
-            else if (subjectType == SUBJECT_TYPE_ACTOR)
+            else if (subjectType == SubjectType.Actor)
                 str = context.NameFormatter.FormatActor(GetSubject());
             else
                 throw new Exception($"Unknown subject type {subjectType}");
@@ -50,14 +64,14 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var targetIndex = GetTarget();
             switch (targetIndex)
             {
-                case TARGET_LAST_TARGET:
+                case TargetType.LastTarget:
                     str += ", Last Target";
                     break;
-                case TARGET_RANDOM:
+                case TargetType.Random:
                     str += ", Random";
                     break;
                 default:
-                    str += $", Index {targetIndex + 1}";
+                    str += $", Index {(int)targetIndex + 1}";
                     break;
             }
 

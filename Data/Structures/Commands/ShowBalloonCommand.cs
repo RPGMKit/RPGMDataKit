@@ -5,21 +5,24 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ShowBalloonCommand : NamedCommand
     {
-        protected const int ICON_EXCLAMATION = 1;
-        protected const int ICON_QUESTION = 2;
-        protected const int ICON_MUSIC_NOTE = 3;
-        protected const int ICON_HEART = 4;
-        protected const int ICON_ANGER = 5;
-        protected const int ICON_SWEAT = 6;
-        protected const int ICON_COBWEB = 7;
-        protected const int ICON_SILENCE = 8;
-        protected const int ICON_LIGHT_BULB = 9;
-        protected const int ICON_ZZZ = 10;
-        protected const int ICON_USER_DEFINED_1 = 11;
-        protected const int ICON_USER_DEFINED_2 = 12;
-        protected const int ICON_USER_DEFINED_3 = 13;
-        protected const int ICON_USER_DEFINED_4 = 14;
-        protected const int ICON_USER_DEFINED_5 = 15;
+        public enum IconType
+        {
+            Exclamation = 1,
+            Question = 2,
+            MusicNote = 3,
+            Heart = 4,
+            Anger = 5,
+            Sweat = 6,
+            Cobweb = 7,
+            Silence = 8,
+            LightBulb = 9,
+            Zzz = 10,
+            UserDefined1 = 11,
+            UserDefined2 = 12,
+            UserDefined3 = 13,
+            UserDefined4 = 14,
+            UserDefined5 = 15,
+        }
 
         public override int Code => CommandCodes.ShowBaloonIcon;
         public override string GetCommandName(StorageVersion version) => "Show Balloon Icon";
@@ -29,9 +32,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(0);
         }
 
-        public int GetBalloonIcon()
+        public IconType GetBalloonIcon()
         {
-            return GetParameter<int>(1);
+            return (IconType)GetParameter<int>(1);
         }
 
         public bool GetWaitForCompletion()
@@ -47,49 +50,49 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
             switch (GetBalloonIcon())
             {
-                case ICON_EXCLAMATION:
+                case IconType.Exclamation:
                     str += "Exclamation";
                     break;
-                case ICON_QUESTION:
+                case IconType.Question:
                     str += "Question";
                     break;
-                case ICON_MUSIC_NOTE:
+                case IconType.MusicNote:
                     str += "Music Note";
                     break;
-                case ICON_HEART:
+                case IconType.Heart:
                     str += "Heart";
                     break;
-                case ICON_ANGER:
+                case IconType.Anger:
                     str += "Anger";
                     break;
-                case ICON_SWEAT:
+                case IconType.Sweat:
                     str += "Sweat";
                     break;
-                case ICON_COBWEB:
+                case IconType.Cobweb:
                     str += "Cobweb";
                     break;
-                case ICON_SILENCE:
+                case IconType.Silence:
                     str += "Silence";
                     break;
-                case ICON_LIGHT_BULB:
+                case IconType.LightBulb:
                     str += "Light Bulb";
                     break;
-                case ICON_ZZZ:
+                case IconType.Zzz:
                     str += "Zzz";
                     break;
-                case ICON_USER_DEFINED_1:
+                case IconType.UserDefined1:
                     str += "User-defined 1";
                     break;
-                case ICON_USER_DEFINED_2:
+                case IconType.UserDefined2:
                     str += "User-defined 2";
                     break;
-                case ICON_USER_DEFINED_3:
+                case IconType.UserDefined3:
                     str += "User-defined 3";
                     break;
-                case ICON_USER_DEFINED_4:
+                case IconType.UserDefined4:
                     str += "User-defined 4";
                     break;
-                case ICON_USER_DEFINED_5:
+                case IconType.UserDefined5:
                     str += "User-defined 5";
                     break;
                 default:

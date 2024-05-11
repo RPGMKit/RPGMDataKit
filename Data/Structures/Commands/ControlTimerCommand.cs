@@ -5,9 +5,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ControlTimerCommand : NamedCommand
     {
-        public bool GetOn()
+        public OnOffState GetState()
         {
-            return GetParameter<int>(0) == 0;
+            return (OnOffState)GetParameter<int>(0);
         }
 
         public int GetSeconds()
@@ -20,13 +20,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
         public override string GetParametersDescription(EntityContext context, DumpOptions options)
         {
-            if (!GetOn())
+            if (GetState() == OnOffState.Off)
                 return "Stop";
 
             var sec = GetSeconds();
             var min = sec / 60;
             sec %= 60;
-
 
             if (context.Version == StorageVersion.MV)
                 return $"Start, {min} min {sec} sec";

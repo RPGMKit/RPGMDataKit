@@ -5,17 +5,20 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 {
     public class IfEnemyCommand : IfCommand
     {
-        protected const int CHECK_APPEARED = 0;
-        protected const int CHECK_STATE = 1;
+        public enum CheckType
+        {
+            Appeared = 0,
+            State = 1,
+        }
 
         public int GetTroopMemberId()
         {
             return GetParameter<int>(1);
         }
 
-        public int GetCheckType()
+        public CheckType GetCheckType()
         {
-            return GetParameter<int>(2);
+            return (CheckType)GetParameter<int>(2);
         }
 
         public T? GetCheckParameter<T>()
@@ -29,12 +32,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
 
             switch (GetCheckType())
             {
-                case CHECK_APPEARED:
+                case CheckType.Appeared:
                     if (context.Version == StorageVersion.MV)
                         str += " is appeared";
                     str += " is Appeared";
                     break;
-                case CHECK_STATE:
+                case CheckType.State:
                     if (context.Version == StorageVersion.MV)
                         str += $" is affected by {context.NameFormatter.FormatState(GetCheckParameter<int>())}";
                     else

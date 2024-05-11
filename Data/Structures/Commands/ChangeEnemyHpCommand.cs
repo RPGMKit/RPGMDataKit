@@ -5,24 +5,31 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class ChangeEnemyHpCommand : NamedCommand
     {
-        protected const int OPERATOR_INCREASE = 0;
-        protected const int OPERATOR_DECREASE = 1;
-        protected const int OPERAND_CONSTANT = 0;
-        protected const int OPERAND_VARIABLE = 1;
+        public enum OperatorType
+        {
+            Increase = 0,
+            Decrease = 1,
+        }
 
+        public enum OperandType
+        {
+            Constant = 0,
+            Variable = 1,
+        }
+        
         public int GetMember()
         {
             return GetParameter<int>(0);
         }
 
-        public int GetOperator()
+        public OperatorType GetOperator()
         {
-            return GetParameter<int>(1);
+            return (OperatorType)GetParameter<int>(1);
         }
 
-        public int GetOperandType()
+        public OperandType GetOperandType()
         {
-            return GetParameter<int>(2);
+            return (OperandType)GetParameter<int>(2);
         }
 
         public int GetOperand()
@@ -44,10 +51,10 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
             switch (GetOperator())
             {
-                case OPERATOR_INCREASE:
+                case OperatorType.Increase:
                     str += ", + ";
                     break;
-                case OPERATOR_DECREASE:
+                case OperatorType.Decrease:
                     str += ", - ";
                     break;
                 default:
@@ -56,12 +63,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
             switch (GetOperandType())
             {
-                case OPERAND_CONSTANT:
+                case OperandType.Constant:
                     str += GetOperand();
                     break;
-                case OPERAND_VARIABLE:
-                    str += context.NameFormatter.FormatVariable(GetOperand(),
-                        new() { BracketType = context.Version == StorageVersion.MV ? BracketType.Figure : null });
+                case OperandType.Variable:
+                    str += context.NameFormatter.FormatVariable(GetOperand());
                     break;
                 default:
                     throw new Exception($"Unknown modify enemy hp operand type '{GetOperandType()}'");

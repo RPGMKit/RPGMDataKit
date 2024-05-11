@@ -5,9 +5,12 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 {
     public class GetLocationInfoCommand : NamedCommand
     {
-        protected const int DESIGNATION_TYPE_DIRECT = 0;
-        protected const int DESIGNATION_TYPE_BY_VARIABLES = 1;
-
+        public enum DesignationType
+        {
+            Direct = 0,
+            ByVariables = 1,
+        }
+        
         private static Dictionary<int, Tuple<string, string>> InfoTypeIdsMap = new()
         {
             [0] = new("Terrain Tag", "Terrain Tag"),
@@ -29,9 +32,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             return GetParameter<int>(1);
         }
 
-        public int GetDesignationType()
+        public DesignationType GetDesignationType()
         {
-            return GetParameter<int>(2);
+            return (DesignationType)GetParameter<int>(2);
         }
 
         public int GetParam1()
@@ -51,7 +54,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         {
             string str;
             if (context.Version == StorageVersion.MV)
-                str = context.NameFormatter.FormatVariable(GetVariable());
+                str = context.NameFormatter.FormatVariable(GetVariable(), new() { BracketType = BracketType.None });
             else
                 str = context.NameFormatter.FormatVariable(GetVariable(), new()
                 {
@@ -65,25 +68,23 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
             var infoName = context.Version == StorageVersion.MV ? infoTypeName.Item1 : infoTypeName.Item2;
             if (string.IsNullOrEmpty(infoName))
                 throw new Exception($"Unknown info type id {GetInfoType()} for get location info command");
-            
+
             str += $", {infoName}";
 
             switch (GetDesignationType())
             {
-                case DESIGNATION_TYPE_DIRECT:
+                case DesignationType.Direct:
                     if (context.Version == StorageVersion.MV)
                         str += $", ({GetParam1()},{GetParam2()})";
                     else
                         str += $", ({GetParam1():D3},{GetParam2():D3})";
                     break;
-                case DESIGNATION_TYPE_BY_VARIABLES:
+                case DesignationType.ByVariables:
                     string var1, var2;
                     if (context.Version == StorageVersion.MV)
                     {
-                        var1 = context.NameFormatter.FormatVariable(GetParam1(),
-                            new() { BracketType = BracketType.Figure });
-                        var2 = context.NameFormatter.FormatVariable(GetParam2(),
-                            new() { BracketType = BracketType.Figure });
+                        var1 = context.NameFormatter.FormatVariable(GetParam1());
+                        var2 = context.NameFormatter.FormatVariable(GetParam2());
 
                         str += $", ({var1},{var2})";
                     }
@@ -102,6 +103,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
 
                         str += $", Variable {var1}{var2}";
                     }
+
                     break;
                 default:
                     throw new Exception($"Unknown get location info designation type '{GetDesignationType()}'");

@@ -5,17 +5,20 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
 
 public class IfTimerCommand : IfCommand
 {
-    protected const int OPERATOR_GTE = 0;
-    protected const int OPERATOR_LTE = 1;
+    public enum OperatorType
+    {
+        Gte = 0,
+        Lte = 1,
+    }
 
     public int GetSeconds()
     {
         return GetParameter<int>(1);
     }
 
-    public int GetOperator()
+    public OperatorType GetOperator()
     {
-        return GetParameter<int>(2);
+        return (OperatorType)GetParameter<int>(2);
     }
 
     private static string FormatTime(int seconds)
@@ -38,10 +41,10 @@ public class IfTimerCommand : IfCommand
 
         switch (GetOperator())
         {
-            case OPERATOR_GTE:
+            case OperatorType.Gte:
                 op = context.Version == StorageVersion.MV ? "≥" : "more";
                 break;
-            case OPERATOR_LTE:
+            case OperatorType.Lte:
                 op = context.Version == StorageVersion.MV ? "≤" : "less";
                 break;
             default:

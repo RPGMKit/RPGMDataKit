@@ -9,7 +9,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         private const int EquipmentTypeShield = 1;
         private const int EquipmentTypeHead = 2;
         private const int EquipmentTypeBody = 3;
-        private const int EquipmentTypeAccessory = 3;
+        private const int EquipmentTypeAccessory = 4;
 
         private static readonly Dictionary<int, string> LegacyEquipmentTypeToName = new()
         {
