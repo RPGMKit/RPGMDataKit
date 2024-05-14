@@ -87,28 +87,28 @@ public class NameFormatter
         if (actorId == 0)
             return "Entire party";
 
-        var actor = _context.Storage.Actors.Get().Get(actorId);
+        var actor = _context.Storage.Actors.Get(actorId);
 
         return FormatSimple(actorId, actor?.Name, options);
     }
 
     public string FormatAnimation(int animationId)
     {
-        var animation = _context.Storage.Animations.Get().Get(animationId);
+        var animation = _context.Storage.Animations.Get(animationId);
 
         return FormatSimple(animationId, animation?.Name ?? "");
     }
 
     public string FormatArmor(int armorId)
     {
-        var armor = _context.Storage.Armors.Get().Get(armorId);
+        var armor = _context.Storage.Armors.Get(armorId);
 
         return FormatSimple(armorId, armor?.Name, new() { Literal = "A" });
     }
 
     public string FormatClass(int classId)
     {
-        var @class = _context.Storage.Classes.Get().Get(classId);
+        var @class = _context.Storage.Classes.Get(classId);
 
         return FormatSimple(classId, @class?.Name);
     }
@@ -122,7 +122,7 @@ public class NameFormatter
 
     public string FormatEnemy(int enemyId, FormatOptions? options = null)
     {
-        var enemy = _context.Storage.Enemies.Get().Get(enemyId);
+        var enemy = _context.Storage.Enemies.Get(enemyId);
 
         return FormatSimple(enemyId, enemy?.Name, options);
     }
@@ -151,7 +151,7 @@ public class NameFormatter
 
     public string FormatItem(int itemId)
     {
-        var item = _context.Storage.Items.Get().Get(itemId);
+        var item = _context.Storage.Items.Get(itemId);
 
         return FormatSimple(itemId, item?.Name);
     }
@@ -161,21 +161,21 @@ public class NameFormatter
         options ??= new();
         options.SkipId ??= _context.Version == StorageVersion.MV;
 
-        var mapInfo = _context.Storage.MapInfos.Get().Get(mapId);
+        var mapInfo = _context.Storage.MapInfos.Get(mapId);
 
         return FormatSimple(mapId, mapInfo?.Name, options);
     }
     
     public string FormatSkill(int skillId)
     {
-        var skill = _context.Storage.Skills.Get().Get(skillId);
+        var skill = _context.Storage.Skills.Get(skillId);
 
         return FormatSimple(skillId, skill?.Name);
     }
 
     public string FormatState(int stateId)
     {
-        var state = _context.Storage.States.Get().Get(stateId);
+        var state = _context.Storage.States.Get(stateId);
 
         return FormatSimple(stateId, state?.Name);
     }
@@ -206,7 +206,7 @@ public class NameFormatter
 
     public string FormatTileset(int tilesetId)
     {
-        var tileSet = _context.Storage.Tilesets.Get().Get(tilesetId);
+        var tileSet = _context.Storage.Tilesets.Get(tilesetId);
 
         return FormatSimple(tilesetId, tileSet?.Name, new() { BracketType = BracketType.None });
     }
@@ -214,7 +214,7 @@ public class NameFormatter
     // TODO: without bracket check
     public string FormatTroop(int troopId)
     {
-        var troop = _context.Storage.Troops.Get().Get(troopId);
+        var troop = _context.Storage.Troops.Get(troopId);
 
         return FormatSimple(troopId, troop?.Name ?? "", new() { BracketType = BracketType.None });
     }
@@ -277,7 +277,7 @@ public class NameFormatter
 
     public string FormatWeapon(int weaponId)
     {
-        var weapon = _context.Storage.Weapons.Get().Get(weaponId);
+        var weapon = _context.Storage.Weapons.Get(weaponId);
 
         return FormatSimple(weaponId, weapon?.Name, new() { Literal = "W" });
     }

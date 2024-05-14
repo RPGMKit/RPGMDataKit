@@ -29,7 +29,7 @@ public static class TroopHelper
         }
     }
 
-    public static void DumpTroopCommands(Storage storage, string path, DumpOptions? options = null)
+    public static void DumpTroopCommands(Storage storage, string path, DumpOptions options)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
@@ -38,13 +38,15 @@ public static class TroopHelper
         {
             IndentHelper.ValidateIndents(context.Page, storage.Version);
 
-            var fileName = $"Troop_{context.Troop.Id:D3}_Page_{context.PageId}.txt";
-            File.WriteAllText(Path.Combine(path, fileName),
-                CommandContainerHelper.Dump(context.Page, new()
-                {
-                    Storage = storage,
-                    TroopContext = context,
-                }, options));
+            using var file = File.Open(Path.Combine(path, $"Troop_{context.Troop.Id:D3}_Page_{context.PageId}.txt"),
+                FileMode.Create);
+            using var writer = new StreamWriter(file);
+
+            context.Page.Dump(writer, new()
+            {
+                Storage = storage,
+                TroopContext = context,
+            }, options);
         });
     }
 }

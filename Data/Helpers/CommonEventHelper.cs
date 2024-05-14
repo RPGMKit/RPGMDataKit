@@ -24,7 +24,7 @@ public static class CommonEventHelper
         }
     }
 
-    public static void DumpCommonEventCommands(Storage storage, string path, DumpOptions? options = null)
+    public static void DumpCommonEventCommands(Storage storage, string path, DumpOptions options)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
@@ -33,12 +33,15 @@ public static class CommonEventHelper
         {
             IndentHelper.ValidateIndents(context.CommonEvent, storage.Version);
 
-            File.WriteAllText(Path.Combine(path, $"CommonEvent_{context.CommonEvent.Id:D3}.txt"),
-                context.CommonEvent.Dump(new()
-                {
-                    Storage = storage,
-                    CommonEventContext = context,
-                }, options));
+            using var file = File.Open(Path.Combine(path, $"CommonEvent_{context.CommonEvent.Id:D3}.txt"),
+                FileMode.Create);
+            using var writer = new StreamWriter(file);
+
+            context.CommonEvent.Dump(writer, new()
+            {
+                Storage = storage,
+                CommonEventContext = context,
+            }, options);
         });
     }
 }

@@ -16,17 +16,18 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
         //     Storage = storage;
         // }
 
-        public virtual string Dump(EntityContext context, DumpOptions options)
+        public virtual void Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
             switch (options.Format)
             {
                 case DumpFormat.Text:
                     throw new Exception($"'Text' serialization not implemented for '{GetType().Name}'");
                 case DumpFormat.PrettyJson:
-                    return JsonConvert.SerializeObject(this, Formatting.Indented);
+                {
+                    writer.WriteLine(JsonConvert.SerializeObject(this, Formatting.Indented));
+                    return;
+                }
             }
-
-            return "";
         }
     }
 }

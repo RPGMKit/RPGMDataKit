@@ -1,4 +1,5 @@
-﻿using RPGMakerLibCoreV2.Data.Enums;
+﻿using RPGMakerLibCoreV2.Data;
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
@@ -13,21 +14,21 @@ public abstract class Storage
     
     public StorageVersion Version { get; init; }
 
-    public DataHolder<IByIdGetter<IActor>> Actors;
-    public DataHolder<IByIdGetter<IAnimation>> Animations;
-    public DataHolder<IByIdGetter<IArmor>> Armors;
-    public DataHolder<IByIdGetter<IClass>> Classes;
-    public DataHolder<IByIdGetter<ICommonEvent>> CommonEvents;
-    public DataHolder<IByIdGetter<IEnemy>> Enemies;
-    public DataHolder<IByIdGetter<IItem>> Items;
-    public DataHolder<IByIdGetter<ISkill>> Skills;
-    public DataHolder<IByIdGetter<IState>> States;
+    public DataLookupHolder<IActor> Actors;
+    public DataLookupHolder<IAnimation> Animations;
+    public DataLookupHolder<IArmor> Armors;
+    public DataLookupHolder<IClass> Classes;
+    public DataLookupHolder<ICommonEvent> CommonEvents;
+    public DataLookupHolder<IEnemy> Enemies;
+    public DataLookupHolder<IItem> Items;
+    public DataLookupHolder<ISkill> Skills;
+    public DataLookupHolder<IState> States;
     public DataHolder<ISystem> System;
     public MapsHolder Maps;
-    public DataHolder<IByIdGetter<IMapInfo>> MapInfos;
-    public DataHolder<IByIdGetter<ITileSet>> Tilesets;
-    public DataHolder<IByIdGetter<ITroop>> Troops;
-    public DataHolder<IByIdGetter<IWeapon>> Weapons;
+    public DataLookupHolder<IMapInfo> MapInfos;
+    public DataLookupHolder<ITileSet> Tilesets;
+    public DataLookupHolder<ITroop> Troops;
+    public DataLookupHolder<IWeapon> Weapons;
 
     public Storage(string projectPath)
     {
@@ -50,7 +51,7 @@ public abstract class Storage
 
     public ICommonEvent? GetCommonEvent(int id)
     {
-        return CommonEvents.Get().ElementAtOrDefault(id);
+        return CommonEvents.Get(id);
     }
 
     public string GetSwitch(int id)
@@ -65,12 +66,12 @@ public abstract class Storage
 
     public IMapInfo? GetMapInfo(int id)
     {
-        return MapInfos.Get().ElementAtOrDefault(id);
+        return MapInfos.Get(id);
     }
 
     public IAnimation? GetAnimation(int id)
     {
-        return Animations.Get().ElementAtOrDefault(id);
+        return Animations.Get(id);
     }
 
     public IEvent? GetMapEvent(int mapId, int eventId)

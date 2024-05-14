@@ -31,13 +31,17 @@ public class Troop : JsonEntity, ITroop
 
         public IEnumerable<NamedCommand> NamedCommands => List.Select(CommandFactory.Create);
         public IEnumerable<IEventCommand> Commands => List;
-        
-        public override string Dump(EntityContext context, DumpOptions options)
+
+        public override void Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
             if (options.Format == DumpFormat.Text)
-                return CommandContainerHelper.Dump(this, context, options);
+            {
+                foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
+                    writer.WriteLine(line);
+                return;
+            }
 
-            return base.Dump(context, options);
+            base.Dump(writer, context, options);
         }
     }
 

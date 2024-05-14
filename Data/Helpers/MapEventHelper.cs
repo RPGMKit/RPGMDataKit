@@ -38,7 +38,7 @@ public static class MapEventHelper
         }
     }
 
-    public static void DumpMapEventCommands(Storage storage, string path, DumpOptions? options = null)
+    public static void DumpMapEventCommands(Storage storage, string path, DumpOptions options)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
@@ -47,13 +47,16 @@ public static class MapEventHelper
         {
             IndentHelper.ValidateIndents(context.Page, storage.Version);
 
-            var fileName = $"Map_{context.MapId:D3}_Event_{context.Event.Id:D3}_Page_{context.PageId}.txt";
-            File.WriteAllText(Path.Combine(path, fileName),
-                context.Page.Dump(new()
-                {
-                    Storage = storage,
-                    MapEventContext = context,
-                }, options));
+            using var file = File.Open(
+                Path.Combine(path, $"Map_{context.MapId:D3}_Event_{context.Event.Id:D3}_Page_{context.PageId}.txt"),
+                FileMode.Create);
+            using var writer = new StreamWriter(file);
+
+            context.Page.Dump(writer, new()
+            {
+                Storage = storage,
+                MapEventContext = context,
+            }, options);
         });
     }
 }

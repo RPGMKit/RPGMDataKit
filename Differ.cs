@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text;
+using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Diff;
 using RPGMakerLibCoreV2.Diff.Text;
@@ -59,19 +60,22 @@ namespace RPGMakerLibCoreV2
                 if (commonEventA == null && commonEventB == null)
                     continue;
 
-                var textA = commonEventA?.Dump(new()
+                using StringWriter bA = new();
+                using StringWriter bB = new();
+                
+                commonEventA?.Dump(bA,new()
                 {
                     Storage = left,
                     CommonEventContext = new() { CommonEvent = commonEventA },
                 }, options);
-                var textB = commonEventB?.Dump(new()
+                commonEventB?.Dump(bB, new()
                 {
                     Storage = right,
                     CommonEventContext = new() { CommonEvent = commonEventB }
                 }, options);
 
                 var context = new Patch.CommonEvenData() { CommonEventId = i };
-                var diff = CalculateTextDiff(textA, textB);
+                var diff = CalculateTextDiff(bA.ToString(), bB.ToString());
                 if (diff.Item1 == DiffType.Equal)
                     continue;
 
@@ -108,12 +112,15 @@ namespace RPGMakerLibCoreV2
                 
                 var pageB = otherEvent?.Pages.Get(context.PageId);
 
-                var textA = context.Page.Dump(new()
+                using StringWriter bA = new();
+                using StringWriter bB = new();
+                
+                context.Page.Dump(bA, new()
                 {
                     Storage = left,
                     MapEventContext = context,
                 }, options);
-                var textB = pageB?.Dump(new()
+                pageB?.Dump(bB, new()
                 {
                     Storage = right,
                     MapEventContext = new()
@@ -124,11 +131,11 @@ namespace RPGMakerLibCoreV2
                         PageId = context.PageId,
                         Page = pageB
                     }
-                }, options) ?? "";
+                }, options);
 
                 var patchData = new Patch.MapEventPageData() { MapId = context.MapId, EventId = context.Event.Id, PageId = context.PageId };
 
-                var diff = CalculateTextDiff(textA, textB);
+                var diff = CalculateTextDiff(bA.ToString(), bB.ToString());
                 if (diff.Item1 == DiffType.Equal)
                     return;
 
@@ -166,11 +173,15 @@ namespace RPGMakerLibCoreV2
                 var pageA = otherEvent?.Pages.Get(context.PageId);
                 if (pageA == null)
                 {
-                    var diff = CalculateTextDiff("", context.Page.Dump(new()
+                    using var sA = new StringWriter();
+
+                    context.Page.Dump(sA, new()
                     {
                         Storage = right,
                         MapEventContext = context
-                    }, options));
+                    }, options);
+                    
+                    var diff = CalculateTextDiff("", sA.ToString());
                     
                     if (diff.Item1 == DiffType.Equal)
                         return;

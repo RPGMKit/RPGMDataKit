@@ -1,16 +1,18 @@
 ﻿using RPGMakerLibCoreV2.Storages.Abstraction;
 
-namespace RPGMakerLibCoreV2;
+namespace RPGMakerLibCoreV2.Data;
+
+public delegate T HolderLoader<T>(string path);
 
 public class DataHolder<TDataType>
 {
-    private bool _isLoaded;
+    protected bool _isLoaded;
     private readonly Storage _storage;
-    private TDataType _data;
-    private readonly Func<string, TDataType> _loader;
+    protected TDataType _data;
+    private readonly HolderLoader<TDataType> _loader;
     private string _path;
 
-    public DataHolder(Storage storage, string path, Func<string, TDataType> loader)
+    public DataHolder(Storage storage, string path, HolderLoader<TDataType> loader)
     {
         _storage = storage;
         _path = path;

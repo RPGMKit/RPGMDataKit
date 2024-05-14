@@ -14,12 +14,16 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
             [JsonProperty(PropertyName = "list")]
             public LookupList<EventCommand> List { get; set; }
 
-            public override string Dump(EntityContext context, DumpOptions options)
+            public override void Dump(TextWriter writer, EntityContext context, DumpOptions options)
             {
                 if (options.Format == DumpFormat.Text)
-                    return CommandContainerHelper.Dump(this, context, options);
+                {
+                    foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
+                        writer.WriteLine(line);
+                    return;
+                }
 
-                return base.Dump(context, options);
+                base.Dump(writer, context, options);
             }
 
             public IEnumerable<NamedCommand> NamedCommands => List.Select(CommandFactory.Create);

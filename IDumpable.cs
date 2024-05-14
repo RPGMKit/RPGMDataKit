@@ -4,5 +4,5 @@ namespace RPGMakerLibCoreV2;
 
 public interface IDumpable
 {
-    public string Dump(EntityContext context, DumpOptions options);
+    public void Dump(TextWriter writer, EntityContext context, DumpOptions options);
 }

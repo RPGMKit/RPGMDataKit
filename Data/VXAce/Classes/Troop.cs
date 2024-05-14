@@ -83,10 +83,13 @@ public class Troop : RubySerializationEntity, ITroop
 
         public IEnumerable<IEventCommand> Commands => List;
 
-        public string Dump(EntityContext context, DumpOptions options)
+        public void Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
             if (options.Format == DumpFormat.Text)
-                return CommandContainerHelper.Dump(this, context, options);
+            {
+                foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
+                    writer.WriteLine(line);
+            }
 
             throw new NotImplementedException($"{options.Format} not supported");
         }
