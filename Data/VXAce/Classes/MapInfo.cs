@@ -6,7 +6,7 @@ using RubyMarshalCS.Serialization.Enums;
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::MapInfo")]
-class MapInfo : RubySerializationEntity, IMapInfo
+public class MapInfo : RubySerializationEntity, IMapInfo
 {
     [RubyProperty("@expanded")]
     public bool Expanded { get; set; }

@@ -80,7 +80,7 @@ public class Map : RubySerializationEntity, IMap
     [RubyProperty("@data")]
     public Table _Data { get; set; }
 
-    public LookupList<int> Data => _Data.Elements.Cast<int>().ToLookupList();
+    public LookupList<int> Data => _Data.Elements.ConvertAll<int>(_ => Convert.ToInt32(_)).ToLookupList();
 
     [RubyProperty("@events")]
     public LookupMap<Event> _Events { get; set; }

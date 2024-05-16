@@ -4,7 +4,7 @@ using RubyMarshalCS.Serialization.Attributes;
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::System::Terms")]
-class Terms : RubySerializationEntity
+public class Terms : RubySerializationEntity
 {
     [RubyProperty("@params")]
     public List<string> _params;

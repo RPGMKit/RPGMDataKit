@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Helpers;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Diff;
 using RPGMakerLibCoreV2.Diff.Text;
 using RPGMakerLibCoreV2.Storages.Abstraction;
@@ -62,17 +63,13 @@ namespace RPGMakerLibCoreV2
 
                 using StringWriter bA = new();
                 using StringWriter bB = new();
-                
-                commonEventA?.Dump(bA,new()
-                {
-                    Storage = left,
-                    CommonEventContext = new() { CommonEvent = commonEventA },
-                }, options);
-                commonEventB?.Dump(bB, new()
-                {
-                    Storage = right,
-                    CommonEventContext = new() { CommonEvent = commonEventB }
-                }, options);
+
+                commonEventA?.Dump(bA,
+                    new(left, new CommonEventContext() { CommonEvent = commonEventA }, options.ExtendedFormat),
+                    options);
+                commonEventB?.Dump(bB,
+                    new(right, new CommonEventContext() { CommonEvent = commonEventB }, options.ExtendedFormat),
+                    options);
 
                 var context = new Patch.CommonEvenData() { CommonEventId = i };
                 var diff = CalculateTextDiff(bA.ToString(), bB.ToString());
@@ -96,7 +93,7 @@ namespace RPGMakerLibCoreV2
                         //     m.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson }), "").Item2
                     });
                 }
-                
+
                 var otherEvent = right.GetMapEvent(context.MapId, context.Event.Id);
                 if (otherEvent == null)
                 {
@@ -109,31 +106,24 @@ namespace RPGMakerLibCoreV2
                         //     e.Dump(left, new DumpOptions() { Format = DumpFormat.PrettyJson }), "").Item2
                     });
                 }
-                
+
                 var pageB = otherEvent?.Pages.Get(context.PageId);
 
                 using StringWriter bA = new();
                 using StringWriter bB = new();
-                
-                context.Page.Dump(bA, new()
-                {
-                    Storage = left,
-                    MapEventContext = context,
-                }, options);
-                pageB?.Dump(bB, new()
-                {
-                    Storage = right,
-                    MapEventContext = new()
-                    {
-                        MapId = context.MapId,
-                        Map = otherMap,
-                        Event = otherEvent,
-                        PageId = context.PageId,
-                        Page = pageB
-                    }
-                }, options);
 
-                var patchData = new Patch.MapEventPageData() { MapId = context.MapId, EventId = context.Event.Id, PageId = context.PageId };
+                context.Page.Dump(bA, new(left, context, options.ExtendedFormat), options);
+                pageB?.Dump(bB, new(right, new MapEventContext()
+                {
+                    MapId = context.MapId,
+                    Map = otherMap,
+                    Event = otherEvent,
+                    PageId = context.PageId,
+                    Page = pageB
+                }, options.ExtendedFormat), options);
+
+                var patchData = new Patch.MapEventPageData()
+                    { MapId = context.MapId, EventId = context.Event.Id, PageId = context.PageId };
 
                 var diff = CalculateTextDiff(bA.ToString(), bB.ToString());
                 if (diff.Item1 == DiffType.Equal)
@@ -175,11 +165,7 @@ namespace RPGMakerLibCoreV2
                 {
                     using var sA = new StringWriter();
 
-                    context.Page.Dump(sA, new()
-                    {
-                        Storage = right,
-                        MapEventContext = context
-                    }, options);
+                    context.Page.Dump(sA, new(right, context, options.ExtendedFormat), options);
                     
                     var diff = CalculateTextDiff("", sA.ToString());
                     

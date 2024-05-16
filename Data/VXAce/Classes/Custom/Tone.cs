@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
 
 [RubyObject("Tone")]
 [RubyUserSerializer(typeof(ToneSerializer), "")]
-class Tone : RubySerializationEntity, ITone
+public class Tone : RubySerializationEntity, ITone
 {
     [RubyProperty("@red")]
     public double _Red;

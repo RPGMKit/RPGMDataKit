@@ -24,11 +24,11 @@ public class MVStorage : Storage
         CommonEvents = new(this, DataPath("CommonEvents.json"), LoadData<LookupList<CommonEvent>>);
         Enemies = new(this, DataPath("Enemies.json"), LoadData<LookupList<Enemy>>);
         Items = new(this, DataPath("Items.json"), LoadData<LookupList<Item>>);
+        Maps = new(this, MapPath, LoadData<Map>);
+        MapInfos = new(this, DataPath("MapInfos.json"), LoadData<LookupList<MapInfo>>);
         Skills = new(this, DataPath("Skills.json"), LoadData<LookupList<Skill>>);
         States = new(this, DataPath("States.json"), LoadData<LookupList<State>>);
         System = new(this, DataPath("System.json"), LoadData<Data.MV.Classes.System>);
-        Maps = new(this, MapPath, LoadData<Map>);
-        MapInfos = new(this, DataPath("MapInfos.json"), LoadData<LookupList<MapInfo>>);
         Tilesets = new(this, DataPath("TileSets.json"), LoadData<LookupList<Tileset>>);
         Troops = new(this, DataPath("Troops.json"), LoadData<LookupList<Troop>>);
         Weapons = new(this, DataPath("Weapons.json"), LoadData<LookupList<Weapon>>);

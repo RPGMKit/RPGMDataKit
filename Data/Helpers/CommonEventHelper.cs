@@ -37,11 +37,7 @@ public static class CommonEventHelper
                 FileMode.Create);
             using var writer = new StreamWriter(file);
 
-            context.CommonEvent.Dump(writer, new()
-            {
-                Storage = storage,
-                CommonEventContext = context,
-            }, options);
+            context.CommonEvent.Dump(writer, new(storage, context, options.ExtendedFormat), options);
         });
     }
 }

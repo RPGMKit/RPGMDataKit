@@ -29,7 +29,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands
         {
             var moveCommand = Factory(context.Version);
 
-            return moveCommand.AsString(context, new DumpOptions() {AppendCommandCode = options.AppendCommandCode, WithIndent = false, EmphasiseStrings = options.EmphasiseStrings});
+            return moveCommand.AsString(context, new DumpOptions() {AppendCommandCode = options.AppendCommandCode, WithIndent = false, ExtendedFormat = options.ExtendedFormat});
         }
     }
 }

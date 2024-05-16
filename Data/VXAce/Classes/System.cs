@@ -8,7 +8,7 @@ using RubyMarshalCS.Serialization.Attributes;
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::System")]
-class System : RubySerializationEntity, ISystem
+public class System : RubySerializationEntity, ISystem
 {
     [RubyProperty("@_")]
     public int Unk_ { get; set; }

@@ -85,7 +85,14 @@ public static class IndentHelper
                     ++currIndent;
                     break;
                 case CommandCodes.BattleProcessing:
-                    ++currIndent;
+                    var nextCommand = container.Commands.ElementAtOrDefault(i + 1);
+                    if (nextCommand != null && (nextCommand.Code == CommandCodes.BattleProcessingIfLose
+                                                || nextCommand.Code == CommandCodes.BattleProcessingIfEscape
+                                                || nextCommand.Code == CommandCodes.BattleProcessingIfWin))
+                    {
+                        ++currIndent;
+                    }
+
                     break;
                 case CommandCodes.ShowChoices:
                     ++currIndent;

@@ -5,5 +5,5 @@ public class DumpOptions
     public DumpFormat Format = DumpFormat.Text;
     public bool WithIndent = true;
     public bool AppendCommandCode = true;
-    public bool EmphasiseStrings = false;
+    public bool ExtendedFormat = false;
 }

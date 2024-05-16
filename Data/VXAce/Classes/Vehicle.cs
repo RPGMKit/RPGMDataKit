@@ -4,7 +4,7 @@ using RubyMarshalCS.Serialization.Attributes;
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::System::Vehicle")]
-class Vehicle : RubySerializationEntity
+public class Vehicle : RubySerializationEntity
 {
     [RubyProperty("@start_x")]
     public int StartX;

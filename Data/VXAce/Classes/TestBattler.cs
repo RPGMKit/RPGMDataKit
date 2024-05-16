@@ -4,7 +4,7 @@ using RubyMarshalCS.Serialization.Attributes;
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::System::TestBattler")]
-class TestBattler : RubySerializationEntity
+public class TestBattler : RubySerializationEntity
 {
     [RubyProperty("@actor_id")]
     public int ActorId;

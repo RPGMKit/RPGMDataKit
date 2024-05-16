@@ -52,11 +52,7 @@ public static class MapEventHelper
                 FileMode.Create);
             using var writer = new StreamWriter(file);
 
-            context.Page.Dump(writer, new()
-            {
-                Storage = storage,
-                MapEventContext = context,
-            }, options);
+            context.Page.Dump(writer, new(storage, context, options.ExtendedFormat), options);
         });
     }
 }

@@ -1,6 +1,7 @@
 ﻿using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
+using RubyMarshalCS.SpecialTypes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
@@ -14,5 +15,5 @@ public class Feature : RubySerializationEntity
     public int DataId;
 
     [RubyProperty("@value", CandidateFlags.Dynamic)]
-    public object Value;
+    public DynamicProperty<int, double> Value;
 }

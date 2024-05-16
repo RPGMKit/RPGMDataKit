@@ -89,6 +89,7 @@ public class Troop : RubySerializationEntity, ITroop
             {
                 foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
                     writer.WriteLine(line);
+                return;
             }
 
             throw new NotImplementedException($"{options.Format} not supported");

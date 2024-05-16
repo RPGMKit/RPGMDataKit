@@ -42,11 +42,7 @@ public static class TroopHelper
                 FileMode.Create);
             using var writer = new StreamWriter(file);
 
-            context.Page.Dump(writer, new()
-            {
-                Storage = storage,
-                TroopContext = context,
-            }, options);
+            context.Page.Dump(writer, new(storage, context, options.ExtendedFormat), options);
         });
     }
 }

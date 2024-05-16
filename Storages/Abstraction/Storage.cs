@@ -3,7 +3,6 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 using RPGMakerLibCoreV2.Diff;
 
 namespace RPGMakerLibCoreV2.Storages.Abstraction;
@@ -21,11 +20,11 @@ public abstract class Storage
     public DataLookupHolder<ICommonEvent> CommonEvents;
     public DataLookupHolder<IEnemy> Enemies;
     public DataLookupHolder<IItem> Items;
+    public MapsHolder Maps;
+    public DataLookupHolder<IMapInfo> MapInfos;
     public DataLookupHolder<ISkill> Skills;
     public DataLookupHolder<IState> States;
     public DataHolder<ISystem> System;
-    public MapsHolder Maps;
-    public DataLookupHolder<IMapInfo> MapInfos;
     public DataLookupHolder<ITileSet> Tilesets;
     public DataLookupHolder<ITroop> Troops;
     public DataLookupHolder<IWeapon> Weapons;
@@ -48,7 +47,7 @@ public abstract class Storage
     public abstract void SaveData<T>(string relativePath, T data);
 
     public abstract void SaveAll();
-
+    
     public ICommonEvent? GetCommonEvent(int id)
     {
         return CommonEvents.Get(id);
@@ -99,11 +98,7 @@ public abstract class Storage
             int commandIndex = 0;
             foreach (var command in context.CommonEvent.NamedCommands)
             {
-                searcher(command, new()
-                {
-                    Storage = this,
-                    CommonEventContext = context,
-                });
+                searcher(command, new(this, context));
                 ++commandIndex;
             }
         });
@@ -112,10 +107,7 @@ public abstract class Storage
         {
             foreach (var command in context.Page.NamedCommands)
             {
-                searcher(command, new()
-                {
-                    MapEventContext = context
-                });
+                searcher(command, new(this, context));
             }
         });
     }
