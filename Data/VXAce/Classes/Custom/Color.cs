@@ -20,8 +20,27 @@ public class Color : IColor
     [RubyProperty("@alpha")]
     public double _Alpha;
 
-    public int Red => (int)_Red;
-    public int Green => (int)_Green;
-    public int Blue => (int)_Blue;
-    public int Alpha => (int)_Alpha;
+    public int Red
+    {
+        get => (int)_Red;
+        set => _Red = value;
+    }
+    
+    public int Green
+    {
+        get => (int)_Green;
+        set => _Green = value;
+    }
+    
+    public int Blue
+    {
+        get => (int)_Blue;
+        set => _Blue = value;
+    }
+    
+    public int Alpha
+    {
+        get => (int)_Alpha;
+        set => _Alpha = value;
+    }
 }

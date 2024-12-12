@@ -1,52 +1,45 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ScrollMapCommand : NamedCommand
 {
-    public class ScrollMapCommand : NamedCommand
+    public override int Code => CommandCodes.ScrollMap;
+    public override string GetCommandName(StorageVersion version) => "Scroll Map";
+
+    public Direction Direction { get; set; }
+    public int Distance { get; set; }
+    public int Speed { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        public override int Code => CommandCodes.ScrollMap;
-        public override string GetCommandName(StorageVersion version) => "Scroll Map";
+        Direction = (Direction)parameterProvider.GetParameter<int>(0);
+        Distance = parameterProvider.GetParameter<int>(1);
+        Speed = parameterProvider.GetParameter<int>(2);
+    }
 
-        public Direction GetDirection()
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, (int)Direction);
+        parameterProvider.SetParameter(1, Distance);
+        parameterProvider.SetParameter(2, Speed);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = Direction switch
         {
-            return (Direction)GetParameter<int>(0);
-        }
+            Direction.Down => "Down",
+            Direction.Left => "Left",
+            Direction.Right => "Right",
+            Direction.Up => "Up",
+            _ => throw new Exception($"Unknown direction '{Direction}'")
+        };
 
-        public int GetDistance()
-        {
-            return GetParameter<int>(1);
-        }
+        str += $", {Distance}, {Speed}";
 
-        public int GetSpeed()
-        {
-            return GetParameter<int>(2);
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = "";
-            switch (GetDirection())
-            {
-                case Direction.Down:
-                    str = "Down";
-                    break;
-                case Direction.Left:
-                    str = "Left";
-                    break;
-                case Direction.Right:
-                    str = "Right";
-                    break;
-                case Direction.Up:
-                    str = "Up";
-                    break;
-                default:
-                    throw new Exception($"Unknown direction '{GetDirection()}'");
-            }
-
-            str += $", {GetDistance()}, {GetSpeed()}";
-
-            return str;
-        }
+        return str;
     }
 }

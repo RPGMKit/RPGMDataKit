@@ -1,88 +1,73 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ShowTextBaseCommand : NamedCommand
 {
-    public class ShowTextBaseCommand : NamedCommand
+    public override int Code => CommandCodes.ShowTextBase;
+    public override string GetCommandName(StorageVersion version) => "Text";
+    
+    public enum BackgroundType
     {
-        public enum BackgroundType
-        {
-            Window = 0,
-            Dim = 1,
-            Transparent = 2,
-        }
+        Window = 0,
+        Dim = 1,
+        Transparent = 2,
+    }
 
-        public enum PositionType
-        {
-            Top = 0,
-            Middle = 1,
-            Bottom = 2,
-        }
+    public enum PositionType
+    {
+        Top = 0,
+        Middle = 1,
+        Bottom = 2,
+    }
         
-        public override int Code => CommandCodes.ShowTextBase;
-        public override string GetCommandName(StorageVersion version) => "Text";
+    public string Face { get; set; }
+    public int Offset { get; set; }
+    public BackgroundType Background { get; set; }
+    public PositionType Position { get; set; }
 
-        public string GetFace()
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        Face = parameterProvider.GetParameter<string>(0);
+        Offset = parameterProvider.GetParameter<int>(1);
+        Background = (BackgroundType)parameterProvider.GetParameter<int>(2);
+        Position = (PositionType)parameterProvider.GetParameter<int>(3);
+    }
+    
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, Face);
+        parameterProvider.SetParameter(1, Offset);
+        parameterProvider.SetParameter(2, (int)Background);
+        parameterProvider.SetParameter(3, (int)Position);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var face = Face;
+        if (string.IsNullOrWhiteSpace(face))
+            face = context.Version == StorageVersion.MV ? "None" : "-, -";
+        else
+            face = context.Version == StorageVersion.MV ? $"{face}({Offset})" : $"'{face}', {Offset}";
+
+        var background = Background switch
         {
-            return GetParameter<string>(0);
-        }
+            BackgroundType.Window => context.Version == StorageVersion.MV ? "Window" : "Normal",
+            BackgroundType.Dim => context.Version == StorageVersion.MV ? "Dim" : "Dark",
+            BackgroundType.Transparent => "Transparent",
+            _ => throw new Exception($"Unknown background '{Background}'")
+        };
 
-        public int GetOffset()
+        var position = Position switch
         {
-            return GetParameter<int>(1);
-        }
+            PositionType.Top => "Top",
+            PositionType.Middle => "Middle",
+            PositionType.Bottom => "Bottom",
+            _ => throw new Exception($"Unknown position '{Position}'")
+        };
 
-        public BackgroundType GetBackground()
-        {
-            return (BackgroundType)GetParameter<int>(2);
-        }
-
-        public PositionType GetPosition()
-        {
-            return (PositionType)GetParameter<int>(3);
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var face = GetFace();
-            if (string.IsNullOrWhiteSpace(face))
-                face = context.Version == StorageVersion.MV ? "None" : "-, -";
-            else
-                face = context.Version == StorageVersion.MV ? $"{face}({GetOffset()})" : $"'{face}', {GetOffset()}";
-
-            var background = "";
-            switch (GetBackground())
-            {
-                case BackgroundType.Window:
-                    background = context.Version == StorageVersion.MV ? "Window" : "Normal";
-                    break;
-                case BackgroundType.Dim:
-                    background = context.Version == StorageVersion.MV ? "Dim" : "Dark";
-                    break;
-                case BackgroundType.Transparent:
-                    background = "Transparent";
-                    break;
-                default:
-                    throw new Exception($"Unknown background '{GetBackground()}'");
-            }
-
-            var position = "";
-            switch (GetPosition())
-            {
-                case PositionType.Top:
-                    position = "Top";
-                    break;
-                case PositionType.Middle:
-                    position = "Middle";
-                    break;
-                case PositionType.Bottom:
-                    position = "Bottom";
-                    break;
-                default:
-                    throw new Exception($"Unknown position '{GetPosition()}'");
-            }
-
-            return $"{face}, {background}, {position}";
-        }
+        return $"{face}, {background}, {position}";
     }
 }

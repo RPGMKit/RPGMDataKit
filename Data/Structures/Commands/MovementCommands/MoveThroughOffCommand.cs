@@ -1,10 +1,9 @@
 using RPGMakerLibCoreV2.Data.Enums;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
+
+public class MoveThroughOffCommand : AbstractMoveCommand
 {
-    public class MoveThroughOffCommand : AbstractMoveCommand
-    {
-        public override int Code => MovementRouteCommandCodes.ThroughOff;
-        public override string GetCommandName(StorageVersion version) => "Through OFF";
-    }
+    public override int Code => MovementRouteCommandCodes.ThroughOff;
+    public override string GetCommandName(StorageVersion version) => "Through OFF";
 }

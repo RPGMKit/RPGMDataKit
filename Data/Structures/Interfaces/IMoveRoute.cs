@@ -1,6 +1,6 @@
 ﻿namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
-public interface IRoute
+public interface IMoveRoute
 {
     public bool Repeat { get; set; }
 

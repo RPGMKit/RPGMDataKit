@@ -14,7 +14,7 @@ public class MoveCommand : RubySerializationEntity, IMoveCommand
     public int Code { get; set; }
 
     [RubyProperty("@parameters")]
-    public LookupList<object> Parameters;
+    public LookupList<object> Parameters = new();
     
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1;

@@ -1,83 +1,72 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ChangeSkillCommand : NamedCommand
 {
-    public class ChangeSkillCommand : NamedCommand
+    public override int Code => CommandCodes.ChangeSkill;
+
+    public override string GetCommandName(StorageVersion version)
     {
-        public enum SourceType
-        {
-            Actor = 0,
-            Variable = 1,
-        }
+        if (version == StorageVersion.MV)
+            return "Change Skill";
+        else
+            return "Change Skills";
+    }
         
-        public enum OperatorType
-        {
-            Learn = 0,
-            Forget = 1,
-        }
+    public enum SourceType
+    {
+        Actor = 0,
+        Variable = 1,
+    }
         
-        public SourceType GetSourceType()
+    public enum OperatorType
+    {
+        Learn = 0,
+        Forget = 1,
+    }
+        
+    public SourceType SourceT { get; set; }
+    public int SourceId { get; set; }
+    public OperatorType Operator { get; set; }
+    public int SkillId { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        SourceT = (SourceType)parameterProvider.GetParameter<int>(0);
+        SourceId = parameterProvider.GetParameter<int>(1);
+        Operator = (OperatorType)parameterProvider.GetParameter<int>(2);
+        SkillId = parameterProvider.GetParameter<int>(3);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, (int)SourceT);
+        parameterProvider.SetParameter(1, SourceId);
+        parameterProvider.SetParameter(2, (int)Operator);
+        parameterProvider.SetParameter(3, SkillId);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = SourceT switch
         {
-            return (SourceType)GetParameter<int>(0);
-        }
+            SourceType.Actor => context.NameFormatter.FormatActor(SourceId),
+            SourceType.Variable => context.NameFormatter.FormatVariable(SourceId),
+            _ => throw new Exception($"Unknown change skill source type '{SourceT}'")
+        };
 
-        public int GetSource()
+        str += Operator switch
         {
-            return GetParameter<int>(1);
-        }
+            OperatorType.Learn => ", + ",
+            OperatorType.Forget => ", - ",
+            _ => throw new Exception($"Unknown change skill operator '{Operator}'")
+        };
 
-        public OperatorType GetOperator()
-        {
-            return (OperatorType)GetParameter<int>(2);
-        }
+        str += context.NameFormatter.FormatSkill(SkillId);
 
-        public int GetSkillId()
-        {
-            return GetParameter<int>(3);
-        }
-
-        public override int Code => CommandCodes.ChangeSkill;
-
-        public override string GetCommandName(StorageVersion version)
-        {
-            if (version == StorageVersion.MV)
-                return "Change Skill";
-            else
-                return "Change Skills";
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var source = GetSource();
-            var str = "";
-            switch (GetSourceType())
-            {
-                case SourceType.Actor:
-                    str = context.NameFormatter.FormatActor(source);
-                    break;
-                case SourceType.Variable:
-                    str = context.NameFormatter.FormatVariable(source);
-                    break;
-                default:
-                    throw new Exception($"Unknown change skill source type '{GetSourceType()}'");
-            }
-
-            switch (GetOperator())
-            {
-                case OperatorType.Learn:
-                    str += ", + ";
-                    break;
-                case OperatorType.Forget:
-                    str += ", - ";
-                    break;
-                default:
-                    throw new Exception($"Unknown change skill operator type '{GetOperator()}'");
-            }
-
-            str += context.NameFormatter.FormatSkill(GetSkillId());
-
-            return str;
-        }
+        return str;
     }
 }

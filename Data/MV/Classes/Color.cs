@@ -1,8 +1,9 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
-public class Color : IColor
+public class Color : JsonEntity, IColor
 {
     public static Color FromArray(IList<int> list)
     {

@@ -1,21 +1,25 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
+
+public class MoveScriptCommand : AbstractMoveCommand
 {
-    public class MoveScriptCommand : AbstractMoveCommand
+    public override int Code => MovementRouteCommandCodes.Script;
+    public override string GetCommandName(StorageVersion version) => "Script";
+
+    public string Script { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        public override int Code => MovementRouteCommandCodes.Script;
-        public override string GetCommandName(StorageVersion version) => "Script";
-
-        public string GetScript()
-        {
-            return GetParameter<string>(0);
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            return GetScript();
-        }
+        Script = parameterProvider.GetParameter<string>(0);
     }
+    
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, Script);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options) => Script;
 }

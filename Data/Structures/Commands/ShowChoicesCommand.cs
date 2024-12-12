@@ -1,114 +1,86 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ShowChoicesCommand : NamedCommand
 {
-    public class ShowChoicesCommand : NamedCommand
+    public override int Code => CommandCodes.ShowChoices;
+    public override string GetCommandName(StorageVersion version) => "Show Choices";
+    
+    public enum BackgroundType
     {
-        public enum BackgroundType
+        Window = 0,
+        Dim = 1,
+        Transparent = 2,
+    }
+
+    public enum PositionType
+    {
+        Left = 0,
+        Middle = 1,
+        Right = 2,
+    }
+
+    protected const int DefaultChoiceNone = -1;
+    protected const int CancelChoiceBranch = -2;
+    protected const int CancelChoiceDisallow = -1;
+
+    public List<string> Choices { get; set; }
+    public int CancelChoiceIndex { get; set; }
+    public int DefaultChoiceIndex { get; set; }
+    public PositionType Position { get; set; }
+    public BackgroundType Background { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        Choices = parameterProvider.GetParameter<List<string>>(0);;
+        CancelChoiceIndex = parameterProvider.GetParameter<int>(1);
+        DefaultChoiceIndex = parameterProvider.GetParameter<int>(2);
+        Position = parameterProvider.GetParameter<PositionType>(3);
+        Background = parameterProvider.GetParameter<BackgroundType>(4);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, Choices);
+        parameterProvider.SetParameter(1, CancelChoiceIndex);
+        parameterProvider.SetParameter(2, DefaultChoiceIndex);
+        parameterProvider.SetParameter(3, (int)Position);
+        parameterProvider.SetParameter(4, (int)Background);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var background = Background switch
         {
-            Window = 0,
-            Dim = 1,
-            Transparent = 2,
-        }
+            BackgroundType.Window => "Window",
+            BackgroundType.Dim => "Dim",
+            BackgroundType.Transparent => "Transparent",
+            _ => throw new Exception($"Unknown background '{Background}'")
+        };
 
-        public enum PositionType
+        var position = Position switch
         {
-            Left = 0,
-            Middle = 1,
-            Right = 2,
-        }
+            PositionType.Right => "Right",
+            PositionType.Middle => "Middle",
+            PositionType.Left => "Left",
+            _ => throw new Exception($"Unknown position '{Position}'")
+        };
 
-        protected const int DefaultChoiceNone = -1;
-        protected const int CancelChoiceBranch = -2;
-        protected const int CancelChoiceDisallow = -1;
-
-        public override int Code => CommandCodes.ShowChoices;
-        public override string GetCommandName(StorageVersion version) => "Show Choices";
-
-        public List<string> GetChoices()
+        var defaultChoice = DefaultChoiceIndex switch
         {
-            return GetParameter<List<string>>(0);
-        }
+            DefaultChoiceNone => "-",
+            _ => "#" + (DefaultChoiceIndex + 1)
+        };
 
-        public int GetCancelChoice()
+        var cancelChoice = CancelChoiceIndex switch
         {
-            return GetParameter<int>(1);
-        }
+            CancelChoiceBranch or CancelChoiceDisallow => "-",
+            _ => "#" + (CancelChoiceIndex + 1)
+        };
 
-        public int GetDefaultChoice()
-        {
-            return GetParameter<int>(2);
-        }
-
-        public PositionType GetPosition()
-        {
-            return (PositionType)GetParameter<int>(3);
-        }
-
-        public BackgroundType GetBackground()
-        {
-            return (BackgroundType)GetParameter<int>(4);
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var background = "";
-            switch (GetBackground())
-            {
-                case BackgroundType.Window:
-                    background = "Window";
-                    break;
-                case BackgroundType.Dim:
-                    background = "Dim";
-                    break;
-                case BackgroundType.Transparent:
-                    background = "Transparent";
-                    break;
-                default:
-                    throw new Exception($"Unknown background '{GetBackground()}'");
-            }
-
-            var position = "";
-            switch (GetPosition())
-            {
-                case PositionType.Right:
-                    position = "Right";
-                    break;
-                case PositionType.Middle:
-                    position = "Middle";
-                    break;
-                case PositionType.Left:
-                    position = "Left";
-                    break;
-                default:
-                    throw new Exception($"Unknown position '{GetPosition()}'");
-            }
-
-            var defaultChoice = "";
-            switch (GetDefaultChoice())
-            {
-                case DefaultChoiceNone:
-                    defaultChoice = "-";
-                    break;
-                default:
-                    defaultChoice = "#" + (GetDefaultChoice() + 1);
-                    break;
-            }
-
-            var cancelChoice = "";
-            switch (GetCancelChoice())
-            {
-                case CancelChoiceBranch:
-                case CancelChoiceDisallow:
-                    cancelChoice = "-";
-                    break;
-                default:
-                    cancelChoice = "#" + (GetCancelChoice() + 1);
-                    break;
-            }
-
-            return string.Join(", ", GetChoices()) + $", ({background}, {position}, {defaultChoice}, {cancelChoice})";
-        }
+        return string.Join(", ", Choices) + $", ({background}, {position}, {defaultChoice}, {cancelChoice})";
     }
 }

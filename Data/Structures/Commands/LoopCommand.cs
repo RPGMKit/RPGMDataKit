@@ -1,11 +1,10 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class LoopCommand : NamedCommand
 {
-    public class LoopCommand : NamedCommand
-    {
-        public override int Code => CommandCodes.Loop;
-        public override string GetCommandName(StorageVersion version) => "Loop";
-    }
+    public override int Code => CommandCodes.Loop;
+    public override string GetCommandName(StorageVersion version) => "Loop";
 }

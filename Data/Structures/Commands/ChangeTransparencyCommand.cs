@@ -1,11 +1,10 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Abstraction;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ChangeTransparencyCommand : AbstractOnOffCommand
 {
-    public class ChangeTransparencyCommand : AbstractOnOffCommand
-    {
-        public override int Code => CommandCodes.ChangeTransparency;
-        public override string GetCommandName(StorageVersion version) => "Change Transparency";
-    }
+    public override int Code => CommandCodes.ChangeTransparency;
+    public override string GetCommandName(StorageVersion version) => "Change Transparency";
 }

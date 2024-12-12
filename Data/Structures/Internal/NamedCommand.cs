@@ -6,8 +6,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 
 public abstract class NamedCommand
 {
-    public IParameterProvider ParameterProvider { get; set; }
-
     public abstract int Code { get; }
     
     public abstract string GetCommandName(StorageVersion version);
@@ -15,6 +13,14 @@ public abstract class NamedCommand
     public int? Indent { get; set; }
 
     public bool IsSecondary;
+
+    public virtual void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+    }
+
+    public virtual void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+    }
 
     public virtual string GetParametersDescription(EntityContext context, DumpOptions options) => "";
 
@@ -49,14 +55,8 @@ public abstract class NamedCommand
         return !IsSecondary ? GetPrefixSymbol(version) : GetSecondaryPrefixSymbol(version);
     }
 
-    public T? GetParameter<T>(int index)
-    {
-        return ParameterProvider.GetParameter<T>(index);
-    }
-
     public void SetParameter(int index, JToken value)
     {
-        ParameterProvider.SetParameter(index, value);
     }
 
     public string AsString(EntityContext context, DumpOptions options)

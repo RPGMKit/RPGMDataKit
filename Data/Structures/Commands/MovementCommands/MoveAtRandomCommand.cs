@@ -1,10 +1,9 @@
 using RPGMakerLibCoreV2.Data.Enums;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
+
+public class MoveAtRandomCommand : AbstractMoveCommand
 {
-    public class MoveAtRandomCommand : AbstractMoveCommand
-    {
-        public override int Code => MovementRouteCommandCodes.AtRandom;
-        public override string GetCommandName(StorageVersion version) => "Move at Random";
-    }
+    public override int Code => MovementRouteCommandCodes.AtRandom;
+    public override string GetCommandName(StorageVersion version) => "Move at Random";
 }

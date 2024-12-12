@@ -1,42 +1,46 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
+
+public class IfSwitchCommand : IfCommand
 {
-    public class IfSwitchCommand : IfCommand
+    public int SwitchId { get; set; }   
+    public OnOffState State { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        public int GetSwitch()
+        base.Unpack(parameterProvider, version);
+
+        SwitchId = parameterProvider.GetParameter<int>(1);
+        State = (OnOffState)parameterProvider.GetParameter<int>(2);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        base.Pack(parameterProvider, version);
+        
+        parameterProvider.SetParameter(1, SwitchId);
+        parameterProvider.SetParameter(2, (int)State);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = context.NameFormatter.FormatSwitch(SwitchId);
+
+        if (context.Version == StorageVersion.MV)
+            str += " is ";
+        else
+            str += " == ";
+
+        str += State switch
         {
-            return GetParameter<int>(1);
-        }
+            OnOffState.On => "ON",
+            OnOffState.Off => "OFF",
+            _ => throw new Exception($"Unknown ON/OFF state for '{GetCommandName(context.Version)}' switch command")
+        };
 
-        public OnOffState GetState()
-        {
-            return (OnOffState)GetParameter<int>(2);
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = context.NameFormatter.FormatSwitch(GetSwitch());
-
-            if (context.Version == StorageVersion.MV)
-                str += " is ";
-            else
-                str += " == ";
-
-            switch (GetState())
-            {
-                case OnOffState.On:
-                    str += "ON";
-                    break;
-                case OnOffState.Off:
-                    str += "OFF";
-                    break;
-                default:
-                    throw new Exception($"Unknown ON/OFF state for '{GetCommandName(context.Version)}' switch command");
-            }
-
-            return str;
-        }
+        return str;
     }
 }

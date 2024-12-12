@@ -1,28 +1,37 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
+
+public class IfArmorCommand : IfCommand
 {
-    public class IfArmorCommand : IfCommand
+    public int ArmorId { get; set; }
+    public bool IncludeEquipment { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        public int GetArmor()
-        {
-            return GetParameter<int>(1);
-        }
+        base.Unpack(parameterProvider, version);
 
-        public bool GetIncludeEquipment()
-        {
-            return GetParameter<bool>(2);
-        }
+        ArmorId = parameterProvider.GetParameter<int>(1);
+        IncludeEquipment = parameterProvider.GetParameter<bool>(2);
+    }
 
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var armor = context.NameFormatter.FormatArmor(GetArmor());
-            var str = context.Version == StorageVersion.MV ? $"Party has {armor}" : $"{armor} in Inventory";
-            if (GetIncludeEquipment())
-                str += context.Version == StorageVersion.MV ? " (Include Equipment)" : ", Include Equipment";
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        base.Pack(parameterProvider, version);
+        
+        parameterProvider.SetParameter(1, ArmorId);
+        parameterProvider.SetParameter(2, IncludeEquipment);
+    }
 
-            return str;
-        }
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var armor = context.NameFormatter.FormatArmor(ArmorId);
+        var str = context.Version == StorageVersion.MV ? $"Party has {armor}" : $"{armor} in Inventory";
+        if (IncludeEquipment)
+            str += context.Version == StorageVersion.MV ? " (Include Equipment)" : ", Include Equipment";
+
+        return str;
     }
 }

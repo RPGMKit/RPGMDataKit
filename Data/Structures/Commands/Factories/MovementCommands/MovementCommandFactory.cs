@@ -7,7 +7,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.Factories.MovementCommands;
 
 public static class MovementCommandFactory
 {
-    public static NamedCommand Create(IMoveCommand command)
+    public static NamedCommand Create(IMoveCommand command, StorageVersion version)
     {
         NamedCommand returnCommand;
 
@@ -30,7 +30,6 @@ public static class MovementCommandFactory
                 break;
             case MovementRouteCommandCodes.LowerLeft:
                 returnCommand = new MoveLowerLeftCommand();
-                ;
                 break;
             case MovementRouteCommandCodes.LowerRight:
                 returnCommand = new MoveLowerRightCommand();
@@ -156,7 +155,7 @@ public static class MovementCommandFactory
                 throw new Exception($"Unknown movement command code '{command.Code}'");
         }
 
-        returnCommand.ParameterProvider = command.ParameterProvider;
+        returnCommand.Unpack(command.ParameterProvider, version);
         returnCommand.Indent = null;
 
         return returnCommand;

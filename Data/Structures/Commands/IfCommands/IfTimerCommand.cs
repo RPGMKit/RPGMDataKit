@@ -1,4 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
@@ -11,14 +12,23 @@ public class IfTimerCommand : IfCommand
         Lte = 1,
     }
 
-    public int GetSeconds()
+    public int Seconds { get; set; }
+    public OperatorType Operator { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        return GetParameter<int>(1);
+        base.Unpack(parameterProvider, version);
+
+        Seconds = parameterProvider.GetParameter<int>(1);
+        Operator = (OperatorType)parameterProvider.GetParameter<int>(2);
     }
 
-    public OperatorType GetOperator()
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        return (OperatorType)GetParameter<int>(2);
+        base.Pack(parameterProvider, version);
+        
+        parameterProvider.SetParameter(1, Seconds);
+        parameterProvider.SetParameter(2, (int)Operator);
     }
 
     private static string FormatTime(int seconds)
@@ -37,21 +47,14 @@ public class IfTimerCommand : IfCommand
         else
             fmt = "Timer {1} or {0}";
 
-        string op = "";
-
-        switch (GetOperator())
+        var op = Operator switch
         {
-            case OperatorType.Gte:
-                op = context.Version == StorageVersion.MV ? "≥" : "more";
-                break;
-            case OperatorType.Lte:
-                op = context.Version == StorageVersion.MV ? "≤" : "less";
-                break;
-            default:
-                throw new Exception(
-                    $"Unknown operator '{GetOperator()}' for '{GetCommandName(context.Version)}' timer command");
-        }
+            OperatorType.Gte => context.Version == StorageVersion.MV ? "≥" : "more",
+            OperatorType.Lte => context.Version == StorageVersion.MV ? "≤" : "less",
+            _ => throw new Exception(
+                $"Unknown operator '{Operator}' for '{GetCommandName(context.Version)}' timer command")
+        };
 
-        return string.Format(fmt, op, FormatTime(GetSeconds()));
+        return string.Format(fmt, op, FormatTime(Seconds));
     }
 }

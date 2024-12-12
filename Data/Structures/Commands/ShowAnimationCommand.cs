@@ -1,38 +1,41 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ShowAnimationCommand : NamedCommand
 {
-    public class ShowAnimationCommand : NamedCommand
+    public override int Code => CommandCodes.ShowAnimation;
+    public override string GetCommandName(StorageVersion version) => "Show Animation";
+
+    public int EventId { get; set; }
+    public int AnimationId { get; set; }
+    public bool WaitForCompletion { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        public override int Code => CommandCodes.ShowAnimation;
-        public override string GetCommandName(StorageVersion version) => "Show Animation";
+        EventId = parameterProvider.GetParameter<int>(0);
+        AnimationId = parameterProvider.GetParameter<int>(1);
+        WaitForCompletion = parameterProvider.GetParameter<bool>(2);
+    }
 
-        public int GetEvent()
-        {
-            return GetParameter<int>(0);
-        }
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, EventId);
+        parameterProvider.SetParameter(1, AnimationId);
+        parameterProvider.SetParameter(2, WaitForCompletion);
+    }
 
-        public int GetAnimation()
-        {
-            return GetParameter<int>(1);
-        }
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = context.NameFormatter.FormatEvent(EventId);
 
-        public bool GetWaitForCompletion()
-        {
-            return GetParameter<bool>(2);
-        }
+        str += ", " + context.NameFormatter.FormatAnimation(AnimationId);
 
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = context.NameFormatter.FormatEvent(GetEvent());
+        if (WaitForCompletion)
+            str += context.Version == StorageVersion.MV ? " (Wait)" : ", Wait";
 
-            str += ", " + context.NameFormatter.FormatAnimation(GetAnimation());
-
-            if (GetWaitForCompletion())
-                str += context.Version == StorageVersion.MV ? " (Wait)" : ", Wait";
-
-            return str;
-        }
+        return str;
     }
 }

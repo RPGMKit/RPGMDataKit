@@ -1,10 +1,9 @@
 using RPGMakerLibCoreV2.Data.Enums;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
+
+public class MoveUpperRightCommand : AbstractMoveCommand
 {
-    public class MoveUpperRightCommand : AbstractMoveCommand
-    {
-        public override int Code => MovementRouteCommandCodes.UpperRight;
-        public override string GetCommandName(StorageVersion version) => "Move Upper Right";
-    }
+    public override int Code => MovementRouteCommandCodes.UpperRight;
+    public override string GetCommandName(StorageVersion version) => "Move Upper Right";
 }

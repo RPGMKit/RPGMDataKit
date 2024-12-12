@@ -1,4 +1,5 @@
 ﻿using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Helpers;
@@ -280,5 +281,23 @@ public class NameFormatter
         var weapon = _context.Storage.Weapons.Get(weaponId);
 
         return FormatSimple(weaponId, weapon?.Name, new() { Literal = "W" });
+    }
+
+    public string FormatSoundData(IAudioFile data)
+    {
+        if (_context.Version == StorageVersion.MV)
+        {
+            if (string.IsNullOrWhiteSpace(data.Name))
+                return "None";
+
+            return $"{data.Name} ({data.Volume}, {data.Pitch}, {data.Pan})";
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(data.Name))
+                return "(None)";
+
+            return $"'{data.Name}', {data.Volume}, {data.Pitch}";
+        }
     }
 }

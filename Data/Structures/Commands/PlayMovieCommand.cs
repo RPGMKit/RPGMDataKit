@@ -1,4 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -8,17 +9,23 @@ public class PlayMovieCommand : NamedCommand
     public override int Code => CommandCodes.PlayMovie;
     public override string GetCommandName(StorageVersion version) => "Play Movie";
 
-    public string GetMovie()
+    public string Movie { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        return GetParameter<string>(0);
+        Movie = parameterProvider.GetParameter<string>(0);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, Movie);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
-        var movie = GetMovie();
-        if (string.IsNullOrEmpty(movie))
+        if (string.IsNullOrEmpty(Movie))
             return "None";
 
-        return $"'{movie}'";
+        return $"'{Movie}'";
     }
 }

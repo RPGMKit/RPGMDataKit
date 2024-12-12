@@ -1,105 +1,87 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
+
+public class IfVariableCommand : IfCommand
 {
-    public class IfVariableCommand : IfCommand
+    public enum OperatorType
     {
-        public enum OperatorType
+        Eq = 0,
+        Gte = 1,
+        Lte = 2,
+        Gt = 3,
+        Lt = 4,
+        NEq = 5,
+    }
+
+    public enum OperandType
+    {
+        Constant = 0,
+        Variable = 1,
+    }
+    
+    public int VariableId { get; set; }
+    public OperandType Operand { get; set; }
+    public int Value { get; set; }
+    public OperatorType Operator { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        base.Unpack(parameterProvider, version);
+
+        VariableId = parameterProvider.GetParameter<int>(1);
+        Operand = (OperandType)parameterProvider.GetParameter<int>(2);
+        Value = parameterProvider.GetParameter<int>(3);
+        Operator = (OperatorType)parameterProvider.GetParameter<int>(4);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        base.Pack(parameterProvider, version);
+        
+        parameterProvider.SetParameter(1, VariableId);
+        parameterProvider.SetParameter(2, (int)Operand);
+        parameterProvider.SetParameter(3, Value);
+        parameterProvider.SetParameter(4, (int)Operator);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = context.NameFormatter.FormatVariable(VariableId, new()
         {
-            Eq = 0,
-            Gte = 1,
-            Lte = 2,
-            Gt = 3,
-            Lt = 4,
-            NEq = 5,
+            BracketType = context.Version == StorageVersion.MV ? BracketType.None : null
+        });
+
+        str += Operator switch
+        {
+            OperatorType.Eq => context.Version == StorageVersion.MV ? " = " : " == ",
+            OperatorType.Gte => context.Version == StorageVersion.MV ? " ≥ " : " >= ",
+            OperatorType.Lte => context.Version == StorageVersion.MV ? " ≤ " : " <= ",
+            OperatorType.Gt => " > ",
+            OperatorType.Lt => " < ",
+            OperatorType.NEq => context.Version == StorageVersion.MV ? " ≠ " : " != ",
+            _ => throw new Exception(
+                $"Unknown operator {Operator} for '{GetCommandName(context.Version)}' variable command")
+        };
+
+        switch (Operand)
+        {
+            case OperandType.Constant:
+                str += Value;
+                break;
+            case OperandType.Variable:
+                str += context.NameFormatter.FormatVariable(Value, new()
+                {
+                    BracketType = context.Version == StorageVersion.MV ? BracketType.None : null
+                });
+                break;
+            default:
+                throw new Exception(
+                    $"Unknown operand '{Operand}' for '{GetCommandName(context.Version)}' variable command");
         }
 
-        public enum OperandType
-        {
-            Constant = 0,
-            Variable = 1,
-        }
-
-        public int GetVariable()
-        {
-            return GetParameter<int>(1);
-        }
-
-        public OperandType GetOperandType()
-        {
-            return (OperandType)GetParameter<int>(2);
-        }
-
-        public int GetOperand()
-        {
-            return GetParameter<int>(3);
-        }
-
-        public OperatorType GetOperator()
-        {
-            return (OperatorType)GetParameter<int>(4);
-        }
-
-        public void SetVariable(int value)
-        {
-            SetParameter(1, value);
-        }
-
-        public void SetOperand(int value)
-        {
-            SetParameter(3, value);
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = context.NameFormatter.FormatVariable(GetVariable(), new()
-            {
-                BracketType = context.Version == StorageVersion.MV ? BracketType.None : null
-            });
-
-            switch (GetOperator())
-            {
-                case OperatorType.Eq:
-                    str += context.Version == StorageVersion.MV ? " = " : " == ";
-                    break;
-                case OperatorType.Gte:
-                    str += context.Version == StorageVersion.MV ? " ≥ " : " >= ";
-                    break;
-                case OperatorType.Lte:
-                    str += context.Version == StorageVersion.MV ? " ≤ " : " <= ";
-                    break;
-                case OperatorType.Gt:
-                    str += " > ";
-                    break;
-                case OperatorType.Lt:
-                    str += " < ";
-                    break;
-                case OperatorType.NEq:
-                    str += context.Version == StorageVersion.MV ? " ≠ " : " != ";
-                    break;
-                default:
-                    throw new Exception(
-                        $"Unknown operator type {GetOperator()} for '{GetCommandName(context.Version)}' variable command");
-            }
-
-            switch (GetOperandType())
-            {
-                case OperandType.Constant:
-                    str += GetOperand();
-                    break;
-                case OperandType.Variable:
-                    str += context.NameFormatter.FormatVariable(GetOperand(), new()
-                    {
-                        BracketType = context.Version == StorageVersion.MV ? BracketType.None : null
-                    });
-                    break;
-                default:
-                    throw new Exception(
-                        $"Unknown operand type '{GetOperandType()}' for '{GetCommandName(context.Version)}' variable command");
-            }
-
-            return str;
-        }
+        return str;
     }
 }

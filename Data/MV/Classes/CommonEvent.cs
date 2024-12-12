@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
@@ -14,7 +15,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        public IEnumerable<NamedCommand> NamedCommands => List.Select(CommandFactory.Create);
+        public IEnumerable<NamedCommand> NamedCommands => List.Select(_ => CommandFactory.Create(_, StorageVersion.MV));
         public IEnumerable<IEventCommand> Commands => List;
 
         [JsonProperty(PropertyName = "list")]

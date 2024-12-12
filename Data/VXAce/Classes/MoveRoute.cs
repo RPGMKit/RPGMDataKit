@@ -6,7 +6,7 @@ using RubyMarshalCS.Serialization.Enums;
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::MoveRoute")]
-public class MoveRoute : RubySerializationEntity, IRoute
+public class MoveRoute : RubySerializationEntity, IMoveRoute
 {
     [RubyProperty("@repeat")]
     public bool Repeat { get; set; }

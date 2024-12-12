@@ -1,111 +1,91 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ChangeExperienceCommand : NamedCommand
 {
-    public class ChangeExperienceCommand : NamedCommand
+    public override int Code => CommandCodes.ChangeExp;
+    public override string GetCommandName(StorageVersion version)
     {
-        public enum SourceType
+        if (version == StorageVersion.MV)
+            return "Change experience";
+        else
+            return "Change EXP";
+    }
+        
+    public enum SourceType
+    {
+        Actor = 0,
+        Variable = 1,
+    }
+
+    public enum OperatorType
+    {
+        Increase = 0,
+        Decrease = 1,
+    }
+
+    public enum OperandType
+    {
+        Constant = 0,
+        Variable = 1,
+    }
+
+    public SourceType SourceT { get; set; }
+    public int SourceId { get; set; }
+    public OperatorType Operator { get; set; }
+    public OperandType Operand { get; set; }
+    public int Value { get; set; }
+    public bool ShowLevelUp { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        SourceT = (SourceType)parameterProvider.GetParameter<int>(0);
+        SourceId = parameterProvider.GetParameter<int>(1);
+        Operator = (OperatorType)parameterProvider.GetParameter<int>(2);
+        Operand = (OperandType)parameterProvider.GetParameter<int>(3);
+        Value = parameterProvider.GetParameter<int>(4);
+        ShowLevelUp = parameterProvider.GetParameter<bool>(5);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, (int)SourceT);
+        parameterProvider.SetParameter(1, SourceId);
+        parameterProvider.SetParameter(2, (int)Operator);
+        parameterProvider.SetParameter(3, (int)Operand);
+        parameterProvider.SetParameter(4, Value);
+        parameterProvider.SetParameter(5, ShowLevelUp);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = SourceT switch
         {
-            Actor = 0,
-            Variable = 1,
-        }
+            SourceType.Actor => context.NameFormatter.FormatActor(SourceId),
+            SourceType.Variable => context.NameFormatter.FormatVariable(SourceId),
+            _ => throw new Exception($"Unknown change experience source type '{SourceT}'")
+        };
 
-        public enum OperatorType
+        str += Operator switch
         {
-            Increase = 0,
-            Decrease = 1,
-        }
+            OperatorType.Increase => ", + ",
+            OperatorType.Decrease => ", - ",
+            _ => throw new Exception($"Unknown change experience operator '{Operator}'")
+        };
 
-        public enum OperandType
+        str += Operand switch
         {
-            Constant = 0,
-            Variable = 1,
-        }
+            OperandType.Constant => Value,
+            OperandType.Variable => context.NameFormatter.FormatVariable(Value),
+            _ => throw new Exception($"Unknown change experience operand '{Operand}'")
+        };
 
-        public SourceType GetSourceType()
-        {
-            return (SourceType)GetParameter<int>(0);
-        }
+        if (ShowLevelUp)
+            str += " (Show Level Up)";
 
-        public int GetSource()
-        {
-            return GetParameter<int>(1);
-        }
-
-        public OperatorType GetOperator()
-        {
-            return (OperatorType)GetParameter<int>(2);
-        }
-
-        public OperandType GetOperandType()
-        {
-            return (OperandType)GetParameter<int>(3);
-        }
-
-        public int GetOperand()
-        {
-            return GetParameter<int>(4);
-        }
-
-        public bool GetShowLevelup()
-        {
-            return GetParameter<bool>(5);
-        }
-
-        public override int Code => CommandCodes.ChangeExp;
-        public override string GetCommandName(StorageVersion version)
-        {
-            if (version == StorageVersion.MV)
-                return "Change experience";
-            else
-                return "Change EXP";
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var source = GetSource();
-            var str = "";
-            switch (GetSourceType())
-            {
-                case SourceType.Actor:
-                    str = context.NameFormatter.FormatActor(source);
-                    break;
-                case SourceType.Variable:
-                    str = context.NameFormatter.FormatVariable(source);
-                    break;
-                default:
-                    throw new Exception("Unknown change experience source type '{GetSourceType()}'");
-            }
-
-            switch (GetOperator())
-            {
-                case OperatorType.Increase:
-                    str += ", + ";
-                    break;
-                case OperatorType.Decrease:
-                    str += ", - ";
-                    break;
-                default:
-                    throw new Exception($"Unknown change experience operator type '{GetOperator()}'");
-            }
-
-            switch (GetOperandType())
-            {
-                case OperandType.Constant:
-                    str += GetOperand();
-                    break;
-                case OperandType.Variable:
-                    str += context.NameFormatter.FormatVariable(GetOperand());
-                    break;
-                default:
-                    throw new Exception($"Unknown change experience operand type '{GetOperandType()}'");
-            }
-
-            if (GetShowLevelup())
-                str += " (Show Level Up)";
-
-            return str;
-        }
+        return str;
     }
 }

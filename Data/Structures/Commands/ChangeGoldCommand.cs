@@ -1,68 +1,60 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ChangeGoldCommand : NamedCommand
 {
-    public class ChangeGoldCommand : NamedCommand
+    public override int Code => CommandCodes.ChangeGold;
+    public override string GetCommandName(StorageVersion version) => "Change gold";
+        
+    public enum OperatorType
     {
-        public enum OperatorType
+        Increase = 0,
+        Decrease = 1,
+    }
+
+    public enum OperandType
+    {
+        Constant = 0,
+        Variable = 1,
+    }
+
+    public OperatorType Operator { get; set; }
+    public OperandType Operand { get; set; }
+    public int Value { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        Operator = (OperatorType)parameterProvider.GetParameter<int>(0);
+        Operand = (OperandType)parameterProvider.GetParameter<int>(1);
+        Value = parameterProvider.GetParameter<int>(2);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, (int)Operator);
+        parameterProvider.SetParameter(1, (int)Operand);
+        parameterProvider.SetParameter(2, Value);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = Operator switch
         {
-            Increase = 0,
-            Decrease = 1,
-        }
+            OperatorType.Increase => "+ ",
+            OperatorType.Decrease => "- ",
+            _ => throw new Exception($"Unknown modify gold operator '{Operator}'")
+        };
 
-        public enum OperandType
+        str += Operand switch
         {
-            Constant = 0,
-            Variable = 1,
-        }
+            OperandType.Constant => Value,
+            OperandType.Variable => context.NameFormatter.FormatVariable(Value),
+            _ => throw new Exception($"Unknown modify gold operand '{Operand}'")
+        };
 
-        public OperatorType GetOperator()
-        {
-            return (OperatorType)GetParameter<int>(0);
-        }
-
-        public OperandType GetOperandType()
-        {
-            return (OperandType)GetParameter<int>(1);
-        }
-
-        public int GetOperand()
-        {
-            return GetParameter<int>(2);
-        }
-
-        public override int Code => CommandCodes.ChangeGold;
-        public override string GetCommandName(StorageVersion version) => "Change gold";
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = "";
-            switch (GetOperator())
-            {
-                case OperatorType.Increase:
-                    str = "+ ";
-                    break;
-                case OperatorType.Decrease:
-                    str = "- ";
-                    break;
-                default:
-                    throw new Exception($"Unknown modify gold operator type '{GetOperator()}'");
-            }
-
-            switch (GetOperandType())
-            {
-                case OperandType.Constant:
-                    str += GetOperand();
-                    break;
-                case OperandType.Variable:
-                    str += context.NameFormatter.FormatVariable(GetOperand());
-                    break;
-                default:
-                    throw new Exception($"Unknown modify gold operand type '{GetOperandType()}'");
-            }
-
-            return str;
-        }
+        return str;
     }
 }

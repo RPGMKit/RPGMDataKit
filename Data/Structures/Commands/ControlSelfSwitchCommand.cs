@@ -1,40 +1,39 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.Abstraction;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ControlSelfSwitchCommand : NamedCommand
 {
-    public class ControlSelfSwitchCommand : NamedCommand
+    public override int Code => CommandCodes.ControlSelfSwitch;
+    public override string GetCommandName(StorageVersion version) => "Control Self Switch";
+        
+    public string Switch { get; set; }
+    public OnOffState State { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        public string GetSwitch()
+        Switch = parameterProvider.GetParameter<string>(0);
+        State = (OnOffState)parameterProvider.GetParameter<int>(1);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, Switch);
+        parameterProvider.SetParameter(1, (int)State);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = Switch + State switch
         {
-            return GetParameter<string>(0);
-        }
+            OnOffState.On => " = ON",
+            OnOffState.Off => " = OFF",
+            _ => throw new Exception(
+                $"Unknown on/off state {State} for action #{Code} {nameof(ControlSelfSwitchCommand)}")
+        };
 
-        public OnOffState GetOnOffState()
-        {
-            return (OnOffState)GetParameter<int>(1);
-        }
-
-        public override int Code => CommandCodes.ControlSelfSwitch;
-        public override string GetCommandName(StorageVersion version) => "Control Self Switch";
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = GetSwitch();
-            switch (GetOnOffState())
-            {
-                case OnOffState.On:
-                    str += " = ON";
-                    break;
-                case OnOffState.Off:
-                    str += " = OFF";
-                    break;
-                default:
-                    throw new Exception($"Unknown on/off state {GetOnOffState()} for action #{Code} {nameof(ControlSelfSwitchCommand)}");
-            }
-
-            return str;
-        }
+        return str;
     }
 }

@@ -1,61 +1,60 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ChangeParallaxCommand : NamedCommand
 {
-    public class ChangeParallaxCommand : NamedCommand
+    public override int Code => CommandCodes.ChangeParallaxBackground;
+
+    public override string GetCommandName(StorageVersion version)
     {
-        public override int Code => CommandCodes.ChangeParallaxBackground;
+        if (version == StorageVersion.MV)
+            return "Change Parallax";
+        else
+            return "Change Parallax Back";
+    }
+        
+    public string Image { get; set; }
+    public bool LoopHorizontally { get; set; }
+    public bool LoopVertically { get; set; }
+    public int HorizontalScroll { get; set; }
+    public int VerticalScroll { get; set; }
 
-        public override string GetCommandName(StorageVersion version)
-        {
-            if (version == StorageVersion.MV)
-                return "Change Parallax";
-            else
-                return "Change Parallax Back";
-        }
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        Image = parameterProvider.GetParameter<string>(0);
+        LoopHorizontally = parameterProvider.GetParameter<bool>(1);
+        LoopVertically = parameterProvider.GetParameter<bool>(2);
+        HorizontalScroll = parameterProvider.GetParameter<int>(3);
+        VerticalScroll = parameterProvider.GetParameter<int>(4);
+    }
 
-        public string GetImage()
-        {
-            return GetParameter<string>(0);
-        }
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, Image);
+        parameterProvider.SetParameter(1, LoopHorizontally);
+        parameterProvider.SetParameter(2, LoopVertically);
+        parameterProvider.SetParameter(3, HorizontalScroll);
+        parameterProvider.SetParameter(4, VerticalScroll);
+    }
 
-        public bool GetLoopHorizontally()
-        {
-            return GetParameter<bool>(1);
-        }
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = context.Version == StorageVersion.MV ? Image : $"'{Image}'";
 
-        public bool GetLoopVertically()
-        {
-            return GetParameter<bool>(2);
-        }
+        // only in MV down here
+        List<string> p = new();
+        if (LoopHorizontally)
+            p.Add("Loop Horizontally");
 
-        public int GetHorizontalScroll()
-        {
-            return GetParameter<int>(3);
-        }
+        if (LoopVertically)
+            p.Add("Loop Vertically");
 
-        public int GetVerticalScroll()
-        {
-            return GetParameter<int>(4);
-        }
+        if (p.Count > 0)
+            str += " (" + string.Join(", ", p) + ")";
 
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = context.Version == StorageVersion.MV ? GetImage() : $"'{GetImage()}'"; 
-
-            // only in MV down here
-            List<string> p = new();
-            if (GetLoopHorizontally())
-                p.Add("Loop Horizontally");
-
-            if (GetLoopVertically())
-                p.Add("Loop Vertically");
-
-            if (p.Count > 0)
-                str += " (" + string.Join(", ", p) + ")";
-
-            return str;
-        }
+        return str;
     }
 }

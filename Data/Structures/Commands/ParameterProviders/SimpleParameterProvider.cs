@@ -25,4 +25,6 @@ public class SimpleParameterProvider : IParameterProvider
     {
         _parameters.Set(index, value);
     }
+
+    public int Count => _parameters.Count;
 }

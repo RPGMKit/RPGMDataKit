@@ -1,168 +1,137 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ShowPictureCommand : NamedCommand
 {
-    public class ShowPictureCommand : NamedCommand
+    public override int Code => CommandCodes.ShowPicture;
+    public override string GetCommandName(StorageVersion version) => "Show picture";
+    
+    public enum ReferenceType
     {
-        public enum ReferenceType
-        {
-            UpperLeft = 0,
-            Center = 1,
-        }
+        UpperLeft = 0,
+        Center = 1,
+    }
         
-        public enum DesignationType
-        {
-            Direct = 0,
-            ByVariable = 1,
-        }
+    public enum DesignationType
+    {
+        Direct = 0,
+        ByVariable = 1,
+    }
         
-        public int GetLayer()
+    public int Layer { get; set; }
+    public string Picture { get; set; }
+    public ReferenceType Reference { get; set; }
+    public DesignationType Designation { get; set; }
+    public int Param1 { get; set; }
+    public int Param2 { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public int Transparency { get; set; }
+    public BlendMode BlendMode { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        Layer = parameterProvider.GetParameter<int>(0);
+        Picture = parameterProvider.GetParameter<string>(1);
+        Reference = (ReferenceType)parameterProvider.GetParameter<int>(2);
+        Designation = (DesignationType)parameterProvider.GetParameter<int>(3);
+        Param1 = parameterProvider.GetParameter<int>(4);
+        Param2 = parameterProvider.GetParameter<int>(5);
+        Width = parameterProvider.GetParameter<int>(6);
+        Height = parameterProvider.GetParameter<int>(7);    
+        Transparency = parameterProvider.GetParameter<int>(8);
+        BlendMode = (BlendMode)parameterProvider.GetParameter<int>(9);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, Layer);
+        parameterProvider.SetParameter(1, Picture);
+        parameterProvider.SetParameter(2, (int)Reference);
+        parameterProvider.SetParameter(3, (int)Designation);
+        parameterProvider.SetParameter(4, Param1);
+        parameterProvider.SetParameter(5, Param2);
+        parameterProvider.SetParameter(6, Width);
+        parameterProvider.SetParameter(7, Height);
+        parameterProvider.SetParameter(8, Transparency);
+        parameterProvider.SetParameter(9, (int)BlendMode);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var pictureName = Picture;
+        if (string.IsNullOrWhiteSpace(pictureName) && context.Version == StorageVersion.MV)
+            pictureName = "None";
+
+        string str;
+        if (context.Version == StorageVersion.MV)
+            str = $"#{Layer}, {pictureName}, ";
+        else
+            str = $"{Layer}, '{pictureName}', ";
+
+        str += Reference switch
         {
-            return GetParameter<int>(0);
-        }
+            ReferenceType.UpperLeft => "Upper left",
+            ReferenceType.Center => "Center",
+            _ => throw new Exception($"Unknown show picture reference type '{Reference}'")
+        };
 
-        public string GetPicture()
+        switch (Designation)
         {
-            return GetParameter<string>(1);
-        }
+            case DesignationType.Direct:
+                str += $" ({Param1},{Param2})";
+                break;
+            case DesignationType.ByVariable:
+                string var1, var2;
+                if (context.Version == StorageVersion.MV)
+                {
+                    var1 = context.NameFormatter.FormatVariable(Param1);
+                    var2 = context.NameFormatter.FormatVariable(Param2);
 
-        public ReferenceType GetReference()
-        {
-            return (ReferenceType)GetParameter<int>(2);
-        }
-
-        public DesignationType GetDesignationType()
-        {
-            return (DesignationType)GetParameter<int>(3);
-        }
-
-        public int GetParam1()
-        {
-            return GetParameter<int>(4);
-        }
-
-        public int GetParam2()
-        {
-            return GetParameter<int>(5);
-        }
-
-        public void SetY(int value)
-        {
-            SetParameter(5, value);
-        }
-
-        public int GetWidth()
-        {
-            return GetParameter<int>(6);
-        }
-
-        public int GetHeight()
-        {
-            return GetParameter<int>(7);
-        }
-
-        public int GetTransparency()
-        {
-            return GetParameter<int>(8);
-        }
-
-        public BlendMode GetBlendMode()
-        {
-            return (BlendMode)GetParameter<int>(9);
-        }
-
-        public void SetLayer(int value)
-        {
-            SetParameter(0, value);
-        }
-
-        public void SetPicture(string value)
-        {
-            SetParameter(1, value);
-        }
-
-        public override int Code => CommandCodes.ShowPicture;
-        public override string GetCommandName(StorageVersion version) => "Show picture";
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var pictureName = GetPicture();
-            if (string.IsNullOrWhiteSpace(pictureName) && context.Version == StorageVersion.MV)
-                pictureName = "None";
-
-            string str;
-            if (context.Version == StorageVersion.MV)
-                str = $"#{GetLayer()}, {pictureName}, ";
-            else
-                str = $"{GetLayer()}, '{pictureName}', ";
-
-            switch (GetReference())
-            {
-                case ReferenceType.UpperLeft:
-                    str += "Upper left";
-                    break;
-                case ReferenceType.Center:
-                    str += "Center";
-                    break;
-                default:
-                    throw new Exception($"Unknown show picture reference type '{GetReference()}'");
-            }
-
-            switch (GetDesignationType())
-            {
-                case DesignationType.Direct:
-                    str += $" ({GetParam1()},{GetParam2()})";
-                    break;
-                case DesignationType.ByVariable:
-                    string var1, var2;
-                    if (context.Version == StorageVersion.MV)
+                    str += $" ({var1},{var2})";
+                }
+                else
+                {
+                    var1 = context.NameFormatter.FormatVariable(Param1, new()
                     {
-                        var1 = context.NameFormatter.FormatVariable(GetParam1());
-                        var2 = context.NameFormatter.FormatVariable(GetParam2());
-
-                        str += $" ({var1},{var2})";
-                    }
-                    else
+                        SkipTitle = true,
+                        SkipName = true,
+                    });
+                    var2 = context.NameFormatter.FormatVariable(Param2, new()
                     {
-                        var1 = context.NameFormatter.FormatVariable(GetParam1(), new()
-                        {
-                            SkipTitle = true,
-                            SkipName = true,
-                        });
-                        var2 = context.NameFormatter.FormatVariable(GetParam2(), new()
-                        {
-                            SkipTitle = true,
-                            SkipName = true,
-                        });
+                        SkipTitle = true,
+                        SkipName = true,
+                    });
 
-                        str += $" (Variable {var1}{var2})";
-                    }
+                    str += $" (Variable {var1}{var2})";
+                }
 
-                    break;
-                default:
-                    throw new Exception($"Unknown show picture place by type '{GetDesignationType()}'");
-            }
-
-            str += $", ({GetWidth()}%,{GetHeight()}%), {GetTransparency()}, ";
-            switch (GetBlendMode())
-            {
-                case BlendMode.Normal:
-                    str += "Normal";
-                    break;
-                case BlendMode.Add:
-                    str += context.Version == StorageVersion.MV ? "Additive" : "Add";
-                    break;
-                case BlendMode.Sub:
-                    str += context.Version == StorageVersion.MV
-                        ? throw new Exception($"Unknown show picture blend mode '{GetBlendMode()}'")
-                        : "Sub";
-                    break;
-                default:
-                    throw new Exception($"Unknown show picture blend mode '{GetBlendMode()}'");
-            }
-
-            return str;
+                break;
+            default:
+                throw new Exception($"Unknown show picture place by type '{Designation}'");
         }
+
+        str += $", ({Width}%,{Height}%), {Transparency}, ";
+        switch (BlendMode)
+        {
+            case BlendMode.Normal:
+                str += "Normal";
+                break;
+            case BlendMode.Add:
+                str += context.Version == StorageVersion.MV ? "Additive" : "Add";
+                break;
+            case BlendMode.Sub:
+                str += context.Version == StorageVersion.MV
+                    ? throw new Exception($"Unknown show picture blend mode '{BlendMode}'")
+                    : "Sub";
+                break;
+            default:
+                throw new Exception($"Unknown show picture blend mode '{BlendMode}'");
+        }
+
+        return str;
     }
 }

@@ -1,74 +1,65 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ChangeEnemyTpCommand : NamedCommand
 {
-    public class ChangeEnemyTpCommand : NamedCommand
+    public override int Code => CommandCodes.ChangeEnemyTp;
+    public override string GetCommandName(StorageVersion version) => "Change enemy TP";
+        
+    public enum OperatorType
     {
-        public enum OperatorType
+        Increase = 0,
+        Decrease = 1,
+    }
+
+    public enum OperandType
+    {
+        Constant = 0,
+        Variable = 1,
+    }
+
+    public int TroopId { get; set; }
+    public OperatorType Operator { get; set; }
+    public OperandType Operand { get; set; }
+    public int Value { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        TroopId = parameterProvider.GetParameter<int>(0);
+        Operator = (OperatorType)parameterProvider.GetParameter<int>(1);
+        Operand = (OperandType)parameterProvider.GetParameter<int>(2);
+        Value = parameterProvider.GetParameter<int>(3);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, TroopId);
+        parameterProvider.SetParameter(1, (int)Operator);
+        parameterProvider.SetParameter(2, (int)Operand);
+        parameterProvider.SetParameter(3, Value);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = context.NameFormatter.FormatTroopMember(TroopId);
+
+        str += Operator switch
         {
-            Increase = 0,
-            Decrease = 1,
-        }
+            OperatorType.Increase => ", + ",
+            OperatorType.Decrease => ", - ",
+            _ => throw new Exception($"Unknown modify enemy tp operator '{Operator}'")
+        };
 
-        public enum OperandType
+        str += Operand switch
         {
-            Constant = 0,
-            Variable = 1,
-        }
+            OperandType.Constant => Value,
+            OperandType.Variable => context.NameFormatter.FormatVariable(Value),
+            _ => throw new Exception($"Unknown modify enemy tp operand '{Operand}'")
+        };
 
-        public int GetEnemy()
-        {
-            return GetParameter<int>(0);
-        }
-
-        public OperatorType GetOperator()
-        {
-            return (OperatorType)GetParameter<int>(1);
-        }
-
-        public OperandType GetOperandType()
-        {
-            return (OperandType)GetParameter<int>(2);
-        }
-
-        public int GetOperand()
-        {
-            return GetParameter<int>(3);
-        }
-
-        public override int Code => CommandCodes.ChangeEnemyTp;
-        public override string GetCommandName(StorageVersion version) => "Change enemy TP";
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = context.NameFormatter.FormatTroopMember(GetEnemy());
-
-            switch (GetOperator())
-            {
-                case OperatorType.Increase:
-                    str += ", + ";
-                    break;
-                case OperatorType.Decrease:
-                    str += ", - ";
-                    break;
-                default:
-                    throw new Exception($"Unknown modify enemy tp operator type '{GetOperator()}'");
-            }
-
-            switch (GetOperandType())
-            {
-                case OperandType.Constant:
-                    str += GetOperand();
-                    break;
-                case OperandType.Variable:
-                    str += context.NameFormatter.FormatVariable(GetOperand());
-                    break;
-                default:
-                    throw new Exception($"Unknown modify enemy tp operand type '{GetOperandType()}'");
-            }
-
-            return str;
-        }
+        return str;
     }
 }

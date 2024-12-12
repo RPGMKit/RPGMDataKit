@@ -21,8 +21,27 @@ public class Tone : RubySerializationEntity, ITone
     [RubyProperty("@gray")]
     public double _Gray;
 
-    public int Red => (int)_Red;
-    public int Green => (int)_Green;
-    public int Blue => (int)_Blue;
-    public int Gray => (int)_Gray;
+    public int Red
+    {
+        get => (int)_Red;
+        set => _Red = value;
+    }
+    
+    public int Green
+    {
+        get => (int)_Green;
+        set => _Green = value;
+    }
+    
+    public int Blue
+    {
+        get => (int)_Blue;
+        set => _Blue = value;
+    }
+    
+    public int Gray
+    {
+        get => (int)_Gray;
+        set => _Gray = value;
+    }
 }

@@ -1,81 +1,73 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ForceActionCommand : NamedCommand
 {
-    public class ForceActionCommand : NamedCommand
+    public override int Code => CommandCodes.ForceAction;
+    public override string GetCommandName(StorageVersion version) => "Force Action";
+        
+    public enum SubjectType
     {
-        public enum SubjectType
-        {
-            Enemy = 0,
-            Actor = 1,
-        }
+        Enemy = 0,
+        Actor = 1,
+    }
 
-        public enum TargetType
-        {
-            LastTarget = -2,
-            Random = -1,
-            Index1 = 0,
-            Index2 = 1,
-            Index3 = 2,
-            Index4 = 3,
-            Index5 = 4,
-            Index6 = 5,
-            Index7 = 6,
-            Index8 = 7,
-        }
+    public enum TargetType
+    {
+        LastTarget = -2,
+        Random = -1,
+        Index1 = 0,
+        Index2 = 1,
+        Index3 = 2,
+        Index4 = 3,
+        Index5 = 4,
+        Index6 = 5,
+        Index7 = 6,
+        Index8 = 7,
+    }
 
-        public override int Code => CommandCodes.ForceAction;
-        public override string GetCommandName(StorageVersion version) => "Force Action";
+    public SubjectType Subject { get; set; }
+    public int SubjectId { get; set; }
+    public int SkillId { get; set; }
+    public TargetType Target { get; set; }
 
-        public SubjectType GetSubjectType()
-        {
-            return (SubjectType)GetParameter<int>(0);
-        }
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        Subject = (SubjectType)parameterProvider.GetParameter<int>(0);
+        SubjectId = parameterProvider.GetParameter<int>(1);
+        SkillId = parameterProvider.GetParameter<int>(2);
+        Target = (TargetType)parameterProvider.GetParameter<int>(3);
+    }
 
-        public int GetSubject()
-        {
-            return GetParameter<int>(1);
-        }
-        
-        public int GetSkill()
-        {
-            return GetParameter<int>(2);
-        }
-        
-        public TargetType GetTarget()
-        {
-            return (TargetType)GetParameter<int>(3);
-        }
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, (int)Subject);
+        parameterProvider.SetParameter(1, SubjectId);
+        parameterProvider.SetParameter(2, SkillId);
+        parameterProvider.SetParameter(3, Target);
+    }
 
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = Subject switch
         {
-            string str;
-            var subjectType = GetSubjectType();
-            if (subjectType == SubjectType.Enemy)
-                str = context.NameFormatter.FormatTroopMember(GetSubject());
-            else if (subjectType == SubjectType.Actor)
-                str = context.NameFormatter.FormatActor(GetSubject());
-            else
-                throw new Exception($"Unknown subject type {subjectType}");
-            
-            str += $", {context.NameFormatter.FormatSkill(GetSkill())}";
+            SubjectType.Enemy => context.NameFormatter.FormatTroopMember(SubjectId),
+            SubjectType.Actor => context.NameFormatter.FormatActor(SubjectId),
+            _ => throw new Exception($"Unknown subject type {Subject}")
+        };
 
-            var targetIndex = GetTarget();
-            switch (targetIndex)
-            {
-                case TargetType.LastTarget:
-                    str += ", Last Target";
-                    break;
-                case TargetType.Random:
-                    str += ", Random";
-                    break;
-                default:
-                    str += $", Index {(int)targetIndex + 1}";
-                    break;
-            }
+        str += $", {context.NameFormatter.FormatSkill(SkillId)}";
 
-            return str;
-        }
+        str += Target switch
+        {
+            TargetType.LastTarget => ", Last Target",
+            TargetType.Random => ", Random",
+            _ => $", Index {(int)Target + 1}"
+        };
+
+        return str;
     }
 }

@@ -1,4 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
@@ -12,35 +13,36 @@ public class IfGoldCommand : IfCommand
         Lt = 2,
     }
 
-    public int GetAmount()
+    public int Amount { get; set; }
+    public OperatorType Operator { get; set; }
+    
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        return GetParameter<int>(1);
+        base.Unpack(parameterProvider, version);
+
+        Amount = parameterProvider.GetParameter<int>(1);
+        Operator = (OperatorType)parameterProvider.GetParameter<int>(2);
     }
 
-    public OperatorType GetOperator()
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        return (OperatorType)GetParameter<int>(2);
+        base.Pack(parameterProvider, version);
+        
+        parameterProvider.SetParameter(1, Amount);
+        parameterProvider.SetParameter(2, (int)Operator);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
-        string fmt;
-        switch (GetOperator())
+        string fmt = Operator switch
         {
-            case OperatorType.Gte:
-                fmt = context.Version == StorageVersion.MV ? "≥ {0}" : "{0} or more";
-                break;
-            case OperatorType.Lte:
-                fmt = context.Version == StorageVersion.MV ? "≤ {0}" : "{0} or less";
-                break;
-            case OperatorType.Lt:
-                fmt = context.Version == StorageVersion.MV ? "< {0}" : "is under {0}";
-                break;
-            default:
-                throw new Exception(
-                    $"Unknown operator '{GetOperator()}' for '{GetCommandName(context.Version)}' gold command");
-        }
+            OperatorType.Gte => context.Version == StorageVersion.MV ? "≥ {0}" : "{0} or more",
+            OperatorType.Lte => context.Version == StorageVersion.MV ? "≤ {0}" : "{0} or less",
+            OperatorType.Lt => context.Version == StorageVersion.MV ? "< {0}" : "is under {0}",
+            _ => throw new Exception(
+                $"Unknown operator '{Operator}' for '{GetCommandName(context.Version)}' gold command")
+        };
 
-        return "Gold " + string.Format(fmt, GetAmount());
+        return "Gold " + string.Format(fmt, Amount);
     }
 }

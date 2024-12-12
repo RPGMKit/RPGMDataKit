@@ -1,21 +1,25 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
+
+public class MoveSpeedCommand : AbstractMoveCommand
 {
-    public class MoveSpeedCommand : AbstractMoveCommand
+    public override int Code => MovementRouteCommandCodes.Speed;
+    public override string GetCommandName(StorageVersion version) => "Speed";
+
+    public int Speed { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        public override int Code => MovementRouteCommandCodes.Speed;
-        public override string GetCommandName(StorageVersion version) => "Speed";
-
-        public int GetSpeed()
-        {
-            return GetParameter<int>(0);
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            return GetSpeed().ToString();
-        }
+        Speed = parameterProvider.GetParameter<int>(0);
     }
+    
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, Speed);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options) => Speed.ToString();
 }

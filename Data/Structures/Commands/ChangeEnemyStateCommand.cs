@@ -1,53 +1,51 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ChangeEnemyStateCommand : NamedCommand
 {
-    public class ChangeEnemyStateCommand : NamedCommand
+    public override int Code => CommandCodes.ChangeEnemyState;
+    public override string GetCommandName(StorageVersion version) => "Change Enemy State";
+        
+    public enum OperatorType
     {
-        public enum OperatorType
+        Add = 0,
+        Remove = 1,
+    }
+
+    public int TroopId { get; set; }
+    public OperatorType Operator { get; set; }
+    public int StateId { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        TroopId = parameterProvider.GetParameter<int>(0);
+        Operator = (OperatorType)parameterProvider.GetParameter<int>(1);
+        StateId = parameterProvider.GetParameter<int>(2);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, TroopId);
+        parameterProvider.SetParameter(1, (int)Operator);
+        parameterProvider.SetParameter(2, StateId);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = context.NameFormatter.FormatTroopMember(TroopId);
+
+        str += Operator switch
         {
-            Add = 0,
-            Remove = 1,
-        }
+            OperatorType.Add => ", + ",
+            OperatorType.Remove => ", - ",
+            _ => throw new Exception($"Unknown change enemy state operator '{Operator}'")
+        };
 
-        public int GetEnemy()
-        {
-            return GetParameter<int>(0);
-        }
+        str += context.NameFormatter.FormatState(StateId);
 
-        public OperatorType GetOperator()
-        {
-            return (OperatorType)GetParameter<int>(1);
-        }
-
-        public int GetState()
-        {
-            return GetParameter<int>(2);
-        }
-
-        public override int Code => CommandCodes.ChangeEnemyState;
-        public override string GetCommandName(StorageVersion version) => "Change Enemy State";
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = context.NameFormatter.FormatTroopMember(GetEnemy());
-
-            switch (GetOperator())
-            {
-                case OperatorType.Add:
-                    str += ", + ";
-                    break;
-                case OperatorType.Remove:
-                    str += ", - ";
-                    break;
-                default:
-                    throw new Exception($"Unknown change enemy state operator type '{GetOperator()}'");
-            }
-
-            str += context.NameFormatter.FormatState(GetState());
-
-            return str;
-        }
+        return str;
     }
 }

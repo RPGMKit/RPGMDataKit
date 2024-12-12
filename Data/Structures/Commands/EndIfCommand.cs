@@ -1,20 +1,19 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class EndIfCommand : NamedCommand
 {
-    public class EndIfCommand : NamedCommand
+    public EndIfCommand()
     {
-        public EndIfCommand()
-        {
-            IsSecondary = true;
-        }
+        IsSecondary = true;
+    }
 
-        public override int Code => CommandCodes.EndIf;
+    public override int Code => CommandCodes.EndIf;
 
-        public override string GetCommandName(StorageVersion version)
-        {
-            return version == StorageVersion.MV ? "End" : "Branch End";
-        }
+    public override string GetCommandName(StorageVersion version)
+    {
+        return version == StorageVersion.MV ? "End" : "Branch End";
     }
 }

@@ -1,12 +1,10 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Abstraction;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ChangePlayerFollowers : AbstractOnOffCommand
 {
-    public class ChangePlayerFollowers : AbstractOnOffCommand
-    {
-        public override int Code => CommandCodes.ChangePlayerFollowers;
-        public override string GetCommandName(StorageVersion version) => "Change Player Followers";
-    }
+    public override int Code => CommandCodes.ChangePlayerFollowers;
+    public override string GetCommandName(StorageVersion version) => "Change Player Followers";
 }

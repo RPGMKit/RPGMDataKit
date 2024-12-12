@@ -1,16 +1,15 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class BattleProcessingIfWinCommand : NamedCommand
 {
-    public class BattleProcessingIfWinCommand : NamedCommand
+    public BattleProcessingIfWinCommand()
     {
-        public BattleProcessingIfWinCommand()
-        {
-            IsSecondary = true;
-        }
-        
-        public override int Code => CommandCodes.BattleProcessingIfWin;
-        public override string GetCommandName(StorageVersion version) => "If Win";
+        IsSecondary = true;
     }
+        
+    public override int Code => CommandCodes.BattleProcessingIfWin;
+    public override string GetCommandName(StorageVersion version) => "If Win";
 }

@@ -5,4 +5,6 @@ public interface IParameterProvider
     public T? GetParameter<T>(int index);
 
     public void SetParameter<T>(int index, T? value);
+    
+    public int Count { get; }
 }

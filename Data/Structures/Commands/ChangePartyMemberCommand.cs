@@ -1,54 +1,56 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class ChangePartyMemberCommand : NamedCommand
 {
-    public class ChangePartyMemberCommand : NamedCommand
+    public override int Code => CommandCodes.ChangePartyMember;
+    public override string GetCommandName(StorageVersion version) => "Change Party Member";
+        
+    public enum ChangeType
     {
-        public enum ChangeType
+        Add = 0,
+        Remove = 1,
+    }
+
+    public int ActorId { get; set; }
+    public ChangeType Type { get; set; }
+    public bool DoInitialize { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        ActorId = parameterProvider.GetParameter<int>(0);
+        Type = (ChangeType)parameterProvider.GetParameter<int>(1);
+        DoInitialize = version == StorageVersion.MV
+            ? parameterProvider.GetParameter<bool>(2)
+            : parameterProvider.GetParameter<int>(2) > 0;
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, ActorId);
+        parameterProvider.SetParameter(1, (int)Type);
+        if (version == StorageVersion.MV)
+            parameterProvider.SetParameter(2, DoInitialize);
+        else
+            parameterProvider.SetParameter(2, DoInitialize ? 1 : 0);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = Type switch
         {
-            Add = 0,
-            Remove = 1,
-        }
+            ChangeType.Add => "Add",
+            ChangeType.Remove => "Remove",
+            _ => throw new Exception($"Unknown add/remove state for party member")
+        };
 
-        public override int Code => CommandCodes.ChangePartyMember;
-        public override string GetCommandName(StorageVersion version) => "Change Party Member";
+        str += context.NameFormatter.FormatActor(ActorId);
+        if (DoInitialize)
+            str += context.Version == StorageVersion.MV ? " (Initialize)" : ", Initialize";
 
-        public int GetActor()
-        {
-            return GetParameter<int>(0);
-        }
-
-        public ChangeType GetChangeType()
-        {
-            return (ChangeType)GetParameter<int>(1);
-        }
-
-        public bool GetInitialize(StorageVersion version)
-        {
-            return version == StorageVersion.MV ? GetParameter<bool>(2) : GetParameter<int>(2) > 0;
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = "";
-            switch (GetChangeType())
-            {
-                case ChangeType.Add:
-                    str = "Add";
-                    break;
-                case ChangeType.Remove:
-                    str = "Remove";
-                    break;
-                default:
-                    throw new Exception($"Unknown add/remove state for party member");
-            }
-
-            str += context.NameFormatter.FormatActor(GetActor());
-            if (GetInitialize(context.Version))
-                str += context.Version == StorageVersion.MV ? " (Initialize)" : ", Initialize";
-
-            return str;
-        }
+        return str;
     }
 }

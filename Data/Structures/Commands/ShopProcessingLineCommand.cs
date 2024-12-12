@@ -1,16 +1,15 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
-{
-    public class ShopProcessingLineCommand : ShopProcessingCommand
-    {
-        public ShopProcessingLineCommand()
-        {
-            IsSecondary = true;
-        }
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
 
-        public override int Code => CommandCodes.ShopProcessingLine;
-        public override string GetCommandName(StorageVersion version) => "               ";
+public class ShopProcessingLineCommand : ShopProcessingCommand
+{
+    public ShopProcessingLineCommand()
+    {
+        IsSecondary = true;
     }
+
+    public override int Code => CommandCodes.ShopProcessingLine;
+    public override string GetCommandName(StorageVersion version) => "               ";
 }

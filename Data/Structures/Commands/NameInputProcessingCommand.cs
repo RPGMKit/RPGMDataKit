@@ -1,33 +1,38 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+
+public class NameInputProcessingCommand : NamedCommand
 {
-    public class NameInputProcessingCommand : NamedCommand
+    public override int Code => CommandCodes.NameInputProcessing;
+    public override string GetCommandName(StorageVersion version) => "Name Input Processing";
+        
+    public int ActorId { get; set; }
+    public int MaxCharacters { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        public int GetActor()
+        ActorId = parameterProvider.GetParameter<int>(0);
+        MaxCharacters = parameterProvider.GetParameter<int>(1);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        parameterProvider.SetParameter(0, ActorId);
+        parameterProvider.SetParameter(1, MaxCharacters);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var actorName = context.NameFormatter.FormatActor(ActorId, new()
         {
-            return GetParameter<int>(0);
-        }
+            BracketType = BracketType.None
+        });
 
-        public int GetMaxCharacters()
-        {
-            return GetParameter<int>(1);
-        }
+        var str = $"{actorName}, {MaxCharacters} character(s)";
 
-        public override int Code => CommandCodes.NameInputProcessing;
-        public override string GetCommandName(StorageVersion version) => "Name Input Processing";
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var actorName = context.NameFormatter.FormatActor(GetActor(), new()
-            {
-                BracketType = BracketType.None
-            });
-
-            var str = $"{actorName}, {GetMaxCharacters()} character(s)";
-
-            return str;
-        }
+        return str;
     }
 }

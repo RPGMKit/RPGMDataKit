@@ -1,48 +1,49 @@
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands
+namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
+
+public class IfEventCommand : IfCommand
 {
-    public class IfEventCommand : IfCommand
+    public int EventId { get; set; }
+    public Direction Direction { get; set; }
+
+    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        public int GetEventId()
+        base.Unpack(parameterProvider, version);
+
+        EventId = parameterProvider.GetParameter<int>(1);
+        Direction = (Direction)parameterProvider.GetParameter<int>(2);
+    }
+
+    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    {
+        base.Pack(parameterProvider, version);
+        
+        parameterProvider.SetParameter(1, EventId);
+        parameterProvider.SetParameter(2, (int)Direction);
+    }
+
+    public override string GetParametersDescription(EntityContext context, DumpOptions options)
+    {
+        var str = context.NameFormatter.FormatEvent(EventId);
+
+        if (context.Version == StorageVersion.MV)
+            str += " is facing ";
+        else
+            str += " is Facing ";
+
+        str += Direction switch
         {
-            return GetParameter<int>(1);
-        }
+            Direction.Down => "Down",
+            Direction.Left => "Left",
+            Direction.Right => "Right",
+            Direction.Up => "Up",
+            _ => throw new Exception(
+                $"Unknown orientation '{Direction}' for '{GetCommandName(context.Version)}' orientation command")
+        };
 
-        public Direction GetDirection()
-        {
-            return (Direction)GetParameter<int>(2);
-        }
-
-        public override string GetParametersDescription(EntityContext context, DumpOptions options)
-        {
-            var str = context.NameFormatter.FormatEvent(GetEventId());
-
-            if (context.Version == StorageVersion.MV)
-                str += " is facing ";
-            else
-                str += " is Facing ";
-            switch (GetDirection())
-            {
-                case Direction.Down:
-                    str += "Down";
-                    break;
-                case Direction.Left:
-                    str += "Left";
-                    break;
-                case Direction.Right:
-                    str += "Right";
-                    break;
-                case Direction.Up:
-                    str += "Up";
-                    break;
-                default:
-                    throw new Exception(
-                        $"Unknown orientation '{GetDirection()}' for '{GetCommandName(context.Version)}' orientation command");
-            }
-
-            return str;
-        }
+        return str;
     }
 }
