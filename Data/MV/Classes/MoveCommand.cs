@@ -12,7 +12,7 @@ public class MoveCommand : JsonEntity, IMoveCommand
     public int Code { get; set; }
 
     [JsonProperty(PropertyName = "parameters")]
-    public LookupList<JToken> Parameters = new();
+    public LookupList<object> Parameters { get; set; }
 
     [JsonIgnore]
     public IParameterProvider ParameterProvider => new JsonParameterProvider(Parameters);

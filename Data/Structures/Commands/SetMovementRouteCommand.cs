@@ -17,23 +17,34 @@ public class SetMovementRouteCommand : NamedCommand
     public int EventId { get; set; }
     public IMoveRoute Route { get; set; }
 
+    public List<NamedCommand> Commands => Route.NamedCommands;
+
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
         EventId = parameterProvider.GetParameter<int>(0);
-        Route = version == StorageVersion.MV
-            ? parameterProvider.GetParameter<MoveRouteMV>(1)
-            : parameterProvider.GetParameter<IMoveRoute>(1);
+        
+        if (version == StorageVersion.MV)
+            Route = parameterProvider.GetParameter<MoveRouteMV>(1);
+        else
+            Route = parameterProvider.GetParameter<MoveRouteVX>(1);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         parameterProvider.SetParameter(0, EventId);
 
-        IMoveRoute route = version == StorageVersion.MV ? new MoveRouteMV() : new MoveRouteVX();
+        IMoveRoute route;
+        if (version == StorageVersion.MV)
+            route = new MoveRouteMV();
+        else
+            route = new MoveRouteVX();
+        
         route.Repeat = Route.Repeat;
         route.Skippable = Route.Skippable;
         route.Wait = Route.Wait;
-        
+
+        route.NamedCommands = Commands;
+
         parameterProvider.SetParameter(1, route);
     }
 

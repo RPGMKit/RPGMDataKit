@@ -11,7 +11,7 @@ public static class DumpHelper
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist");
 
-        DumpYaml(path, storage);
+        // DumpYaml(path, storage);
 
         var textsPath = Path.Combine(path, "Texts");
         if (!Directory.Exists(textsPath))

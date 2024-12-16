@@ -1,4 +1,4 @@
-﻿using RubyMarshalCS.Serialization;
+﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;

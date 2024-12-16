@@ -1,5 +1,6 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Exceptions;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;

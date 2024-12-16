@@ -38,8 +38,8 @@ public class ShowChoicesCommand : NamedCommand
         Choices = parameterProvider.GetParameter<List<string>>(0);;
         CancelChoiceIndex = parameterProvider.GetParameter<int>(1);
         DefaultChoiceIndex = parameterProvider.GetParameter<int>(2);
-        Position = parameterProvider.GetParameter<PositionType>(3);
-        Background = parameterProvider.GetParameter<BackgroundType>(4);
+        Position = (PositionType)parameterProvider.GetParameter<int>(3);
+        Background = (BackgroundType)parameterProvider.GetParameter<int>(4);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)

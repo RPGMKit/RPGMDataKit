@@ -29,13 +29,15 @@ public class MovementRouteCommand : NamedCommand
             
         MoveCommand = MovementCommandFactory.Create(eventCommand, version);
     }
-    
+
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         IMoveCommand command = version == StorageVersion.MV ? new MoveCommandMV() : new MoveCommandVX();
-        
+
         command.Code = MoveCommand.Code;
-        MoveCommand.Pack(command.ParameterProvider, version);
+        var parameters = MoveCommand._Pack(version);
+        command.Parameters = parameters.Count > 0 ? parameters : null;
+
         parameterProvider.SetParameter(0, command);
     }
 

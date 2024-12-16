@@ -1,9 +1,7 @@
 ﻿using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
-using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
@@ -18,16 +16,21 @@ public class CommonEvent : RubySerializationEntity, ICommonEvent
     public string Name { get; set; }
 
     [RubyProperty("@trigger")]
-    public int Trigger;
+    public int Trigger { get; set; }
 
     [RubyProperty("@switch_id")]
-    public int SwitchId;
+    public int SwitchId { get; set; }
 
     [RubyProperty("@list")]
-    public List<EventCommand> List;
+    public LookupList<Command>? List;
 
-    public IEnumerable<NamedCommand> NamedCommands => List.Select(_ => CommandFactory.Create(_, StorageVersion.VXAce));
-    public IEnumerable<IEventCommand> Commands => List;
+    public List<NamedCommand> NamedCommands { get; set; }
+
+    public IEnumerable<ICommandWithIndent>? Commands => List;
+
+    protected override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
+
+    protected override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.VXAce);
 
     public void Dump(TextWriter writer, EntityContext context, DumpOptions options)
     {

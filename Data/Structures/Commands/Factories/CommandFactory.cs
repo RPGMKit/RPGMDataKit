@@ -9,7 +9,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 
 public static class CommandFactory
 {
-    public static NamedCommand Create(IEventCommand command, StorageVersion version)
+    public static NamedCommand Create(ICommandWithIndent command, StorageVersion version)
     {
         NamedCommand returnCommand;
         var parameterProvider = command.ParameterProvider;
@@ -389,7 +389,7 @@ public static class CommandFactory
 
         returnCommand.Unpack(parameterProvider, version);
 
-        if (true)
+        if (false)
         {
             IParameterProvider newProv;
             if (version == StorageVersion.MV)
@@ -420,6 +420,12 @@ public static class CommandFactory
             var a = parameterProvider.GetParameter<object>(i);
             var b = newProv.GetParameter<object>(i);
 
+            if ((a == null) ^ (b == null))
+                return;
+            
+            if (a == null || b == null)
+                return;
+            
             if (a.GetType() != b.GetType())
             {
                 if (LongTypes.Contains(a.GetType()) ^ LongTypes.Contains(b.GetType()))

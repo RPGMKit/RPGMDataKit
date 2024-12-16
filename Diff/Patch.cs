@@ -48,5 +48,5 @@ public class Patch
     public MapInfoData MapInfo;
     public MapEventData MapEvent;
     public MapEventPageData MapEventPage;
-    public List<DiffMatchPatch.Patch> Patches;
+    public List<Text.Internal.Patch> Patches;
 }

@@ -1,14 +1,13 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::EventCommand")]
-public class EventCommand : RubySerializationEntity, IEventCommand
+public class Command : RubySerializationEntity, ICommandWithIndent
 {
     [RubyProperty("@code")]
     public int Code { get; set; }
@@ -19,7 +18,7 @@ public class EventCommand : RubySerializationEntity, IEventCommand
     public IParameterProvider ParameterProvider => new SimpleParameterProvider(Parameters);
 
     [RubyProperty("@parameters")]
-    public LookupList<object> Parameters;
+    public LookupList<object> Parameters { get; set; }
     
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1;

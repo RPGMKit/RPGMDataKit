@@ -5,9 +5,9 @@ namespace RPGMakerLibCoreV2.Data.Helpers;
 
 public static class IndentHelper
 {
-    public delegate void IndentWalker(int currIndent, int commandIndex, IEventCommand? prevCommand, IEventCommand currCommand);
+    private delegate void IndentWalker(int currIndent, int commandIndex, ICommandWithIndent? prevCommand, ICommandWithIndent currCommand);
     
-    public static void ValidateIndents(ICommandContainer container, StorageVersion version)
+    public static void ValidateIndents(ICommandContainer<ICommandWithIndent> container, StorageVersion version)
     {
         WalkForIndents(container, version, (indent, index, prevCommand, currCommand) =>
         {
@@ -19,16 +19,16 @@ public static class IndentHelper
         });
     }
 
-    public static void SetupIndents(ICommandContainer container, StorageVersion version)
+    public static void SetupIndents(ICommandContainer<ICommandWithIndent> container, StorageVersion version)
     {
         WalkForIndents(container, version, (indent, _, _, command) => { command.Indent = indent; });
     }
 
-    private static void WalkForIndents(ICommandContainer container, StorageVersion version, IndentWalker walker)
+    private static void WalkForIndents(ICommandContainer<ICommandWithIndent> container, StorageVersion version, IndentWalker walker)
     {
         int currIndent = 0;
 
-        IEventCommand? prevCommand = null;
+        ICommandWithIndent? prevCommand = null;
         
         foreach (var (i, c) in container.Commands.WithIndex())
         {

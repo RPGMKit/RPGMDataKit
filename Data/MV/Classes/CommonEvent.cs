@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
-using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
@@ -15,12 +14,22 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        public IEnumerable<NamedCommand> NamedCommands => List.Select(_ => CommandFactory.Create(_, StorageVersion.MV));
-        public IEnumerable<IEventCommand> Commands => List;
+        [JsonProperty(PropertyName = "trigger")]
+        public int Trigger { get; set; }
+        
+        [JsonProperty(PropertyName = "switchId")]
+        public int SwitchId { get; set; }
 
         [JsonProperty(PropertyName = "list")]
-        public LookupList<EventCommand> List { get; set; }
+        public LookupList<Command>? List { get; set; }
+        
+        public List<NamedCommand> NamedCommands { get; set; }
+        public IEnumerable<ICommandWithIndent>? Commands => List;
 
+        protected override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
+
+        protected override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.MV);
+        
         public override void Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
             if (options.Format == DumpFormat.Text)

@@ -188,7 +188,7 @@ namespace RPGMakerLibCoreV2
             return d;
         }
 
-        public static Tuple<DiffType, List<DiffMatchPatch.Patch>> CalculateTextDiff(string left, string right)
+        public static Tuple<DiffType, List<Diff.Text.Internal.Patch>> CalculateTextDiff(string left, string right)
         {
             DiffType diffType;
             var patches = _dmp.patch_make_by_line(left ?? "", right ?? "");
@@ -204,7 +204,7 @@ namespace RPGMakerLibCoreV2
             return new(diffType, patches);
         }
 
-        private static List<DiffMatchPatch.Patch> CalculatePatches(string left, string right)
+        private static List<Diff.Text.Internal.Patch> CalculatePatches(string left, string right)
         {
             return _dmp.patch_make_by_line(left, right);
         }
@@ -300,7 +300,7 @@ namespace RPGMakerLibCoreV2
             public string Text;
         }
 
-        public static PatchResult Patch(string text, List<DiffMatchPatch.Patch> patches, bool reverse = false)
+        public static PatchResult Patch(string text, List<Diff.Text.Internal.Patch> patches, bool reverse = false)
         {
             if (reverse)
                 patches = _dmp.ReversePatches(patches);

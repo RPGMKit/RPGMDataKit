@@ -1,5 +1,7 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RubyMarshalCS.Serialization;
+﻿using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Helpers;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 
@@ -18,8 +20,20 @@ public class MoveRoute : RubySerializationEntity, IMoveRoute
     public bool Wait { get; set; }
 
     [RubyProperty("@list")]
-    public List<MoveCommand> List;
+    public List<MoveCommand> List { get; set; } = new();
     
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1;
+
+    public List<NamedCommand> NamedCommands { get; set; }
+    public IEnumerable<IMoveCommand> Commands => List;
+    
+    protected override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
+
+    protected override void OnPreSerialize() => List = CommandContainerHelper.Pack<MoveCommand>(NamedCommands, StorageVersion.VXAce);
+    
+    public void Dump(TextWriter writer, EntityContext context, DumpOptions options)
+    {
+        throw new NotImplementedException();
+    }
 }

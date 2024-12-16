@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal
@@ -28,6 +29,26 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
                     return;
                 }
             }
+        }
+
+        [OnDeserialized]
+        void OnDeserialization(StreamingContext context)
+        {
+            OnDeserialize();
+        }
+
+        [OnSerializing]
+        void OnPreSerialization(StreamingContext context)
+        {
+            OnPreSerialize();
+        }
+
+        protected virtual void OnDeserialize()
+        {
+        }
+        
+        protected virtual void OnPreSerialize()
+        {
         }
     }
 }

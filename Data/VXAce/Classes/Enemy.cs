@@ -1,5 +1,5 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RubyMarshalCS.Serialization;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 using RubyMarshalCS.SpecialTypes;

@@ -28,10 +28,15 @@ public class Troop : JsonEntity, ITroop
     public class Page : JsonEntity, IPage
     {
         [JsonProperty(PropertyName = "list")]
-        public LookupList<EventCommand> List { get; set; }
+        public LookupList<Command> List { get; set; }
 
-        public IEnumerable<NamedCommand> NamedCommands => List.Select(_ => CommandFactory.Create(_, StorageVersion.MV));
-        public IEnumerable<IEventCommand> Commands => List;
+        public List<NamedCommand> NamedCommands { get; set; }
+        
+        public IEnumerable<ICommandWithIndent> Commands => List;
+        
+        protected override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
+
+        protected override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.MV);
 
         public override void Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {

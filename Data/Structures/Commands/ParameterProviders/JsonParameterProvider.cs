@@ -6,9 +6,9 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 
 public class JsonParameterProvider : IParameterProvider
 {
-    private readonly LookupList<JToken> _parameters;
+    private readonly LookupList<object> _parameters;
 
-    public JsonParameterProvider(LookupList<JToken> parameters)
+    public JsonParameterProvider(LookupList<object> parameters)
     {
         _parameters = parameters;
     }
@@ -16,7 +16,16 @@ public class JsonParameterProvider : IParameterProvider
     public T? GetParameter<T>(int index)
     {
         var value = _parameters.Get(index);
-        return value == null ? default : value.ToObject<T>();
+        if (value == null)
+            return default;
+
+        if (value is JToken t)
+            return t.ToObject<T>();
+
+        if (typeof(T).IsPrimitive)
+            return (T)Convert.ChangeType(value, typeof(T));
+
+        return (T)value;
     }
 
     public void SetParameter<T>(int index, T? value)

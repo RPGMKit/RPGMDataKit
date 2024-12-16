@@ -18,6 +18,20 @@ public abstract class NamedCommand
     {
     }
 
+    public LookupList<object> _Pack(StorageVersion version)
+    {
+        LookupList<object> ret = new();
+        IParameterProvider provider;
+        if (version == StorageVersion.MV)
+            provider = new JsonParameterProvider(ret);
+        else
+            provider = new SimpleParameterProvider(ret);
+
+        Pack(provider, version);
+
+        return ret;
+    }
+
     public virtual void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
     }
@@ -53,10 +67,6 @@ public abstract class NamedCommand
     protected virtual string GetStringPrefix(StorageVersion version)
     {
         return !IsSecondary ? GetPrefixSymbol(version) : GetSecondaryPrefixSymbol(version);
-    }
-
-    public void SetParameter(int index, JToken value)
-    {
     }
 
     public string AsString(EntityContext context, DumpOptions options)

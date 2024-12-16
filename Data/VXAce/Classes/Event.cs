@@ -121,13 +121,19 @@ public class Event : RubySerializationEntity, IEvent
         public int Trigger;
 
         [RubyProperty("@list")]
-        public List<EventCommand> List;
+        public LookupList<Command> List;
         
         [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
         public object _1;
+
+        public List<NamedCommand> NamedCommands { get; set; }
         
-        public IEnumerable<NamedCommand> NamedCommands => List.Select(_ => CommandFactory.Create(_, StorageVersion.VXAce));
-        public IEnumerable<IEventCommand> Commands => List;
+        public IEnumerable<ICommandWithIndent> Commands => List;
+        
+        protected override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
+
+        protected override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.VXAce);
+        
         public void Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
             if (options.Format == DumpFormat.Text)
