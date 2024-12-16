@@ -20,13 +20,13 @@ public class RecoverAllCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        Source = (SourceType)parameterProvider.GetParameter<int>(0);
+        Source = parameterProvider.GetParameter<SourceType>(0);
         SourceId = parameterProvider.GetParameter<int>(1);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)Source);
+        parameterProvider.SetParameter(0, Source);
         parameterProvider.SetParameter(1, SourceId);
     }
 

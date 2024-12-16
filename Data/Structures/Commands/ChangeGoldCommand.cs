@@ -27,15 +27,15 @@ public class ChangeGoldCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        Operator = (OperatorType)parameterProvider.GetParameter<int>(0);
-        Operand = (OperandType)parameterProvider.GetParameter<int>(1);
+        Operator = parameterProvider.GetParameter<OperatorType>(0);
+        Operand = parameterProvider.GetParameter<OperandType>(1);
         Value = parameterProvider.GetParameter<int>(2);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)Operator);
-        parameterProvider.SetParameter(1, (int)Operand);
+        parameterProvider.SetParameter(0, Operator);
+        parameterProvider.SetParameter(1, Operand);
         parameterProvider.SetParameter(2, Value);
     }
 

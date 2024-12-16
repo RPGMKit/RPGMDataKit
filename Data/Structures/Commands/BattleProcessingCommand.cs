@@ -24,7 +24,7 @@ public class BattleProcessingCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion storageVersion)
     {
-        DsgType = (DesignationType)parameterProvider.GetParameter<int>(0);
+        DsgType = parameterProvider.GetParameter<DesignationType>(0);
         SourceId = parameterProvider.GetParameter<int>(1);
         CanEscape = parameterProvider.GetParameter<bool>(2);
         CanLoose = parameterProvider.GetParameter<bool>(3);
@@ -32,7 +32,7 @@ public class BattleProcessingCommand : NamedCommand
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)DsgType);
+        parameterProvider.SetParameter(0, DsgType);
         parameterProvider.SetParameter(1, SourceId);
         parameterProvider.SetParameter(2, CanEscape);
         parameterProvider.SetParameter(3, CanLoose);

@@ -42,20 +42,20 @@ public class ChangeExperienceCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        SourceT = (SourceType)parameterProvider.GetParameter<int>(0);
+        SourceT = parameterProvider.GetParameter<SourceType>(0);
         SourceId = parameterProvider.GetParameter<int>(1);
-        Operator = (OperatorType)parameterProvider.GetParameter<int>(2);
-        Operand = (OperandType)parameterProvider.GetParameter<int>(3);
+        Operator = parameterProvider.GetParameter<OperatorType>(2);
+        Operand = parameterProvider.GetParameter<OperandType>(3);
         Value = parameterProvider.GetParameter<int>(4);
         ShowLevelUp = parameterProvider.GetParameter<bool>(5);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)SourceT);
+        parameterProvider.SetParameter(0, SourceT);
         parameterProvider.SetParameter(1, SourceId);
-        parameterProvider.SetParameter(2, (int)Operator);
-        parameterProvider.SetParameter(3, (int)Operand);
+        parameterProvider.SetParameter(2, Operator);
+        parameterProvider.SetParameter(3, Operand);
         parameterProvider.SetParameter(4, Value);
         parameterProvider.SetParameter(5, ShowLevelUp);
     }

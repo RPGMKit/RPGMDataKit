@@ -35,17 +35,17 @@ public class ChangeSkillCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        SourceT = (SourceType)parameterProvider.GetParameter<int>(0);
+        SourceT = parameterProvider.GetParameter<SourceType>(0);
         SourceId = parameterProvider.GetParameter<int>(1);
-        Operator = (OperatorType)parameterProvider.GetParameter<int>(2);
+        Operator = parameterProvider.GetParameter<OperatorType>(2);
         SkillId = parameterProvider.GetParameter<int>(3);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)SourceT);
+        parameterProvider.SetParameter(0, SourceT);
         parameterProvider.SetParameter(1, SourceId);
-        parameterProvider.SetParameter(2, (int)Operator);
+        parameterProvider.SetParameter(2, Operator);
         parameterProvider.SetParameter(3, SkillId);
     }
 

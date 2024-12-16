@@ -47,7 +47,7 @@ public class IfButtonCommand : IfCommand
         if (version == StorageVersion.MV)
             Button = ButtonIdToName.First(_ => _.Value == parameterProvider.GetParameter<string>(1).UcFirst()).Key;
         else 
-            Button = (Buttons)parameterProvider.GetParameter<int>(1);
+            Button = parameterProvider.GetParameter<Buttons>(1);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
@@ -57,7 +57,7 @@ public class IfButtonCommand : IfCommand
         if (version == StorageVersion.MV)
             parameterProvider.SetParameter(1, ButtonIdToName[Button]);
         else
-            parameterProvider.SetParameter(1, (int)Button);
+            parameterProvider.SetParameter(1, Button);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

@@ -46,8 +46,8 @@ public class GetLocationInfoCommand : NamedCommand
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
         VariableId = parameterProvider.GetParameter<int>(0);
-        Type = (InfoType)parameterProvider.GetParameter<int>(1);
-        Designation = (DesignationType)parameterProvider.GetParameter<int>(2);
+        Type = parameterProvider.GetParameter<InfoType>(1);
+        Designation = parameterProvider.GetParameter<DesignationType>(2);
         Param1 = parameterProvider.GetParameter<int>(3);
         Param2 = parameterProvider.GetParameter<int>(4);
     }
@@ -55,8 +55,8 @@ public class GetLocationInfoCommand : NamedCommand
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         parameterProvider.SetParameter(0, VariableId);
-        parameterProvider.SetParameter(1, (int)Type);
-        parameterProvider.SetParameter(2, (int)Designation);
+        parameterProvider.SetParameter(1, Type);
+        parameterProvider.SetParameter(2, Designation);
         parameterProvider.SetParameter(3, Param1);
         parameterProvider.SetParameter(4, Param2);
     }

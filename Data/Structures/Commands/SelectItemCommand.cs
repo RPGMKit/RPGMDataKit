@@ -38,7 +38,7 @@ public class SelectItemCommand : NamedCommand
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
         VariableId = parameterProvider.GetParameter<int>(0);
-        Type = (KeyItemType)parameterProvider.GetParameter<int>(1);
+        Type = parameterProvider.GetParameter<KeyItemType>(1);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)

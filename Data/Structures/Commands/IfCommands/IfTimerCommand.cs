@@ -20,7 +20,7 @@ public class IfTimerCommand : IfCommand
         base.Unpack(parameterProvider, version);
 
         Seconds = parameterProvider.GetParameter<int>(1);
-        Operator = (OperatorType)parameterProvider.GetParameter<int>(2);
+        Operator = parameterProvider.GetParameter<OperatorType>(2);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
@@ -28,7 +28,7 @@ public class IfTimerCommand : IfCommand
         base.Pack(parameterProvider, version);
         
         parameterProvider.SetParameter(1, Seconds);
-        parameterProvider.SetParameter(2, (int)Operator);
+        parameterProvider.SetParameter(2, Operator);
     }
 
     private static string FormatTime(int seconds)

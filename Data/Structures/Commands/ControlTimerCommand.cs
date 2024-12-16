@@ -14,13 +14,13 @@ public class ControlTimerCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        State = (OnOffState)parameterProvider.GetParameter<int>(0);
+        State = parameterProvider.GetParameter<OnOffState>(0);
         Seconds = parameterProvider.GetParameter<int>(1);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)State);
+        parameterProvider.SetParameter(0, State);
         parameterProvider.SetParameter(1, Seconds);
     }
 

@@ -32,9 +32,9 @@ public class IfVariableCommand : IfCommand
         base.Unpack(parameterProvider, version);
 
         VariableId = parameterProvider.GetParameter<int>(1);
-        Operand = (OperandType)parameterProvider.GetParameter<int>(2);
+        Operand = parameterProvider.GetParameter<OperandType>(2);
         Value = parameterProvider.GetParameter<int>(3);
-        Operator = (OperatorType)parameterProvider.GetParameter<int>(4);
+        Operator = parameterProvider.GetParameter<OperatorType>(4);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
@@ -42,9 +42,9 @@ public class IfVariableCommand : IfCommand
         base.Pack(parameterProvider, version);
         
         parameterProvider.SetParameter(1, VariableId);
-        parameterProvider.SetParameter(2, (int)Operand);
+        parameterProvider.SetParameter(2, Operand);
         parameterProvider.SetParameter(3, Value);
-        parameterProvider.SetParameter(4, (int)Operator);
+        parameterProvider.SetParameter(4, Operator);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

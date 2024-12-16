@@ -15,7 +15,7 @@ public class IfSelfSwitchCommand : IfCommand
         base.Unpack(parameterProvider, version);
 
         Switch = parameterProvider.GetParameter<string>(1);
-        State = (OnOffState)parameterProvider.GetParameter<int>(2);
+        State = parameterProvider.GetParameter<OnOffState>(2);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
@@ -23,7 +23,7 @@ public class IfSelfSwitchCommand : IfCommand
         base.Pack(parameterProvider, version);
         
         parameterProvider.SetParameter(1, Switch);
-        parameterProvider.SetParameter(2, (int)State);
+        parameterProvider.SetParameter(2, State);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

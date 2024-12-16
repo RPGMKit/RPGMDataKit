@@ -19,12 +19,12 @@ public class MoveBlendModeCommand : AbstractMoveCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        BlendMode = (BlendMode)parameterProvider.GetParameter<int>(0);
+        BlendMode = parameterProvider.GetParameter<BlendMode>(0);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)BlendMode);
+        parameterProvider.SetParameter(0, BlendMode);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

@@ -15,14 +15,14 @@ public class ScrollMapCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        Direction = (Direction)parameterProvider.GetParameter<int>(0);
+        Direction = parameterProvider.GetParameter<Direction>(0);
         Distance = parameterProvider.GetParameter<int>(1);
         Speed = parameterProvider.GetParameter<int>(2);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)Direction);
+        parameterProvider.SetParameter(0, Direction);
         parameterProvider.SetParameter(1, Distance);
         parameterProvider.SetParameter(2, Speed);
     }

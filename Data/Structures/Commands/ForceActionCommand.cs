@@ -36,15 +36,15 @@ public class ForceActionCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        Subject = (SubjectType)parameterProvider.GetParameter<int>(0);
+        Subject = parameterProvider.GetParameter<SubjectType>(0);
         SubjectId = parameterProvider.GetParameter<int>(1);
         SkillId = parameterProvider.GetParameter<int>(2);
-        Target = (TargetType)parameterProvider.GetParameter<int>(3);
+        Target = parameterProvider.GetParameter<TargetType>(3);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)Subject);
+        parameterProvider.SetParameter(0, Subject);
         parameterProvider.SetParameter(1, SubjectId);
         parameterProvider.SetParameter(2, SkillId);
         parameterProvider.SetParameter(3, Target);

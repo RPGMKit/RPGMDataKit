@@ -32,10 +32,11 @@ public class TintScreenCommand : NamedCommand
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         if (version == StorageVersion.MV)
-            parameterProvider.SetParameter(0, new List<int>{Tone.Red, Tone.Green, Tone.Blue, Tone.Gray});
+            parameterProvider.SetParameter(0, new List<int> { Tone.Red, Tone.Green, Tone.Blue, Tone.Gray });
         else
-            parameterProvider.SetParameter(0, new VXTone(){Red = Tone.Red, Green = Tone.Green, Blue = Tone.Blue, Gray = Tone.Gray});
-        
+            parameterProvider.SetParameter(0,
+                new VXTone() { Red = Tone.Red, Green = Tone.Green, Blue = Tone.Blue, Gray = Tone.Gray });
+
         parameterProvider.SetParameter(1, Duration);
         parameterProvider.SetParameter(2, WaitForCompletion);
     }

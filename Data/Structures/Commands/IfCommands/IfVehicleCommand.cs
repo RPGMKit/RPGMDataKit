@@ -12,14 +12,14 @@ public class IfVehicleCommand : IfCommand
     {
         base.Unpack(parameterProvider, version);
 
-        VehicleType = (VehicleType)parameterProvider.GetParameter<int>(1);
+        VehicleType = parameterProvider.GetParameter<VehicleType>(1);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         base.Pack(parameterProvider, version);
         
-        parameterProvider.SetParameter(1, (int)VehicleType);
+        parameterProvider.SetParameter(1, VehicleType);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

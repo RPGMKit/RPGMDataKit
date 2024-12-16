@@ -32,16 +32,16 @@ public class ShowTextBaseCommand : NamedCommand
     {
         Face = parameterProvider.GetParameter<string>(0);
         Offset = parameterProvider.GetParameter<int>(1);
-        Background = (BackgroundType)parameterProvider.GetParameter<int>(2);
-        Position = (PositionType)parameterProvider.GetParameter<int>(3);
+        Background = parameterProvider.GetParameter<BackgroundType>(2);
+        Position = parameterProvider.GetParameter<PositionType>(3);
     }
     
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         parameterProvider.SetParameter(0, Face);
         parameterProvider.SetParameter(1, Offset);
-        parameterProvider.SetParameter(2, (int)Background);
-        parameterProvider.SetParameter(3, (int)Position);
+        parameterProvider.SetParameter(2, Background);
+        parameterProvider.SetParameter(3, Position);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

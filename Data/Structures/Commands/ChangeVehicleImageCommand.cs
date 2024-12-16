@@ -22,14 +22,14 @@ public class ChangeVehicleImageCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        VehicleType = (VehicleType)parameterProvider.GetParameter<int>(0);
+        VehicleType = parameterProvider.GetParameter<VehicleType>(0);
         Image = parameterProvider.GetParameter<string>(1);
         Offset = parameterProvider.GetParameter<int>(2);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)VehicleType);
+        parameterProvider.SetParameter(0, VehicleType);
         parameterProvider.SetParameter(1, Image);
         parameterProvider.SetParameter(2, Offset);
     }

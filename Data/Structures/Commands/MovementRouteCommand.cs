@@ -19,7 +19,7 @@ public class MovementRouteCommand : NamedCommand
         IsSecondary = true;
     }
         
-    NamedCommand MoveCommand { get; set; }
+    public NamedCommand MoveCommand { get; set; }
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {

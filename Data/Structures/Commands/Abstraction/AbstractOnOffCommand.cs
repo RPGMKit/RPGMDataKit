@@ -10,12 +10,12 @@ public abstract class AbstractOnOffCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        State = (OnOffState)parameterProvider.GetParameter<int>(0);
+        State = parameterProvider.GetParameter<OnOffState>(0);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)State);
+        parameterProvider.SetParameter(0, State);
     }
     
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

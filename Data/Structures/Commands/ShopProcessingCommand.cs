@@ -24,7 +24,7 @@ public class ShopProcessingCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        Type = (ItemType)parameterProvider.GetParameter<int>(0);
+        Type = parameterProvider.GetParameter<ItemType>(0);
         ItemId = parameterProvider.GetParameter<int>(1);
         HasCustomPrice = parameterProvider.GetParameter<int>(2) != 0;
         CustomPrice = parameterProvider.GetParameter<int>(3);
@@ -33,7 +33,7 @@ public class ShopProcessingCommand : NamedCommand
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)Type);
+        parameterProvider.SetParameter(0, Type);
         parameterProvider.SetParameter(1, ItemId);
         parameterProvider.SetParameter(2, HasCustomPrice ? 1 : 0);
         parameterProvider.SetParameter(3, CustomPrice);

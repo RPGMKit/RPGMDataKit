@@ -67,21 +67,21 @@ public class ChangeParameterCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        SourceT = (SourceType)parameterProvider.GetParameter<int>(0);
+        SourceT = parameterProvider.GetParameter<SourceType>(0);
         SourceId = parameterProvider.GetParameter<int>(1);
-        ActionParameter = (ActionParameterType)parameterProvider.GetParameter<int>(2);
-        Operator = (OperatorType)parameterProvider.GetParameter<int>(3);
-        Operand = (OperandType)parameterProvider.GetParameter<int>(4);
+        ActionParameter = parameterProvider.GetParameter<ActionParameterType>(2);
+        Operator = parameterProvider.GetParameter<OperatorType>(3);
+        Operand = parameterProvider.GetParameter<OperandType>(4);
         Value = parameterProvider.GetParameter<int>(5);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)SourceT);
+        parameterProvider.SetParameter(0, SourceT);
         parameterProvider.SetParameter(1, SourceId);
-        parameterProvider.SetParameter(2, (int)ActionParameter);
-        parameterProvider.SetParameter(3, (int)Operator);
-        parameterProvider.SetParameter(4, (int)Operand);
+        parameterProvider.SetParameter(2, ActionParameter);
+        parameterProvider.SetParameter(3, Operator);
+        parameterProvider.SetParameter(4, Operand);
         parameterProvider.SetParameter(5, Value);
     }
 

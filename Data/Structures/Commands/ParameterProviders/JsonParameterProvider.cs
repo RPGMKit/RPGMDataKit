@@ -22,8 +22,12 @@ public class JsonParameterProvider : IParameterProvider
         if (value is JToken t)
             return t.ToObject<T>();
 
-        if (typeof(T).IsPrimitive)
-            return (T)Convert.ChangeType(value, typeof(T));
+        var retType = typeof(T);
+        if (retType.IsPrimitive)
+            return (T)Convert.ChangeType(value, retType);
+        
+        if (retType.IsEnum)
+            return (T)Enum.ToObject(retType, value);
 
         return (T)value;
     }

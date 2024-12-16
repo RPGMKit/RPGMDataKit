@@ -14,7 +14,7 @@ public class IfEventCommand : IfCommand
         base.Unpack(parameterProvider, version);
 
         EventId = parameterProvider.GetParameter<int>(1);
-        Direction = (Direction)parameterProvider.GetParameter<int>(2);
+        Direction = parameterProvider.GetParameter<Direction>(2);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
@@ -22,7 +22,7 @@ public class IfEventCommand : IfCommand
         base.Pack(parameterProvider, version);
         
         parameterProvider.SetParameter(1, EventId);
-        parameterProvider.SetParameter(2, (int)Direction);
+        parameterProvider.SetParameter(2, Direction);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

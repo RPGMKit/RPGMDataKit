@@ -35,11 +35,11 @@ public class ShowChoicesCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        Choices = parameterProvider.GetParameter<List<string>>(0);;
+        Choices = parameterProvider.GetParameter<List<string>>(0);
         CancelChoiceIndex = parameterProvider.GetParameter<int>(1);
         DefaultChoiceIndex = parameterProvider.GetParameter<int>(2);
-        Position = (PositionType)parameterProvider.GetParameter<int>(3);
-        Background = (BackgroundType)parameterProvider.GetParameter<int>(4);
+        Position = parameterProvider.GetParameter<PositionType>(3);
+        Background = parameterProvider.GetParameter<BackgroundType>(4);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
@@ -47,8 +47,8 @@ public class ShowChoicesCommand : NamedCommand
         parameterProvider.SetParameter(0, Choices);
         parameterProvider.SetParameter(1, CancelChoiceIndex);
         parameterProvider.SetParameter(2, DefaultChoiceIndex);
-        parameterProvider.SetParameter(3, (int)Position);
-        parameterProvider.SetParameter(4, (int)Background);
+        parameterProvider.SetParameter(3, Position);
+        parameterProvider.SetParameter(4, Background);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

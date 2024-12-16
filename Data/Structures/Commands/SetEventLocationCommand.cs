@@ -25,19 +25,19 @@ public class SetEventLocationCommand : NamedCommand
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
         EventId = parameterProvider.GetParameter<int>(0);
-        Designation = (DesignationType)parameterProvider.GetParameter<int>(1);
+        Designation = parameterProvider.GetParameter<DesignationType>(1);
         Param1 = parameterProvider.GetParameter<int>(2);
         Param2 = parameterProvider.GetParameter<int>(3);
-        Direction = (Direction)parameterProvider.GetParameter<int>(4);
+        Direction = parameterProvider.GetParameter<Direction>(4);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         parameterProvider.SetParameter(0, EventId);
-        parameterProvider.SetParameter(1, (int)Designation);
+        parameterProvider.SetParameter(1, Designation);
         parameterProvider.SetParameter(2, Param1);
         parameterProvider.SetParameter(3, Param2);
-        parameterProvider.SetParameter(4, (int)Direction);
+        parameterProvider.SetParameter(4, Direction);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

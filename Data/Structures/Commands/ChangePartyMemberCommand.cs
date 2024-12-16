@@ -22,7 +22,7 @@ public class ChangePartyMemberCommand : NamedCommand
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
         ActorId = parameterProvider.GetParameter<int>(0);
-        Type = (ChangeType)parameterProvider.GetParameter<int>(1);
+        Type = parameterProvider.GetParameter<ChangeType>(1);
         DoInitialize = version == StorageVersion.MV
             ? parameterProvider.GetParameter<bool>(2)
             : parameterProvider.GetParameter<int>(2) > 0;
@@ -31,7 +31,7 @@ public class ChangePartyMemberCommand : NamedCommand
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         parameterProvider.SetParameter(0, ActorId);
-        parameterProvider.SetParameter(1, (int)Type);
+        parameterProvider.SetParameter(1, Type);
         if (version == StorageVersion.MV)
             parameterProvider.SetParameter(2, DoInitialize);
         else

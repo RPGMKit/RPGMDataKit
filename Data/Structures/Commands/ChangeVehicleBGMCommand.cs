@@ -17,7 +17,7 @@ public class ChangeVehicleBGMCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        VehicleType = (VehicleType)parameterProvider.GetParameter<int>(0);
+        VehicleType = parameterProvider.GetParameter<VehicleType>(0);
         SoundData = version == StorageVersion.MV ? parameterProvider.GetParameter<SoundData>(1) : throw new Exception("Exists only in MV");
     }
 

@@ -23,7 +23,7 @@ public static class CommandFactory
                 returnCommand = new CommentCommand();
                 break;
             case CommandCodes.If:
-                returnCommand = IfCommand.Factory((IfCommand.IfType)command.ParameterProvider.GetParameter<int>(0));
+                returnCommand = IfCommand.Factory(command.ParameterProvider.GetParameter<IfCommand.IfType>(0));
                 break;
             case CommandCodes.CommentContinue:
                 returnCommand = new CommentContinueCommand();

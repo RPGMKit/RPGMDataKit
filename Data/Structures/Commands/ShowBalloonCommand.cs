@@ -35,14 +35,14 @@ public class ShowBalloonCommand : NamedCommand
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
         EventId = parameterProvider.GetParameter<int>(0);
-        Icon = (IconType)parameterProvider.GetParameter<int>(1);
+        Icon = parameterProvider.GetParameter<IconType>(1);
         WaitForCompletion = parameterProvider.GetParameter<bool>(2);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         parameterProvider.SetParameter(0, EventId);
-        parameterProvider.SetParameter(1, (int)Icon);
+        parameterProvider.SetParameter(1, Icon);
         parameterProvider.SetParameter(2, WaitForCompletion);
     }
 

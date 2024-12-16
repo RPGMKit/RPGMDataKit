@@ -37,14 +37,14 @@ public class MovePictureCommand : NamedCommand
     {
         Layer = parameterProvider.GetParameter<int>(0);
         // param 1 alaways 0
-        Reference = (ReferenceType)parameterProvider.GetParameter<int>(2);
-        Designation = (DesignationType)parameterProvider.GetParameter<int>(3);
+        Reference = parameterProvider.GetParameter<ReferenceType>(2);
+        Designation = parameterProvider.GetParameter<DesignationType>(3);
         Param1 = parameterProvider.GetParameter<int>(4);
         Param2 = parameterProvider.GetParameter<int>(5);
         Width = parameterProvider.GetParameter<int>(6);
         Height = parameterProvider.GetParameter<int>(7);
         Transparency = parameterProvider.GetParameter<int>(8);
-        BlendMode = (BlendMode)parameterProvider.GetParameter<int>(9);
+        BlendMode = parameterProvider.GetParameter<BlendMode>(9);
         Frames = parameterProvider.GetParameter<int>(10);
         WaitCompletion = parameterProvider.GetParameter<bool>(11);
     }
@@ -53,14 +53,14 @@ public class MovePictureCommand : NamedCommand
     {
         parameterProvider.SetParameter(0, Layer);
         parameterProvider.SetParameter(1, 0);
-        parameterProvider.SetParameter(2, (int)Reference);
-        parameterProvider.SetParameter(3, (int)Designation);
+        parameterProvider.SetParameter(2, Reference);
+        parameterProvider.SetParameter(3, Designation);
         parameterProvider.SetParameter(4, Param1);
         parameterProvider.SetParameter(5, Param2);
         parameterProvider.SetParameter(6, Width);
         parameterProvider.SetParameter(7, Height);
         parameterProvider.SetParameter(8, Transparency);
-        parameterProvider.SetParameter(9, (int)BlendMode);
+        parameterProvider.SetParameter(9, BlendMode);
         parameterProvider.SetParameter(10, Frames);
         parameterProvider.SetParameter(11, WaitCompletion);
     }

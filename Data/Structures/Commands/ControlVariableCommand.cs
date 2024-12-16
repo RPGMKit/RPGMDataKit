@@ -158,8 +158,8 @@ public class ControlVariableCommand : NamedCommand
     {
         StartVariable = parameterProvider.GetParameter<int>(0);
         EndVariable = parameterProvider.GetParameter<int>(1);
-        Operator = (OperatorType)parameterProvider.GetParameter<int>(2);
-        Operand = (OperandType)parameterProvider.GetParameter<int>(3);
+        Operator = parameterProvider.GetParameter<OperatorType>(2);
+        Operand = parameterProvider.GetParameter<OperandType>(3);
         Value1 = parameterProvider.GetParameter<object>(4);
         Value2 = parameterProvider.GetParameter<object>(5);
         Value3 = parameterProvider.GetParameter<object>(6);
@@ -169,8 +169,8 @@ public class ControlVariableCommand : NamedCommand
     {
         parameterProvider.SetParameter(0, StartVariable);
         parameterProvider.SetParameter(1, EndVariable);
-        parameterProvider.SetParameter(2, (int)Operator);
-        parameterProvider.SetParameter(3, (int)Operand);
+        parameterProvider.SetParameter(2, Operator);
+        parameterProvider.SetParameter(3, Operand);
         parameterProvider.SetParameter(4, Value1);
 
         if (Operand == OperandType.GameData)

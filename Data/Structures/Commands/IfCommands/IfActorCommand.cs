@@ -26,7 +26,7 @@ public class IfActorCommand : IfCommand
         base.Unpack(parameterProvider, version);
 
         ActorId = parameterProvider.GetParameter<int>(1);
-        Check = (CheckType)parameterProvider.GetParameter<int>(2);
+        Check = parameterProvider.GetParameter<CheckType>(2);
         Param = parameterProvider.GetParameter<object>(3);
     }
 
@@ -35,7 +35,7 @@ public class IfActorCommand : IfCommand
         base.Pack(parameterProvider, version);
 
         parameterProvider.SetParameter(1, ActorId);
-        parameterProvider.SetParameter(2, (int)Check);
+        parameterProvider.SetParameter(2, Check);
         parameterProvider.SetParameter(3, Param);
     }
 

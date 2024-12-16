@@ -22,14 +22,14 @@ public class ChangeEnemyStateCommand : NamedCommand
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
         TroopId = parameterProvider.GetParameter<int>(0);
-        Operator = (OperatorType)parameterProvider.GetParameter<int>(1);
+        Operator = parameterProvider.GetParameter<OperatorType>(1);
         StateId = parameterProvider.GetParameter<int>(2);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         parameterProvider.SetParameter(0, TroopId);
-        parameterProvider.SetParameter(1, (int)Operator);
+        parameterProvider.SetParameter(1, Operator);
         parameterProvider.SetParameter(2, StateId);
     }
 

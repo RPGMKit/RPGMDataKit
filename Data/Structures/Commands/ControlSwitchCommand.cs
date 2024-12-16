@@ -17,14 +17,14 @@ public class ControlSwitchCommand : NamedCommand
     {
         StartSwitchId = parameterProvider.GetParameter<int>(0);
         EndSwitchId = parameterProvider.GetParameter<int>(1);
-        State = (OnOffState)parameterProvider.GetParameter<int>(2);
+        State = parameterProvider.GetParameter<OnOffState>(2);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         parameterProvider.SetParameter(0, StartSwitchId);
         parameterProvider.SetParameter(1, EndSwitchId);
-        parameterProvider.SetParameter(2, (int)State);
+        parameterProvider.SetParameter(2, State);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

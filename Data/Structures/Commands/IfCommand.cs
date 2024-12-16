@@ -36,12 +36,12 @@ public abstract class IfCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        Type = (IfType)parameterProvider.GetParameter<int>(0);
+        Type = parameterProvider.GetParameter<IfType>(0);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)Type);
+        parameterProvider.SetParameter(0, Type);
     }
 
     public static IfCommand Factory(IfType type)

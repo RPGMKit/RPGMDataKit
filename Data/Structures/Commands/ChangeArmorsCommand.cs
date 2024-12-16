@@ -34,8 +34,8 @@ public class ChangeArmorsCommand : NamedCommand
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
         ArmorId = parameterProvider.GetParameter<int>(0);
-        Operator = (OperatorType)parameterProvider.GetParameter<int>(1);
-        Operand = (OperandType)parameterProvider.GetParameter<int>(2);
+        Operator = parameterProvider.GetParameter<OperatorType>(1);
+        Operand = parameterProvider.GetParameter<OperandType>(2);
         Value = parameterProvider.GetParameter<int>(3);
         IncludeEquipment = parameterProvider.GetParameter<bool>(4);
     }
@@ -43,8 +43,8 @@ public class ChangeArmorsCommand : NamedCommand
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         parameterProvider.SetParameter(0, ArmorId);
-        parameterProvider.SetParameter(1, (int)Operator);
-        parameterProvider.SetParameter(2, (int)Operand);
+        parameterProvider.SetParameter(1, Operator);
+        parameterProvider.SetParameter(2, Operand);
         parameterProvider.SetParameter(3, Value);
         parameterProvider.SetParameter(4, IncludeEquipment);
     }

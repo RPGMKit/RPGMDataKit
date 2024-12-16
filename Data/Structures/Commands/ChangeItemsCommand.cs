@@ -35,16 +35,16 @@ public class ChangeItemsCommand : NamedCommand
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
         ItemId = parameterProvider.GetParameter<int>(0);
-        Operator = (OperatorType)parameterProvider.GetParameter<int>(1);
-        Operand = (OperandType)parameterProvider.GetParameter<int>(2);
+        Operator = parameterProvider.GetParameter<OperatorType>(1);
+        Operand = parameterProvider.GetParameter<OperandType>(2);
         Value = parameterProvider.GetParameter<int>(3);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
         parameterProvider.SetParameter(0, ItemId);
-        parameterProvider.SetParameter(1, (int)Operator);
-        parameterProvider.SetParameter(2, (int)Operand);
+        parameterProvider.SetParameter(1, Operator);
+        parameterProvider.SetParameter(2, Operand);
         parameterProvider.SetParameter(3, Value);
     }
 

@@ -21,7 +21,7 @@ public class IfGoldCommand : IfCommand
         base.Unpack(parameterProvider, version);
 
         Amount = parameterProvider.GetParameter<int>(1);
-        Operator = (OperatorType)parameterProvider.GetParameter<int>(2);
+        Operator = parameterProvider.GetParameter<OperatorType>(2);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
@@ -29,7 +29,7 @@ public class IfGoldCommand : IfCommand
         base.Pack(parameterProvider, version);
         
         parameterProvider.SetParameter(1, Amount);
-        parameterProvider.SetParameter(2, (int)Operator);
+        parameterProvider.SetParameter(2, Operator);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

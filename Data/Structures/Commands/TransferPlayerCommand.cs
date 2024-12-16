@@ -32,22 +32,22 @@ public class TransferPlayerCommand : NamedCommand
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        Designation = (DesignationType)parameterProvider.GetParameter<int>(0);
+        Designation = parameterProvider.GetParameter<DesignationType>(0);
         Param1 = parameterProvider.GetParameter<int>(1);
         Param2 = parameterProvider.GetParameter<int>(2);
         Param3 = parameterProvider.GetParameter<int>(3);
-        Direction = (Direction)parameterProvider.GetParameter<int>(4);
-        Fade = (FadeType)parameterProvider.GetParameter<int>(5);
+        Direction = parameterProvider.GetParameter<Direction>(4);
+        Fade = parameterProvider.GetParameter<FadeType>(5);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
-        parameterProvider.SetParameter(0, (int)Designation);
+        parameterProvider.SetParameter(0, Designation);
         parameterProvider.SetParameter(1, Param1);
         parameterProvider.SetParameter(2, Param2);
         parameterProvider.SetParameter(3, Param3);
-        parameterProvider.SetParameter(4, (int)Direction);
-        parameterProvider.SetParameter(5, (int)Fade);
+        parameterProvider.SetParameter(4, Direction);
+        parameterProvider.SetParameter(5, Fade);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
