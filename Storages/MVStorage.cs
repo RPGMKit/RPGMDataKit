@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.MV.Classes;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 
@@ -17,28 +18,30 @@ public class MVStorage : Storage
 
     protected override void Init()
     {
-        Actors = new(this, DataPath("Actors.json"), LoadData<LookupList<Actor>>);
-        Animations = new(this, DataPath("Animations.json"), LoadData<LookupList<Animation>>);
-        Armors = new(this, DataPath("Armors.json"), LoadData<LookupList<Armor>>);
-        Classes = new(this, DataPath("Classes.json"), LoadData<LookupList<Class>>);
-        CommonEvents = new(this, DataPath("CommonEvents.json"), LoadData<LookupList<CommonEvent>>);
-        Enemies = new(this, DataPath("Enemies.json"), LoadData<LookupList<Enemy>>);
-        Items = new(this, DataPath("Items.json"), LoadData<LookupList<Item>>);
+        Actors = new(this, DataPath("Actors.json"), path => LoadData<LookupList<Actor>>(path).MorphToBase<IActor>());
+        Animations = new(this, DataPath("Animations.json"),
+            path => LoadData<LookupList<Animation>>(path).MorphToBase<IAnimation>());
+        Armors = new(this, DataPath("Armors.json"), path => LoadData<LookupList<Armor>>(path).MorphToBase<IArmor>());
+        Classes = new(this, DataPath("Classes.json"), path => LoadData<LookupList<Class>>(path).MorphToBase<IClass>());
+        CommonEvents = new(this, DataPath("CommonEvents.json"),
+            path => LoadData<LookupList<CommonEvent>>(path).MorphToBase<ICommonEvent>());
+        Enemies = new(this, DataPath("Enemies.json"), path => LoadData<LookupList<Enemy>>(path).MorphToBase<IEnemy>());
+        Items = new(this, DataPath("Items.json"), path => LoadData<LookupList<Item>>(path).MorphToBase<IItem>());
         Maps = new(this, MapPath, LoadData<Map>);
-        MapInfos = new(this, DataPath("MapInfos.json"), LoadData<LookupList<MapInfo>>);
-        Skills = new(this, DataPath("Skills.json"), LoadData<LookupList<Skill>>);
-        States = new(this, DataPath("States.json"), LoadData<LookupList<State>>);
+        MapInfos = new(this, DataPath("MapInfos.json"), path => LoadData<LookupList<MapInfo>>(path).MorphToBase<IMapInfo>());
+        Skills = new(this, DataPath("Skills.json"), path => LoadData<LookupList<Skill>>(path).MorphToBase<ISkill>());
+        States = new(this, DataPath("States.json"), path => LoadData<LookupList<State>>(path).MorphToBase<IState>());
         System = new(this, DataPath("System.json"), LoadData<Data.MV.Classes.System>);
-        Tilesets = new(this, DataPath("TileSets.json"), LoadData<LookupList<Tileset>>);
-        Troops = new(this, DataPath("Troops.json"), LoadData<LookupList<Troop>>);
-        Weapons = new(this, DataPath("Weapons.json"), LoadData<LookupList<Weapon>>);
+        Tilesets = new(this, DataPath("TileSets.json"), path => LoadData<LookupList<Tileset>>(path).MorphToBase<ITileSet>());
+        Troops = new(this, DataPath("Troops.json"), path => LoadData<LookupList<Troop>>(path).MorphToBase<ITroop>());
+        Weapons = new(this, DataPath("Weapons.json"), path => LoadData<LookupList<Weapon>>(path).MorphToBase<IWeapon>());
     }
 
     public override string DataPath(string dataObject)
     {
         return Path.Combine("data", dataObject);
     }
-    
+
     public override T LoadData<T>(string relativePath)
     {
         var path = Path.Combine(ProjectPath, relativePath);

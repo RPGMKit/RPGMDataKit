@@ -1,10 +1,8 @@
 ﻿using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
-using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
-using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
@@ -29,53 +27,55 @@ public class Troop : RubySerializationEntity, ITroop
     }
 
     [RubyObject("RPG::Troop::Page")]
-    public class Page : RubySerializationEntity, IPage
+    public class EventPage : RubySerializationEntity, ITroopPage
     {
         [RubyObject("RPG::Troop::Page::Condition")]
-        public class PageCondition : RubySerializationEntity
+        public class PageCondition : RubySerializationEntity, ITroopPageCondition
         {
             [RubyProperty("@turn_ending")]
-            public bool TurnEnding;
+            public bool TurnEnding { get; set; }
 
             [RubyProperty("@turn_valid")]
-            public bool TurnValid;
+            public bool TurnValid { get; set; }
 
             [RubyProperty("@enemy_valid")]
-            public bool EnemyValid;
+            public bool EnemyValid { get; set; }
 
             [RubyProperty("@actor_valid")]
-            public bool ActorValid;
+            public bool ActorValid { get; set; }
 
             [RubyProperty("@switch_valid")]
-            public bool SwitchValid;
+            public bool SwitchValid { get; set; }
 
             [RubyProperty("@turn_a")]
-            public int TurnA;
+            public int TurnA { get; set; }
 
             [RubyProperty("@turn_b")]
-            public int TurnB;
+            public int TurnB { get; set; }
 
             [RubyProperty("@enemy_index")]
-            public int EnemyIndex;
+            public int EnemyIndex { get; set; }
 
             [RubyProperty("@enemy_hp")]
-            public int EnemyHp;
+            public int EnemyHp { get; set; }
 
             [RubyProperty("@actor_id")]
-            public int ActorId;
+            public int ActorId { get; set; }
 
             [RubyProperty("@actor_hp")]
-            public int ActorHp;
+            public int ActorHp { get; set; }
 
             [RubyProperty("@switch_id")]
-            public int SwitchId;
+            public int SwitchId { get; set; }
         }
 
         [RubyProperty("@condition")]
-        public PageCondition Condition;
+        public PageCondition _Condition { get; set; }
+
+        public ITroopPageCondition Condition => _Condition;
 
         [RubyProperty("@span")]
-        public int Span;
+        public int Span { get; set; }
 
         [RubyProperty("@list")]
         public List<Command> List;
@@ -83,10 +83,10 @@ public class Troop : RubySerializationEntity, ITroop
         public List<NamedCommand> NamedCommands { get; set; }
 
         public IEnumerable<ICommandWithIndent> Commands => List;
-        
-        protected override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
 
-        protected override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.VXAce);
+        public override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
+
+        public override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.VXAce);
 
         public void Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
@@ -113,7 +113,7 @@ public class Troop : RubySerializationEntity, ITroop
     public IByIdGetter<IMember> Members => _Members;
 
     [RubyProperty("@pages")]
-    public LookupList<Page> _Pages { get; set; }
+    public LookupList<EventPage> _Pages { get; set; }
 
-    public IByIdGetter<IPage> Pages => _Pages;
+    public IByIdGetter<ITroopPage> Pages => _Pages;
 }

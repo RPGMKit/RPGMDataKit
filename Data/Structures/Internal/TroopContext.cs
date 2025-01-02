@@ -6,7 +6,7 @@ public class TroopContext
 {
     public ITroop Troop { get; set; }
     public int PageId { get; set; }
-    public IPage Page { get; set; }
+    public ITroopPage EventPage { get; set; }
     
     public override string ToString() =>
         $"Troop [{Troop.Id:D3}:{Troop.Name}], Page {PageId}";

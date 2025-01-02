@@ -78,7 +78,7 @@ public abstract class Storage
         return Maps.Get(mapId)?.Events.Get(eventId);
     }
 
-    public IPage? GetMapEventPage(int mapId, int eventId, int pageId)
+    public IEventPage? GetMapEventPage(int mapId, int eventId, int pageId)
     {
         return GetMapEvent(mapId, eventId)?.Pages.ElementAt(pageId);
     }
@@ -90,6 +90,8 @@ public abstract class Storage
     }
 
     public delegate void CommandWalker(NamedCommand command, EntityContext context);
+    
+    public delegate void CommandWalker<T>(NamedCommand command, EntityContext context) where T: NamedCommand;
     
     public void SearchCommands(CommandWalker searcher)
     {
@@ -105,7 +107,7 @@ public abstract class Storage
 
         MapEventHelper.WalkMapEventPages(this, (context) => 
         {
-            foreach (var command in context.Page.NamedCommands)
+            foreach (var command in context.EventPage.NamedCommands)
             {
                 searcher(command, new(this, context));
             }

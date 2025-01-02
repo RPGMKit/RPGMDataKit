@@ -3,7 +3,7 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
-public class Color : JsonEntity, IColor
+public class Color : LookupList<int>, IColor
 {
     public static Color FromArray(IList<int> list)
     {
@@ -16,8 +16,20 @@ public class Color : JsonEntity, IColor
         };
     }
 
-    public int Red { get; set; }
-    public int Green { get; set; }
-    public int Blue { get; set; }
-    public int Alpha { get; set; }
+    public int Red
+    {
+        get => this[0]; set => Set(0, value);
+    }
+    public int Green
+    {
+        get => this[1]; set => Set(1, value);
+    }
+    public int Blue
+    {
+        get => this[2]; set => Set(2, value);
+    }
+    public int Alpha
+    {
+        get => this[3]; set => Set(3, value);
+    }
 }

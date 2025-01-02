@@ -1,4 +1,5 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.SpecialTypes;
 
@@ -8,34 +9,34 @@ namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 public class UsableItem : BaseItem
 {
     [RubyObject("RPG::UsableItem::Effect")]
-    public class Effect : RubySerializationEntity
+    public class Effect : RubySerializationEntity, IEffect
     {
         [RubyProperty("@code")]
-        public int Code;
+        public int Code { get; set; }
 
         [RubyProperty("@data_id")]
-        public int DataId;
+        public int DataId { get; set; }
 
         [RubyProperty("@value1")]
-        public DynamicProperty<int, double> Value1;
+        public object Value1 { get; set; }
 
         [RubyProperty("@value2")]
-        public DynamicProperty<int, double> Value2;
+        public object Value2 { get; set; }
     }
 
     [RubyObject("RPG::UsableItem::Damage")]
-    public class ItemDamage : RubySerializationEntity
+    public class ItemDamage : RubySerializationEntity, IItemDamage
     {
         [RubyProperty("@type")]
-        public int Type;
+        public int Type { get; set; }
         [RubyProperty("@element_id")]
-        public int ElementId;
+        public int ElementId { get; set; }
         [RubyProperty("@formula")]
-        public string Formula;
+        public string Formula { get; set; }
         [RubyProperty("@variance")]
-        public int Variance;
+        public int Variance { get; set; }
         [RubyProperty("@critical")]
-        public bool Critical;
+        public bool Critical { get; set; }
     }
 
     [RubyProperty("@scope")]

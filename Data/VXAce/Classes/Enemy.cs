@@ -2,7 +2,6 @@
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
-using RubyMarshalCS.SpecialTypes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
@@ -10,61 +9,61 @@ namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 public class Enemy : BaseItem, IEnemy
 {
     [RubyObject("RPG::Enemy::DropItem")]
-    public class DropItem : RubySerializationEntity
+    public class DropItem : RubySerializationEntity, IDropItem
     {
         [RubyProperty("@kind")]
-        public int Kind;
+        public int Kind { get; set; }
 
         [RubyProperty("@data_id")]
-        public int DataId;
+        public int DataId { get; set; }
 
         [RubyProperty("@denominator")]
-        public int Denominator;
+        public int Denominator { get; set; }
     }
 
     [RubyObject("RPG::Enemy::Action")]
-    public class Action : RubySerializationEntity
+    public class Action : RubySerializationEntity, IAction
     {
         [RubyProperty("@skill_id")]
-        public int SkillId;
+        public int SkillId { get; set; }
 
         [RubyProperty("@condition_type")]
-        public int ConditionType;
+        public int ConditionType { get; set; }
 
         [RubyProperty("@condition_param1")]
-        public DynamicProperty<int, double> ConditionParam1;
+        public object ConditionParam1 { get; set; }
 
         [RubyProperty("@condition_param2")]
-        public DynamicProperty<int, double> ConditionParam2;
+        public object ConditionParam2 { get; set; }
 
         [RubyProperty("@rating")]
-        public int Rating;
+        public int Rating { get; set; }
     }
 
     [RubyProperty("@battler_name")]
-    public string BattlerName;
+    public string BattlerName { get; set; }
 
     [RubyProperty("@battler_hue")]
-    public int BattlerHue;
+    public int BattlerHue { get; set; }
 
     [RubyProperty("@params")]
-    public List<int> Params;
+    public List<int> Params { get; set; }
 
     [RubyProperty("@exp")]
-    public int Exp;
+    public int Exp { get; set; }
 
     [RubyProperty("@gold")]
-    public int Gold;
+    public int Gold { get; set; }
 
     [RubyProperty("@drop_items")]
-    public List<DropItem> DropItems;
+    public List<DropItem> DropItems { get; set; }
 
     [RubyProperty("@actions")]
-    public List<Action> Actions;
+    public List<Action> Actions { get; set; }
 
     [RubyProperty("@hit", CandidateFlags.In)]
-    public int Hit;
+    public int Hit { get; set; }
     
     [RubyProperty("@eva", CandidateFlags.In)]
-    public int Eva;
+    public int Eva { get; set; }
 }

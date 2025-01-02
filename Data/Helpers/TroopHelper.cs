@@ -23,7 +23,7 @@ public static class TroopHelper
                 {
                     Troop = troop,
                     PageId = i,
-                    Page = p,
+                    EventPage = p,
                 });
             }
         }
@@ -36,13 +36,13 @@ public static class TroopHelper
 
         WalkTroopPages(storage, (context) =>
         {
-            IndentHelper.ValidateIndents(context.Page, storage.Version);
+            IndentHelper.ValidateIndents(context.EventPage, storage.Version);
 
             using var file = File.Open(Path.Combine(path, $"Troop_{context.Troop.Id:D3}_Page_{context.PageId}.txt"),
                 FileMode.Create);
             using var writer = new StreamWriter(file);
 
-            context.Page.Dump(writer, new(storage, context, options.ExtendedFormat), options);
+            context.EventPage.Dump(writer, new(storage, context, options.ExtendedFormat), options);
         });
     }
 }

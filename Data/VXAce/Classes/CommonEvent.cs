@@ -28,9 +28,9 @@ public class CommonEvent : RubySerializationEntity, ICommonEvent
 
     public IEnumerable<ICommandWithIndent>? Commands => List;
 
-    protected override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
+    public override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
 
-    protected override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.VXAce);
+    public override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.VXAce);
 
     public void Dump(TextWriter writer, EntityContext context, DumpOptions options)
     {

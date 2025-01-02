@@ -41,12 +41,6 @@ public class Animation : RubySerializationEntity, IAnimation
         public int FlashDuration;
     }
 
-    /// <summary>
-    /// /
-    /// </summary>
-    ///
-    ///
-
     [RubyProperty("@id")]
     public int Id { get; set; }
     

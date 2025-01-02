@@ -112,14 +112,14 @@ namespace RPGMakerLibCoreV2
                 using StringWriter bA = new();
                 using StringWriter bB = new();
 
-                context.Page.Dump(bA, new(left, context, options.ExtendedFormat), options);
+                context.EventPage.Dump(bA, new(left, context, options.ExtendedFormat), options);
                 pageB?.Dump(bB, new(right, new MapEventContext()
                 {
                     MapId = context.MapId,
                     Map = otherMap,
                     Event = otherEvent,
                     PageId = context.PageId,
-                    Page = pageB
+                    EventPage = pageB
                 }, options.ExtendedFormat), options);
 
                 var patchData = new Patch.MapEventPageData()
@@ -165,7 +165,7 @@ namespace RPGMakerLibCoreV2
                 {
                     using var sA = new StringWriter();
 
-                    context.Page.Dump(sA, new(right, context, options.ExtendedFormat), options);
+                    context.EventPage.Dump(sA, new(right, context, options.ExtendedFormat), options);
                     
                     var diff = CalculateTextDiff("", sA.ToString());
                     

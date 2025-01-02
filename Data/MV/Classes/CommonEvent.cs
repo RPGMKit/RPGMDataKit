@@ -26,9 +26,9 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         public List<NamedCommand> NamedCommands { get; set; }
         public IEnumerable<ICommandWithIndent>? Commands => List;
 
-        protected override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
+        public override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
 
-        protected override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.MV);
+        public override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.MV);
         
         public override void Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {

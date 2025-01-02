@@ -1,6 +1,6 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RubyMarshalCS.Serialization;
+using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
@@ -9,7 +9,7 @@ namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 public class Class : BaseItem, IClass
 {
     [RubyObject("RPG::Class::Learning")]
-    public class Learning : RubySerializationEntity
+    public class Learning : RubySerializationEntity, ILearning
     {
         [RubyProperty("@level")]
         public int Level { get; set; }
@@ -25,7 +25,7 @@ public class Class : BaseItem, IClass
     public List<int> ExpParams { get; set; }
 
     [RubyProperty("@params")]
-    public object Params { get; set; }
+    public Table Params { get; set; }
 
     [RubyProperty("@learnings")]
     public List<Learning> Learnings { get; set; }

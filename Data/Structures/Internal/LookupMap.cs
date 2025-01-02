@@ -14,10 +14,30 @@ public class LookupMap<T> : Dictionary<int, T>, IDataLookup<T>
         return default;
     }
 
-    public void Set(int index, T value)
+    public void Set(int index, T? value)
     {
         this[index] = value;
     }
 
     public IEnumerator<T> GetEnumerator() => Values.GetEnumerator();
+
+    public IEnumerable<KeyValuePair<int, T>> GetWithIndex()
+    {
+        foreach (var key in Keys)
+            yield return new KeyValuePair<int, T>(key, this[key]);
+    }
+    
+    public IDataLookup<TV> MorphToBase<TV>() where TV : class
+    {
+        if (!typeof(TV).IsSubclassOf(typeof(T)))
+            throw new Exception("Cant morph, not a base type.");
+
+        LookupMap<TV> morphed = new LookupMap<TV>();
+        foreach (var p in GetWithIndex())
+        {
+            morphed.Set(p.Key, (TV?)Convert.ChangeType(p.Value, typeof(TV)));
+        }
+
+        return morphed;
+    }
 }

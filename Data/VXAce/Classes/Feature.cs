@@ -1,19 +1,18 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
-using RubyMarshalCS.Serialization.Enums;
-using RubyMarshalCS.SpecialTypes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::BaseItem::Feature")]
-public class Feature : RubySerializationEntity
+public class Feature : RubySerializationEntity, IFeature
 {
     [RubyProperty("@code")]
-    public int Code;
+    public int Code { get; set; }
 
     [RubyProperty("@data_id")]
-    public int DataId;
+    public int DataId { get; set; }
 
-    [RubyProperty("@value", CandidateFlags.Dynamic)]
-    public DynamicProperty<int, double> Value;
+    [RubyProperty("@value")]
+    public object Value { get; set; }
 }

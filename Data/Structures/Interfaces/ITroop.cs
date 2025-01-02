@@ -10,5 +10,5 @@ public interface ITroop
 
     public IByIdGetter<IMember> Members { get; }
     
-    public IByIdGetter<IPage> Pages { get; }
+    public IByIdGetter<ITroopPage> Pages { get; }
 }

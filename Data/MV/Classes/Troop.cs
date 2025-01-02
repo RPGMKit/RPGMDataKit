@@ -25,18 +25,65 @@ public class Troop : JsonEntity, ITroop
         public bool Hidden { get; set; }
     }
 
-    public class Page : JsonEntity, IPage
+    public class EventPage : JsonEntity, ITroopPage
     {
+        public class PageCondition : JsonEntity, ITroopPageCondition
+        {
+            [JsonProperty("turnEnding")]
+            public bool TurnEnding { get; set; }
+
+            [JsonProperty("turnValid")]
+            public bool TurnValid { get; set; }
+
+            [JsonProperty("enemyValid")]
+            public bool EnemyValid { get; set; }
+
+            [JsonProperty("actorValid")]
+            public bool ActorValid { get; set; }
+
+            [JsonProperty("switchValid")]
+            public bool SwitchValid { get; set; }
+
+            [JsonProperty("turnA")]
+            public int TurnA { get; set; }
+
+            [JsonProperty("turnB")]
+            public int TurnB { get; set; }
+
+            [JsonProperty("enemyIndex")]
+            public int EnemyIndex { get; set; }
+
+            [JsonProperty("enemyHp")]
+            public int EnemyHp { get; set; }
+
+            [JsonProperty("actorId")]
+            public int ActorId { get; set; }
+
+            [JsonProperty("actorHp")]
+            public int ActorHp { get; set; }
+
+            [JsonProperty("switchId")]
+            public int SwitchId { get; set; }
+        }
+
+        [JsonProperty("span")]
+        public int Span { get; set; }
+
+        [JsonProperty("conditions")]
+        public PageCondition _Condition { get; set; }
+       
+        public ITroopPageCondition Condition => _Condition;
+
         [JsonProperty(PropertyName = "list")]
         public LookupList<Command> List { get; set; }
 
         public List<NamedCommand> NamedCommands { get; set; }
         
         public IEnumerable<ICommandWithIndent> Commands => List;
-        
-        protected override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
 
-        protected override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.MV);
+        public override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
+
+        public override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.MV);
 
         public override void Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
@@ -63,7 +110,7 @@ public class Troop : JsonEntity, ITroop
     public IByIdGetter<IMember> Members => _Members;
 
     [JsonProperty("pages")]
-    public LookupList<Page> _Pages { get; set; }
+    public LookupList<EventPage> _Pages { get; set; }
 
-    public IByIdGetter<IPage> Pages => _Pages;
+    public IByIdGetter<ITroopPage> Pages => _Pages;
 }
