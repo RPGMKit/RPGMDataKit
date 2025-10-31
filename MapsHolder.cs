@@ -18,6 +18,11 @@ public class MapsHolder
         _loader = loader;
     }
 
+    public void Unload()
+    {
+        _maps.Clear();
+    }
+
     public IMap? Get(int index)
     {
         if (!_maps.ContainsKey(index))

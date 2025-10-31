@@ -19,6 +19,12 @@ public class DataHolder<TDataType>
         _loader = loader;
     }
 
+    public void Unload()
+    {
+        _isLoaded = false;
+        _data = default;
+    }
+    
     public TDataType Get()
     {
         if (!_isLoaded)

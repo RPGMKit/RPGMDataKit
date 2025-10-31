@@ -13,4 +13,9 @@ public class DataLookupHolder<TDataType> : DataHolder<IDataLookup<TDataType>>
     {
         return Get().Get(index);
     }
+
+    public void Set(int index, TDataType? value)
+    {
+        Get().Set(index, value);
+    }
 }

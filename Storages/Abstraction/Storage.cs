@@ -36,6 +36,25 @@ public abstract class Storage
         Init();
     }
 
+    public virtual void Unload()
+    {
+        Actors.Unload();
+        Animations.Unload();
+        Armors.Unload();
+        Classes.Unload();
+        CommonEvents.Unload();
+        Enemies.Unload();
+        Items.Unload();
+        Maps.Unload();
+        MapInfos.Unload();
+        Skills.Unload();
+        States.Unload();
+        System.Unload();
+        Tilesets.Unload();
+        Troops.Unload();
+        Weapons.Unload();
+    }
+
     protected abstract void Init();
 
     protected abstract string MapPath(int index);
