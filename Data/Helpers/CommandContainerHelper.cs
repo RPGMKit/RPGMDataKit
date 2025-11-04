@@ -12,8 +12,18 @@ public static class CommandContainerHelper
     {
         if (options.Format == DumpFormat.Text)
         {
+            var i = 0;
             foreach (var command in container.NamedCommands)
-                yield return command.AsString(context, options);
+            {
+                var lineNumber = "";
+                if (!string.IsNullOrWhiteSpace(options.LineNumberFormat))
+                    lineNumber = string.Format("{0:" + options.LineNumberFormat + "} ", i);
+
+                ++i;
+
+                yield return lineNumber + command.AsString(context, options);
+            }
+
             yield break;
         }
 

@@ -130,15 +130,13 @@ public class NameFormatter
 
     public string FormatEvent(int eventId, FormatOptions? options = null)
     {
-        string eventName;
+        string? eventName;
         switch (eventId)
         {
             case -1:
                 return "Player";
-                break;
             case 0:
                 return "This Event";
-                break;
             default:
                 eventName = _context.MapEventContext?.Map.Events.Get(eventId)?.Name;
                 break;

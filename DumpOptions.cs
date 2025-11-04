@@ -6,4 +6,5 @@ public class DumpOptions
     public bool WithIndent = true;
     public bool AppendCommandCode = true;
     public bool ExtendedFormat = false;
+    public string LineNumberFormat = "";
 }

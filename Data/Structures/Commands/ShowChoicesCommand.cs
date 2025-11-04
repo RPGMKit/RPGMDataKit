@@ -32,6 +32,8 @@ public class ShowChoicesCommand : NamedCommand
     public int DefaultChoiceIndex { get; set; }
     public PositionType Position { get; set; }
     public BackgroundType Background { get; set; }
+    
+    public bool IsCancelChoiceBranch => CancelChoiceIndex == CancelChoiceBranch;
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {

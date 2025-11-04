@@ -22,16 +22,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
 
         public virtual void Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
-            switch (options.Format)
-            {
-                case DumpFormat.Text:
-                    throw new Exception($"'Text' serialization not implemented for '{GetType().Name}'");
-                case DumpFormat.PrettyJson:
-                {
-                    writer.WriteLine(JsonConvert.SerializeObject(this, Formatting.Indented));
-                    return;
-                }
-            }
+            throw new Exception($"'{options.Format}' dump format not implemented for '{GetType().Name}'");
         }
 
         [OnDeserialized]

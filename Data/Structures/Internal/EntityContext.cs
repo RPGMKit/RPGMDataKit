@@ -27,7 +27,7 @@ public class EntityContext
         TroopContext = context;
     }
 
-    public Storage Storage { get; set; }
+    public Storage Storage { get; }
     
     public StorageVersion Version => Storage.Version;
 

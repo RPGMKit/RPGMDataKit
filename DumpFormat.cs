@@ -3,6 +3,6 @@
     public enum DumpFormat
     {
         Text,
-        PrettyJson,
+        PatchFormat,
     }
 }

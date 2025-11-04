@@ -1,17 +1,15 @@
-﻿using System.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Diff;
 using RPGMakerLibCoreV2.Diff.Text;
 using RPGMakerLibCoreV2.Storages.Abstraction;
-using Patch = RPGMakerLibCoreV2.Diff.Patch;
 
 namespace RPGMakerLibCoreV2
 {
     public static class Differ
     {
-        private static DiffMatchPatchV2 _dmp = new DiffMatchPatchV2();
+        private static readonly DiffMatchPatchV2 _dmp = new();
 
         public static List<Patch> CalculatePatches(Storage left, Storage right, DumpOptions options)
         {
@@ -125,12 +123,12 @@ namespace RPGMakerLibCoreV2
                 var patchData = new Patch.MapEventPageData()
                     { MapId = context.MapId, EventId = context.Event.Id, PageId = context.PageId };
 
-                var diff = CalculateTextDiff(bA.ToString(), bB.ToString());
-                if (diff.Item1 == DiffType.Equal)
+                var (diffType, diffs) = CalculateTextDiff(bA.ToString(), bB.ToString());
+                if (diffType == DiffType.Equal)
                     return;
 
                 d.Add(new()
-                    { Type = diff.Item1, MapEventPage = patchData, Patches = diff.Item2 });
+                    { Type = diffType, MapEventPage = patchData, Patches = diffs });
             });
 
             MapEventHelper.WalkMapEventPages(right, context =>

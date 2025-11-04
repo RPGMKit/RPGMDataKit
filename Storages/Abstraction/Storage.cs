@@ -10,6 +10,8 @@ namespace RPGMakerLibCoreV2.Storages.Abstraction;
 public abstract class Storage
 {
     public string ProjectPath { get; private set; }
+
+    public string DataDirectory { get; private set; }
     
     public StorageVersion Version { get; init; }
 
@@ -29,9 +31,10 @@ public abstract class Storage
     public DataLookupHolder<ITroop> Troops;
     public DataLookupHolder<IWeapon> Weapons;
 
-    public Storage(string projectPath)
+    public Storage(string projectPath, string dataDirectory = "data")
     {
         ProjectPath = projectPath;
+        DataDirectory = dataDirectory;
 
         Init();
     }
@@ -108,27 +111,39 @@ public abstract class Storage
         public List<MapEventContext> MapEventResults = new();
     }
 
-    public delegate void CommandWalker(NamedCommand command, EntityContext context);
+    public delegate void CommandWalker(int index, NamedCommand command, EntityContext context);
     
-    public delegate void CommandWalker<T>(NamedCommand command, EntityContext context) where T: NamedCommand;
+    public delegate void CommandWalker<T>(int index, NamedCommand command, EntityContext context) where T: NamedCommand;
     
     public void SearchCommands(CommandWalker searcher)
     {
         CommonEventHelper.WalkCommonEvents(CommonEvents.Get(), (context) =>
         {
-            int commandIndex = 0;
+            var commandIndex = 0;
             foreach (var command in context.CommonEvent.NamedCommands)
             {
-                searcher(command, new(this, context));
+                searcher(commandIndex, command, new(this, context));
                 ++commandIndex;
             }
         });
 
         MapEventHelper.WalkMapEventPages(this, (context) => 
         {
+            var commandIndex = 0;
             foreach (var command in context.EventPage.NamedCommands)
             {
-                searcher(command, new(this, context));
+                searcher(commandIndex, command, new(this, context));
+                ++commandIndex;
+            }
+        });
+        
+        TroopHelper.WalkTroopPages(this, (context) =>
+        {
+            var commandIndex = 0;
+            foreach (var command in context.EventPage.NamedCommands)
+            {
+                searcher(commandIndex, command, new(this, context));
+                ++commandIndex;
             }
         });
     }

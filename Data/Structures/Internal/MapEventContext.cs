@@ -11,5 +11,5 @@ public class MapEventContext
     public IEventPage EventPage { get; set; }
     
     public override string ToString() =>
-        $"Map [{MapId:D3}:{Map.DisplayName}], Event [{Event.Id:D3}:{Event.Name}], Page {PageId}, X {Event.X}, Y {Event.X}";
+        $"Map [{MapId:D3}:{Map.DisplayName}], Event [{Event.Id:D3}:{Event.Name}], Page {PageId}, X {Event.X}, Y {Event.Y}";
 }

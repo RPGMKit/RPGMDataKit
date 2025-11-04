@@ -9,7 +9,7 @@ namespace RPGMakerLibCoreV2.Storages;
 
 public class MVStorage : Storage
 {
-    public MVStorage(string projectPath) : base(projectPath)
+    public MVStorage(string projectPath, string dataDirectory = "data") : base(projectPath, dataDirectory)
     {
         Version = StorageVersion.MV;
     }
@@ -39,7 +39,7 @@ public class MVStorage : Storage
 
     public override string DataPath(string dataObject)
     {
-        return Path.Combine("data", dataObject);
+        return Path.Combine(DataDirectory, dataObject);
     }
 
     public override T LoadData<T>(string relativePath)

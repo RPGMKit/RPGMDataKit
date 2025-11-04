@@ -41,12 +41,12 @@ public class Patch
     }
 
     public DiffType Type;
-    public SwitchData Switch;
-    public VariableData Variable;
-    public CommonEvenData CommonEvent;
-    public MapData Map;
-    public MapInfoData MapInfo;
-    public MapEventData MapEvent;
-    public MapEventPageData MapEventPage;
-    public List<Text.Internal.Patch> Patches;
+    public SwitchData? Switch;
+    public VariableData? Variable;
+    public CommonEvenData? CommonEvent;
+    public MapData? Map;
+    public MapInfoData? MapInfo;
+    public MapEventData? MapEvent;
+    public MapEventPageData? MapEventPage;
+    public List<Text.Internal.Patch> Patches = new();
 }

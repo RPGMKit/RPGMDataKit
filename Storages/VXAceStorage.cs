@@ -12,7 +12,7 @@ public class VXAceStorage : Storage
 {
     public DataLookupHolder<Script> Scripts;
     
-    public VXAceStorage(string projectPath) : base(projectPath)
+    public VXAceStorage(string projectPath, string dataDirectory = "data") : base(projectPath, dataDirectory)
     {
         Version = StorageVersion.VXAce;
     }
@@ -45,7 +45,7 @@ public class VXAceStorage : Storage
 
     public override string DataPath(string dataObject)
     {
-        return Path.Combine("data", dataObject);
+        return Path.Combine(DataDirectory, dataObject);
     }
 
     public override T LoadData<T>(string relativePath)

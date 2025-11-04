@@ -14,6 +14,8 @@ public abstract class NamedCommand
 
     public bool IsSecondary;
 
+    public T Cast<T>() where T : NamedCommand => (T)this;
+
     public virtual void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
     }
