@@ -131,19 +131,28 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
             public List<NamedCommand> NamedCommands { get; set; }
             public IEnumerable<ICommandWithIndent> Commands => List;
 
-            public override void OnDeserialize() =>
+            public override void OnDeserialized()
+            {
+                base.OnDeserialized();
                 NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
+            }
 
-            public override void OnPreSerialize() =>
+            public override void OnSerializing()
+            {
+                base.OnSerializing();
                 List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.MV);
+            }
         }
 
         [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
+        
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
+        
         [JsonProperty(PropertyName = "note")]
         public string Note { get; set; }
+        
         [JsonProperty(PropertyName = "pages")]
         public LookupList<EventPage> _Pages { get; set; }
 

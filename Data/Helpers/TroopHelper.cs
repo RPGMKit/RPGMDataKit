@@ -9,12 +9,13 @@ public static class TroopHelper
 
     public static void WalkTroopPages(Storage storage, TroopWalker walker)
     {
-        foreach (var troop in storage.Troops.Get())
+        foreach (var (_,troop) in storage.Troops.Get())
         {
             if (troop == null)
                 continue;
 
-            foreach (var (i, p) in troop.Pages.WithIndex())
+            var i = 0;
+            foreach (var p in troop.Pages)
             {
                 if (p == null)
                     continue;
@@ -25,6 +26,8 @@ public static class TroopHelper
                     PageId = i,
                     EventPage = p,
                 });
+
+                ++i;
             }
         }
     }

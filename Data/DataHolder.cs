@@ -2,7 +2,7 @@
 
 namespace RPGMakerLibCoreV2.Data;
 
-public delegate T HolderLoader<T>(string path);
+public delegate T? HolderLoader<T>(string path);
 
 public class DataHolder<TDataType>
 {
@@ -49,11 +49,16 @@ public class DataHolder<TDataType>
         _isLoaded = true;
     }
 
-    public void Save()
+    public virtual void Save()
+    {
+        _Save(_data);
+    }
+
+    protected void _Save<T>(T value)
     {
         if (!_isLoaded)
             return;
 
-        _storage.SaveData(_path, _data);
+        _storage.SaveData(_path, value);
     }
 }

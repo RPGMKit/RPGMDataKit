@@ -26,63 +26,62 @@ public static class IndentHelper
 
     private static void WalkForIndents(ICommandContainer<ICommandWithIndent> container, StorageVersion version, IndentWalker walker)
     {
-        int currIndent = 0;
-
         ICommandWithIndent? prevCommand = null;
-        
-        foreach (var (i, c) in container.Commands.WithIndex())
+
+        int i = 0, indentLevel = 0;
+        foreach (var c in container.Commands)
         {
             switch (c.Code)
             {
                 case CommandCodes.EndIf:
-                    --currIndent;
+                    --indentLevel;
                     break;
                 case CommandCodes.Else:
-                    --currIndent;
+                    --indentLevel;
                     break;
                 case CommandCodes.EndLoop:
-                    --currIndent;
+                    --indentLevel;
                     break;
                 case CommandCodes.ChoiceCase:
                 case CommandCodes.ChoiceCaseCancel:
-                    --currIndent;
+                    --indentLevel;
                     break;
                 case CommandCodes.BattleProcessingIfLose:
                 case CommandCodes.BattleProcessingIfEscape:
                 case CommandCodes.BattleProcessingIfWin:
-                    --currIndent;
+                    --indentLevel;
                     break;
                 case CommandCodes.BattleProcessingEnd:
-                    --currIndent;
+                    --indentLevel;
                     break;
                 case CommandCodes.ChoicesEnd:
-                    --currIndent;
+                    --indentLevel;
                     break;
             }
 
-            walker(currIndent, i, prevCommand, c);
+            walker(indentLevel, i, prevCommand, c);
 
             prevCommand = c;
 
             switch (c.Code)
             {
                 case CommandCodes.If:
-                    ++currIndent;
+                    ++indentLevel;
                     break;
                 case CommandCodes.Loop:
-                    ++currIndent;
+                    ++indentLevel;
                     break;
                 case CommandCodes.Else:
-                    ++currIndent;
+                    ++indentLevel;
                     break;
                 case CommandCodes.ChoiceCase:
                 case CommandCodes.ChoiceCaseCancel:
-                    ++currIndent;
+                    ++indentLevel;
                     break;
                 case CommandCodes.BattleProcessingIfLose:
                 case CommandCodes.BattleProcessingIfEscape:
                 case CommandCodes.BattleProcessingIfWin:
-                    ++currIndent;
+                    ++indentLevel;
                     break;
                 case CommandCodes.BattleProcessing:
                     var nextCommand = container.Commands.ElementAtOrDefault(i + 1);
@@ -90,14 +89,16 @@ public static class IndentHelper
                                                 || nextCommand.Code == CommandCodes.BattleProcessingIfEscape
                                                 || nextCommand.Code == CommandCodes.BattleProcessingIfWin))
                     {
-                        ++currIndent;
+                        ++indentLevel;
                     }
 
                     break;
                 case CommandCodes.ShowChoices:
-                    ++currIndent;
+                    ++indentLevel;
                     break;
             }
+
+            ++i;
         }
     }
 }

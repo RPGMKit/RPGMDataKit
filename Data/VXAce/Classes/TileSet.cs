@@ -24,7 +24,7 @@ public class TileSet : RubySerializationEntity, ITileSet
     [RubyProperty("@flags")]
     public Table _Flags { get; set; }
     
-    public LookupList<int> Flags => _Flags.Elements.Cast<int>().ToLookupList();
+    public LookupList<int> Flags => new(_Flags.Elements.Cast<int>().ToList());
 
     [RubyProperty("@note")]
     public string Note { get; set; }

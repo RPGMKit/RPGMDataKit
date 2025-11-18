@@ -28,10 +28,18 @@ public class MoveRoute : RubySerializationEntity, IMoveRoute
     public List<NamedCommand> NamedCommands { get; set; }
     public IEnumerable<IMoveCommand> Commands => List;
 
-    public override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
+    public override void OnDeserialized()
+    {
+        base.OnDeserialized();
+        NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
+    }
 
-    public override void OnPreSerialize() => List = CommandContainerHelper.Pack<MoveCommand>(NamedCommands, StorageVersion.VXAce);
-    
+    public override void OnSerializing()
+    {
+        base.OnSerializing();
+        List = CommandContainerHelper.Pack<MoveCommand>(NamedCommands, StorageVersion.VXAce);
+    }
+
     public void Dump(TextWriter writer, EntityContext context, DumpOptions options)
     {
         throw new NotImplementedException();

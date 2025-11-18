@@ -12,14 +12,14 @@ class EncodingConverter : IYamlTypeConverter
         return typeof(Encoding).IsAssignableFrom(type);
     }
 
-    public object? ReadYaml(IParser parser, Type type)
+    public object? ReadYaml(IParser parser, Type type, ObjectDeserializer rootDeserializer)
     {
         var scalar = parser.Consume<Scalar>();
 
         return Encoding.GetEncoding(Convert.ToInt32(scalar.Value));
     }
 
-    public void WriteYaml(IEmitter emitter, object? value, Type type)
+    public void WriteYaml(IEmitter emitter, object? value, Type type, ObjectSerializer serializer)
     {
         emitter.Emit(new Scalar(((Encoding)value).CodePage.ToString()));
     }

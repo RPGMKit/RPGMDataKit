@@ -84,9 +84,17 @@ public class Troop : RubySerializationEntity, ITroop
 
         public IEnumerable<ICommandWithIndent> Commands => List;
 
-        public override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
+        public override void OnDeserialized()
+        {
+            base.OnDeserialized();
+            NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
+        }
 
-        public override void OnPreSerialize() => List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.VXAce);
+        public override void OnSerializing()
+        {
+            base.OnSerializing();
+            List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.VXAce);
+        }
 
         public void Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {

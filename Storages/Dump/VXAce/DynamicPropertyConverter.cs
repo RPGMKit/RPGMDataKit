@@ -31,7 +31,7 @@ public class DynamicPropertyConverter : IYamlTypeConverter
         typeof(String),
     };
 
-    public object? ReadYaml(IParser parser, Type type)
+    public object? ReadYaml(IParser parser, Type type, ObjectDeserializer rootDeserializer)
     {
         string? valueTypeName = null;
         object? value = null;
@@ -101,7 +101,7 @@ public class DynamicPropertyConverter : IYamlTypeConverter
         return type;
     }
 
-    public void WriteYaml(IEmitter emitter, object? value, Type type)
+    public void WriteYaml(IEmitter emitter, object? value, Type type, ObjectSerializer serializer)
     {
         var prop = (IDynamicProperty)value!;
 

@@ -389,73 +389,8 @@ public static class CommandFactory
 
         returnCommand.Unpack(parameterProvider, version);
 
-        if (false)
-        {
-            IParameterProvider newProv;
-            if (version == StorageVersion.MV)
-                newProv = new JsonParameterProvider(new());
-            else
-                newProv = new SimpleParameterProvider(new());
-
-            returnCommand.Pack(newProv, version);
-
-            CompareProviders(parameterProvider, newProv);
-        }
-
         returnCommand.Indent = command.Indent;
 
         return returnCommand;
-    }
-
-
-    private static List<Type> LongTypes = new() { typeof(long), typeof(int) };
-
-    private static void CompareProviders(IParameterProvider parameterProvider, IParameterProvider newProv)
-    {
-        if (newProv.Count != parameterProvider.Count)
-            Console.WriteLine();
-
-        for (var i = 0; i < newProv.Count; ++i)
-        {
-            var a = parameterProvider.GetParameter<object>(i);
-            var b = newProv.GetParameter<object>(i);
-
-            if ((a == null) ^ (b == null))
-                return;
-            
-            if (a == null || b == null)
-                return;
-            
-            if (a.GetType() != b.GetType())
-            {
-                if (LongTypes.Contains(a.GetType()) ^ LongTypes.Contains(b.GetType()))
-                    return;
-            }
-
-            if (a is JToken arrA && b is JToken arrB)
-            {
-                if (!JToken.DeepEquals(arrA, arrB))
-                {
-                    var textA = arrA.ToString(Formatting.Indented);
-                    var textB = arrB.ToString(Formatting.Indented);
-                    return;
-                }
-            }
-            else
-            {
-                if (LongTypes.Contains(a.GetType()))
-                {
-                    if (Convert.ToInt64(a) != Convert.ToInt64(b))
-                        return;
-                }
-                else if (a != b)
-                    return;
-            }
-        }
-    }
-
-    private static bool CompareJTokens(JToken a, JToken b)
-    {
-        return JToken.DeepEquals(a, b);
     }
 }

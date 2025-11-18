@@ -14,6 +14,16 @@ class RubyObjectTypeInspector : TypeInspectorSkeleton
         _innerInspector = innerInspector;
     }
 
+    public override string GetEnumName(Type enumType, string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override string GetEnumValue(object enumValue)
+    {
+        throw new NotImplementedException();
+    }
+
     public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
     {
         var props = _innerInspector.GetProperties(type, container);

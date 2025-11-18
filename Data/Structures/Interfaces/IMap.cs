@@ -14,7 +14,7 @@ public interface IMap
     public int Width { get; set; }
 
     // ground 1 => ground 2? => bottom object => top object => shadow flags => region id
-    public LookupList<int> Data { get; }
+    public IDataLookup<int> Data { get; }
 
     public IByIdGetter<IEvent> Events { get; }
 }

@@ -24,8 +24,16 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         
         public IEnumerable<IMoveCommand>? Commands => List;
 
-        public override void OnDeserialize() => NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
+        public override void OnDeserialized()
+        {
+            base.OnDeserialized();
+            NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
+        }
 
-        public override void OnPreSerialize() => List = CommandContainerHelper.Pack<MoveCommand>(NamedCommands, StorageVersion.MV);
+        public override void OnSerializing()
+        {
+            base.OnSerializing();
+            List = CommandContainerHelper.Pack<MoveCommand>(NamedCommands, StorageVersion.MV);
+        }
     }
 }

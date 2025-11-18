@@ -1,5 +1,6 @@
 ﻿using RPGMakerLibCoreV2.Data;
 using RPGMakerLibCoreV2.Data.Enums;
+using RPGMakerLibCoreV2.Data.Enums.Internal;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
@@ -39,6 +40,12 @@ public abstract class Storage
         Init();
     }
 
+    public void ChangeProjectPath(string path, string dataDirectory = "data")
+    {
+        ProjectPath = path;
+        DataDirectory = dataDirectory;
+    }
+
     public virtual void Unload()
     {
         Actors.Unload();
@@ -64,12 +71,41 @@ public abstract class Storage
     
     public abstract string DataPath(string dataObject);
 
-    public abstract T LoadData<T>(string relativePath);
+    public abstract T LoadData<T>(string dataFile);
 
-    public abstract void SaveData<T>(string relativePath, T data);
+    public abstract void SaveData<T>(string dataFile, T data);
 
     public abstract void SaveAll();
     
+    protected DataLookupHolder<TV> LoadListHolder<T, TV>(string fileName, Func<T?, int>? idGetter = null)
+        where T : class, TV
+        where TV : class
+    {
+        return new(this, HolderType.List, fileName, path =>
+        {
+            var data = LoadData<List<T>>(path);
+            var dict = new Dictionary<int, TV?>();
+            for (var i = 0; i < data.Count; ++i)
+                dict[idGetter != null ? idGetter(data[i]) : i] = data[i];
+
+            return dict;
+        });
+    }
+
+    protected DataLookupHolder<TV> LoadDictionaryHolder<T, TV>(string fileName)
+        where T : class, TV
+        where TV: class
+    {
+        return new(this, HolderType.Dictionary, fileName, path => LoadData<Dictionary<int, T?>>(path).MorphToBase<T, TV>());
+    }
+
+    protected DataHolder<TV> LoadHolder<T, TV>(string fileName)
+        where T : class, TV
+        where TV: class
+    {
+        return new(this, fileName, LoadData<T>);
+    }
+
     public ICommonEvent? GetCommonEvent(int id)
     {
         return CommonEvents.Get(id);

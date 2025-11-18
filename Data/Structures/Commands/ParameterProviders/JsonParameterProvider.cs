@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RubyMarshalCS.Serialization;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 
@@ -28,13 +29,15 @@ public class JsonParameterProvider : IParameterProvider
         
         if (retType.IsEnum)
             return (T)Enum.ToObject(retType, value);
-
-        return (T)value;
+        
+        return (T?)SerializationHelper.AssignmentConversion(typeof(T), value, true);
+        // return (T)value;
     }
 
     public void SetParameter<T>(int index, T? value)
     {
-        _parameters.Set(index, value != null ? JToken.FromObject(value, Jsonser) : null);
+        // _parameters.Set(index, value != null ? JToken.FromObject(value, Jsonser) : null);
+        _parameters.Set(index, value != null ? value : null);
     }
 
     private static JsonSerializer Jsonser = new JsonSerializer() { NullValueHandling = NullValueHandling.Include };

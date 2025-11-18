@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -25,8 +24,31 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
             throw new Exception($"'{options.Format}' dump format not implemented for '{GetType().Name}'");
         }
 
-        [OnDeserialized]
-        void OnDeserialization(StreamingContext context)
+        [YamlDotNet.Serialization.Callbacks.OnDeserialized]
+        public void OnYamlDeserialized()
+        {
+            OnDeserialized();
+        }
+
+        [YamlDotNet.Serialization.Callbacks.OnSerializing]
+        public void OnYamlSerializing()
+        {
+            OnSerializing();
+        }
+        
+        [System.Runtime.Serialization.OnDeserialized]
+        void OnGenericDeserialized(StreamingContext context)
+        {
+            OnDeserialized();
+        }
+
+        [System.Runtime.Serialization.OnSerializing]
+        void OnGenericSerializing(StreamingContext context)
+        {
+            OnSerializing();
+        }
+
+        public virtual void OnDeserialized()
         {
             if (_unknownFields != null)
             {
@@ -38,22 +60,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
                     _globalUnknownFields[GetType()][key] = key;
                 }
             }
-            
-            OnDeserialize();
         }
 
-        [OnSerializing]
-        void OnPreSerialization(StreamingContext context)
+        public virtual void OnSerializing()
         {
-            OnPreSerialize();
-        }
-
-        public virtual void OnDeserialize()
-        {
-        }
-
-        public virtual void OnPreSerialize()
-        {
+            return;
         }
     }
 }

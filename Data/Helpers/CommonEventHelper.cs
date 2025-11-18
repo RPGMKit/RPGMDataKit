@@ -13,9 +13,9 @@ public static class CommonEventHelper
         WalkCommonEvents(storage.CommonEvents.Get(), walker);
     }
 
-    public static void WalkCommonEvents(IEnumerable<ICommonEvent> commonEvents, CommonEventWalker walker)
+    public static void WalkCommonEvents(Dictionary<int, ICommonEvent?> commonEvents, CommonEventWalker walker)
     {
-        foreach (var c in commonEvents)
+        foreach (var (_, c) in commonEvents)
         {
             if (c == null)
                 continue;

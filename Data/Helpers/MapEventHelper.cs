@@ -9,7 +9,7 @@ public static class MapEventHelper
 
     public static void WalkMapEventPages(Storage storage, MapEventPageWalker pageWalker)
     {
-        foreach (var (id, info) in storage.MapInfos.Get().WithIndex())
+        foreach (var (id, info) in storage.MapInfos.Get())
         {
             var m = storage.Maps.Get(id);
             if (m == null)
@@ -20,7 +20,8 @@ public static class MapEventHelper
                 if (e == null)
                     continue;
 
-                foreach (var (i, p) in e.Pages.WithIndex())
+                var i = 0;
+                foreach (var p in e.Pages)
                 {
                     if (p == null)
                         continue;
@@ -33,6 +34,7 @@ public static class MapEventHelper
                         PageId = i,
                         EventPage = p,
                     });
+                    ++i;
                 }
             }
         }

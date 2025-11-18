@@ -36,7 +36,17 @@ public static class CommandContainerHelper
         if (commands != null)
         {
             if (typeof(ICommandWithIndent).IsAssignableFrom(typeof(T)))
-                namedCommands.AddRange(commands.Select(c => CommandFactory.Create((ICommandWithIndent)c, version)));
+                namedCommands.AddRange(commands.Select(c =>
+                {
+                    try
+                    {
+                        return CommandFactory.Create((ICommandWithIndent)c, version);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                }));
             else if (typeof(IMoveCommand).IsAssignableFrom(typeof(T)))
                 namedCommands.AddRange(commands.Select(c => MovementCommandFactory.Create((IMoveCommand)c, version)));
             else
@@ -62,7 +72,7 @@ public static class CommandContainerHelper
 
             var parameters = _._Pack(version);
 
-            comm.Parameters = parameters.Count > 0 ? parameters : null;
+            comm.Parameters = parameters.Count > 0 ? parameters : [];
 
             return comm;
         }));

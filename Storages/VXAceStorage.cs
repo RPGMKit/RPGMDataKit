@@ -17,30 +17,26 @@ public class VXAceStorage : Storage
         Version = StorageVersion.VXAce;
     }
 
-    protected override string MapPath(int index) => DataPath($"Map{index:D3}.rvdata2");
+    protected override string MapPath(int index) => $"Map{index:D3}.rvdata2";
 
     protected override void Init()
     {
-        Actors = new(this, DataPath("Actors.rvdata2"), path => LoadData<LookupList<Actor>>(path).MorphToBase<IActor>());
-        Animations = new(this, DataPath("Animations.rvdata2"),
-            path => LoadData<LookupList<Animation>>(path).MorphToBase<IAnimation>());
-        Armors = new(this, DataPath("Armors.rvdata2"), path => LoadData<LookupList<Armor>>(path).MorphToBase<IArmor>());
-        Classes = new(this, DataPath("Classes.rvdata2"), path => LoadData<LookupList<Class>>(path).MorphToBase<IClass>());
-        CommonEvents = new(this, DataPath("CommonEvents.rvdata2"),
-            path => LoadData<LookupList<CommonEvent>>(path).MorphToBase<ICommonEvent>());
-        Enemies = new(this, DataPath("Enemies.rvdata2"), path => LoadData<LookupList<Enemy>>(path).MorphToBase<IEnemy>());
-        Items = new(this, DataPath("Items.rvdata2"), path => LoadData<LookupList<Item>>(path).MorphToBase<IItem>());
+        Actors = LoadListHolder<Actor, IActor>("Actors.rvdata2");
+        Animations = LoadListHolder<Animation, IAnimation>("Animations.rvdata2");
+        Armors = LoadListHolder<Armor, IArmor>("Armors.rvdata2");
+        Classes = LoadListHolder<Class, IClass>("Classes.rvdata2");
+        CommonEvents = LoadListHolder<CommonEvent, ICommonEvent>("CommonEvents.rvdata2");
+        Enemies = LoadListHolder<Enemy, IEnemy>("Enemies.rvdata2");
+        Items = LoadListHolder<Item, IItem>("Items.rvdata2");
         Maps = new(this, MapPath, LoadData<Map>);
-        MapInfos = new(this, DataPath("MapInfos.rvdata2"),
-            path => LoadData<LookupMap<MapInfo>>(path).MorphToBase<IMapInfo>());
-        Scripts = new(this, DataPath("Scripts.rvdata2"), LoadData<LookupList<Script>>);
-        Skills = new(this, DataPath("Skills.rvdata2"), path => LoadData<LookupList<Skill>>(path).MorphToBase<ISkill>());
-        States = new(this, DataPath("States.rvdata2"), path => LoadData<LookupList<State>>(path).MorphToBase<IState>());
-        System = new(this, DataPath("System.rvdata2"), LoadData<Data.VXAce.Classes.System>);
-        Tilesets = new(this, DataPath("Tilesets.rvdata2"),
-            path => LoadData<LookupList<TileSet>>(path).MorphToBase<ITileSet>());
-        Troops = new(this, DataPath("Troops.rvdata2"), path => LoadData<LookupList<Troop>>(path).MorphToBase<ITroop>());
-        Weapons = new(this, DataPath("Weapons.rvdata2"), path => LoadData<LookupList<Weapon>>(path).MorphToBase<IWeapon>());
+        MapInfos = LoadDictionaryHolder<MapInfo, IMapInfo>("MapInfos.rvdata2");
+        Scripts = LoadListHolder<Script, Script>("Scripts.rvdata2");
+        Skills = LoadListHolder<Skill, ISkill>("Skills.rvdata2");
+        States = LoadListHolder<State, IState>("States.rvdata2");
+        System = LoadHolder<Data.VXAce.Classes.System, ISystem>("System.rvdata2");
+        Tilesets = LoadListHolder<TileSet, ITileSet>("Tilesets.rvdata2");
+        Troops = LoadListHolder<Troop,ITroop>("Troops.rvdata2");
+        Weapons = LoadListHolder<Weapon, IWeapon>("Weapons.rvdata2");
     }
 
     public override string DataPath(string dataObject)
@@ -48,16 +44,16 @@ public class VXAceStorage : Storage
         return Path.Combine(DataDirectory, dataObject);
     }
 
-    public override T LoadData<T>(string relativePath)
+    public override T LoadData<T>(string dataFile)
     {
-        var path = Path.Combine(ProjectPath, relativePath);
+        var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
         if (!File.Exists(path))
             throw new FileNotFoundException(path);
         
-        return RubyMarshal.Load<T>(DataPath(path));
+        return RubyMarshal.Load<T>(path);
     }
 
-    public override void SaveData<T>(string relativePath, T data)
+    public override void SaveData<T>(string dataFile, T data)
     {
         throw new NotImplementedException();
     }

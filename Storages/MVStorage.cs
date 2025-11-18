@@ -2,7 +2,6 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.MV.Classes;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 
 namespace RPGMakerLibCoreV2.Storages;
@@ -14,27 +13,25 @@ public class MVStorage : Storage
         Version = StorageVersion.MV;
     }
 
-    protected override string MapPath(int index) => DataPath($"Map{index:D3}.json");
+    protected override string MapPath(int index) => $"Map{index:D3}.json";
 
     protected override void Init()
     {
-        Actors = new(this, DataPath("Actors.json"), path => LoadData<LookupList<Actor>>(path).MorphToBase<IActor>());
-        Animations = new(this, DataPath("Animations.json"),
-            path => LoadData<LookupList<Animation>>(path).MorphToBase<IAnimation>());
-        Armors = new(this, DataPath("Armors.json"), path => LoadData<LookupList<Armor>>(path).MorphToBase<IArmor>());
-        Classes = new(this, DataPath("Classes.json"), path => LoadData<LookupList<Class>>(path).MorphToBase<IClass>());
-        CommonEvents = new(this, DataPath("CommonEvents.json"),
-            path => LoadData<LookupList<CommonEvent>>(path).MorphToBase<ICommonEvent>());
-        Enemies = new(this, DataPath("Enemies.json"), path => LoadData<LookupList<Enemy>>(path).MorphToBase<IEnemy>());
-        Items = new(this, DataPath("Items.json"), path => LoadData<LookupList<Item>>(path).MorphToBase<IItem>());
+        Actors = LoadListHolder<Actor, IActor>("Actors.json");
+        Animations = LoadListHolder<Animation, IAnimation>("Animations.json");
+        Armors = LoadListHolder<Armor, IArmor>("Armors.json");
+        Classes = LoadListHolder<Class, IClass>("Classes.json");
+        CommonEvents = LoadListHolder<CommonEvent, ICommonEvent>("CommonEvents.json");
+        Enemies = LoadListHolder<Enemy, IEnemy>("Enemies.json");
+        Items = LoadListHolder<Item, IItem>("Items.json");
         Maps = new(this, MapPath, LoadData<Map>);
-        MapInfos = new(this, DataPath("MapInfos.json"), path => LoadData<LookupList<MapInfo>>(path).MorphToBase<IMapInfo>());
-        Skills = new(this, DataPath("Skills.json"), path => LoadData<LookupList<Skill>>(path).MorphToBase<ISkill>());
-        States = new(this, DataPath("States.json"), path => LoadData<LookupList<State>>(path).MorphToBase<IState>());
-        System = new(this, DataPath("System.json"), LoadData<Data.MV.Classes.System>);
-        Tilesets = new(this, DataPath("TileSets.json"), path => LoadData<LookupList<Tileset>>(path).MorphToBase<ITileSet>());
-        Troops = new(this, DataPath("Troops.json"), path => LoadData<LookupList<Troop>>(path).MorphToBase<ITroop>());
-        Weapons = new(this, DataPath("Weapons.json"), path => LoadData<LookupList<Weapon>>(path).MorphToBase<IWeapon>());
+        MapInfos = LoadListHolder<MapInfo, IMapInfo>("MapInfos.json");
+        Skills = LoadListHolder<Skill, ISkill>("Skills.json");
+        States = LoadListHolder<State, IState>("States.json");
+        System = LoadHolder<Data.MV.Classes.System, ISystem>("System.json");
+        Tilesets = LoadListHolder<Tileset, ITileSet>("Tilesets.json");
+        Troops = LoadListHolder<Troop, ITroop>("Troops.json");
+        Weapons = LoadListHolder<Weapon, IWeapon>("Weapons.json");
     }
 
     public override string DataPath(string dataObject)
@@ -42,9 +39,9 @@ public class MVStorage : Storage
         return Path.Combine(DataDirectory, dataObject);
     }
 
-    public override T LoadData<T>(string relativePath)
+    public override T LoadData<T>(string dataFile)
     {
-        var path = Path.Combine(ProjectPath, relativePath);
+        var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
         if (!File.Exists(path))
             throw new FileNotFoundException(path);
 
@@ -55,9 +52,9 @@ public class MVStorage : Storage
         return JsonConvert.DeserializeObject<T>(contents);
     }
 
-    public override void SaveData<T>(string relativePath, T data)
+    public override void SaveData<T>(string dataFile, T data)
     {
-        var path = Path.Combine(ProjectPath, relativePath);
+        var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
         File.WriteAllText(path, JsonConvert.SerializeObject(data));
     }
 

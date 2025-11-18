@@ -1,6 +1,4 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
-
-namespace RPGMakerLibCoreV2;
+﻿namespace RPGMakerLibCoreV2;
 
 public static class LibExtensions
 {
@@ -18,23 +16,21 @@ public static class LibExtensions
         return new string(a);
     }
 
-    public static IEnumerable<(int index, T item)> WithIndex<T>(this IEnumerable<T> source)
+    public static Dictionary<int, TV?> MorphToBase<T, TV>(this Dictionary<int, T?> dict)
+        where T : class, TV
+        where TV : class
     {
-        return source.Select((item, index) => (index, item));
+        Dictionary<int, TV?> morphed = new();
+        foreach (var (i, p) in dict)
+            morphed[i] = p;
+
+        return morphed;
     }
 
-    public static LookupList<T> ToLookupList<T>(this IEnumerable<T> source, Func<T, int>? indexer = null)
+    public static void Grow<T>(this IList<T?> list, int newSize, T? defaultValue = default)
     {
-        var l = new LookupList<T>();
-
-        if (indexer != null)
-        {
-            foreach (var e in source)
-                l.Set(indexer(e), e);
-        }
-        else
-            l.AddRange(source);
-
-        return l;
+        var toAdd = newSize - list.Count;
+        while (toAdd-- > 0)
+            list.Add(defaultValue);
     }
 }
