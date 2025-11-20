@@ -23,14 +23,14 @@ public abstract class RubySerializationEntity
         OnDeserialized();
     }
     
-    [RubyOnPreSerialize]
-    protected void OnRubySerializing(RubyObject context)
+    [RubyOnSerializing]
+    protected void OnRubySerializing(RubyObject obj)
     {
         OnSerializing();
     }
     
-    [RubyOnDeserialize]
-    protected void OnRubyDeserialized(RubyObject context)
+    [RubyOnDeserialized]
+    protected void OnRubyDeserialized(RubyObject obj)
     {
         OnDeserialized();
     }

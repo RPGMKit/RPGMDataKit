@@ -1,6 +1,6 @@
 ﻿namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
-public interface ICommonEvent : ICommandContainer<ICommandWithIndent>
+public interface ICommonEvent : ICommandContainer<ICommand>
 {
     public int Id { get; set; }
 

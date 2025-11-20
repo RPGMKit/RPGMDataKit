@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Structures.Commands;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.TypeInspectors;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.MV;
+namespace RPGMakerLibCoreV2.Storages.Dump.Yaml.MV;
 
 class MvObjectTypeInspector : TypeInspectorSkeleton
 {
@@ -21,6 +20,7 @@ class MvObjectTypeInspector : TypeInspectorSkeleton
 
     public override string GetEnumValue(object enumValue)
     {
+        throw new NotImplementedException();
         var t = enumValue.GetType();
 
         return Enum.Format(t, enumValue, "D");
@@ -35,3 +35,5 @@ class MvObjectTypeInspector : TypeInspectorSkeleton
         return props.OrderBy(p => p.Name);
     }
 }
+
+

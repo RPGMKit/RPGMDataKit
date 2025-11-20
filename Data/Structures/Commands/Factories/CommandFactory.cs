@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
+﻿using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
@@ -9,7 +6,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 
 public static class CommandFactory
 {
-    public static NamedCommand Create(ICommandWithIndent command, StorageVersion version)
+    public static NamedCommand Create(ICommand command, StorageVersion version)
     {
         NamedCommand returnCommand;
         var parameterProvider = command.ParameterProvider;

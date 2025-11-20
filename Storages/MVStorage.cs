@@ -57,21 +57,4 @@ public class MVStorage : Storage
         var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
         File.WriteAllText(path, JsonConvert.SerializeObject(data));
     }
-
-    public override void SaveAll()
-    {
-        Actors.Save();
-        Animations.Save();
-        Armors.Save();
-        Classes.Save();
-        CommonEvents.Save();
-        Items.Save();
-        Skills.Save();
-        States.Save();
-        System.Save();
-        Maps.Save();
-        MapInfos.Save();
-        Tilesets.Save();
-        Weapons.Save();
-    }
 }

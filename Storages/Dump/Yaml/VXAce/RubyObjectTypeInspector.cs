@@ -3,7 +3,7 @@ using RubyMarshalCS.Serialization.Attributes;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.TypeInspectors;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.VXAce;
+namespace RPGMakerLibCoreV2.Storages.Dump.Yaml.VXAce;
 
 class RubyObjectTypeInspector : TypeInspectorSkeleton
 {

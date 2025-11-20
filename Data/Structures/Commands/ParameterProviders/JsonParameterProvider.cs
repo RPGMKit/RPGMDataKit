@@ -1,22 +1,21 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using Newtonsoft.Json.Linq;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RubyMarshalCS.Serialization;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 
 public class JsonParameterProvider : IParameterProvider
 {
-    private readonly LookupList<object> _parameters;
+    private readonly ICommand _command;
 
-    public JsonParameterProvider(LookupList<object> parameters)
+    public JsonParameterProvider(ICommand command)
     {
-        _parameters = parameters;
+        _command = command;
     }
 
     public T? GetParameter<T>(int index)
     {
-        var value = _parameters.Get(index);
+        var value = _command.Parameters?.Get(index);
         if (value == null)
             return default;
 
@@ -36,11 +35,14 @@ public class JsonParameterProvider : IParameterProvider
 
     public void SetParameter<T>(int index, T? value)
     {
+        _command.Parameters ??= new();
         // _parameters.Set(index, value != null ? JToken.FromObject(value, Jsonser) : null);
-        _parameters.Set(index, value != null ? value : null);
+        _command.Parameters.Set(index, value != null ? value : null);
     }
 
-    private static JsonSerializer Jsonser = new JsonSerializer() { NullValueHandling = NullValueHandling.Include };
+    // private static JsonSerializer Jsonser = new JsonSerializer() { NullValueHandling = NullValueHandling.Include };
 
-    public int Count => _parameters.Count;
+    public int Count => _command.Parameters?.Count ?? 0;
+
+    public void Clear() => _command.Parameters?.Clear();
 }

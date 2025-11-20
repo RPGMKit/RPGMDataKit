@@ -129,18 +129,20 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
             }
 
             public List<NamedCommand> NamedCommands { get; set; }
-            public IEnumerable<ICommandWithIndent> Commands => List;
+            public IEnumerable<ICommand> Commands => List;
 
             public override void OnDeserialized()
             {
                 base.OnDeserialized();
-                NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
+                NamedCommands = CommandContainerHelper.Unpack(List, StorageVersion.MV);
+                MoveRoute.NamedCommands = CommandContainerHelper.Unpack(_MoveRoute.List, StorageVersion.MV);
             }
 
             public override void OnSerializing()
             {
                 base.OnSerializing();
                 List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.MV);
+                _MoveRoute.List = CommandContainerHelper.Pack<MoveCommand>(_MoveRoute.NamedCommands, StorageVersion.MV);
             }
         }
 

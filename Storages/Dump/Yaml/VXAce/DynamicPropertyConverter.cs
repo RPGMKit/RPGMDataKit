@@ -1,12 +1,11 @@
-﻿using RPGMakerLibCoreV2.Data.VXAce.Classes;
-using RubyMarshalCS.Serialization;
+﻿using RubyMarshalCS.Serialization;
 using RubyMarshalCS.SpecialTypes;
 using RubyMarshalCS.SpecialTypes.Interfaces;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.VXAce;
+namespace RPGMakerLibCoreV2.Storages.Dump.Yaml.VXAce;
 
 public class DynamicPropertyConverter : IYamlTypeConverter
 {

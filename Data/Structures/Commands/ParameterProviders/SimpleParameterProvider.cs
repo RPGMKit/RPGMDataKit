@@ -1,20 +1,21 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RubyMarshalCS.Serialization;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 
 public class SimpleParameterProvider : IParameterProvider
 {
-    private readonly LookupList<object> _parameters;
+    private readonly ICommand _command;
 
-    public SimpleParameterProvider(LookupList<object> parameters)
+    public SimpleParameterProvider(ICommand command)
     {
-        _parameters = parameters;
+        _command = command;
     }
 
     public T? GetParameter<T>(int index)
     {
-        var value = _parameters.Get(index);
+        var value = _command.Parameters?.Get(index);
         if (value == null)
             return default;
 
@@ -23,8 +24,11 @@ public class SimpleParameterProvider : IParameterProvider
 
     public void SetParameter<T>(int index, T? value)
     {
-        _parameters.Set(index, value);
+        _command.Parameters ??= new();
+        _command.Parameters.Set(index, value);
     }
 
-    public int Count => _parameters.Count;
+    public int Count => _command.Parameters?.Count ?? 0;
+    
+    public void Clear() => _command.Parameters?.Clear();
 }

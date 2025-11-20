@@ -1,11 +1,11 @@
 ﻿using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
-using RubyMarshalCS.Serialization;
+using RubyMarshalCS.Serialization.Interfaces;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Serializers;
 
-class TableSerializer : AbstractRubyUserSerializer<Table>
+class TableSerializer : IRubyUserSerializer<Table>
 {
-    public override void Read(Table obj, BinaryReader reader)
+    public void Read(Table obj, BinaryReader reader)
     {
         obj.NumOfDimensions = reader.ReadInt32();
         obj.SizeX = reader.ReadInt32();
@@ -20,7 +20,7 @@ class TableSerializer : AbstractRubyUserSerializer<Table>
         var p = reader.BaseStream.Position;
     }
 
-    public override void Write(Table obj, BinaryWriter writer)
+    public void Write(Table obj, BinaryWriter writer)
     {
         writer.Write((int)obj.NumOfDimensions);
         writer.Write((int)obj.SizeX);

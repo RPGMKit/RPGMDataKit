@@ -24,12 +24,12 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         public LookupList<Command>? List { get; set; }
         
         public List<NamedCommand> NamedCommands { get; set; }
-        public IEnumerable<ICommandWithIndent>? Commands => List;
+        public IEnumerable<ICommand>? Commands => List;
 
         public override void OnDeserialized()
         {
             base.OnDeserialized();
-            NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
+            NamedCommands = CommandContainerHelper.Unpack(List, StorageVersion.MV);
         }
 
         public override void OnSerializing()

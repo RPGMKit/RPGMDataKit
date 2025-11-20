@@ -7,7 +7,7 @@ using RubyMarshalCS.Serialization.Enums;
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::EventCommand")]
-public class Command : RubySerializationEntity, ICommandWithIndent
+public class Command : RubySerializationEntity, ICommand
 {
     [RubyProperty("@code")]
     public int Code { get; set; }
@@ -15,10 +15,10 @@ public class Command : RubySerializationEntity, ICommandWithIndent
     [RubyProperty("@indent")]
     public int? Indent { get; set; }
 
-    public IParameterProvider ParameterProvider => new SimpleParameterProvider(Parameters);
+    public IParameterProvider ParameterProvider => new SimpleParameterProvider(this);
 
     [RubyProperty("@parameters")]
-    public LookupList<object> Parameters { get; set; }
+    public LookupList<object?>? Parameters { get; set; }
     
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1;

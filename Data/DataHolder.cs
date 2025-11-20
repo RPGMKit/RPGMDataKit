@@ -39,6 +39,9 @@ public class DataHolder<TDataType>
 
     public void Load()
     {
+        if (_isLoaded)
+            return;
+        
         _data = _loader(_path);
         _isLoaded = true;
     }

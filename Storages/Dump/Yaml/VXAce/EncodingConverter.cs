@@ -3,7 +3,7 @@ using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.VXAce;
+namespace RPGMakerLibCoreV2.Storages.Dump.Yaml.VXAce;
 
 class EncodingConverter : IYamlTypeConverter
 {
@@ -15,12 +15,17 @@ class EncodingConverter : IYamlTypeConverter
     public object? ReadYaml(IParser parser, Type type, ObjectDeserializer rootDeserializer)
     {
         var scalar = parser.Consume<Scalar>();
+        if (string.IsNullOrWhiteSpace(scalar.Value))
+            return null;
 
         return Encoding.GetEncoding(Convert.ToInt32(scalar.Value));
     }
 
     public void WriteYaml(IEmitter emitter, object? value, Type type, ObjectSerializer serializer)
     {
-        emitter.Emit(new Scalar(((Encoding)value).CodePage.ToString()));
+        if (value == null)
+            serializer(null);
+        
+        serializer(((Encoding)value).CodePage);
     }
 }

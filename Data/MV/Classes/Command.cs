@@ -5,7 +5,7 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
-public class Command : JsonEntity, ICommandWithIndent
+public class Command : JsonEntity, ICommand
 {
     [JsonProperty(PropertyName = "code")]
     public int Code { get; set; }
@@ -13,9 +13,9 @@ public class Command : JsonEntity, ICommandWithIndent
     [JsonProperty(PropertyName = "indent")]
     public int? Indent { get; set; }
 
-    [JsonProperty(PropertyName = "parameters")]
-    public LookupList<object> Parameters { get; set; }
+    [JsonProperty(PropertyName = "parameters", NullValueHandling = NullValueHandling.Ignore)]
+    public LookupList<object?>? Parameters { get; set; }
 
     [JsonIgnore]
-    public IParameterProvider ParameterProvider => new JsonParameterProvider(Parameters);
+    public IParameterProvider ParameterProvider => new JsonParameterProvider(this);
 }

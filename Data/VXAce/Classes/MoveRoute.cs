@@ -20,7 +20,7 @@ public class MoveRoute : RubySerializationEntity, IMoveRoute
     public bool Wait { get; set; }
 
     [RubyProperty("@list")]
-    public List<MoveCommand> List { get; set; } = new();
+    public List<MoveCommand>? List { get; set; } = new();
     
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1;
@@ -31,7 +31,7 @@ public class MoveRoute : RubySerializationEntity, IMoveRoute
     public override void OnDeserialized()
     {
         base.OnDeserialized();
-        NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
+        NamedCommands = CommandContainerHelper.Unpack(List, StorageVersion.VXAce);
     }
 
     public override void OnSerializing()

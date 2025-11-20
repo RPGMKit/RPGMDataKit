@@ -18,7 +18,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         public bool Wait { get; set; }
 
         [JsonProperty(PropertyName = "list")]
-        public LookupList<MoveCommand> List { get; set; }
+        public LookupList<MoveCommand>? List { get; set; }
 
         public List<NamedCommand> NamedCommands { get; set; }
         
@@ -27,7 +27,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         public override void OnDeserialized()
         {
             base.OnDeserialized();
-            NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.MV);
+            NamedCommands = CommandContainerHelper.Unpack(List, StorageVersion.MV);
         }
 
         public override void OnSerializing()

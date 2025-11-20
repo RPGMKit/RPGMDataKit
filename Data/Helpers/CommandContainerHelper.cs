@@ -30,28 +30,27 @@ public static class CommandContainerHelper
         throw new Exception($"Dump format {options.Format} not implemented");
     }
 
-    public static List<NamedCommand> Unpack<T>(IEnumerable<T>? commands, StorageVersion version) where T : ICommand
+    public static List<NamedCommand>? Unpack<T>(IEnumerable<T>? commands, StorageVersion version) where T : ICommand
     {
+        if (commands == null)
+            return null;
+
         List<NamedCommand> namedCommands = new();
-        if (commands != null)
-        {
-            if (typeof(ICommandWithIndent).IsAssignableFrom(typeof(T)))
-                namedCommands.AddRange(commands.Select(c =>
+        if (typeof(IMoveCommand).IsAssignableFrom(typeof(T)))
+            namedCommands.AddRange(commands.Select(c => MovementCommandFactory.Create((IMoveCommand)c, version)));
+        else
+            namedCommands.AddRange(commands.Select(c =>
+            {
+                try
                 {
-                    try
-                    {
-                        return CommandFactory.Create((ICommandWithIndent)c, version);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw ex;
-                    }
-                }));
-            else if (typeof(IMoveCommand).IsAssignableFrom(typeof(T)))
-                namedCommands.AddRange(commands.Select(c => MovementCommandFactory.Create((IMoveCommand)c, version)));
-            else
-                throw new Exception($"Unsupported Command type {typeof(T).Name}");
-        }
+                    return CommandFactory.Create(c, version);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }));
+
 
         return namedCommands;
     }
@@ -63,16 +62,13 @@ public static class CommandContainerHelper
             return null;
         
         LookupList<T> ret = new();
-        ret.AddRange(commands.Select(_ =>
+        ret.AddRange(commands.Select(c =>
         {
-            var comm = new T() { Code = _.Code };
+            var comm = new T() { Code = c.Code, Indent = c.Indent };
 
-            if (comm is ICommandWithIndent commandWithIndent)
-                commandWithIndent.Indent = _.Indent;
-
-            var parameters = _._Pack(version);
-
-            comm.Parameters = parameters.Count > 0 ? parameters : [];
+            c._Pack(comm, version);
+            if (comm.Parameters == null && (comm.Code == 0 || comm.Indent != null))
+                comm.Parameters = [];
 
             return comm;
         }));

@@ -1,7 +1,6 @@
 ﻿using RPGMakerLibCoreV2.Data;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Data.VXAce.Classes;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 using RubyMarshalCS;
@@ -34,9 +33,15 @@ public class VXAceStorage : Storage
         Skills = LoadListHolder<Skill, ISkill>("Skills.rvdata2");
         States = LoadListHolder<State, IState>("States.rvdata2");
         System = LoadHolder<Data.VXAce.Classes.System, ISystem>("System.rvdata2");
-        Tilesets = LoadListHolder<TileSet, ITileSet>("Tilesets.rvdata2");
+        Tilesets = LoadListHolder<Tileset, ITileSet>("Tilesets.rvdata2");
         Troops = LoadListHolder<Troop,ITroop>("Troops.rvdata2");
         Weapons = LoadListHolder<Weapon, IWeapon>("Weapons.rvdata2");
+    }
+
+    public override void Unload()
+    {
+        base.Unload();
+        Scripts.Unload();
     }
 
     public override string DataPath(string dataObject)
@@ -55,11 +60,19 @@ public class VXAceStorage : Storage
 
     public override void SaveData<T>(string dataFile, T data)
     {
-        throw new NotImplementedException();
+        var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
+        RubyMarshal.Dump(path, data);
     }
 
+    public override void Preload()
+    {
+        base.Preload();
+        Scripts.Get();
+    }
+    
     public override void SaveAll()
     {
-        throw new NotImplementedException();
+        base.SaveAll();
+        Scripts.Save();
     }
 }

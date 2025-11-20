@@ -7,7 +7,9 @@ public interface ICommand
 {
     public int Code { get; set; }
     
-    public LookupList<object> Parameters { get; set; }
+    public int? Indent { get; set; }
+    
+    public LookupList<object?>? Parameters { get; set; }
 
     public IParameterProvider ParameterProvider { get; }
 }

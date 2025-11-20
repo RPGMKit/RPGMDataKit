@@ -7,8 +7,7 @@ namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 public class Script : LookupList<object>
 {
-    private string _code;
-    private string _name;
+    private string? _code;
 
     public int Stamp
     {
@@ -18,20 +17,17 @@ public class Script : LookupList<object>
 
     public string Name
     {
-        get
-        {
-            if (_name != null)
-                return _name;
-
-            _name = ((BinaryString)this[1]).Value;
-
-            return _name;
-        }
+        get => ((BinaryString)this[1]).Value;
         set
         {
-            _name = value;
-
-            Set(1, new BinaryString(value));
+            var str = Get(1) as BinaryString;
+            if (str == null)
+            {
+                str = new BinaryString(value);
+                Set(1, str);
+            }
+            else
+                str.Value = value;
         }
     }
 
@@ -42,7 +38,10 @@ public class Script : LookupList<object>
             if (_code != null)
                 return _code;
 
-            _code = Encoding.UTF8.GetString(RubyDeflate.Inflate(((BinaryString)this[2]).Bytes));
+            var binaryString = (BinaryString)this[2];
+            var enc = binaryString.Encoding ?? Encoding.UTF8;
+            
+            _code = enc.GetString(RubyDeflate.Inflate(binaryString.Bytes));
 
             return _code;
         }
@@ -50,9 +49,13 @@ public class Script : LookupList<object>
         {
             _code = value;
 
-            var str = new BinaryString(RubyDeflate.Deflate(Encoding.UTF8.GetBytes(_code)), Encoding.UTF8);
+            var binaryString = (BinaryString)this[2];
+            var enc = binaryString?.Encoding ?? Encoding.UTF8;
 
-            Set(2, str);
+            var bytes = RubyDeflate.Deflate(enc.GetBytes(_code));
+            binaryString = new BinaryString(bytes, enc);
+
+            Set(2, binaryString);
         }
     }
 }

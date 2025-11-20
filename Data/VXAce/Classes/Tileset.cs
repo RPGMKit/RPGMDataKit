@@ -7,7 +7,7 @@ using RubyMarshalCS.Serialization.Attributes;
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::Tileset")]
-public class TileSet : RubySerializationEntity, ITileSet
+public class Tileset : RubySerializationEntity, ITileSet
 {
     [RubyProperty("@id")]
     public int Id { get; set; }

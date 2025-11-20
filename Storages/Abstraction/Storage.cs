@@ -75,7 +75,45 @@ public abstract class Storage
 
     public abstract void SaveData<T>(string dataFile, T data);
 
-    public abstract void SaveAll();
+    public virtual void Preload()
+    {
+        Actors.Get();
+        Animations.Get();
+        Armors.Get();
+        Classes.Get();
+        CommonEvents.Get();
+        Enemies.Get();
+        Items.Get();
+        Skills.Get();
+        States.Get();
+        System.Get();
+        MapInfos.Get();
+        Troops.Get();
+        Tilesets.Get();
+        Weapons.Get();
+        
+        foreach (var map in MapInfos.Get())
+            Maps.Get(map.Key);
+    }
+    
+    public virtual void SaveAll()
+    {
+        Actors.Save();
+        Animations.Save();
+        Armors.Save();
+        Classes.Save();
+        CommonEvents.Save();
+        Enemies.Save();
+        Items.Save();
+        Skills.Save();
+        States.Save();
+        System.Save();
+        Maps.Save();
+        MapInfos.Save();
+        Troops.Save();
+        Tilesets.Save();
+        Weapons.Save();
+    }
     
     protected DataLookupHolder<TV> LoadListHolder<T, TV>(string fileName, Func<T?, int>? idGetter = null)
         where T : class, TV

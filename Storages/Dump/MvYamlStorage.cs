@@ -2,14 +2,16 @@
 using RPGMakerLibCoreV2.Data.MV.Classes;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Storages.Abstraction;
-using RPGMakerLibCoreV2.Storages.Dump.MV;
-using YamlDotNet.Core;
-using YamlDotNet.Serialization;
+using RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
 
 namespace RPGMakerLibCoreV2.Storages.Dump;
 
-public class MvYamlDumper : AbstractYamlDumper
+public class MvYamlStorage : AbstractYamlStorage
 {
+    public MvYamlStorage() : base(new MvYamlSerializer())
+    {
+    }
+
     protected override void _Dump(string path, Storage storage)
     {
         var vxStorage = (MVStorage)storage;
@@ -68,54 +70,5 @@ public class MvYamlDumper : AbstractYamlDumper
         LoadMaps<Map>(path, storage);
         
         Reporter?.SetStage(DumpStage.Finished);
-    }
-
-    private void PrepareBuilder<T>(BuilderSkeleton<T> builder) where T : BuilderSkeleton<T>
-    {
-        builder
-            .WithTypeInspector(inner => new MvObjectTypeInspector(inner));
-        
-        builder.WithTagMapping("!" + nameof(SoundData), typeof(SoundData));
-        builder.WithTagMapping("!" + nameof(MoveRoute), typeof(MoveRoute));
-        builder.WithTagMapping("!" + nameof(MoveCommand), typeof(MoveCommand));
-    }
-
-    public ISerializer _GetSerializer()=> CreateSerializer();
-    public IDeserializer _GetDeserializer()=> CreateDeserializer();
-    
-    protected override ISerializer CreateSerializer()
-    {
-        var builder = new SerializerBuilder()
-            .WithQuotingNecessaryStrings()
-            .EnsureRoundtrip()
-            .DisableAliases()
-            .WithEmissionPhaseObjectGraphVisitor(args => new ForceIntegerEnumVisitor(args.InnerVisitor))
-            // .WithTypeConverter(new JArrayConverter())
-            .WithTypeConverter(new JTokenConverter())
-            .WithDefaultScalarStyle(ScalarStyle.DoubleQuoted);
-
-        PrepareBuilder(builder);
-
-        return builder.Build();
-    }
-
-    protected override IDeserializer CreateDeserializer()
-    {
-        var builder = new DeserializerBuilder()
-            .IgnoreUnmatchedProperties()
-            .WithNodeDeserializer(new ForceIntDeserializer())
-            .WithAttemptingUnquotedStringTypeDeserialization();
-
-        PrepareBuilder(builder);
-
-        return builder.Build();
-    }
-    
-    protected override void OnLoad<T>(T entity)
-    {
-    }
-
-    protected override void OnDump<T>(T entity)
-    {
     }
 }

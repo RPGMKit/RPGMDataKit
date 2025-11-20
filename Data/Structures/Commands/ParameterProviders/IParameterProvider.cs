@@ -7,4 +7,6 @@ public interface IParameterProvider
     public void SetParameter<T>(int index, T? value);
     
     public int Count { get; }
+    
+    public void Clear();
 }

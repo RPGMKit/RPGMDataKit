@@ -1,34 +1,18 @@
 ﻿using RPGMakerLibCoreV2.Data.Helpers.Dump;
-using RPGMakerLibCoreV2.Data.MV.Classes;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Data.VXAce.Classes;
 using RPGMakerLibCoreV2.Storages.Abstraction;
-using RPGMakerLibCoreV2.Storages.Dump.MV;
-using RPGMakerLibCoreV2.Storages.Dump.VXAce;
-using RubyMarshalCS.Serialization;
-using RubyMarshalCS.SpecialTypes;
-using RubyMarshalCS.SpecialTypes.Interfaces;
-using YamlDotNet.Core;
-using YamlDotNet.Serialization;
-using Actor = RPGMakerLibCoreV2.Data.VXAce.Classes.Actor;
-using Animation = RPGMakerLibCoreV2.Data.VXAce.Classes.Animation;
-using Armor = RPGMakerLibCoreV2.Data.VXAce.Classes.Armor;
-using Class = RPGMakerLibCoreV2.Data.VXAce.Classes.Class;
-using CommonEvent = RPGMakerLibCoreV2.Data.VXAce.Classes.CommonEvent;
-using Enemy = RPGMakerLibCoreV2.Data.VXAce.Classes.Enemy;
-using Item = RPGMakerLibCoreV2.Data.VXAce.Classes.Item;
-using Map = RPGMakerLibCoreV2.Data.VXAce.Classes.Map;
-using MapInfo = RPGMakerLibCoreV2.Data.VXAce.Classes.MapInfo;
-using Skill = RPGMakerLibCoreV2.Data.VXAce.Classes.Skill;
-using State = RPGMakerLibCoreV2.Data.VXAce.Classes.State;
-using Troop = RPGMakerLibCoreV2.Data.VXAce.Classes.Troop;
-using Weapon = RPGMakerLibCoreV2.Data.VXAce.Classes.Weapon;
+using RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
 
 namespace RPGMakerLibCoreV2.Storages.Dump;
 
-public class VxAceYamlDumper : AbstractYamlDumper
+public class VxAceYamlStorage : AbstractYamlStorage
 {
+    public VxAceYamlStorage() : base(new VxAceYamlSerializer())
+    {
+        AddSpecialSerializer<Script>(new ScriptSerializer());
+    }
+
     protected override void _Dump(string path, Storage storage)
     {
         var vxStorage = (VXAceStorage)storage;
@@ -93,51 +77,10 @@ public class VxAceYamlDumper : AbstractYamlDumper
         Reporter?.SetStage(DumpStage.Finished);
     }
 
-    private void PrepareBuilder<T>(BuilderSkeleton<T> builder) where T : BuilderSkeleton<T>
+    protected override string GetExtension<T>()
     {
-        builder
-            .WithTypeInspector(inner => new RubyObjectTypeInspector(inner))
-            .WithTypeConverter(new EncodingConverter())
-            .WithTypeConverter(new DynamicPropertyConverter());
-
-        var rubyObjectTypes = SerializationHelper.GetRegisteredRubyObjects("");
-        foreach (var (typeName,type) in rubyObjectTypes)
-            builder.WithTagMapping($"!{typeName}", type);
-        
-        builder.WithTagMapping("!BinaryString", typeof(BinaryString));
-        builder.WithTagMapping("!Script", typeof(Script));
-        builder.WithTagMapping("!DynamicProperty", typeof(IDynamicProperty));
-    }
-
-    protected override ISerializer CreateSerializer()
-    {
-        var builder = new SerializerBuilder()
-            .WithQuotingNecessaryStrings()
-            .EnsureRoundtrip()
-            .DisableAliases()
-            .WithDefaultScalarStyle(ScalarStyle.DoubleQuoted);
-
-        PrepareBuilder(builder);
-
-        return builder.Build();
-    }
-
-    protected override IDeserializer CreateDeserializer()
-    {
-        var builder = new DeserializerBuilder()
-            .IgnoreUnmatchedProperties()
-            .WithAttemptingUnquotedStringTypeDeserialization();
-
-        PrepareBuilder(builder);
-
-        return builder.Build();
-    }
-    
-    protected override void OnLoad<T>(T entity)
-    {
-    }
-
-    protected override void OnDump<T>(T entity)
-    {
+        if (typeof(T) == typeof(Script))
+            return "txt";
+        return base.GetExtension<T>();
     }
 }

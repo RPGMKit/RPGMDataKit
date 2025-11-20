@@ -132,18 +132,20 @@ public class Event : RubySerializationEntity, IEvent
 
         public List<NamedCommand> NamedCommands { get; set; }
         
-        public IEnumerable<ICommandWithIndent> Commands => List;
+        public IEnumerable<ICommand> Commands => List;
 
         public override void OnDeserialized()
         {
             base.OnDeserialized();
-            NamedCommands = CommandContainerHelper.Unpack(Commands, StorageVersion.VXAce);
+            NamedCommands = CommandContainerHelper.Unpack(List, StorageVersion.VXAce);
+            MoveRoute.NamedCommands = CommandContainerHelper.Unpack(_MoveRoute.List, StorageVersion.VXAce);
         }
 
         public override void OnSerializing()
         {
             base.OnSerializing();
             List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.VXAce);
+            _MoveRoute.List = CommandContainerHelper.Pack<MoveCommand>(_MoveRoute.NamedCommands, StorageVersion.VXAce);
         }
 
         public void Dump(TextWriter writer, EntityContext context, DumpOptions options)

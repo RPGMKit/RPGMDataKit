@@ -27,7 +27,7 @@ public class MovementRouteCommand : NamedCommand
             ? parameterProvider.GetParameter<MoveCommandMV>(0)
             : parameterProvider.GetParameter<IMoveCommand>(0);
             
-        MoveCommand = MovementCommandFactory.Create(eventCommand, version);
+        MoveCommand = MovementCommandFactory.Create(eventCommand!, version);
     }
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
@@ -35,8 +35,7 @@ public class MovementRouteCommand : NamedCommand
         IMoveCommand command = version == StorageVersion.MV ? new MoveCommandMV() : new MoveCommandVX();
 
         command.Code = MoveCommand.Code;
-        var parameters = MoveCommand._Pack(version);
-        command.Parameters = parameters.Count > 0 ? parameters : null;
+        MoveCommand._Pack(command, version);
 
         parameterProvider.SetParameter(0, command);
     }

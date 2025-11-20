@@ -1,11 +1,11 @@
 ﻿using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
-using RubyMarshalCS.Serialization;
+using RubyMarshalCS.Serialization.Interfaces;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Serializers;
 
-class ColorSerializer : AbstractRubyUserSerializer<Color>
+class ColorSerializer : IRubyUserSerializer<Color>
 {
-    public override void Read(Color obj, BinaryReader reader)
+    public void Read(Color obj, BinaryReader reader)
     {
         obj._Red = reader.ReadDouble();
         obj._Green = reader.ReadDouble();
@@ -13,7 +13,7 @@ class ColorSerializer : AbstractRubyUserSerializer<Color>
         obj._Alpha = reader.ReadDouble();
     }
 
-    public override void Write(Color obj, BinaryWriter writer)
+    public void Write(Color obj, BinaryWriter writer)
     {
         writer.Write((double)obj._Red);
         writer.Write((double)obj._Green);

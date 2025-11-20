@@ -24,42 +24,42 @@ public static class DumpHelper
 
     public static void DumpYaml(string path, Storage storage, DumpProgressReporter.DumpReporter? reporter = null, CancellationToken? token = null)
     {
-        AbstractYamlDumper yamlDumper;
+        AbstractYamlStorage yamlStorage;
         switch (storage.Version)
         {
             case StorageVersion.VXAce:
-                yamlDumper = new VxAceYamlDumper();
+                yamlStorage = new VxAceYamlStorage();
                 break;
             case StorageVersion.MV:
-                yamlDumper = new MvYamlDumper();
+                yamlStorage = new MvYamlStorage();
                 break;
             default:
                 throw new Exception($"Unsupported storage version {storage.Version}");
         }
 
-        yamlDumper.Reporter = new DumpProgressReporter(reporter, token);
+        yamlStorage.Reporter = new DumpProgressReporter(reporter, token);
 
-        yamlDumper.Dump(path, storage);
+        yamlStorage.Dump(path, storage);
     }
 
     public static void LoadYaml(string path, Storage storage, DumpProgressReporter.DumpReporter? reporter = null, CancellationToken? token = null)
     {
-        AbstractYamlDumper yamlDumper;
+        AbstractYamlStorage yamlStorage;
         switch (storage.Version)
         {
             case StorageVersion.VXAce:
-                yamlDumper = new VxAceYamlDumper();
+                yamlStorage = new VxAceYamlStorage();
                 break;
             case StorageVersion.MV:
-                yamlDumper = new MvYamlDumper();
+                yamlStorage = new MvYamlStorage();
                 break;
             default:
                 throw new Exception($"Unsupported storage version {storage.Version}");
         }
 
-        yamlDumper.Reporter = new DumpProgressReporter(reporter, token);
+        yamlStorage.Reporter = new DumpProgressReporter(reporter, token);
 
-        yamlDumper.Load(path, storage);
+        yamlStorage.Load(path, storage);
     }
 
     public static void DumpCommands(string path, Storage storage, DumpOptions options)

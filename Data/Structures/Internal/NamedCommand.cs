@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 
@@ -20,18 +21,16 @@ public abstract class NamedCommand
     {
     }
 
-    public LookupList<object> _Pack(StorageVersion version)
+    public void _Pack(ICommand command, StorageVersion version)
     {
-        LookupList<object> ret = new();
         IParameterProvider provider;
         if (version == StorageVersion.MV)
-            provider = new JsonParameterProvider(ret);
+            provider = new JsonParameterProvider(command);
         else
-            provider = new SimpleParameterProvider(ret);
+            provider = new SimpleParameterProvider(command);
 
+        provider.Clear();
         Pack(provider, version);
-
-        return ret;
     }
 
     public virtual void Pack(IParameterProvider parameterProvider, StorageVersion version)
