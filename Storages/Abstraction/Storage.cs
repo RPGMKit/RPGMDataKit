@@ -187,11 +187,11 @@ public abstract class Storage
 
     public delegate void CommandWalker(int index, NamedCommand command, EntityContext context);
     
-    public delegate void CommandWalker<T>(int index, NamedCommand command, EntityContext context) where T: NamedCommand;
+    // public delegate void CommandWalker<T>(int index, NamedCommand command, EntityContext context) where T: NamedCommand;
     
-    public void SearchCommands(CommandWalker searcher)
+    public async Task SearchCommands(CommandWalker searcher)
     {
-        CommonEventHelper.WalkCommonEvents(CommonEvents.Get(), (context) =>
+        await CommonEventHelper.WalkCommonEvents(this, async (context) =>
         {
             var commandIndex = 0;
             foreach (var command in context.CommonEvent.NamedCommands)
@@ -201,7 +201,7 @@ public abstract class Storage
             }
         });
 
-        MapEventHelper.WalkMapEventPages(this, (context) => 
+        await MapEventHelper.WalkMapEventPages(this, async (context) => 
         {
             var commandIndex = 0;
             foreach (var command in context.EventPage.NamedCommands)
@@ -211,7 +211,7 @@ public abstract class Storage
             }
         });
         
-        TroopHelper.WalkTroopPages(this, (context) =>
+        await TroopHelper.WalkTroopPages(this, async (context) =>
         {
             var commandIndex = 0;
             foreach (var command in context.EventPage.NamedCommands)

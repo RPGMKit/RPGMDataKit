@@ -93,16 +93,16 @@ public class Troop : JsonEntity, ITroop
             List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.MV);
         }
 
-        public override void Dump(TextWriter writer, EntityContext context, DumpOptions options)
+        public override async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
             if (options.Format == DumpFormat.Text)
             {
                 foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
-                    writer.WriteLine(line);
+                    await writer.WriteLineAsync(line);
                 return;
             }
 
-            base.Dump(writer, context, options);
+            await base.Dump(writer, context, options);
         }
     }
 

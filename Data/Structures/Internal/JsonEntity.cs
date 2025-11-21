@@ -19,7 +19,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
         //     Storage = storage;
         // }
 
-        public virtual void Dump(TextWriter writer, EntityContext context, DumpOptions options)
+        public virtual async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
             throw new Exception($"'{options.Format}' dump format not implemented for '{GetType().Name}'");
         }

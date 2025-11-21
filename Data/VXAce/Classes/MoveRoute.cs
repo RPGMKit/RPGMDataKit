@@ -40,7 +40,7 @@ public class MoveRoute : RubySerializationEntity, IMoveRoute
         List = CommandContainerHelper.Pack<MoveCommand>(NamedCommands, StorageVersion.VXAce);
     }
 
-    public void Dump(TextWriter writer, EntityContext context, DumpOptions options)
+    public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
     {
         throw new NotImplementedException();
     }

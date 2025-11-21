@@ -5,9 +5,9 @@ namespace RPGMakerLibCoreV2.Data.Helpers;
 
 public static class TroopHelper
 {
-    public delegate void TroopWalker(TroopContext context);
+    public delegate Task TroopWalker(TroopContext context);
 
-    public static void WalkTroopPages(Storage storage, TroopWalker walker)
+    public static async Task WalkTroopPages(Storage storage, TroopWalker walker)
     {
         foreach (var (_,troop) in storage.Troops.Get())
         {
@@ -20,7 +20,7 @@ public static class TroopHelper
                 if (p == null)
                     continue;
 
-                walker(new()
+                await walker(new()
                 {
                     Troop = troop,
                     PageId = i,
@@ -32,20 +32,21 @@ public static class TroopHelper
         }
     }
 
-    public static void DumpTroopCommands(Storage storage, string path, DumpOptions options)
+    public static async Task DumpTroopCommands(Storage storage, string path, DumpOptions options)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
 
-        WalkTroopPages(storage, (context) =>
+        await WalkTroopPages(storage, async (context) =>
         {
             IndentHelper.ValidateIndents(context.EventPage, storage.Version);
 
-            using var file = File.Open(Path.Combine(path, $"Troop_{context.Troop.Id:D3}_Page_{context.PageId}.txt"),
+            await using var file = File.Open(
+                Path.Combine(path, $"Troop_{context.Troop.Id:D3}_Page_{context.PageId}.txt"),
                 FileMode.Create);
-            using var writer = new StreamWriter(file);
+            await using var writer = new StreamWriter(file);
 
-            context.EventPage.Dump(writer, new(storage, context, options.ExtendedFormat), options);
+            await context.EventPage.Dump(writer, new(storage, context, options.ExtendedFormat), options);
         });
     }
 }

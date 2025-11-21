@@ -148,12 +148,12 @@ public class Event : RubySerializationEntity, IEvent
             _MoveRoute.List = CommandContainerHelper.Pack<MoveCommand>(_MoveRoute.NamedCommands, StorageVersion.VXAce);
         }
 
-        public void Dump(TextWriter writer, EntityContext context, DumpOptions options)
+        public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
             if (options.Format == DumpFormat.Text)
             {
                 foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
-                    writer.WriteLine(line);
+                    await writer.WriteLineAsync(line);
                 return;
             }
 

@@ -11,7 +11,7 @@ namespace RPGMakerLibCoreV2
     {
         private static readonly DiffMatchPatchV2 _dmp = new();
 
-        public static List<Patch> CalculatePatches(Storage left, Storage right, DumpOptions options)
+        public static async Task<List<Patch>> CalculatePatches(Storage left, Storage right, DumpOptions options)
         {
             List<Patch> d = new();
 
@@ -59,13 +59,13 @@ namespace RPGMakerLibCoreV2
                 if (commonEventA == null && commonEventB == null)
                     continue;
 
-                using StringWriter bA = new();
-                using StringWriter bB = new();
+                await using StringWriter bA = new();
+                await using StringWriter bB = new();
 
-                commonEventA?.Dump(bA,
+                await commonEventA?.Dump(bA,
                     new(left, new CommonEventContext() { CommonEvent = commonEventA }, options.ExtendedFormat),
                     options);
-                commonEventB?.Dump(bB,
+                await commonEventB?.Dump(bB,
                     new(right, new CommonEventContext() { CommonEvent = commonEventB }, options.ExtendedFormat),
                     options);
 
@@ -78,7 +78,7 @@ namespace RPGMakerLibCoreV2
                     { Type = diff.Item1, CommonEvent = context, Patches = diff.Item2 });
             }
 
-            MapEventHelper.WalkMapEventPages(left, context =>
+            await MapEventHelper.WalkMapEventPages(left, async context =>
             {
                 var otherMap = right.Maps.Get(context.MapId);
                 if (otherMap == null)
@@ -107,11 +107,11 @@ namespace RPGMakerLibCoreV2
 
                 var pageB = otherEvent?.Pages.Get(context.PageId);
 
-                using StringWriter bA = new();
-                using StringWriter bB = new();
+                await using StringWriter bA = new();
+                await using StringWriter bB = new();
 
-                context.EventPage.Dump(bA, new(left, context, options.ExtendedFormat), options);
-                pageB?.Dump(bB, new(right, new MapEventContext()
+                await context.EventPage.Dump(bA, new(left, context, options.ExtendedFormat), options);
+                await pageB?.Dump(bB, new(right, new MapEventContext()
                 {
                     MapId = context.MapId,
                     Map = otherMap,
@@ -131,7 +131,7 @@ namespace RPGMakerLibCoreV2
                     { Type = diffType, MapEventPage = patchData, Patches = diffs });
             });
 
-            MapEventHelper.WalkMapEventPages(right, context =>
+            await MapEventHelper.WalkMapEventPages(right, async context =>
             {
                 var otherMap = left.Maps.Get(context.MapId);
                 if (otherMap == null)
@@ -161,9 +161,9 @@ namespace RPGMakerLibCoreV2
                 var pageA = otherEvent?.Pages.Get(context.PageId);
                 if (pageA == null)
                 {
-                    using var sA = new StringWriter();
+                    await using var sA = new StringWriter();
 
-                    context.EventPage.Dump(sA, new(right, context, options.ExtendedFormat), options);
+                    await context.EventPage.Dump(sA, new(right, context, options.ExtendedFormat), options);
                     
                     var diff = CalculateTextDiff("", sA.ToString());
                     

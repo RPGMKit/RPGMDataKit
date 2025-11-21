@@ -55,27 +55,27 @@ public class IfActorCommand : IfCommand
                     ? $"Name of {unitName} is {name}"
                     : $"{unitName} is Name '{name}' Applied";
             case CheckType.Class:
-                var className = context.NameFormatter.FormatClass((int)Param);
+                var className = context.NameFormatter.FormatClass(Convert.ToInt32(Param));
                 return context.Version == StorageVersion.MV
                     ? $"Class of {unitName} is {className}"
                     : $"{unitName} is {className}";
             case CheckType.Skill:
-                var skillName = context.NameFormatter.FormatSkill((int)Param);
+                var skillName = context.NameFormatter.FormatSkill(Convert.ToInt32(Param));
                 return context.Version == StorageVersion.MV
                     ? $"{unitName} has learned {skillName}"
                     : $"{unitName} is {skillName} Learned";
             case CheckType.WeaponEquipped:
-                var weaponName = context.NameFormatter.FormatWeapon((int)Param);
+                var weaponName = context.NameFormatter.FormatWeapon(Convert.ToInt32(Param));
                 return context.Version == StorageVersion.MV
                     ? $"{unitName} has equipped {weaponName}"
                     : $"{unitName} is {weaponName} Equipped";
             case CheckType.ArmorEquipped:
-                var armorName = context.NameFormatter.FormatArmor((int)Param);
+                var armorName = context.NameFormatter.FormatArmor(Convert.ToInt32(Param));
                 return context.Version == StorageVersion.MV
                     ? $"{unitName} has equipped {armorName}"
                     : $"{unitName} is {armorName} Equipped";
             case CheckType.State:
-                var stateName = context.NameFormatter.FormatState((int)Param);
+                var stateName = context.NameFormatter.FormatState(Convert.ToInt32(Param));
                 return context.Version == StorageVersion.MV
                     ? $"{unitName} is affected by {stateName}"
                     : $"{unitName} is {stateName} Inflicted";

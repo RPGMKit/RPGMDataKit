@@ -6,38 +6,33 @@ namespace RPGMakerLibCoreV2.Data.Helpers;
 
 public static class CommonEventHelper
 {
-    public delegate void CommonEventWalker(CommonEventContext context);
+    public delegate Task CommonEventWalker(CommonEventContext context);
 
-    public static void WalkCommonEvents(Storage storage, CommonEventWalker walker)
+    public static async Task WalkCommonEvents(Storage storage, CommonEventWalker walker)
     {
-        WalkCommonEvents(storage.CommonEvents.Get(), walker);
-    }
-
-    public static void WalkCommonEvents(Dictionary<int, ICommonEvent?> commonEvents, CommonEventWalker walker)
-    {
-        foreach (var (_, c) in commonEvents)
+        foreach (var (_, c) in storage.CommonEvents.Get())
         {
             if (c == null)
                 continue;
 
-            walker(new() { CommonEvent = c });
+            await walker(new() { CommonEvent = c });
         }
     }
 
-    public static void DumpCommonEventCommands(Storage storage, string path, DumpOptions options)
+    public static async Task DumpCommonEventCommands(Storage storage, string path, DumpOptions options)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
 
-        WalkCommonEvents(storage, (context) =>
+        await WalkCommonEvents(storage, async (context) =>
         {
             IndentHelper.ValidateIndents(context.CommonEvent, storage.Version);
 
-            using var file = File.Open(Path.Combine(path, $"CommonEvent_{context.CommonEvent.Id:D3}.txt"),
+            await using var file = File.Open(Path.Combine(path, $"CommonEvent_{context.CommonEvent.Id:D3}.txt"),
                 FileMode.Create);
-            using var writer = new StreamWriter(file);
 
-            context.CommonEvent.Dump(writer, new(storage, context, options.ExtendedFormat), options);
+            await using var writer = new StreamWriter(file);
+            await context.CommonEvent.Dump(writer, new(storage, context, options.ExtendedFormat), options);
         });
     }
 }
