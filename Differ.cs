@@ -125,10 +125,12 @@ namespace RPGMakerLibCoreV2
 
                 var (diffType, diffs) = CalculateTextDiff(bA.ToString(), bB.ToString());
                 if (diffType == DiffType.Equal)
-                    return;
+                    return true;
 
                 d.Add(new()
                     { Type = diffType, MapEventPage = patchData, Patches = diffs });
+
+                return true;
             });
 
             await MapEventHelper.WalkMapEventPages(right, async context =>
@@ -168,7 +170,7 @@ namespace RPGMakerLibCoreV2
                     var diff = CalculateTextDiff("", sA.ToString());
                     
                     if (diff.Item1 == DiffType.Equal)
-                        return;
+                        return true;
 
                     d.Add(new()
                     {
@@ -181,6 +183,8 @@ namespace RPGMakerLibCoreV2
                         Patches = diff.Item2
                     });
                 }
+
+                return true;
             });
 
             return d;

@@ -23,7 +23,7 @@ public abstract class AbstractTextStorage
         _specialSerializers[typeof(T)] = serializer;
     }
 
-    public DumpProgressReporter? Reporter { get; set; }
+    public ProgressReporter? Reporter { get; set; }
 
     private bool NeedCancel => Reporter?.NeedCancel ?? false;
 
@@ -52,14 +52,15 @@ public abstract class AbstractTextStorage
         if (NeedCancel)
             return;
 
-        Reporter?.ResetTotal(storage.MapInfos.Get().Count);
+        using var _ = Reporter?.IncLevel(storage.MapInfos.Get().Count);
+        using var _2 = Reporter?.Report(level: _.Level - 1);
 
         foreach (var (mapId, _) in storage.MapInfos.Get())
         {
             if (NeedCancel)
                 break;
 
-            using var rp = Reporter?.Report(nameof(storage.Maps), mapId);
+            using var _3 = Reporter?.Report($"{nameof(storage.Maps)}: {mapId}");
 
             var map = storage.Maps.Get(mapId);
             if (map != null)
@@ -74,15 +75,14 @@ public abstract class AbstractTextStorage
         if (NeedCancel)
             return;
 
-        Reporter?.ResetTotal(storage.MapInfos.Get().Count);
-
         var mapsDirectory = Path.Combine(path, nameof(storage.Maps));
         if (!Directory.Exists(mapsDirectory))
             return;
 
         var mapFiles = Directory.GetFiles(mapsDirectory, "*." + GetExtension<T>());
 
-        Reporter?.ResetTotal(mapFiles.Length);
+        using var _ = Reporter?.IncLevel(mapFiles.Length);
+        using var _2 = Reporter?.Report(level: _.Level - 1);
 
         foreach (var mapFile in mapFiles)
         {
@@ -92,7 +92,7 @@ public abstract class AbstractTextStorage
             if (!int.TryParse(Path.GetFileNameWithoutExtension(mapFile), out var id))
                 continue;
 
-            using var rp = Reporter?.Report(nameof(storage.Maps), id);
+            using var _3 = Reporter?.Report($"{nameof(storage.Maps)}: {id}");
 
             var map = LoadEntity<T>(mapFile);
 
@@ -105,18 +105,17 @@ public abstract class AbstractTextStorage
         if (NeedCancel)
             return;
 
-        using var rp1 = Reporter?.ReportGlobal();
-
         path = Path.Combine(path, entityName);
 
-        Reporter?.ResetTotal(holder.Get().Count);
+        using var _ = Reporter?.IncLevel(holder.Get().Count);
+        using var _2 = Reporter?.Report(level: _.Level - 1);
 
         foreach (var (i, e) in holder.Get())
         {
             if (NeedCancel)
                 break;
 
-            using var rp2 = Reporter?.Report(entityName, i);
+            using var _3 = Reporter?.Report($"{entityName}: {i}");
 
             if (e != null)
                 DumpEntity(path, i.ToString(), e);
@@ -128,10 +127,9 @@ public abstract class AbstractTextStorage
         if (NeedCancel)
             return;
 
-        using var rp1 = Reporter?.ReportGlobal();
-
-        Reporter?.ResetTotal(1);
-        using var rp2 = Reporter?.Report(entityName);
+        using var _ = Reporter?.IncLevel(1);
+        using var _2 = Reporter?.Report(level: _.Level - 1);
+        using var _3 = Reporter?.Report(entityName);
         DumpEntity(path, entityName, holder.Get());
     }
 
@@ -146,11 +144,10 @@ public abstract class AbstractTextStorage
         if (!Directory.Exists(path))
             return;
 
-        using var rp1 = Reporter?.ReportGlobal();
-
         var files = Directory.GetFiles(path, "*." + GetExtension<T>());
 
-        Reporter?.ResetTotal(files.Length);
+        using var _ = Reporter?.IncLevel(files.Length);
+        using var _2 = Reporter?.Report(level: _.Level - 1);
 
         foreach (var file in files)
         {
@@ -160,7 +157,7 @@ public abstract class AbstractTextStorage
             if (!int.TryParse(Path.GetFileNameWithoutExtension(file), out var id))
                 continue;
 
-            using var rp2 = Reporter?.Report(entityName, id);
+            using var _3 = Reporter?.Report($"{entityName} {id}");
 
             holder.Set(id, LoadEntity<T>(file), false);
         }
@@ -171,10 +168,9 @@ public abstract class AbstractTextStorage
         if (NeedCancel)
             return;
 
-        using var rp1 = Reporter?.ReportGlobal();
-
-        Reporter?.ResetTotal(1);
-        using var rp2 = Reporter?.Report(entityName);
+        using var _ =Reporter?.IncLevel(1);
+        using var _2 = Reporter?.Report(level: _.Level - 1);
+        using var _3 = Reporter?.Report(entityName);
 
         holder.Set(LoadEntity<T>(Path.Combine(path, entityName + "." + GetExtension<T>())));
     }

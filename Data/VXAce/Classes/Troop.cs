@@ -100,6 +100,8 @@ public class Troop : RubySerializationEntity, ITroop
         {
             if (options.Format == DumpFormat.Text)
             {
+                await TroopHelper.DumpPageInfo(this, writer, context, options);
+                await writer.WriteLineAsync("Commands:");
                 foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
                     await writer.WriteLineAsync(line);
                 return;

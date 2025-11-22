@@ -116,16 +116,16 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
             [JsonProperty("list")]
             public LookupList<Command> List { get; set; }
 
-            public override async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
+            public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
             {
                 if (options.Format == DumpFormat.Text)
                 {
+                    await MapEventHelper.DumpPageInfo(this, writer, context, options);
+                    await writer.WriteLineAsync("Commands:");
                     foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
                         await writer.WriteLineAsync(line);
                     return;
                 }
-
-                await base.Dump(writer, context, options);
             }
 
             public List<NamedCommand> NamedCommands { get; set; }

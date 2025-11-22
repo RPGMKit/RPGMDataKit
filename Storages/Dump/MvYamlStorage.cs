@@ -16,12 +16,8 @@ public class MvYamlStorage : AbstractYamlStorage
     {
         var vxStorage = (MVStorage)storage;
 
-        Reporter?.SetStage(DumpStage.Init);
-        Reporter?.Report();
-        
         Reporter?.SetStage(DumpStage.Progress);
-        
-        Reporter?.SetGlobalTotal(15);
+        Reporter?.ResetTotal(15);
 
         DumpHolder(path, nameof(vxStorage.Actors), vxStorage.Actors);
         DumpHolder(path, nameof(vxStorage.Animations), vxStorage.Animations);
@@ -45,12 +41,8 @@ public class MvYamlStorage : AbstractYamlStorage
 
     protected override void _Load(string path, Storage storage)
     {
-        Reporter?.SetStage(DumpStage.Init);
-        Reporter?.Report();
-        
         Reporter?.SetStage(DumpStage.Progress);
-        
-        Reporter?.SetGlobalTotal(15);
+        Reporter?.ResetTotal(15);
 
         LoadHolder<Actor, IActor>(path, nameof(storage.Actors), storage.Actors);
         LoadHolder<Animation, IAnimation>(path, nameof(storage.Animations), storage.Animations);

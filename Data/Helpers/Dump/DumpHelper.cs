@@ -6,17 +6,26 @@ namespace RPGMakerLibCoreV2.Data.Helpers.Dump;
 
 public static class DumpHelper
 {
-    public static async Task Dump(string path, Storage storage, DumpOptions? options = null)
+    public static async Task Dump(string path, Storage storage, DumpOptions? options = null, ProgressReporter.ProgressReporterCallback? reporterCallback = null, CancellationToken? token = null)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist");
 
         options ??= new();
         
-        await DumpCommands(path, storage, options);
+        var reporter = new ProgressReporter(reporterCallback, token);
+        reporter.SetStage(DumpStage.Init);
+        reporter.ResetTotal(3);
+
+        reporter.SetStage(DumpStage.Progress);
+        await reporter.Report().For(async () => await CommonEventHelper.DumpCommonEventCommands(storage, path, options, reporter));
+        await reporter.Report().For(async () => await MapEventHelper.DumpMapEventCommands(storage, path, options, reporter));
+        await reporter.Report().For(async () => await TroopHelper.DumpTroopCommands(storage, path, options, reporter));
+        
+        reporter.SetStage(DumpStage.Finished);
     }
 
-    public static void DumpYaml(string path, Storage storage, DumpProgressReporter.DumpReporter? reporter = null, CancellationToken? token = null)
+    public static void DumpYaml(string path, Storage storage, ProgressReporter.ProgressReporterCallback? reporterCallback = null, CancellationToken? token = null)
     {
         AbstractYamlStorage yamlStorage;
         switch (storage.Version)
@@ -31,12 +40,12 @@ public static class DumpHelper
                 throw new Exception($"Unsupported storage version {storage.Version}");
         }
 
-        yamlStorage.Reporter = new DumpProgressReporter(reporter, token);
+        yamlStorage.Reporter = reporterCallback != null ? new ProgressReporter(reporterCallback, token) : null;
 
         yamlStorage.Dump(path, storage);
     }
 
-    public static void LoadYaml(string path, Storage storage, DumpProgressReporter.DumpReporter? reporter = null, CancellationToken? token = null)
+    public static void LoadYaml(string path, Storage storage, ProgressReporter.ProgressReporterCallback? reporter = null, CancellationToken? token = null)
     {
         AbstractYamlStorage yamlStorage;
         switch (storage.Version)
@@ -51,15 +60,8 @@ public static class DumpHelper
                 throw new Exception($"Unsupported storage version {storage.Version}");
         }
 
-        yamlStorage.Reporter = new DumpProgressReporter(reporter, token);
+        yamlStorage.Reporter = reporter != null ? new ProgressReporter(reporter, token) : null;
 
         yamlStorage.Load(path, storage);
-    }
-
-    public static async Task DumpCommands(string path, Storage storage, DumpOptions options)
-    {
-        await CommonEventHelper.DumpCommonEventCommands(storage, path, options);
-        await MapEventHelper.DumpMapEventCommands(storage, path, options);
-        await TroopHelper.DumpTroopCommands(storage, path, options);
     }
 }

@@ -83,9 +83,9 @@ public class Map : RubySerializationEntity, IMap
     public IDataLookup<int> Data => new ListWrapper<int, short>(_Data.Elements, i => (short)i, s => (int)s);
 
     [RubyProperty("@events")]
-    public LookupMap<Event> _Events { get; set; }
+    public LookupMap<Event?> _Events { get; set; }
 
-    public IByIdGetter<IEvent> Events => _Events;
+    public IByIdGetter<IEvent?> Events => _Events;
 
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1 { get; set; }

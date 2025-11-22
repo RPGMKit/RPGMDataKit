@@ -44,6 +44,10 @@ public class CommonEvent : RubySerializationEntity, ICommonEvent
     {
         if (options.Format == DumpFormat.Text)
         {
+            await writer.WriteLineAsync($"Name: [{Id:D3}] {Name}");
+            await writer.WriteLineAsync($"Trigger: {Trigger}");
+            await writer.WriteLineAsync("SwitchId: " + (Trigger > 0 ? context.NameFormatter.FormatSwitch(SwitchId) : "None"));
+            await writer.WriteLineAsync("Commands:");
             foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
                 await writer.WriteLineAsync(line);
             return;

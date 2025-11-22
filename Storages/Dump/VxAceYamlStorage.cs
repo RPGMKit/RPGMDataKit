@@ -17,12 +17,8 @@ public class VxAceYamlStorage : AbstractYamlStorage
     {
         var vxStorage = (VXAceStorage)storage;
 
-        Reporter?.SetStage(DumpStage.Init);
-        Reporter?.Report();
-        
         Reporter?.SetStage(DumpStage.Progress);
-        
-        Reporter?.SetGlobalTotal(16);
+        Reporter?.ResetTotal(16);
 
         DumpHolder(path, nameof(vxStorage.Actors), vxStorage.Actors);
         DumpHolder(path, nameof(vxStorage.Animations), vxStorage.Animations);
@@ -49,12 +45,8 @@ public class VxAceYamlStorage : AbstractYamlStorage
     {
         var vxStorage = (VXAceStorage)storage;
         
-        Reporter?.SetStage(DumpStage.Init);
-        Reporter?.Report();
-        
         Reporter?.SetStage(DumpStage.Progress);
-        
-        Reporter?.SetGlobalTotal(16);
+        Reporter?.ResetTotal(16);
 
         LoadHolder<Actor, IActor>(path, nameof(storage.Actors), storage.Actors);
         LoadHolder<Animation, IAnimation>(path, nameof(storage.Animations), storage.Animations);

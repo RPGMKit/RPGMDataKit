@@ -2,6 +2,7 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Enums.Internal;
 using RPGMakerLibCoreV2.Data.Helpers;
+using RPGMakerLibCoreV2.Data.Helpers.Dump;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Diff;
@@ -188,38 +189,74 @@ public abstract class Storage
     public delegate void CommandWalker(int index, NamedCommand command, EntityContext context);
     
     // public delegate void CommandWalker<T>(int index, NamedCommand command, EntityContext context) where T: NamedCommand;
-    
-    public async Task SearchCommands(CommandWalker searcher)
+
+    public async Task SearchCommands(CommandWalker searcher, ProgressReporter.ProgressReporterCallback? reporterCallback = null,
+        CancellationToken cancellationToken = default)
     {
+        var reporter = reporterCallback != null ? new ProgressReporter(reporterCallback, cancellationToken) : null;
+
+        reporter?.SetStage(DumpStage.Init);
+        
+        var stepCount = 0;
+        stepCount += Maps.GetAll().Sum(m => m.Events.Sum(e => e?.Pages.Count() ?? 0));
+        stepCount += Troops.Get().Sum(t => t.Value?.Pages.Count() ?? 0);
+        stepCount += CommonEvents.Get().Count;
+        
+        reporter?.ResetTotal(stepCount);
+        
+        reporter?.SetStage(DumpStage.Progress);
         await CommonEventHelper.WalkCommonEvents(this, async (context) =>
         {
+            using var _ = reporter?.Report("", 0);
+            
             var commandIndex = 0;
             foreach (var command in context.CommonEvent.NamedCommands)
             {
                 searcher(commandIndex, command, new(this, context));
                 ++commandIndex;
+                
+                if (reporter?.NeedCancel ?? false)
+                    return false;
             }
-        });
 
-        await MapEventHelper.WalkMapEventPages(this, async (context) => 
+            return true;
+        }, reporter);
+
+        await MapEventHelper.WalkMapEventPages(this, async (context) =>
         {
+            using var _ = reporter?.Report("", 0);
+
             var commandIndex = 0;
             foreach (var command in context.EventPage.NamedCommands)
             {
                 searcher(commandIndex, command, new(this, context));
                 ++commandIndex;
+                
+                if (reporter?.NeedCancel ?? false)
+                    return false;
             }
-        });
-        
+
+            return true;
+        }, reporter);
+
         await TroopHelper.WalkTroopPages(this, async (context) =>
         {
+            using var _ = reporter?.Report("", 0);
+
             var commandIndex = 0;
             foreach (var command in context.EventPage.NamedCommands)
             {
                 searcher(commandIndex, command, new(this, context));
                 ++commandIndex;
+                
+                if (reporter?.NeedCancel ?? false)
+                    return false;
             }
-        });
+
+            return true;
+        }, reporter);
+        
+        reporter?.SetStage(DumpStage.Finished);
     }
 
     public class PatchOptions

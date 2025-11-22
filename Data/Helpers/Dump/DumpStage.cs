@@ -2,6 +2,7 @@
 
 public enum DumpStage
 {
+    None,
     Init,
     Progress,
     Finished

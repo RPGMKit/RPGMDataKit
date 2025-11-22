@@ -42,6 +42,16 @@ public class MapsHolder
         return _maps[index].Get();
     }
 
+    public IEnumerable<IMap> GetAll()
+    {
+        foreach (var (id, _) in _storage.MapInfos.Get())
+        {
+            var map = Get(id);
+            if (map != null)
+                yield return map;
+        }
+    }
+
     private DataHolder<IMap> CreateSubHolder(int mapIndex)
     {
         return new(_storage, _pathLoader(mapIndex), _loader);

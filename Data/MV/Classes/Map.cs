@@ -78,9 +78,9 @@ public class Map : JsonEntity, IMap
     public LookupList<int> _Data { get; set; }
 
     [JsonProperty(PropertyName = "events")]
-    public LookupList<Event> _Events { get; set; }
+    public LookupList<Event?> _Events { get; set; }
 
     public IDataLookup<int> Data => _Data;
 
-    public IByIdGetter<IEvent> Events => _Events;
+    public IByIdGetter<IEvent?> Events => _Events;
 }

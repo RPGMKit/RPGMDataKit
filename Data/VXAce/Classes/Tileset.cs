@@ -1,6 +1,6 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RubyMarshalCS.Serialization;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
 using RubyMarshalCS.Serialization.Attributes;
 
@@ -19,12 +19,14 @@ public class Tileset : RubySerializationEntity, ITileSet
     public string Name { get; set; }
 
     [RubyProperty("@tileset_names")]
-    public LookupList<string> TilesetNames { get; set; }
+    public LookupList<string> _TilesetNames { get; set; }
+
+    public IDataLookup<string> TilesetNames => _TilesetNames;
 
     [RubyProperty("@flags")]
     public Table _Flags { get; set; }
     
-    public LookupList<int> Flags => new(_Flags.Elements.Cast<int>().ToList());
+    public IDataLookup<int> Flags => new ListWrapper<int, short>(_Flags.Elements, i => (short)i, s => (int)s);
 
     [RubyProperty("@note")]
     public string Note { get; set; }

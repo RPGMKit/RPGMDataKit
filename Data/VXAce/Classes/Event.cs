@@ -152,6 +152,8 @@ public class Event : RubySerializationEntity, IEvent
         {
             if (options.Format == DumpFormat.Text)
             {
+                await MapEventHelper.DumpPageInfo(this, writer, context, options);
+                await writer.WriteLineAsync("Commands:");
                 foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
                     await writer.WriteLineAsync(line);
                 return;

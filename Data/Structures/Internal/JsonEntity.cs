@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 namespace RPGMakerLibCoreV2.Data.Structures.Internal
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public abstract class JsonEntity : IDumpable
+    public abstract class JsonEntity
     {
         [JsonExtensionData]
         private IDictionary<string, JToken> _unknownFields;
@@ -18,11 +18,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
         // {
         //     Storage = storage;
         // }
-
-        public virtual async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
-        {
-            throw new Exception($"'{options.Format}' dump format not implemented for '{GetType().Name}'");
-        }
 
         [YamlDotNet.Serialization.Callbacks.OnDeserialized]
         public void OnYamlDeserialized()
