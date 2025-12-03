@@ -316,7 +316,7 @@ public static class CommandFactory
             case CommandCodes.PlaySe:
                 returnCommand = new PlaySECommand();
                 break;
-            case CommandCodes.StopSE:
+            case CommandCodes.StopSe:
                 returnCommand = new StopSECommand();
                 break;
             case CommandCodes.PlayMovie:

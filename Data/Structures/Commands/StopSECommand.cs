@@ -5,6 +5,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands;
 
 public class StopSECommand : NamedCommand
 {
-    public override int Code => CommandCodes.StopSE;
+    public override int Code => CommandCodes.StopSe;
     public override string GetCommandName(StorageVersion version) => "Stop SE";
 }

@@ -66,7 +66,7 @@ public static class CommandCodes
     public const int FadeoutBgs = 246;
     public const int PlayMe = 249;
     public const int PlaySe = 250;
-    public const int StopSE = 251;
+    public const int StopSe = 251;
     public const int PlayMovie = 261;
     public const int ChangeMapNameDisplay = 281;
     public const int ChangeTileset = 282;

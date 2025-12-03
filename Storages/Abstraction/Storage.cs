@@ -125,7 +125,7 @@ public abstract class Storage
             var data = LoadData<List<T>>(path);
             var dict = new Dictionary<int, TV?>();
             for (var i = 0; i < data.Count; ++i)
-                dict[idGetter != null ? idGetter(data[i]) : i] = data[i];
+                dict[idGetter?.Invoke(data[i]) ?? i] = data[i];
 
             return dict;
         });
@@ -186,7 +186,7 @@ public abstract class Storage
         public List<MapEventContext> MapEventResults = new();
     }
 
-    public delegate void CommandWalker(int index, NamedCommand command, EntityContext context);
+    public delegate Task CommandWalker(int index, NamedCommand command, EntityContext context);
     
     // public delegate void CommandWalker<T>(int index, NamedCommand command, EntityContext context) where T: NamedCommand;
 
@@ -212,7 +212,16 @@ public abstract class Storage
             var commandIndex = 0;
             foreach (var command in context.CommonEvent.NamedCommands)
             {
-                searcher(commandIndex, command, new(this, context));
+                try
+                {
+                    await searcher(commandIndex, command, new(this, context));
+                }
+                catch
+                {
+                    reporter?.SetStage(DumpStage.Finished);
+                    throw;
+                }
+
                 ++commandIndex;
                 
                 if (reporter?.NeedCancel ?? false)
@@ -229,7 +238,16 @@ public abstract class Storage
             var commandIndex = 0;
             foreach (var command in context.EventPage.NamedCommands)
             {
-                searcher(commandIndex, command, new(this, context));
+                try
+                {
+                    await searcher(commandIndex, command, new(this, context));
+                }
+                catch
+                {
+                    reporter?.SetStage(DumpStage.Finished);
+                    throw;
+                }
+
                 ++commandIndex;
                 
                 if (reporter?.NeedCancel ?? false)
@@ -246,7 +264,16 @@ public abstract class Storage
             var commandIndex = 0;
             foreach (var command in context.EventPage.NamedCommands)
             {
-                searcher(commandIndex, command, new(this, context));
+                try
+                {
+                    await searcher(commandIndex, command, new(this, context));
+                }
+                catch
+                {
+                    reporter?.SetStage(DumpStage.Finished);
+                    throw;
+                }
+
                 ++commandIndex;
                 
                 if (reporter?.NeedCancel ?? false)

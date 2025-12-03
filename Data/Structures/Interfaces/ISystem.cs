@@ -10,4 +10,8 @@ public interface ISystem
     public LookupList<string> Variables { get; }
     
     public LookupList<string> EquipmentTypes { get; }
+    
+    public string GameTitle { get; }
+    
+    public string CurrencyUnit { get; }
 }

@@ -5,10 +5,27 @@ namespace RPGMakerLibCoreV2.Storages.Dump;
 
 public static class ConverterHelper
 {
-    public class Member
+    public interface IMember
     {
-        public required Attribute Attribute { get; init; }
-        public required MemberInfo MemberInfo { get; init; }
+        public string Name { get; }
+        
+        public Type MemberType { get; }
+
+        public void SetValue(object obj, object? value);
+
+        public object? GetValue(object obj);
+    }
+    
+    public class Member : IMember
+    {
+        public readonly MemberInfo MemberInfo;
+
+        public Member(MemberInfo memberInfo)
+        {
+            MemberInfo = memberInfo;
+        }
+        
+        public string Name => MemberInfo.Name;
 
         public Type MemberType
         {
@@ -42,8 +59,35 @@ public static class ConverterHelper
 
             throw new Exception("Unsupported member type");;
         }
+    }
 
+    public class MemberWithAttribute : IMember
+    {
+        public MemberWithAttribute(MemberInfo memberInfo, Attribute attribute)
+        {
+            _member = new(memberInfo);
+            Attribute = attribute;
+        }
+
+        public MemberWithAttribute(Member member, Attribute attribute)
+        {
+            _member = member;
+            Attribute = attribute;
+        }
+
+        public Attribute Attribute { get; init; }
+
+        private Member _member;
+        
         public T? AttributeAs<T>() where T : Attribute => Attribute as T;
+        
+        public string Name => _member.Name;
+        
+        public Type MemberType => _member.MemberType;
+        
+        public void SetValue(object obj, object? value) => _member.SetValue(obj, value);
+
+        public object? GetValue(object obj) => _member.GetValue(obj);
     }
 
     public static Dictionary<Type, string> TaggedTypes { get; } = new()
@@ -53,41 +97,54 @@ public static class ConverterHelper
         [typeof(MoveCommand)] = "MoveCommand",
     };
     
-    private static Dictionary<Type, Dictionary<Type, IEnumerable<Member>>> _cache = new();
-
-    public static IEnumerable<Member> GetMembersWithAttribute<T>(Type type) where T : Attribute
+    private static Dictionary<Type, Dictionary<Type, IEnumerable<MemberWithAttribute>>> _membersWithAttributesCache = new();
+    private static Dictionary<Type, IEnumerable<Member>> _membersCache = new();
+    
+    public static IEnumerable<MemberWithAttribute> GetMembersWithAttribute<T>(Type type) where T : Attribute
     {
-        if (_cache.TryGetValue(type, out var byAttribute))
+        if (_membersWithAttributesCache.TryGetValue(type, out var byAttribute))
         {
             if (byAttribute.TryGetValue(typeof(T), out var cachedMembers))
                 return cachedMembers;
         }
         else
-            _cache[type] = new();
+            _membersWithAttributesCache[type] = new();
 
-        List<Member> members = new();
+        List<MemberWithAttribute> members = new();
 
         foreach (var member in GetMembers(type))
         {
-            var attr = member.GetCustomAttribute<T>();
+            var attr = member.MemberInfo.GetCustomAttribute<T>();
             if (attr != null)
-                members.Add(new() { Attribute = attr, MemberInfo = member });
+                members.Add(new(member, attr));
         }
 
-        _cache[type][typeof(T)] = members;
+        _membersWithAttributesCache[type][typeof(T)] = members;
 
         return members;
     }
 
-    private static IEnumerable<MemberInfo> GetMembers(Type type)
+    public static IEnumerable<Member> GetMembers(Type type)
     {
-        List<MemberInfo> members = new();
+        if (_membersCache.TryGetValue(type, out var members))
+            return members;
+
+        members = GetMembersRecursive(type);
+
+        _membersCache[type] = members;
+
+        return members;
+    }
+
+    private static IEnumerable<Member> GetMembersRecursive(Type type)
+    {
+        List<Member> members = new();
         members.AddRange(type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
-                                        BindingFlags.DeclaredOnly));
+                                        BindingFlags.DeclaredOnly).Select(m => new Member(m)));
         members.AddRange(type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
-                                            BindingFlags.DeclaredOnly));
+                                            BindingFlags.DeclaredOnly).Select(m => new Member(m)));
         if (type.BaseType != null)
-            members.AddRange(GetMembers(type.BaseType));
+            members.AddRange(GetMembersRecursive(type.BaseType));
 
         return members;
     }

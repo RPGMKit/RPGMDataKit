@@ -47,10 +47,10 @@ public class JsonEntityConverter : IYamlTypeConverter
         var members = ConverterHelper.GetMembersWithAttribute<JsonPropertyAttribute>(type);
         var extensionDictionary = GetExtensionMember(value, type);
         foreach (var member in members.OrderBy(p =>
-                     p.AttributeAs<JsonPropertyAttribute>()?.PropertyName ?? p.MemberInfo.Name))
+                     p.AttributeAs<JsonPropertyAttribute>()?.PropertyName ?? p.Name))
         {
             emitter.Emit(
-                new Scalar(member.AttributeAs<JsonPropertyAttribute>()?.PropertyName ?? member.MemberInfo.Name));
+                new Scalar(member.AttributeAs<JsonPropertyAttribute>()?.PropertyName ?? member.Name));
             serializer(member.GetValue(value));
         }
 
@@ -88,7 +88,7 @@ public class JsonEntityConverter : IYamlTypeConverter
             var scalar = parser.Consume<Scalar>();
             var member = members.FirstOrDefault(m =>
             {
-                var name = m.AttributeAs<JsonPropertyAttribute>()?.PropertyName ?? m.MemberInfo.Name;
+                var name = m.AttributeAs<JsonPropertyAttribute>()?.PropertyName ?? m.Name;
                 return name == scalar.Value;
             });
             

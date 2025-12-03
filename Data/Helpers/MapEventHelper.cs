@@ -76,10 +76,15 @@ public static class MapEventHelper
 
     public static async Task DumpPageInfo(IEventPage page, TextWriter writer, EntityContext context, DumpOptions options)
     {
-        await writer.WriteLineAsync($"Map: {context.NameFormatter.FormatMap(context.MapEventContext!.MapId)}");
-        await writer.WriteLineAsync($"Event: {context.NameFormatter.FormatEvent(context.MapEventContext.Event.Id)}, Page: {context.MapEventContext.PageId}");
-        await writer.WriteLineAsync(
-            $"Coords: ({context.MapEventContext.Event.X}, {context.MapEventContext.Event.Y})");
+        if (context.MapEventContext != null)
+        {
+            await writer.WriteLineAsync($"Map: {context.NameFormatter.FormatMap(context.MapEventContext!.MapId)}");
+            await writer.WriteLineAsync(
+                $"Event: {context.NameFormatter.FormatEvent(context.MapEventContext.Event.Id)}, Page: {context.MapEventContext.PageId}");
+            await writer.WriteLineAsync(
+                $"Coords: ({context.MapEventContext.Event.X}, {context.MapEventContext.Event.Y})");
+        }
+
         await writer.WriteLineAsync("Character: " + (!string.IsNullOrWhiteSpace(page.Graphic.CharacterName) ? $"{page.Graphic.CharacterName}, {page.Graphic.CharacterIndex}" : ""));
         await writer.WriteLineAsync($"Tile Id: {page.Graphic.TileId}");
         await writer.WriteLineAsync($"Trigger: {page.Trigger}");

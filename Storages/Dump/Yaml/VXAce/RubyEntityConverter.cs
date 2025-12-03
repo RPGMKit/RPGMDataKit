@@ -47,10 +47,10 @@ public class RubyEntityConverter : IYamlTypeConverter
         var members = ConverterHelper.GetMembersWithAttribute<RubyPropertyAttribute>(type);
         var extensionDictionary = GetExtensionMember(value, type);
         foreach (var member in members.OrderBy(p =>
-                     p.AttributeAs<RubyPropertyAttribute>()!.PropertyName ?? p.MemberInfo.Name))
+                     p.AttributeAs<RubyPropertyAttribute>()!.PropertyName ?? p.Name))
         {
             emitter.Emit(
-                new Scalar(member.AttributeAs<RubyPropertyAttribute>()!.PropertyName ?? member.MemberInfo.Name));
+                new Scalar(member.AttributeAs<RubyPropertyAttribute>()!.PropertyName ?? member.Name));
             serializer(member.GetValue(value));
         }
 
@@ -88,7 +88,7 @@ public class RubyEntityConverter : IYamlTypeConverter
             var scalar = parser.Consume<Scalar>();
             var member = members.FirstOrDefault(m =>
             {
-                var name = m.AttributeAs<RubyPropertyAttribute>()!.PropertyName ?? m.MemberInfo.Name;
+                var name = m.AttributeAs<RubyPropertyAttribute>()!.PropertyName ?? m.Name;
                 return name == scalar.Value;
             });
             

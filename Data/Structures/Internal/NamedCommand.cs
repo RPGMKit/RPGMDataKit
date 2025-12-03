@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using RPGMakerLibCoreV2.Data.Enums;
+﻿using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
