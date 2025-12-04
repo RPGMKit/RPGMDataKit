@@ -42,8 +42,11 @@ public class ScriptConverter : IRubyCustomConverter
         throw new Exception("Not implemented");
     }
 
-    public object Cast(object o)
+    public object? Cast(object? o)
     {
+        if (o == null)
+            return null;
+        
         if (!(o is IList))
             throw new Exception("Not a list");
 
