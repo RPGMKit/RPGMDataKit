@@ -18,7 +18,6 @@ public class VxAceYamlSerializer : AbstractYamlSerializer
             .WithTypeConverter(new EncodingConverter())
             .WithTypeConverter(new DynamicPropertyConverter())
             .WithTypeConverter(new BinaryStringConverter())
-            .WithTypeConverter(new ScriptConverter())
             .WithTypeConverter(new RubyEntityConverter());
 
         var rubyObjectTypes = SerializationHelper.GetRegisteredRubyObjects("");

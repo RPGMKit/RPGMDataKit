@@ -12,9 +12,7 @@ public class ScriptSerializer : IToTextSerializer
 
         return string.Join("\r\n", [
             script.Stamp,
-            ((BinaryString)script[1]).Encoding?.CodePage ?? 0,
             script.Name,
-            ((BinaryString)script[2]).Encoding?.CodePage ?? 0,
             script.Code
         ]);
     }
@@ -25,12 +23,8 @@ public class ScriptSerializer : IToTextSerializer
 
         using var sr = new StringReader(text);
         script.Stamp = Convert.ToInt32(sr.ReadLine());
-        var enc = Convert.ToInt32(sr.ReadLine());
-        var name = sr.ReadLine();
+        script.Name = sr.ReadLine();
 
-        script.Set(1, new BinaryString(name, enc > 0 ? Encoding.GetEncoding(enc) : null));
-
-        enc = Convert.ToInt32(sr.ReadLine());
         List<string> scriptLines = new();
         for (;;)
         {
@@ -40,8 +34,6 @@ public class ScriptSerializer : IToTextSerializer
 
             scriptLines.Add(line);
         }
-
-        script.Set(2, new BinaryString("", enc > 0 ? Encoding.GetEncoding(enc) : null));
         script.Code = string.Join("\r\n", scriptLines);
 
         return (T)(object)script;
