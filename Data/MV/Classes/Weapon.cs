@@ -11,4 +11,7 @@ public class Weapon : JsonEntity, IWeapon
 
     [JsonProperty(PropertyName = "name")]
     public string Name { get; set; }
+
+    [JsonProperty("iconIndex")]
+    public int IconIndex { get; set; }
 }
