@@ -1,9 +1,8 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
-public class Color : LookupList<int>, IColor
+public class Color : List<int>, IColor
 {
     public static Color FromArray(IList<int> list)
     {
@@ -18,18 +17,18 @@ public class Color : LookupList<int>, IColor
 
     public int Red
     {
-        get => this[0]; set => Set(0, value);
+        get => this[0]; set => this.Set(0, value);
     }
     public int Green
     {
-        get => this[1]; set => Set(1, value);
+        get => this[1]; set => this.Set(1, value);
     }
     public int Blue
     {
-        get => this[2]; set => Set(2, value);
+        get => this[2]; set => this.Set(2, value);
     }
     public int Alpha
     {
-        get => this[3]; set => Set(3, value);
+        get => this[3]; set => this.Set(3, value);
     }
 }

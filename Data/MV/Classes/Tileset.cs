@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes
 {
@@ -11,9 +10,9 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         public int Id { get; set; }
 
         [JsonProperty(PropertyName = "flags")]
-        public LookupList<int> _Flags { get; set; }
+        public List<short> _Flags { get; set; }
 
-        public IDataLookup<int> Flags => _Flags;
+        public IList<short> Flags => _Flags;
 
         [JsonProperty(PropertyName = "mode")]
         public int Mode { get; set; }
@@ -25,8 +24,8 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         public string Note { get; set; }
 
         [JsonProperty(PropertyName = "tilesetNames")]
-        public LookupList<string> _TilesetNames { get; set; }
+        public List<string> _TilesetNames { get; set; }
 
-        public IDataLookup<string> TilesetNames => _TilesetNames;
+        public IList<string> TilesetNames => _TilesetNames;
     }
 }

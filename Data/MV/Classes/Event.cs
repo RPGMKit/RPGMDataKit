@@ -3,7 +3,7 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes
 {
@@ -92,7 +92,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
 
             [JsonProperty("moveRoute")]
             public MoveRoute _MoveRoute { get; set; }
-            
+
             public IMoveRoute MoveRoute => _MoveRoute;
 
             [JsonProperty("walkAnime")]
@@ -114,7 +114,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
             public int Trigger { get; set; }
 
             [JsonProperty("list")]
-            public LookupList<Command> List { get; set; }
+            public List<Command> List { get; set; }
 
             public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
             {
@@ -148,20 +148,21 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
 
         [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
-        
+
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
-        
+
         [JsonProperty(PropertyName = "note")]
         public string Note { get; set; }
-        
-        [JsonProperty(PropertyName = "pages")]
-        public LookupList<EventPage> _Pages { get; set; }
 
-        public IByIdGetter<IEventPage> Pages => _Pages;
+        [JsonProperty(PropertyName = "pages")]
+        public List<EventPage> _Pages { get; set; }
+
+        public IList<IEventPage?> Pages => ListWrapper<IEventPage, EventPage>.Create(this, nameof(_Pages));
 
         [JsonProperty(PropertyName = "x")]
         public int X { get; set; }
+
         [JsonProperty(PropertyName = "y")]
         public int Y { get; set; }
     }

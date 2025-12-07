@@ -18,7 +18,7 @@ public class MoveRoute : JsonEntity, IMoveRoute
     public bool Wait { get; set; }
 
     [JsonProperty(PropertyName = "list")]
-    public LookupList<MoveCommand>? List { get; set; }
+    public List<MoveCommand>? List { get; set; }
 
     public List<NamedCommand> NamedCommands { get; set; }
         

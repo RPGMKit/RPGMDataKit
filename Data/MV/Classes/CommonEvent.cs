@@ -21,7 +21,7 @@ public class CommonEvent : JsonEntity, ICommonEvent
     public int SwitchId { get; set; }
 
     [JsonProperty(PropertyName = "list")]
-    public LookupList<Command>? List { get; set; }
+    public List<Command>? List { get; set; }
         
     public List<NamedCommand> NamedCommands { get; set; }
     public IEnumerable<ICommand>? Commands => List;

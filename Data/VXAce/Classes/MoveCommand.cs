@@ -13,7 +13,7 @@ public class MoveCommand : RubySerializationEntity, IMoveCommand
     public int Code { get; set; }
 
     [RubyProperty("@parameters")]
-    public LookupList<object?>? Parameters { get; set; }
+    public List<object?>? Parameters { get; set; }
     
     public int? Indent { get; set; }
     

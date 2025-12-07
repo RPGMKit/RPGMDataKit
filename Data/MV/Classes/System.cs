@@ -115,7 +115,7 @@ public class System : JsonEntity, ISystem
     public int StartY { get; set; }
 
     [JsonProperty(PropertyName = "switches")]
-    public LookupList<string> Switches { get; set; }
+    public List<string> Switches { get; set; }
     
     [JsonProperty("terms")]
     public Terms Terms { get; set; }
@@ -136,10 +136,10 @@ public class System : JsonEntity, ISystem
     public SoundData TitleBgm { get; set; }
 
     [JsonProperty(PropertyName = "equipTypes")]
-    public LookupList<string> EquipmentTypes { get; set; }
+    public List<string> EquipmentTypes { get; set; }
 
     [JsonProperty(PropertyName = "variables")]
-    public LookupList<string> Variables { get; set; }
+    public List<string> Variables { get; set; }
 
     [JsonProperty(PropertyName = "versionId")]
     public int VersionId { get; set; }

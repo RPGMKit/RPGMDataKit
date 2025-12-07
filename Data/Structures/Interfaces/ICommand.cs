@@ -9,7 +9,7 @@ public interface ICommand
     
     public int? Indent { get; set; }
     
-    public LookupList<object?>? Parameters { get; set; }
+    public List<object?>? Parameters { get; set; }
 
     public IParameterProvider ParameterProvider { get; }
 }

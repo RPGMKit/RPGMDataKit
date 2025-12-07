@@ -22,7 +22,7 @@ public static class MapEventHelper
                 continue;
 
             using var _2 = reporter?.Report();
-            foreach (var e in m.Events)
+            foreach (var (_, e) in m.Events)
             {
                 if (e == null)
                     continue;
@@ -53,7 +53,7 @@ public static class MapEventHelper
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
 
-        using var _ = reporter?.IncLevel(storage.Maps.GetAll().Sum(m => m.Events.Sum(e => e?.Pages.Count())) ?? 0);
+        using var _ = reporter?.IncLevel(storage.Maps.GetAll().Sum(m => m.Events.Sum(e => e.Value?.Pages.Count)) ?? 0);
 
         await WalkMapEventPages(storage, async (context) =>
         {

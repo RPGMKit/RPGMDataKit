@@ -1,8 +1,7 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
 using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
-using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 
@@ -69,7 +68,7 @@ public class Map : RubySerializationEntity, IMap
     public int ParallaxSX { get; set; }
 
     [RubyProperty("@parallax_sy")]
-    public int ParallaxXY { get; set; }
+    public int ParallaxSY { get; set; }
 
     [RubyProperty("@parallax_show")]
     public bool ParallaxShow { get; set; }
@@ -80,12 +79,12 @@ public class Map : RubySerializationEntity, IMap
     [RubyProperty("@data")]
     public Table _Data { get; set; }
 
-    public IDataLookup<int> Data => new ListWrapper<int, short>(_Data.Elements, i => (short)i, s => (int)s);
+    public IList<int> Data => ListWrapper<int, short>.Create(_Data, nameof(_Data.Elements), Convert.ToInt32, Convert.ToInt16);
 
     [RubyProperty("@events")]
-    public LookupMap<Event?> _Events { get; set; }
+    public Dictionary<int, Event?> _Events { get; set; }
 
-    public IByIdGetter<IEvent?> Events => _Events;
+    public IDictionary<int, IEvent?> Events => DictionaryWrapper<IEvent, Event>.Create(this, nameof(_Events));
 
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1 { get; set; }

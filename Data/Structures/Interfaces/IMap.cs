@@ -1,7 +1,4 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
-
-namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
+﻿namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
 public interface IMap
 {
@@ -14,7 +11,23 @@ public interface IMap
     public int Width { get; set; }
 
     // ground 1 => ground 2? => bottom object => top object => shadow flags => region id
-    public IDataLookup<int> Data { get; }
+    public IList<int> Data { get; }
 
-    public IByIdGetter<IEvent?> Events { get; }
+    public IDictionary<int, IEvent?> Events { get; }
+    
+    public string ParallaxName { get; set; }
+    
+    public bool ParallaxLoopX { get; set; }
+    
+    public bool ParallaxLoopY { get; set; }
+    
+    public int ParallaxSX { get; set; }
+    
+    public int ParallaxSY { get; set; }
+    
+    public bool SpecifyBattleback { get; set; }
+    
+    public string Battleback1Name { get; set; }
+    
+    public string Battleback2Name { get; set; }
 }

@@ -22,7 +22,7 @@ public class CommonEvent : RubySerializationEntity, ICommonEvent
     public int SwitchId { get; set; }
 
     [RubyProperty("@list")]
-    public LookupList<Command>? List;
+    public List<Command>? List;
 
     public List<NamedCommand> NamedCommands { get; set; }
 

@@ -14,7 +14,7 @@ public class MoveCommand : JsonEntity, IMoveCommand
     public int? Indent { get; set; } = null; // always null
 
     [JsonProperty(PropertyName = "parameters", NullValueHandling = NullValueHandling.Ignore)]
-    public LookupList<object?>? Parameters { get; set; }
+    public List<object?>? Parameters { get; set; }
 
     [JsonIgnore]
     public IParameterProvider ParameterProvider => new JsonParameterProvider(this);

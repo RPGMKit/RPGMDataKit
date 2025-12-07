@@ -46,7 +46,7 @@ public class System : RubySerializationEntity, ISystem
     public List<SE> Sounds { get; set; }
 
     [RubyProperty("@variables")]
-    public LookupList<string> Variables { get; set; }
+    public List<string> Variables { get; set; }
 
     [RubyProperty("@battle_bgm")]
     public BGM BattleBGM { get; set; }
@@ -64,7 +64,7 @@ public class System : RubySerializationEntity, ISystem
     public int MagicNumber { get; set; }
 
     [RubyProperty("@switches")]
-    public LookupList<string> Switches { get; set; }
+    public List<string> Switches { get; set; }
 
     [RubyProperty("@gameover_me")]
     public ME GameoverME { get; set; }
@@ -138,5 +138,5 @@ public class System : RubySerializationEntity, ISystem
     [RubyProperty("@opt_floor_death")]
     public bool OptFloorDeath { get; set; }
 
-    public LookupList<string> EquipmentTypes => throw new DoesNotExistInVersionException($"{nameof(EquipmentTypes)}");
+    public List<string> EquipmentTypes => throw new DoesNotExistInVersionException($"{nameof(EquipmentTypes)}");
 }

@@ -190,7 +190,7 @@ public abstract class AbstractTextStorage
 
     public T LoadEntity<T>(string path)
     {
-        Debug.WriteLine($"Loading entity at: {path}");
+        Console.WriteLine($"Loading entity at: {path}");
         var entity = GetSerializer<T>().Deserialize<T>(File.ReadAllText(path));
 
         return (T)entity;

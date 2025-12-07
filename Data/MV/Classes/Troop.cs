@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
-using RPGMakerLibCoreV2.Data.Structures.Commands.Factories;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
@@ -71,14 +70,14 @@ public class Troop : JsonEntity, ITroop
 
         [JsonProperty("conditions")]
         public PageCondition _Condition { get; set; }
-       
+
         public ITroopPageCondition Condition => _Condition;
 
         [JsonProperty(PropertyName = "list")]
-        public LookupList<Command> List { get; set; }
+        public List<Command> List { get; set; }
 
         public List<NamedCommand> NamedCommands { get; set; }
-        
+
         public IEnumerable<ICommand> Commands => List;
 
         public override void OnDeserialized()
@@ -113,12 +112,12 @@ public class Troop : JsonEntity, ITroop
     public string Name { get; set; }
 
     [JsonProperty("members")]
-    public LookupList<Member> _Members { get; set; }
+    public List<Member> _Members { get; set; }
 
-    public IByIdGetter<IMember> Members => _Members;
+    public IList<IMember?> Members => ListWrapper<IMember, Member>.Create(this, nameof(_Members));
 
     [JsonProperty("pages")]
-    public LookupList<EventPage> _Pages { get; set; }
+    public List<EventPage> _Pages { get; set; }
 
-    public IByIdGetter<ITroopPage> Pages => _Pages;
+    public IList<ITroopPage?> Pages => ListWrapper<ITroopPage, EventPage>.Create(this, nameof(_Pages));
 }

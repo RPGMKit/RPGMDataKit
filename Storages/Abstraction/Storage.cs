@@ -198,8 +198,8 @@ public abstract class Storage
         reporter?.SetStage(DumpStage.Init);
         
         var stepCount = 0;
-        stepCount += Maps.GetAll().Sum(m => m.Events.Sum(e => e?.Pages.Count() ?? 0));
-        stepCount += Troops.Get().Sum(t => t.Value?.Pages.Count() ?? 0);
+        stepCount += Maps.GetAll().Sum(m => m.Events.Sum(p => p.Value?.Pages.Count ?? 0));
+        stepCount += Troops.Get().Sum(t => t.Value?.Pages.Count ?? 0);
         stepCount += CommonEvents.Get().Count;
         
         reporter?.ResetTotal(stepCount);

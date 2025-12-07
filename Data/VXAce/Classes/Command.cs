@@ -18,7 +18,7 @@ public class Command : RubySerializationEntity, ICommand
     public IParameterProvider ParameterProvider => new SimpleParameterProvider(this);
 
     [RubyProperty("@parameters")]
-    public LookupList<object?>? Parameters { get; set; }
+    public List<object?>? Parameters { get; set; }
     
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1;

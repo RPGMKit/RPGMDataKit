@@ -1,15 +1,12 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
-
-namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
+﻿namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
 public interface ISystem
 {
-    public LookupList<string> Switches { get; }
+    public List<string> Switches { get; }
 
-    public LookupList<string> Variables { get; }
+    public List<string> Variables { get; }
     
-    public LookupList<string> EquipmentTypes { get; }
+    public List<string> EquipmentTypes { get; }
     
     public string GameTitle { get; }
     

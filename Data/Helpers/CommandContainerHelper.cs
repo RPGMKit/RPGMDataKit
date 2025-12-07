@@ -55,13 +55,13 @@ public static class CommandContainerHelper
         return namedCommands;
     }
 
-    public static LookupList<T>? Pack<T>(IEnumerable<NamedCommand>? commands, StorageVersion version)
+    public static List<T>? Pack<T>(IEnumerable<NamedCommand>? commands, StorageVersion version)
         where T : ICommand, new()
     {
         if (commands == null)
             return null;
         
-        LookupList<T> ret = new();
+        List<T> ret = new();
         ret.AddRange(commands.Select(c =>
         {
             var comm = new T() { Code = c.Code, Indent = c.Indent };

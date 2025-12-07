@@ -2,7 +2,7 @@
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 
@@ -125,7 +125,7 @@ public class Event : RubySerializationEntity, IEvent
         public int Trigger { get; set; }
 
         [RubyProperty("@list")]
-        public LookupList<Command> List { get; set; }
+        public List<Command> List { get; set; }
         
         [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
         public object _1;
@@ -176,9 +176,9 @@ public class Event : RubySerializationEntity, IEvent
     public int Y { get; set; }
 
     [RubyProperty("@pages")]
-    public LookupList<EventPage> _Pages { get; set; }
+    public List<EventPage> _Pages { get; set; }
 
-    public IByIdGetter<IEventPage> Pages => _Pages;
+    public IList<IEventPage?> Pages => ListWrapper<IEventPage, EventPage>.Create(this, nameof(_Pages));
 
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1 { get; set; }

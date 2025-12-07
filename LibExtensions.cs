@@ -33,4 +33,22 @@ public static class LibExtensions
         while (toAdd-- > 0)
             list.Add(defaultValue);
     }
+
+    public static T? Get<T>(this IList<T?> list, int index, T? def = default)
+    {
+        return index >= 0 && index < list.Count ? list[index] : def;
+    }
+
+    public static void Set<T>(this IList<T?> list, int index, T? value)
+    {
+        while (index >= list.Count)
+            list.Add(default);
+
+        list[index] = value;
+    }
+
+    public static T? Get<T>(this IDictionary<int, T?> dict, int key, T? def = default)
+    {
+        return dict.TryGetValue(key, out var value) ? value : def;
+    }
 }
