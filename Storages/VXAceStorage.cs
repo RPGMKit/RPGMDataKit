@@ -75,4 +75,23 @@ public class VXAceStorage : Storage
         base.SaveAll();
         Scripts.Save();
     }
+
+    public async Task DumpScripts(string path)
+    {
+        if (!Directory.Exists(path))
+            throw new Exception("Directory not found: " + path);
+
+        foreach (var (i, script) in Scripts.Get())
+        {
+            if (script == null)
+                continue;
+
+            if (string.IsNullOrWhiteSpace(script.Code))
+                continue;
+
+            var name = !string.IsNullOrWhiteSpace(script.Name) ? $"{i:D3}_{script.Name}.rb" : $"{i:D3}_script.rb";
+
+            await File.WriteAllTextAsync(Path.Combine(path, name), script.Code);
+        }
+    }
 }

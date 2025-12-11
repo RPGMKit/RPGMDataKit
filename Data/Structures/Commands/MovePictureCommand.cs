@@ -51,6 +51,9 @@ public class MovePictureCommand : NamedCommand
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
+        if (BlendMode == BlendMode.Screen && version != StorageVersion.MV)
+            throw new Exception($"Unsupported blend mode {BlendMode}");
+
         parameterProvider.SetParameter(0, Layer);
         parameterProvider.SetParameter(1, 0);
         parameterProvider.SetParameter(2, Reference);
@@ -117,9 +120,8 @@ public class MovePictureCommand : NamedCommand
         {
             BlendMode.Normal => "Normal",
             BlendMode.Add => context.Version == StorageVersion.MV ? "Additive" : "Add",
-            BlendMode.Sub => context.Version == StorageVersion.MV
-                ? throw new Exception($"Unknown show picture blend mode '{BlendMode}'")
-                : "Sub",
+            BlendMode.Sub => context.Version == StorageVersion.MV ? "Multiply" : "Sub",
+            BlendMode.Screen => context.Version == StorageVersion.MV ? "Screen" : $"Unknown ({BlendMode})",
             _ => throw new Exception($"Unknown show picture blend mode '{BlendMode}'")
         };
 

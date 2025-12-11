@@ -1,6 +1,4 @@
-﻿using System.Text;
-using RPGMakerLibCoreV2.Data.VXAce.Classes;
-using RubyMarshalCS.SpecialTypes;
+﻿using RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 namespace RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
 

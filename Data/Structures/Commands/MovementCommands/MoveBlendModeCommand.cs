@@ -15,7 +15,7 @@ public class MoveBlendModeCommand : AbstractMoveCommand
             return "Change Blending";
     }
     
-    public BlendMode BlendMode { get; set; }
+    public BlendMode BlendMode{ get; set; }
 
     public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
     {
@@ -24,6 +24,9 @@ public class MoveBlendModeCommand : AbstractMoveCommand
 
     public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
     {
+        if (BlendMode == BlendMode.Screen && version != StorageVersion.MV)
+            throw new Exception($"Unsupported blend mode {BlendMode}");
+        
         parameterProvider.SetParameter(0, BlendMode);
     }
 
@@ -36,7 +39,10 @@ public class MoveBlendModeCommand : AbstractMoveCommand
             case BlendMode.Add:
                 return context.Version == StorageVersion.MV ? "Additive" : "Add";
             case BlendMode.Sub:
-                return "Sub";
+            //case BlendMode.Multiply:
+                return context.Version == StorageVersion.MV ? "Multiply" : "Sub";
+            case BlendMode.Screen:
+                return context.Version == StorageVersion.MV ? "Screen" : $"Unknown ({BlendMode})";
             default:
                 return $"Unknown ({BlendMode})";
         }
