@@ -4,9 +4,9 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
 
-public class MoveOpacityCommand : AbstractMoveCommand
+public class MoveChangeOpacityCommand : AbstractMoveCommand
 {
-    public override int Code => MovementRouteCommandCodes.Opacity;
+    public override int Code => MovementRouteCommandCodes.ChangeOpacity;
 
     public override string GetCommandName(StorageVersion version)
     {

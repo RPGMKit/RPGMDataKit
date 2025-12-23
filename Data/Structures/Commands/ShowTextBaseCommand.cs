@@ -9,13 +9,6 @@ public class ShowTextBaseCommand : NamedCommand
     public override int Code => CommandCodes.ShowTextBase;
     public override string GetCommandName(StorageVersion version) => "Text";
     
-    public enum BackgroundType
-    {
-        Window = 0,
-        Dim = 1,
-        Transparent = 2,
-    }
-
     public enum PositionType
     {
         Top = 0,

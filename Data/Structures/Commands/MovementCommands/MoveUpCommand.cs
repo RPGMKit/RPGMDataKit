@@ -4,6 +4,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
 
 public class MoveUpCommand : AbstractMoveCommand
 {
-    public override int Code => MovementRouteCommandCodes.Up;
+    public override int Code => MovementRouteCommandCodes.MoveUp;
     public override string GetCommandName(StorageVersion version) => "Move Up";
 }

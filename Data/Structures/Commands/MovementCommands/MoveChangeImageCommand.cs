@@ -4,9 +4,9 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
 
-public class MoveImageCommand : AbstractMoveCommand
+public class MoveChangeImageCommand : AbstractMoveCommand
 {
-    public override int Code => MovementRouteCommandCodes.Image;
+    public override int Code => MovementRouteCommandCodes.ChangeImage;
 
     public override string GetCommandName(StorageVersion version)
     {

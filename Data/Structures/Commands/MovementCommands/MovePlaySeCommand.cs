@@ -7,9 +7,9 @@ using RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
 
-public class MoveSeCommand : AbstractMoveCommand
+public class MovePlaySeCommand : AbstractMoveCommand
 {
-    public override int Code => MovementRouteCommandCodes.Se;
+    public override int Code => MovementRouteCommandCodes.PlaySe;
     public override string GetCommandName(StorageVersion version) => "SE";
 
     public IAudioFile SoundData { get; set; }

@@ -9,13 +9,6 @@ public class ShowChoicesCommand : NamedCommand
     public override int Code => CommandCodes.ShowChoices;
     public override string GetCommandName(StorageVersion version) => "Show Choices";
     
-    public enum BackgroundType
-    {
-        Window = 0,
-        Dim = 1,
-        Transparent = 2,
-    }
-
     public enum PositionType
     {
         Left = 0,

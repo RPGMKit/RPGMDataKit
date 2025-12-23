@@ -4,9 +4,9 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
 
-public class MoveSpeedCommand : AbstractMoveCommand
+public class MoveChangeSpeedCommand : AbstractMoveCommand
 {
-    public override int Code => MovementRouteCommandCodes.Speed;
+    public override int Code => MovementRouteCommandCodes.ChangeSpeed;
     public override string GetCommandName(StorageVersion version) => "Speed";
 
     public int Speed { get; set; }

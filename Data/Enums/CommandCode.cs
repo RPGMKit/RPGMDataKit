@@ -71,7 +71,7 @@ public static class CommandCodes
     public const int ChangeMapNameDisplay = 281;
     public const int ChangeTileset = 282;
     public const int ChangeBattleBackground = 283;
-    public const int ChangeParallaxBackground = 284;
+    public const int ChangeParallax = 284;
     public const int GetLocationInfo = 285;
     public const int BattleProcessing = 301;
     public const int ShopProcessing = 302;

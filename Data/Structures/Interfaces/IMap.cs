@@ -30,4 +30,6 @@ public interface IMap
     public string Battleback1Name { get; set; }
     
     public string Battleback2Name { get; set; }
+    
+    public string Note { get; set; }
 }

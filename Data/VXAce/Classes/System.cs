@@ -1,6 +1,7 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Exceptions;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
 using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
 using RubyMarshalCS.Serialization.Attributes;
 
@@ -43,7 +44,7 @@ public class System : RubySerializationEntity, ISystem
     public int BattlerHue { get; set; }
 
     [RubyProperty("@sounds")]
-    public List<SE> Sounds { get; set; }
+    public List<SE> _Sounds { get; set; }
 
     [RubyProperty("@variables")]
     public List<string> Variables { get; set; }
@@ -97,7 +98,7 @@ public class System : RubySerializationEntity, ISystem
     public string CurrencyUnit { get; set; }
 
     [RubyProperty("@window_tone")]
-    public Tone WindowTone { get; set; }
+    public Tone _WindowTone { get; set; }
 
     [RubyProperty("@japanese")]
     public bool Japanese { get; set; }
@@ -138,5 +139,13 @@ public class System : RubySerializationEntity, ISystem
     [RubyProperty("@opt_floor_death")]
     public bool OptFloorDeath { get; set; }
 
+    public IList<IAudioFile?> Sounds => ListWrapper<IAudioFile, SE>.Create(this, nameof(_Sounds));
+    
     public List<string> EquipmentTypes => throw new DoesNotExistInVersionException($"{nameof(EquipmentTypes)}");
+
+    public ITone WindowTone
+    {
+        get => _WindowTone;
+        set => _WindowTone = new Tone() { Red = value.Red, Green = value.Green, Blue = value.Blue, Gray = value.Gray };
+    }
 }

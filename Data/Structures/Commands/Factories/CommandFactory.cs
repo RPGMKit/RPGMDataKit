@@ -331,7 +331,7 @@ public static class CommandFactory
             case CommandCodes.ChangeBattleBackground:
                 returnCommand = new ChangeBattleBackground();
                 break;
-            case CommandCodes.ChangeParallaxBackground:
+            case CommandCodes.ChangeParallax:
                 returnCommand = new ChangeParallaxCommand();
                 break;
             case CommandCodes.ExitEventProcessing:

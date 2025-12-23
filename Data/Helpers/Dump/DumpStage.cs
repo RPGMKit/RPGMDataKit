@@ -5,5 +5,6 @@ public enum DumpStage
     None,
     Init,
     Progress,
+    Cancelled,
     Finished
 }

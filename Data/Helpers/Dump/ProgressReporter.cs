@@ -77,6 +77,7 @@ public class ProgressReporter
         switch (stage)
         {
             case DumpStage.Init:
+            case DumpStage.Cancelled:
             case DumpStage.Finished:
                 _reporterCallback?.Invoke(stage, "", 0, 0, 0);
                 break;

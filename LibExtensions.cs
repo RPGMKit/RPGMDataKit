@@ -34,7 +34,7 @@ public static class LibExtensions
             list.Add(defaultValue);
     }
 
-    public static T? Get<T>(this IList<T?> list, int index, T? def = default)
+    public static T? Get<T>(this IList<T> list, int index, T? def = default)
     {
         return index >= 0 && index < list.Count ? list[index] : def;
     }

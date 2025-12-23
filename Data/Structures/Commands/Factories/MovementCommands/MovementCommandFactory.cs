@@ -13,47 +13,47 @@ public static class MovementCommandFactory
 
         switch (command.Code)
         {
-            case MovementRouteCommandCodes.Empty:
+            case MovementRouteCommandCodes.End:
                 returnCommand = new MoveEmptyCommand();
                 break;
-            case MovementRouteCommandCodes.Down:
+            case MovementRouteCommandCodes.MoveDown:
                 returnCommand = new MoveDownCommand();
                 break;
-            case MovementRouteCommandCodes.Left:
+            case MovementRouteCommandCodes.MoveLeft:
                 returnCommand = new MoveLeftCommand();
                 break;
-            case MovementRouteCommandCodes.Right:
+            case MovementRouteCommandCodes.MoveRight:
                 returnCommand = new MoveRightCommand();
                 break;
-            case MovementRouteCommandCodes.Up:
+            case MovementRouteCommandCodes.MoveUp:
                 returnCommand = new MoveUpCommand();
                 break;
-            case MovementRouteCommandCodes.LowerLeft:
+            case MovementRouteCommandCodes.MoveLowerLeft:
                 returnCommand = new MoveLowerLeftCommand();
                 break;
-            case MovementRouteCommandCodes.LowerRight:
+            case MovementRouteCommandCodes.MoveLowerRight:
                 returnCommand = new MoveLowerRightCommand();
                 break;
-            case MovementRouteCommandCodes.UpperLeft:
+            case MovementRouteCommandCodes.MoveUpperLeft:
                 returnCommand = new MoveUpperLeftCommand();
                 break;
-            case MovementRouteCommandCodes.UpperRight:
+            case MovementRouteCommandCodes.MoveUpperRight:
                 returnCommand = new MoveUpperRightCommand();
                 break;
-            case MovementRouteCommandCodes.AtRandom:
-                returnCommand = new MoveAtRandomCommand();
+            case MovementRouteCommandCodes.MoveRandom:
+                returnCommand = new MoveRandomCommand();
                 break;
-            case MovementRouteCommandCodes.TowardPlayer:
+            case MovementRouteCommandCodes.MoveTowardPlayer:
                 returnCommand = new MoveTowardPlayerCommand();
                 break;
-            case MovementRouteCommandCodes.AwayFromPlayer:
+            case MovementRouteCommandCodes.MoveAwayFromPlayer:
                 returnCommand = new MoveAwayFromPlayerCommand();
                 break;
-            case MovementRouteCommandCodes.OneStepForward:
-                returnCommand = new MoveOneStepForwardCommand();
+            case MovementRouteCommandCodes.MoveForward:
+                returnCommand = new MoveForwardCommand();
                 break;
-            case MovementRouteCommandCodes.OneStepBackward:
-                returnCommand = new MoveOneStepBackwardCommand();
+            case MovementRouteCommandCodes.MoveBackward:
+                returnCommand = new MoveBackwardCommand();
                 break;
             case MovementRouteCommandCodes.Jump:
                 returnCommand = new MoveJumpCommand();
@@ -100,11 +100,11 @@ public static class MovementCommandFactory
             case MovementRouteCommandCodes.SwitchOff:
                 returnCommand = new MoveSwitchOffCommand();
                 break;
-            case MovementRouteCommandCodes.Speed:
-                returnCommand = new MoveSpeedCommand();
+            case MovementRouteCommandCodes.ChangeSpeed:
+                returnCommand = new MoveChangeSpeedCommand();
                 break;
-            case MovementRouteCommandCodes.Frequency:
-                returnCommand = new MoveFrequencyCommand();
+            case MovementRouteCommandCodes.ChangeFrequency:
+                returnCommand = new MoveChangeFrequencyCommand();
                 break;
             case MovementRouteCommandCodes.WalkingAnimationOn:
                 returnCommand = new MoveWalkingAnimationOnCommand();
@@ -136,17 +136,17 @@ public static class MovementCommandFactory
             case MovementRouteCommandCodes.TransparentOff:
                 returnCommand = new MoveTransparentOffCommand();
                 break;
-            case MovementRouteCommandCodes.Image:
-                returnCommand = new MoveImageCommand();
+            case MovementRouteCommandCodes.ChangeImage:
+                returnCommand = new MoveChangeImageCommand();
                 break;
-            case MovementRouteCommandCodes.Opacity:
-                returnCommand = new MoveOpacityCommand();
+            case MovementRouteCommandCodes.ChangeOpacity:
+                returnCommand = new MoveChangeOpacityCommand();
                 break;
-            case MovementRouteCommandCodes.BlendMode:
-                returnCommand = new MoveBlendModeCommand();
+            case MovementRouteCommandCodes.ChangeBlendMode:
+                returnCommand = new MoveChangeBlendModeCommand();
                 break;
-            case MovementRouteCommandCodes.Se:
-                returnCommand = new MoveSeCommand();
+            case MovementRouteCommandCodes.PlaySe:
+                returnCommand = new MovePlaySeCommand();
                 break;
             case MovementRouteCommandCodes.Script:
                 returnCommand = new MoveScriptCommand();

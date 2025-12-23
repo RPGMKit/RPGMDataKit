@@ -283,7 +283,7 @@ public abstract class Storage
             return true;
         }, reporter);
         
-        reporter?.SetStage(DumpStage.Finished);
+        reporter?.SetStage(reporter.NeedCancel ? DumpStage.Cancelled : DumpStage.Finished);
     }
 
     public class PatchOptions

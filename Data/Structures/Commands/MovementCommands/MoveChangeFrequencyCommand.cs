@@ -4,9 +4,9 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
 
-public class MoveFrequencyCommand : AbstractMoveCommand
+public class MoveChangeFrequencyCommand : AbstractMoveCommand
 {
-    public override int Code => MovementRouteCommandCodes.Frequency;
+    public override int Code => MovementRouteCommandCodes.ChangeFrequency;
     public override string GetCommandName(StorageVersion version) => "Frequency";
 
     public int Frequency { get; set; }
