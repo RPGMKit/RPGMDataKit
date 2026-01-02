@@ -21,7 +21,7 @@ public static class MapEventHelper
             if (m == null)
                 continue;
 
-            using var _2 = reporter?.Report();
+            using var _2 = reporter?.DoReport();
             foreach (var (_, e) in m.Events)
             {
                 if (e == null)
@@ -59,16 +59,17 @@ public static class MapEventHelper
         {
             var entityContext = new EntityContext(storage, context, options.ExtendedFormat);
             
-            using var _2 = reporter?.Report("Map " + entityContext.NameFormatter.FormatMap(context.MapId));
+            using var _2 = reporter?.DoReport("Map " + entityContext.NameFormatter.FormatMap(context.MapId));
             
             IndentHelper.ValidateIndents(context.EventPage, storage.Version);
 
-            await using var file = File.Open(
-                Path.Combine(path, $"Map_{context.MapId:D3}_Event_{context.Event.Id:D3}_Page_{context.PageId}.txt"),
-                FileMode.Create);
+            var filePath = Path.Combine(path, $"Map_{context.MapId:D3}_Event_{context.Event.Id:D3}_Page_{context.PageId}.txt");
+            await using var file = File.Open(filePath, FileMode.Create);
             await using var writer = new StreamWriter(file);
 
             await context.EventPage.Dump(writer, entityContext, options);
+            
+            reporter?.CustomReport(filePath);
 
             return !reporter?.NeedCancel ?? true;
         });

@@ -2,9 +2,8 @@
 
 public class ProgressReporter
 {
-    public ProgressReporter(ProgressReporterCallback? reporterCallback, CancellationToken? token = null)
+    public ProgressReporter(CancellationToken? token = null)
     {
-        _reporterCallback = reporterCallback;
         _token = token;
     }
 
@@ -43,8 +42,6 @@ public class ProgressReporter
         }
     }
 
-    private ProgressReporterCallback? _reporterCallback;
-
     private int _level = 0;
     private Dictionary<int, int> _current = new();
     private Dictionary<int, int> _total = new();
@@ -79,11 +76,11 @@ public class ProgressReporter
             case DumpStage.Init:
             case DumpStage.Cancelled:
             case DumpStage.Finished:
-                _reporterCallback?.Invoke(stage, "", 0, 0, 0);
+                Report?.Invoke(stage, "", 0, 0, 0);
                 break;
             case DumpStage.Progress:
                 if (Stage == DumpStage.None)
-                    _reporterCallback?.Invoke(DumpStage.Init, "", 0, 0, 0);
+                    Report?.Invoke(DumpStage.Init, "", 0, 0, 0);
                 break;
         }
 
@@ -94,7 +91,7 @@ public class ProgressReporter
 
     public delegate void ProgressReporterCallback(DumpStage stage, string message, int level, int currentIndex, int total);
 
-    public ReportContext Report(string message = "", int level = -1)
+    public ReportContext DoReport(string message = "", int level = -1)
     {
         if (level == -1)
             level = _level;
@@ -102,7 +99,7 @@ public class ProgressReporter
         var indices = _current.Keys.Concat(_total.Keys).Distinct();
 
         foreach (var index in indices)
-            _reporterCallback?.Invoke(Stage, message, index, Get(index), GetTotal(index));
+            Report?.Invoke(Stage, message, index, Get(index), GetTotal(index));
 
         return CreateContext(() =>
         {
@@ -110,6 +107,13 @@ public class ProgressReporter
                 Inc(level);
         });
     }
+
+    public void CustomReport(string message)
+    {
+        Report?.Invoke(DumpStage.Custom, message, -1, -1, 0);
+    }
+
+    public event ProgressReporterCallback? Report;
 
     private ReportContext CreateContext(Action a)
     {

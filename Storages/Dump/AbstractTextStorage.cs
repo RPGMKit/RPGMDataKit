@@ -27,15 +27,15 @@ public abstract class AbstractTextStorage
 
     private bool NeedCancel => Reporter?.NeedCancel ?? false;
 
-    public void Dump(string path, Storage storage)
+    public async Task Dump(string path, Storage storage)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist");
 
-        _Dump(path, storage);
+        await _Dump(path, storage);
     }
 
-    protected abstract void _Dump(string path, Storage storage);
+    protected abstract Task _Dump(string path, Storage storage);
 
     public void Load(string path, Storage storage)
     {
@@ -47,24 +47,24 @@ public abstract class AbstractTextStorage
 
     protected abstract void _Load(string path, Storage storage);
 
-    protected void DumpMaps(string path, Storage storage)
+    protected async Task DumpMaps(string path, Storage storage)
     {
         if (NeedCancel)
             return;
 
         using var _ = Reporter?.IncLevel(storage.MapInfos.Get().Count);
-        using var _2 = Reporter?.Report(level: _.Level - 1);
+        using var _2 = Reporter?.DoReport(level: _.Level - 1);
 
         foreach (var (mapId, _) in storage.MapInfos.Get())
         {
             if (NeedCancel)
                 break;
 
-            using var _3 = Reporter?.Report($"{nameof(storage.Maps)}: {mapId}");
+            using var _3 = Reporter?.DoReport($"{nameof(storage.Maps)}: {mapId}");
 
             var map = storage.Maps.Get(mapId);
             if (map != null)
-                DumpEntity(Path.Combine(path, nameof(storage.Maps)), mapId.ToString(), map);
+                await DumpEntity(Path.Combine(path, nameof(storage.Maps)), mapId.ToString(), map);
         }
     }
 
@@ -82,7 +82,7 @@ public abstract class AbstractTextStorage
         var mapFiles = Directory.GetFiles(mapsDirectory, "*." + GetExtension<T>());
 
         using var _ = Reporter?.IncLevel(mapFiles.Length);
-        using var _2 = Reporter?.Report(level: _.Level - 1);
+        using var _2 = Reporter?.DoReport(level: _.Level - 1);
 
         foreach (var mapFile in mapFiles)
         {
@@ -92,7 +92,7 @@ public abstract class AbstractTextStorage
             if (!int.TryParse(Path.GetFileNameWithoutExtension(mapFile), out var id))
                 continue;
 
-            using var _3 = Reporter?.Report($"{nameof(storage.Maps)}: {id}");
+            using var _3 = Reporter?.DoReport($"{nameof(storage.Maps)}: {id}");
 
             var map = LoadEntity<T>(mapFile);
 
@@ -100,7 +100,7 @@ public abstract class AbstractTextStorage
         }
     }
 
-    protected void DumpHolder<T>(string path, string entityName, DataLookupHolder<T> holder)
+    protected async Task DumpHolder<T>(string path, string entityName, DataLookupHolder<T> holder)
     {
         if (NeedCancel)
             return;
@@ -108,29 +108,29 @@ public abstract class AbstractTextStorage
         path = Path.Combine(path, entityName);
 
         using var _ = Reporter?.IncLevel(holder.Get().Count);
-        using var _2 = Reporter?.Report(level: _.Level - 1);
+        using var _2 = Reporter?.DoReport(level: _.Level - 1);
 
         foreach (var (i, e) in holder.Get())
         {
             if (NeedCancel)
                 break;
 
-            using var _3 = Reporter?.Report($"{entityName}: {i}");
+            using var _3 = Reporter?.DoReport($"{entityName}: {i}");
 
             if (e != null)
-                DumpEntity(path, i.ToString(), e);
+                await DumpEntity(path, i.ToString(), e);
         }
     }
 
-    protected void DumpHolder<T>(string path, string entityName, DataHolder<T> holder)
+    protected async Task DumpHolder<T>(string path, string entityName, DataHolder<T> holder)
     {
         if (NeedCancel)
             return;
 
         using var _ = Reporter?.IncLevel(1);
-        using var _2 = Reporter?.Report(level: _.Level - 1);
-        using var _3 = Reporter?.Report(entityName);
-        DumpEntity(path, entityName, holder.Get());
+        using var _2 = Reporter?.DoReport(level: _.Level - 1);
+        using var _3 = Reporter?.DoReport(entityName);
+        await DumpEntity(path, entityName, holder.Get());
     }
 
     protected void LoadHolder<T, TV>(string path, string entityName, DataLookupHolder<TV> holder) where T : TV
@@ -147,7 +147,7 @@ public abstract class AbstractTextStorage
         var files = Directory.GetFiles(path, "*." + GetExtension<T>());
 
         using var _ = Reporter?.IncLevel(files.Length);
-        using var _2 = Reporter?.Report(level: _.Level - 1);
+        using var _2 = Reporter?.DoReport(level: _.Level - 1);
 
         foreach (var file in files)
         {
@@ -157,7 +157,7 @@ public abstract class AbstractTextStorage
             if (!int.TryParse(Path.GetFileNameWithoutExtension(file), out var id))
                 continue;
 
-            using var _3 = Reporter?.Report($"{entityName} {id}");
+            using var _3 = Reporter?.DoReport($"{entityName} {id}");
 
             holder.Set(id, LoadEntity<T>(file), false);
         }
@@ -168,16 +168,16 @@ public abstract class AbstractTextStorage
         if (NeedCancel)
             return;
 
-        using var _ =Reporter?.IncLevel(1);
-        using var _2 = Reporter?.Report(level: _.Level - 1);
-        using var _3 = Reporter?.Report(entityName);
+        using var _ = Reporter?.IncLevel(1);
+        using var _2 = Reporter?.DoReport(level: _.Level - 1);
+        using var _3 = Reporter?.DoReport(entityName);
 
         holder.Set(LoadEntity<T>(Path.Combine(path, entityName + "." + GetExtension<T>())));
     }
 
     private IToTextSerializer GetSerializer<T>() => _specialSerializers.GetValueOrDefault(typeof(T), _serializer);
 
-    public void DumpEntity<T>(string path, string entityName, T entity)
+    public async Task DumpEntity<T>(string path, string entityName, T entity)
     {
         if (NeedCancel)
             return;
@@ -185,7 +185,11 @@ public abstract class AbstractTextStorage
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
 
-        File.WriteAllText(Path.Combine(path, entityName + "." + GetExtension<T>()), GetSerializer<T>().Serialize(entity));
+        var entityPath = Path.Combine(path, entityName + "." + GetExtension<T>());
+
+        await File.WriteAllTextAsync(entityPath, GetSerializer<T>().Serialize(entity));
+
+        Reporter?.CustomReport(entityPath);
     }
 
     public T LoadEntity<T>(string path)

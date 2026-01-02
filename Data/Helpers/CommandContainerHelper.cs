@@ -47,10 +47,9 @@ public static class CommandContainerHelper
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    throw;
                 }
             }));
-
 
         return namedCommands;
     }

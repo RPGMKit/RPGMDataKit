@@ -17,7 +17,7 @@ public static class CommonEventHelper
             if (c == null)
                 continue;
 
-            using var _2 = reporter?.Report();
+            using var _2 = reporter?.DoReport();
             if (!await walker(new() { CommonEvent = c }))
                 break;
         }
@@ -35,14 +35,16 @@ public static class CommonEventHelper
         {
             var entityContext = new EntityContext(storage, context, options.ExtendedFormat);
 
-            using var _2 = reporter?.Report("Common Event " + entityContext.NameFormatter.FormatCommonEvent(context.CommonEvent.Id));
+            using var _2 = reporter?.DoReport("Common Event " + entityContext.NameFormatter.FormatCommonEvent(context.CommonEvent.Id));
             IndentHelper.ValidateIndents(context.CommonEvent, storage.Version);
 
-            await using var file = File.Open(Path.Combine(path, $"CommonEvent_{context.CommonEvent.Id:D3}.txt"),
-                FileMode.Create);
+            var filePath = Path.Combine(path, $"CommonEvent_{context.CommonEvent.Id:D3}.txt");
+            await using var file = File.Open(filePath, FileMode.Create);
 
             await using var writer = new StreamWriter(file);
             await context.CommonEvent.Dump(writer, entityContext, options);
+            
+            reporter?.CustomReport(filePath);
 
             return !reporter?.NeedCancel ?? false;
         });

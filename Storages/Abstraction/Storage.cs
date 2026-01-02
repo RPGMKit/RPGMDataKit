@@ -193,7 +193,8 @@ public abstract class Storage
     public async Task SearchCommands(CommandWalker searcher, ProgressReporter.ProgressReporterCallback? reporterCallback = null,
         CancellationToken cancellationToken = default)
     {
-        var reporter = reporterCallback != null ? new ProgressReporter(reporterCallback, cancellationToken) : null;
+        var reporter = reporterCallback != null ? new ProgressReporter(cancellationToken) : null;
+        reporter?.Report += reporterCallback;
 
         reporter?.SetStage(DumpStage.Init);
         
@@ -207,7 +208,7 @@ public abstract class Storage
         reporter?.SetStage(DumpStage.Progress);
         await CommonEventHelper.WalkCommonEvents(this, async (context) =>
         {
-            using var _ = reporter?.Report("", 0);
+            using var _ = reporter?.DoReport("", 0);
             
             var commandIndex = 0;
             foreach (var command in context.CommonEvent.NamedCommands)
@@ -233,7 +234,7 @@ public abstract class Storage
 
         await MapEventHelper.WalkMapEventPages(this, async (context) =>
         {
-            using var _ = reporter?.Report("", 0);
+            using var _ = reporter?.DoReport("", 0);
 
             var commandIndex = 0;
             foreach (var command in context.EventPage.NamedCommands)
@@ -259,7 +260,7 @@ public abstract class Storage
 
         await TroopHelper.WalkTroopPages(this, async (context) =>
         {
-            using var _ = reporter?.Report("", 0);
+            using var _ = reporter?.DoReport("", 0);
 
             var commandIndex = 0;
             foreach (var command in context.EventPage.NamedCommands)

@@ -13,30 +13,30 @@ public class VxAceYamlStorage : AbstractYamlStorage
         AddSpecialSerializer<Script>(new ScriptSerializer());
     }
 
-    protected override void _Dump(string path, Storage storage)
+    protected override async Task _Dump(string path, Storage storage)
     {
         var vxStorage = (VXAceStorage)storage;
 
         Reporter?.SetStage(DumpStage.Progress);
         Reporter?.ResetTotal(16);
 
-        DumpHolder(path, nameof(vxStorage.Actors), vxStorage.Actors);
-        DumpHolder(path, nameof(vxStorage.Animations), vxStorage.Animations);
-        DumpHolder(path, nameof(vxStorage.Armors), vxStorage.Armors);
-        DumpHolder(path, nameof(vxStorage.Classes), vxStorage.Classes);
-        DumpHolder(path, nameof(vxStorage.CommonEvents), vxStorage.CommonEvents);
-        DumpHolder(path, nameof(vxStorage.Enemies), vxStorage.Enemies);
-        DumpHolder(path, nameof(vxStorage.Items), vxStorage.Items);
-        DumpHolder(path, nameof(vxStorage.Scripts), vxStorage.Scripts);
-        DumpHolder(path, nameof(vxStorage.Skills), vxStorage.Skills);
-        DumpHolder(path, nameof(vxStorage.States), vxStorage.States);
-        DumpHolder(path, nameof(vxStorage.System), vxStorage.System);
-        DumpHolder(path, nameof(vxStorage.MapInfos), vxStorage.MapInfos);
-        DumpHolder(path, nameof(vxStorage.Tilesets), vxStorage.Tilesets);
-        DumpHolder(path, nameof(vxStorage.Troops), vxStorage.Troops);
-        DumpHolder(path, nameof(vxStorage.Weapons), vxStorage.Weapons);
+        await DumpHolder(path, nameof(vxStorage.Actors), vxStorage.Actors);
+        await DumpHolder(path, nameof(vxStorage.Animations), vxStorage.Animations);
+        await DumpHolder(path, nameof(vxStorage.Armors), vxStorage.Armors);
+        await DumpHolder(path, nameof(vxStorage.Classes), vxStorage.Classes);
+        await DumpHolder(path, nameof(vxStorage.CommonEvents), vxStorage.CommonEvents);
+        await DumpHolder(path, nameof(vxStorage.Enemies), vxStorage.Enemies);
+        await DumpHolder(path, nameof(vxStorage.Items), vxStorage.Items);
+        await DumpHolder(path, nameof(vxStorage.Scripts), vxStorage.Scripts);
+        await DumpHolder(path, nameof(vxStorage.Skills), vxStorage.Skills);
+        await DumpHolder(path, nameof(vxStorage.States), vxStorage.States);
+        await DumpHolder(path, nameof(vxStorage.System), vxStorage.System);
+        await DumpHolder(path, nameof(vxStorage.MapInfos), vxStorage.MapInfos);
+        await DumpHolder(path, nameof(vxStorage.Tilesets), vxStorage.Tilesets);
+        await DumpHolder(path, nameof(vxStorage.Troops), vxStorage.Troops);
+        await DumpHolder(path, nameof(vxStorage.Weapons), vxStorage.Weapons);
         
-        DumpMaps(path, vxStorage);
+        await DumpMaps(path, vxStorage);
         
         Reporter?.SetStage(DumpStage.Finished);
     }

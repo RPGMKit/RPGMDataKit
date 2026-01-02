@@ -13,19 +13,37 @@ public static class DumpHelper
 
         options ??= new();
         
-        var reporter = new ProgressReporter(reporterCallback, token);
+        var reporter = new ProgressReporter(token);
+        if (reporterCallback != null)
+            reporter.Report += reporterCallback;
         reporter.SetStage(DumpStage.Init);
         reporter.ResetTotal(3);
 
+        var existingFiles = Directory.GetFiles(path, "*.txt", SearchOption.AllDirectories);
+        List<string> createdFiles = [];
+        reporter.Report += (stage, message, level, index, total) =>
+        {
+            if (stage == DumpStage.Custom)
+                createdFiles.Add(Path.GetFullPath(message));
+        };
+
         reporter.SetStage(DumpStage.Progress);
-        await reporter.Report().For(async () => await CommonEventHelper.DumpCommonEventCommands(storage, path, options, reporter));
-        await reporter.Report().For(async () => await MapEventHelper.DumpMapEventCommands(storage, path, options, reporter));
-        await reporter.Report().For(async () => await TroopHelper.DumpTroopCommands(storage, path, options, reporter));
+        await reporter.DoReport().For(async () => await CommonEventHelper.DumpCommonEventCommands(storage, path, options, reporter));
+        await reporter.DoReport().For(async () => await MapEventHelper.DumpMapEventCommands(storage, path, options, reporter));
+        await reporter.DoReport().For(async () => await TroopHelper.DumpTroopCommands(storage, path, options, reporter));
         
         reporter.SetStage(DumpStage.Finished);
+        
+        if (!reporter.NeedCancel)
+        {
+            var extraFiles = existingFiles.Except(createdFiles);
+            foreach (var extraFile in extraFiles)
+                File.Delete(extraFile);
+        }
     }
 
-    public static void DumpYaml(string path, Storage storage, ProgressReporter.ProgressReporterCallback? reporterCallback = null, CancellationToken? token = null)
+    public static async Task DumpYaml(string path, Storage storage,
+        ProgressReporter.ProgressReporterCallback? reporterCallback = null, CancellationToken? token = null)
     {
         AbstractYamlStorage yamlStorage;
         switch (storage.Version)
@@ -40,9 +58,27 @@ public static class DumpHelper
                 throw new Exception($"Unsupported storage version {storage.Version}");
         }
 
-        yamlStorage.Reporter = reporterCallback != null ? new ProgressReporter(reporterCallback, token) : null;
+        yamlStorage.Reporter = new ProgressReporter(token);
+        if (reporterCallback != null)
+            yamlStorage.Reporter.Report += reporterCallback;
 
-        yamlStorage.Dump(path, storage);
+        var existingFiles = Directory.GetFiles(path, "*.yaml", SearchOption.AllDirectories);
+        List<string> createdFiles = [];
+
+        yamlStorage.Reporter.Report += (stage, message, _, _, _) =>
+        {
+            if (stage == DumpStage.Custom)
+                createdFiles.Add(Path.GetFullPath(message));
+        };
+
+        await yamlStorage.Dump(path, storage);
+
+        if (!yamlStorage.Reporter.NeedCancel)
+        {
+            var extraFiles = existingFiles.Except(createdFiles);
+            foreach (var extraFile in extraFiles)
+                File.Delete(extraFile);
+        }
     }
 
     public static void LoadYaml(string path, Storage storage, ProgressReporter.ProgressReporterCallback? reporter = null, CancellationToken? token = null)
@@ -60,7 +96,8 @@ public static class DumpHelper
                 throw new Exception($"Unsupported storage version {storage.Version}");
         }
 
-        yamlStorage.Reporter = reporter != null ? new ProgressReporter(reporter, token) : null;
+        yamlStorage.Reporter = reporter != null ? new ProgressReporter(token) : null;
+        yamlStorage.Reporter?.Report += reporter;
 
         yamlStorage.Load(path, storage);
     }

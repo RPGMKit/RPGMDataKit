@@ -1,5 +1,4 @@
-﻿using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Helpers.Dump;
+﻿using RPGMakerLibCoreV2.Data.Helpers.Dump;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Storages.Abstraction;
@@ -19,7 +18,7 @@ public static class TroopHelper
             if (troop == null)
                 continue;
 
-            using var _2 = reporter?.Report();
+            using var _2 = reporter?.DoReport();
             var i = 0;
             foreach (var p in troop.Pages)
             {
@@ -49,16 +48,17 @@ public static class TroopHelper
         {
             var entityContext = new EntityContext(storage, context, options.ExtendedFormat);
             
-            using var _2 = reporter?.Report("Troop " + entityContext.NameFormatter.FormatTroop(context.Troop.Id));
+            using var _2 = reporter?.DoReport("Troop " + entityContext.NameFormatter.FormatTroop(context.Troop.Id));
             
             IndentHelper.ValidateIndents(context.EventPage, storage.Version);
 
-            await using var file = File.Open(
-                Path.Combine(path, $"Troop_{context.Troop.Id:D3}_Page_{context.PageId}.txt"),
-                FileMode.Create);
+            var filePath = Path.Combine(path, $"Troop_{context.Troop.Id:D3}_Page_{context.PageId}.txt");
+            await using var file = File.Open(filePath, FileMode.Create);
             await using var writer = new StreamWriter(file);
 
             await context.EventPage.Dump(writer, new(storage, context, options.ExtendedFormat), options);
+
+            reporter?.CustomReport(filePath);
             
             return !reporter?.NeedCancel ?? false;
         });
