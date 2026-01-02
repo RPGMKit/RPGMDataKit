@@ -53,14 +53,19 @@ public static class MapEventHelper
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
 
-        using var _ = reporter?.IncLevel(storage.Maps.GetAll().Sum(m => m.Events.Sum(e => e.Value?.Pages.Count)) ?? 0);
+        using var _ = reporter?.IncLevel(storage.MapInfos.Get().Count);
 
+        var lastMapId = -1;
         await WalkMapEventPages(storage, async (context) =>
         {
             var entityContext = new EntityContext(storage, context, options.ExtendedFormat);
-            
-            using var _2 = reporter?.DoReport("Map " + entityContext.NameFormatter.FormatMap(context.MapId));
-            
+
+            if (lastMapId != context.MapId)
+            {
+                lastMapId = context.MapId;
+                reporter?.DoReport("Map " + entityContext.NameFormatter.FormatMap(context.MapId)).Finish();
+            }
+
             IndentHelper.ValidateIndents(context.EventPage, storage.Version);
 
             var filePath = Path.Combine(path, $"Map_{context.MapId:D3}_Event_{context.Event.Id:D3}_Page_{context.PageId}.txt");

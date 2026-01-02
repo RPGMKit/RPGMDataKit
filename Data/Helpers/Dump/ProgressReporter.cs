@@ -11,7 +11,7 @@ public class ProgressReporter
     {
         private readonly Action _finished;
 
-        private bool _needCall = true;
+        private bool _needFinish = true;
         
         public int Level { get; private set; }
         
@@ -24,20 +24,24 @@ public class ProgressReporter
         public async Task For(Func<Task> f)
         {
             await f();
-            _finished();
-            _needCall = false;
+            Finish();
         }
         
         public void For(Action a)
         {
             a();
+            Finish();
+        }
+
+        public void Finish()
+        {
             _finished();
-            _needCall = false;
+            _needFinish = false;
         }
 
         public void Dispose()
         {
-            if (_needCall)
+            if (_needFinish)
                 _finished();
         }
     }
@@ -62,7 +66,11 @@ public class ProgressReporter
         ++_level;
         ResetTotal(total);
         
-        return CreateContext(() => --_level);
+        return CreateContext(() =>
+        {
+            _current[_level] = 0;
+            --_level;
+        });
     }
 
     private readonly CancellationToken? _token;

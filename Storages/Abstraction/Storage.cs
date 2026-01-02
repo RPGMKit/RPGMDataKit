@@ -199,7 +199,7 @@ public abstract class Storage
         reporter?.SetStage(DumpStage.Init);
         
         var stepCount = 0;
-        stepCount += Maps.GetAll().Sum(m => m.Events.Sum(p => p.Value?.Pages.Count ?? 0));
+        stepCount += MapInfos.Get().Count;
         stepCount += Troops.Get().Sum(t => t.Value?.Pages.Count ?? 0);
         stepCount += CommonEvents.Get().Count;
         
@@ -232,9 +232,14 @@ public abstract class Storage
             return true;
         }, reporter);
 
+        var lastMapId = -1;
         await MapEventHelper.WalkMapEventPages(this, async (context) =>
         {
-            using var _ = reporter?.DoReport("", 0);
+            if (lastMapId != context.MapId)
+            {
+                lastMapId = context.MapId;
+                reporter?.DoReport("", 0).Finish();
+            }
 
             var commandIndex = 0;
             foreach (var command in context.EventPage.NamedCommands)
