@@ -4,6 +4,8 @@ using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.VXAce.Classes;
 using RPGMakerLibCoreV2.Storages.Abstraction;
 using RubyMarshalCS;
+using RubyMarshalCS.Enums;
+using RubyMarshalCS.Settings;
 
 namespace RPGMakerLibCoreV2.Storages;
 
@@ -11,9 +13,35 @@ public class VXAceStorage : Storage
 {
     public DataLookupHolder<Script> Scripts;
     
+    private readonly DeserializationSettings _deserializationSettings;
+
     public VXAceStorage(string projectPath, string dataDirectory = "data") : base(projectPath, dataDirectory)
     {
         Version = StorageVersion.VXAce;
+
+        _deserializationSettings = new DeserializationSettings
+        {
+            MissingMemberHandling = MissingMemberHandling.Error,
+            UndefinedObjectHandling = UndefinedObjectHandling.Error,
+            UndefinedUserObjectHandling = UndefinedUserObjectHandling.Error,
+
+            MissingMember = (_, args) =>
+            {
+                Console.WriteLine(
+                    $"Missing member \"{args.Member.Key}\" found for object \"{args.RubyObject.GetRealClassName()}\"");
+                args.Store();
+            },
+            UndefinedObject = (_, args) =>
+            {
+                Console.WriteLine($"Undefined object found: \"{args.RubyObject.GetRealClassName()}\"");
+                args.Ignore();
+            },
+            UndefinedUserObject = (_, args) =>
+            {
+                Console.WriteLine($"Undefined user object found: \"{args.RubyUserObject.GetRealClassName()}\"");
+                args.Store();
+            }
+        };
     }
 
     protected override string MapPath(int index) => $"Map{index:D3}.rvdata2";
@@ -55,7 +83,7 @@ public class VXAceStorage : Storage
         if (!File.Exists(path))
             throw new FileNotFoundException(path);
         
-        return RubyMarshal.Load<T>(path);
+        return RubyMarshal.Load<T>(path, _deserializationSettings);
     }
 
     public override void SaveData<T>(string dataFile, T data)
