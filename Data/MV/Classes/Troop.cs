@@ -3,7 +3,7 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
@@ -112,12 +112,14 @@ public class Troop : JsonEntity, ITroop
     public string Name { get; set; }
 
     [JsonProperty("members")]
-    public List<Member> _Members { get; set; }
+    [JsonConverter(typeof(InterfaceListJsonConverter<IMember, Member>))]
+    public List<IMember?> Members { get; set; } = new();
 
-    public IList<IMember?> Members => ListWrapper<IMember, Member>.Create(this, nameof(_Members));
+    IList<IMember?> ITroop.Members => Members;
 
     [JsonProperty("pages")]
-    public List<EventPage> _Pages { get; set; }
+    [JsonConverter(typeof(InterfaceListJsonConverter<ITroopPage, EventPage>))]
+    public List<ITroopPage?> Pages { get; set; } = new();
 
-    public IList<ITroopPage?> Pages => ListWrapper<ITroopPage, EventPage>.Create(this, nameof(_Pages));
+    IList<ITroopPage?> ITroop.Pages => Pages;
 }

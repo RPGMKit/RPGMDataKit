@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
@@ -104,7 +104,8 @@ public class System : JsonEntity, ISystem
     public List<string> SkillTypes { get; set; }
 
     [JsonProperty(PropertyName = "sounds")]
-    public List<SoundData> _Sounds { get; set; }
+    [JsonConverter(typeof(InterfaceListJsonConverter<IAudioFile, SoundData>))]
+    public List<IAudioFile?> Sounds { get; set; } = new();
 
     [JsonProperty(PropertyName = "startMapId")]
     public int StartMapId { get; set; }
@@ -154,7 +155,7 @@ public class System : JsonEntity, ISystem
     [JsonProperty(PropertyName = "windowTone")]
     public List<int> _WindowTone { get; set; }
 
-    public IList<IAudioFile?> Sounds => ListWrapper<IAudioFile, SoundData>.Create(this, nameof(_Sounds));
+    IList<IAudioFile?> ISystem.Sounds => Sounds;
 
     public ITone WindowTone
     {

@@ -3,7 +3,7 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes
 {
@@ -156,9 +156,10 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         public string Note { get; set; }
 
         [JsonProperty(PropertyName = "pages")]
-        public List<EventPage> _Pages { get; set; }
+        [JsonConverter(typeof(InterfaceListJsonConverter<IEventPage, EventPage>))]
+        public List<IEventPage?> Pages { get; set; } = new();
 
-        public IList<IEventPage?> Pages => ListWrapper<IEventPage, EventPage>.Create(this, nameof(_Pages));
+        IList<IEventPage?> IEvent.Pages => Pages;
 
         [JsonProperty(PropertyName = "x")]
         public int X { get; set; }

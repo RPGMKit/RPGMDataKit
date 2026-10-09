@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
@@ -78,9 +78,10 @@ public class Map : JsonEntity, IMap
     public List<int> _Data { get; set; }
 
     [JsonProperty(PropertyName = "events")]
-    public List<Event?> _Events { get; set; }
+    [JsonConverter(typeof(ListToDictionaryJsonConverter<IEvent, Event>))]
+    public Dictionary<int, IEvent?> Events { get; set; } = new();
 
     public IList<int> Data => _Data;
 
-    public IDictionary<int, IEvent?> Events => ListToDictionaryWrapper<IEvent, Event>.Create(this, nameof(_Events));
+    IDictionary<int, IEvent?> IMap.Events => Events;
 }

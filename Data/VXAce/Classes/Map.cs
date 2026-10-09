@@ -1,6 +1,6 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
+using RPGMakerLibCoreV2.Data.VXAce.Serializers;
 using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
@@ -77,14 +77,15 @@ public class Map : RubySerializationEntity, IMap
     public string Note { get; set; }
 
     [RubyProperty("@data")]
-    public Table _Data { get; set; }
+    [RubyPropertyConverter(typeof(MapDataConverter))]
+    public List<int> Data { get; set; } = new();
 
-    public IList<int> Data => ListWrapper<int, short>.Create(_Data, nameof(_Data.Elements), Convert.ToInt32, Convert.ToInt16);
+    IList<int> IMap.Data => Data;
 
     [RubyProperty("@events")]
-    public Dictionary<int, Event?> _Events { get; set; }
+    public Dictionary<int, IEvent?> Events { get; set; } = new();
 
-    public IDictionary<int, IEvent?> Events => DictionaryWrapper<IEvent, Event>.Create(this, nameof(_Events));
+    IDictionary<int, IEvent?> IMap.Events => Events;
 
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1 { get; set; }

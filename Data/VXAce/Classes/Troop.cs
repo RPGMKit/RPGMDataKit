@@ -2,7 +2,6 @@
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
@@ -118,12 +117,12 @@ public class Troop : RubySerializationEntity, ITroop
     public string Name { get; set; }
 
     [RubyProperty("@members")]
-    public List<Member> _Members { get; set; }
+    public List<IMember?> Members { get; set; } = new();
 
-    public IList<IMember?> Members => ListWrapper<IMember, Member>.Create(this, nameof(_Members));
+    IList<IMember?> ITroop.Members => Members;
 
     [RubyProperty("@pages")]
-    public List<EventPage> _Pages { get; set; }
+    public List<ITroopPage?> Pages { get; set; } = new();
 
-    public IList<ITroopPage?> Pages => ListWrapper<ITroopPage, EventPage>.Create(this, nameof(_Pages));
+    IList<ITroopPage?> ITroop.Pages => Pages;
 }

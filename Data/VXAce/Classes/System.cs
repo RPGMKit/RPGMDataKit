@@ -1,7 +1,6 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Exceptions;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Wrappers;
 using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
 using RubyMarshalCS.Serialization.Attributes;
 
@@ -44,7 +43,7 @@ public class System : RubySerializationEntity, ISystem
     public int BattlerHue { get; set; }
 
     [RubyProperty("@sounds")]
-    public List<SE> _Sounds { get; set; }
+    public List<IAudioFile?> Sounds { get; set; } = new();
 
     [RubyProperty("@variables")]
     public List<string> Variables { get; set; }
@@ -139,7 +138,7 @@ public class System : RubySerializationEntity, ISystem
     [RubyProperty("@opt_floor_death")]
     public bool OptFloorDeath { get; set; }
 
-    public IList<IAudioFile?> Sounds => ListWrapper<IAudioFile, SE>.Create(this, nameof(_Sounds));
+    IList<IAudioFile?> ISystem.Sounds => Sounds;
     
     public List<string> EquipmentTypes => throw new DoesNotExistInVersionException($"{nameof(EquipmentTypes)}");
 
