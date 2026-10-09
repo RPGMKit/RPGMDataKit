@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ErrorEventArgs = Newtonsoft.Json.Serialization.ErrorEventArgs;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal
 {
@@ -10,8 +11,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
         [JsonExtensionData]
         private IDictionary<string, JToken> _unknownFields;
 
-        public static Dictionary<Type, Dictionary<string, string>> _globalUnknownFields = new();
-        
         // public object Storage { get; private set; }
         //
         // public virtual void Initialize(object storage)
@@ -28,9 +27,16 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
         [YamlDotNet.Serialization.Callbacks.OnSerializing]
         public void OnYamlSerializing()
         {
+            var wtf = new JsonSerializerSettings();
+            wtf.Error += Error;
             OnSerializing();
         }
-        
+
+        private void Error(object? sender, ErrorEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         [System.Runtime.Serialization.OnDeserialized]
         void OnGenericDeserialized(StreamingContext context)
         {
@@ -45,16 +51,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
 
         public virtual void OnDeserialized()
         {
-            if (_unknownFields != null)
-            {
-                foreach (var (key, _) in _unknownFields)
-                {
-                    if (!_globalUnknownFields.ContainsKey(GetType()))
-                        _globalUnknownFields[GetType()] = new();
-
-                    _globalUnknownFields[GetType()][key] = key;
-                }
-            }
         }
 
         public virtual void OnSerializing()

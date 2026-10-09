@@ -376,7 +376,7 @@ public static class CommandFactory
             case CommandCodes.ShopProcessingLine:
                 returnCommand = new ShopProcessingLineCommand();
                 break;
-            case CommandCodes.ScriptLineCommand:
+            case CommandCodes.ScriptLine:
                 returnCommand = new ScriptLineCommand();
                 break;
             default:

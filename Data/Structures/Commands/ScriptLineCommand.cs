@@ -13,7 +13,7 @@ public class ScriptLineCommand : NamedCommand
 
     public override string GetCommandName(StorageVersion version) => "      ";
         
-    public override int Code => CommandCodes.ScriptLineCommand;
+    public override int Code => CommandCodes.ScriptLine;
 
     public string Text { get; set; }
 

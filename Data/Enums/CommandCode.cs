@@ -123,5 +123,5 @@ public static class CommandCodes
     public const int BattleProcessingIfLose = 603; // "if lose" case for event 301
     public const int BattleProcessingEnd = 604; // close indent for event 301
     public const int ShopProcessingLine = 605;
-    public const int ScriptLineCommand = 655;
+    public const int ScriptLine = 655;
 }
