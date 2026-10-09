@@ -1,8 +1,7 @@
 ﻿namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
-public interface ITileSet
+public interface ITileSet : IHasId
 {
-    public int Id { get; set; }
     public IList<short> Flags { get; }
     public int Mode { get; set; } // enum TilesetMode
     public string Name { get; set; }

@@ -1,8 +1,7 @@
 ﻿namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
-public interface ITroop
+public interface ITroop : IHasId
 {
-    public int Id { get; set; }
 
     public string Name { get; set; }
 

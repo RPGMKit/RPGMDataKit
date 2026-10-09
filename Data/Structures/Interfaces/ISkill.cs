@@ -1,8 +1,7 @@
 ﻿namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
-public interface ISkill
+public interface ISkill : IHasId
 {
-    public int Id { get; set; }
     public string Name { get; set; }
     int IconIndex { get; set; }
 }

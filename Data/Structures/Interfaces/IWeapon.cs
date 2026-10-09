@@ -1,8 +1,7 @@
 ﻿namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
-public interface IWeapon
+public interface IWeapon : IHasId
 {
-    public int Id { get; set; }
     
     public string Name { get; set; }
     
