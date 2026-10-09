@@ -44,22 +44,22 @@ public class MvYamlStorage : AbstractYamlStorage
         Reporter?.SetStage(DumpStage.Progress);
         Reporter?.ResetTotal(15);
 
-        LoadHolder<Actor, IActor>(path, nameof(storage.Actors), storage.Actors);
-        LoadHolder<Animation, IAnimation>(path, nameof(storage.Animations), storage.Animations);
-        LoadHolder<Armor, IArmor>(path, nameof(storage.Armors), storage.Armors);
-        LoadHolder<Class, IClass>(path, nameof(storage.Classes), storage.Classes);
-        LoadHolder<CommonEvent, ICommonEvent>(path, nameof(storage.CommonEvents), storage.CommonEvents);
-        LoadHolder<Enemy, IEnemy>(path, nameof(storage.Enemies), storage.Enemies);
-        LoadHolder<Item, IItem>(path, nameof(storage.Items), storage.Items);
-        LoadHolder<Skill, ISkill>(path, nameof(storage.Skills), storage.Skills);
-        LoadHolder<State, IState>(path, nameof(storage.States), storage.States);
-        LoadHolder<Data.MV.Classes.System, ISystem>(path, nameof(storage.System), storage.System);
-        LoadHolder<MapInfo, IMapInfo>(path, nameof(storage.MapInfos), storage.MapInfos);
-        LoadHolder<Tileset, ITileSet>(path, nameof(storage.Tilesets), storage.Tilesets);
-        LoadHolder<Troop, ITroop>(path, nameof(storage.Troops), storage.Troops);
-        LoadHolder<Weapon, IWeapon>(path, nameof(storage.Weapons), storage.Weapons);
+        LoadHolder<IActor>(storage, path, nameof(storage.Actors), storage.Actors);
+        LoadHolder<IAnimation>(storage, path, nameof(storage.Animations), storage.Animations);
+        LoadHolder<IArmor>(storage, path, nameof(storage.Armors), storage.Armors);
+        LoadHolder<IClass>(storage, path, nameof(storage.Classes), storage.Classes);
+        LoadHolder<ICommonEvent>(storage, path, nameof(storage.CommonEvents), storage.CommonEvents);
+        LoadHolder<IEnemy>(storage, path, nameof(storage.Enemies), storage.Enemies);
+        LoadHolder<IItem>(storage, path, nameof(storage.Items), storage.Items);
+        LoadHolder<ISkill>(storage, path, nameof(storage.Skills), storage.Skills);
+        LoadHolder<IState>(storage, path, nameof(storage.States), storage.States);
+        LoadHolder<ISystem>(storage, path, nameof(storage.System), storage.System);
+        LoadHolder<IMapInfo>(storage, path, nameof(storage.MapInfos), storage.MapInfos);
+        LoadHolder<ITileSet>(storage, path, nameof(storage.Tilesets), storage.Tilesets);
+        LoadHolder<ITroop>(storage, path, nameof(storage.Troops), storage.Troops);
+        LoadHolder<IWeapon>(storage, path, nameof(storage.Weapons), storage.Weapons);
         
-        LoadMaps<Map>(path, storage);
+        LoadMaps(path, storage);
         
         Reporter?.SetStage(DumpStage.Finished);
     }

@@ -4,17 +4,19 @@ namespace RPGMakerLibCoreV2.Data;
 
 public delegate T? HolderLoader<T>(string path);
 
-public class DataHolder<TDataType>
+public delegate void HolderSaver(string path, object? data);
+
+public class DataHolder<TDataType> : ITable
 {
     protected bool _isLoaded;
-    private readonly Storage _storage;
+    private readonly HolderSaver _saver;
     protected TDataType _data;
     private readonly HolderLoader<TDataType> _loader;
     private string _path;
 
-    public DataHolder(Storage storage, string path, HolderLoader<TDataType> loader)
+    public DataHolder(string path, HolderLoader<TDataType> loader, HolderSaver saver)
     {
-        _storage = storage;
+        _saver = saver;
         _path = path;
         _loader = loader;
     }
@@ -36,6 +38,8 @@ public class DataHolder<TDataType>
 
         return _data;
     }
+
+    void ITable.Preload() => Get();
 
     public void Load()
     {
@@ -62,6 +66,6 @@ public class DataHolder<TDataType>
         if (!_isLoaded)
             return;
 
-        _storage.SaveData(_path, value);
+        _saver(_path, value);
     }
 }

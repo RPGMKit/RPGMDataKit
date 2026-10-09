@@ -5,7 +5,9 @@ using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Helpers.Dump;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using System.Reflection;
 using RPGMakerLibCoreV2.Diff;
+using RPGMakerLibCoreV2.Storages.Serialization;
 
 namespace RPGMakerLibCoreV2.Storages.Abstraction;
 
@@ -33,8 +35,16 @@ public abstract class Storage
     public DataLookupHolder<ITroop> Troops;
     public DataLookupHolder<IWeapon> Weapons;
 
-    public Storage(string projectPath, string dataDirectory = "data")
+    private readonly List<ITable> _tables = new();
+    private readonly IDataSerializer _serializer;
+    private readonly TypeMap _types;
+
+    protected Storage(StorageVersion version, IDataSerializer serializer, TypeMap types, string projectPath,
+        string dataDirectory = "data")
     {
+        Version = version;
+        _serializer = serializer;
+        _types = types;
         ProjectPath = projectPath;
         DataDirectory = dataDirectory;
 
@@ -49,78 +59,98 @@ public abstract class Storage
 
     public virtual void Unload()
     {
-        Actors.Unload();
-        Animations.Unload();
-        Armors.Unload();
-        Classes.Unload();
-        CommonEvents.Unload();
-        Enemies.Unload();
-        Items.Unload();
+        foreach (var table in _tables)
+            table.Unload();
+
         Maps.Unload();
-        MapInfos.Unload();
-        Skills.Unload();
-        States.Unload();
-        System.Unload();
-        Tilesets.Unload();
-        Troops.Unload();
-        Weapons.Unload();
     }
 
     protected abstract void Init();
 
-    protected abstract string MapPath(int index);
-    
-    public abstract string DataPath(string dataObject);
+    protected virtual string MapPath(int index) => $"Map{index:D3}{_serializer.FileExtension}";
 
-    public abstract T LoadData<T>(string dataFile);
+    public virtual string DataPath(string dataObject) => Path.Combine(DataDirectory, dataObject);
 
-    public abstract void SaveData<T>(string dataFile, T data);
+    public virtual T LoadData<T>(string dataFile)
+    {
+        var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
+        if (!File.Exists(path))
+            throw new FileNotFoundException(path);
+
+        return _serializer.Load<T>(path);
+    }
+
+    public virtual void SaveData<T>(string dataFile, T data)
+    {
+        _serializer.Save(Path.Combine(ProjectPath, DataDirectory, dataFile), data);
+    }
+
+    protected string FileName(string name) => name + _serializer.FileExtension;
 
     public virtual void Preload()
     {
-        Actors.Get();
-        Animations.Get();
-        Armors.Get();
-        Classes.Get();
-        CommonEvents.Get();
-        Enemies.Get();
-        Items.Get();
-        Skills.Get();
-        States.Get();
-        System.Get();
-        MapInfos.Get();
-        Troops.Get();
-        Tilesets.Get();
-        Weapons.Get();
-        
+        foreach (var table in _tables)
+            table.Preload();
+
         foreach (var map in MapInfos.Get())
             Maps.Get(map.Key);
     }
-    
+
     public virtual void SaveAll()
     {
-        Actors.Save();
-        Animations.Save();
-        Armors.Save();
-        Classes.Save();
-        CommonEvents.Save();
-        Enemies.Save();
-        Items.Save();
-        Skills.Save();
-        States.Save();
-        System.Save();
+        foreach (var table in _tables)
+            table.Save();
+
         Maps.Save();
-        MapInfos.Save();
-        Troops.Save();
-        Tilesets.Save();
-        Weapons.Save();
     }
-    
-    protected DataLookupHolder<TV> LoadListHolder<T, TV>(string fileName, Func<T?, int>? idGetter = null)
+
+    private void SaveObject(string path, object? data) => SaveData(path, data);
+
+    private THolder Register<THolder>(THolder holder) where THolder : ITable
+    {
+        _tables.Add(holder);
+        return holder;
+    }
+
+    /// <summary>Concrete type of this storage's maker version for an entity interface.</summary>
+    public Type ConcreteType<TV>() => _types.Resolve(typeof(TV));
+
+    private object InvokeCore(string method, Type concrete, Type entity, params object?[] args)
+    {
+        return typeof(Storage)
+            .GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic)!
+            .MakeGenericMethod(concrete, entity)
+            .Invoke(this, args)!;
+    }
+
+    protected void LoadListHolder<TV>(out DataLookupHolder<TV> holder, string fileName,
+        Func<TV?, int>? idGetter = null) where TV : class
+    {
+        holder = (DataLookupHolder<TV>)InvokeCore(nameof(LoadListHolderCore), ConcreteType<TV>(), typeof(TV),
+            fileName, idGetter);
+    }
+
+    protected void LoadDictionaryHolder<TV>(out DataLookupHolder<TV> holder, string fileName) where TV : class
+    {
+        holder = (DataLookupHolder<TV>)InvokeCore(nameof(LoadDictionaryHolderCore), ConcreteType<TV>(), typeof(TV),
+            fileName);
+    }
+
+    protected void LoadHolder<TV>(out DataHolder<TV> holder, string fileName) where TV : class
+    {
+        holder = (DataHolder<TV>)InvokeCore(nameof(LoadHolderCore), ConcreteType<TV>(), typeof(TV), fileName);
+    }
+
+    protected void LoadMapsHolder(out MapsHolder holder)
+    {
+        holder = (MapsHolder)InvokeCore(nameof(LoadMapsHolderCore), ConcreteType<IMap>(), typeof(IMap));
+    }
+
+    private DataLookupHolder<TV> LoadListHolderCore<T, TV>(string fileName, Func<TV?, int>? idGetter)
         where T : class, TV
         where TV : class
     {
-        return new(this, HolderType.List, fileName, path =>
+        return Register<DataLookupHolder<TV>>(new(HolderType.List, fileName, path =>
         {
             var data = LoadData<List<T>>(path);
             var dict = new Dictionary<int, TV?>();
@@ -128,21 +158,28 @@ public abstract class Storage
                 dict[idGetter?.Invoke(data[i]) ?? i] = data[i];
 
             return dict;
-        });
+        }, SaveObject));
     }
 
-    protected DataLookupHolder<TV> LoadDictionaryHolder<T, TV>(string fileName)
+    private DataLookupHolder<TV> LoadDictionaryHolderCore<T, TV>(string fileName)
         where T : class, TV
-        where TV: class
+        where TV : class
     {
-        return new(this, HolderType.Dictionary, fileName, path => LoadData<Dictionary<int, T?>>(path).MorphToBase<T, TV>());
+        return Register<DataLookupHolder<TV>>(new(HolderType.Dictionary, fileName,
+            path => LoadData<Dictionary<int, T?>>(path).MorphToBase<T, TV>(), SaveObject));
     }
 
-    protected DataHolder<TV> LoadHolder<T, TV>(string fileName)
+    private DataHolder<TV> LoadHolderCore<T, TV>(string fileName)
         where T : class, TV
-        where TV: class
+        where TV : class
     {
-        return new(this, fileName, LoadData<T>);
+        return Register<DataHolder<TV>>(new(fileName, path => LoadData<T>(path), SaveObject));
+    }
+
+    private MapsHolder LoadMapsHolderCore<T, TV>()
+        where T : class, TV
+    {
+        return new(MapPath, path => (IMap)LoadData<T>(path)!, SaveObject);
     }
 
     public ICommonEvent? GetCommonEvent(int id)
@@ -206,16 +243,15 @@ public abstract class Storage
         reporter?.ResetTotal(stepCount);
         
         reporter?.SetStage(DumpStage.Progress);
-        await CommonEventHelper.WalkCommonEvents(this, async (context) =>
+
+        async Task<bool> WalkCommands(List<NamedCommand> commands, Func<EntityContext> contextFactory)
         {
-            using var _ = reporter?.DoReport("", 0);
-            
             var commandIndex = 0;
-            foreach (var command in context.CommonEvent.NamedCommands)
+            foreach (var command in commands)
             {
                 try
                 {
-                    await searcher(commandIndex, command, new(this, context));
+                    await searcher(commandIndex, command, contextFactory());
                 }
                 catch
                 {
@@ -224,12 +260,19 @@ public abstract class Storage
                 }
 
                 ++commandIndex;
-                
+
                 if (reporter?.NeedCancel ?? false)
                     return false;
             }
 
             return true;
+        }
+
+        await CommonEventHelper.WalkCommonEvents(this, async (context) =>
+        {
+            using var _ = reporter?.DoReport("", 0);
+
+            return await WalkCommands(context.CommonEvent.NamedCommands, () => new(this, context));
         }, reporter);
 
         var lastMapId = -1;
@@ -241,54 +284,16 @@ public abstract class Storage
                 reporter?.DoReport("", 0).Finish();
             }
 
-            var commandIndex = 0;
-            foreach (var command in context.EventPage.NamedCommands)
-            {
-                try
-                {
-                    await searcher(commandIndex, command, new(this, context));
-                }
-                catch
-                {
-                    reporter?.SetStage(DumpStage.Finished);
-                    throw;
-                }
-
-                ++commandIndex;
-                
-                if (reporter?.NeedCancel ?? false)
-                    return false;
-            }
-
-            return true;
+            return await WalkCommands(context.EventPage.NamedCommands, () => new(this, context));
         }, reporter);
 
         await TroopHelper.WalkTroopPages(this, async (context) =>
         {
             using var _ = reporter?.DoReport("", 0);
 
-            var commandIndex = 0;
-            foreach (var command in context.EventPage.NamedCommands)
-            {
-                try
-                {
-                    await searcher(commandIndex, command, new(this, context));
-                }
-                catch
-                {
-                    reporter?.SetStage(DumpStage.Finished);
-                    throw;
-                }
-
-                ++commandIndex;
-                
-                if (reporter?.NeedCancel ?? false)
-                    return false;
-            }
-
-            return true;
+            return await WalkCommands(context.EventPage.NamedCommands, () => new(this, context));
         }, reporter);
-        
+
         reporter?.SetStage(reporter.NeedCancel ? DumpStage.Cancelled : DumpStage.Finished);
     }
 

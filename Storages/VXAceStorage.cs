@@ -3,9 +3,7 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.VXAce.Classes;
 using RPGMakerLibCoreV2.Storages.Abstraction;
-using RubyMarshalCS;
-using RubyMarshalCS.Enums;
-using RubyMarshalCS.Settings;
+using RPGMakerLibCoreV2.Storages.Serialization;
 
 namespace RPGMakerLibCoreV2.Storages;
 
@@ -13,95 +11,29 @@ public class VXAceStorage : Storage
 {
     public DataLookupHolder<Script> Scripts;
     
-    private readonly DeserializationSettings _deserializationSettings;
-
-    public VXAceStorage(string projectPath, string dataDirectory = "data") : base(projectPath, dataDirectory)
+    public VXAceStorage(string projectPath, string dataDirectory = "data") : base(StorageVersion.VXAce,
+        new RubyMarshalDataSerializer(), TypeMap.VXAce, projectPath, dataDirectory)
     {
-        Version = StorageVersion.VXAce;
-
-        _deserializationSettings = new DeserializationSettings
-        {
-            MissingMemberHandling = MissingMemberHandling.Error,
-            UndefinedObjectHandling = UndefinedObjectHandling.Error,
-            UndefinedUserObjectHandling = UndefinedUserObjectHandling.Error,
-
-            MissingMember = (_, args) =>
-            {
-                Console.WriteLine(
-                    $"Missing member \"{args.Member.Key}\" found for object \"{args.RubyObject.GetRealClassName()}\"");
-                args.Store();
-            },
-            UndefinedObject = (_, args) =>
-            {
-                Console.WriteLine($"Undefined object found: \"{args.RubyObject.GetRealClassName()}\"");
-                args.Ignore();
-            },
-            UndefinedUserObject = (_, args) =>
-            {
-                Console.WriteLine($"Undefined user object found: \"{args.RubyUserObject.GetRealClassName()}\"");
-                args.Store();
-            }
-        };
     }
-
-    protected override string MapPath(int index) => $"Map{index:D3}.rvdata2";
 
     protected override void Init()
     {
-        Actors = LoadListHolder<Actor, IActor>("Actors.rvdata2");
-        Animations = LoadListHolder<Animation, IAnimation>("Animations.rvdata2");
-        Armors = LoadListHolder<Armor, IArmor>("Armors.rvdata2");
-        Classes = LoadListHolder<Class, IClass>("Classes.rvdata2");
-        CommonEvents = LoadListHolder<CommonEvent, ICommonEvent>("CommonEvents.rvdata2");
-        Enemies = LoadListHolder<Enemy, IEnemy>("Enemies.rvdata2");
-        Items = LoadListHolder<Item, IItem>("Items.rvdata2");
-        Maps = new(this, MapPath, LoadData<Map>);
-        MapInfos = LoadDictionaryHolder<MapInfo, IMapInfo>("MapInfos.rvdata2");
-        Scripts = LoadListHolder<Script, Script>("Scripts.rvdata2");
-        Skills = LoadListHolder<Skill, ISkill>("Skills.rvdata2");
-        States = LoadListHolder<State, IState>("States.rvdata2");
-        System = LoadHolder<Data.VXAce.Classes.System, ISystem>("System.rvdata2");
-        Tilesets = LoadListHolder<Tileset, ITileSet>("Tilesets.rvdata2");
-        Troops = LoadListHolder<Troop,ITroop>("Troops.rvdata2");
-        Weapons = LoadListHolder<Weapon, IWeapon>("Weapons.rvdata2");
-    }
-
-    public override void Unload()
-    {
-        base.Unload();
-        Scripts.Unload();
-    }
-
-    public override string DataPath(string dataObject)
-    {
-        return Path.Combine(DataDirectory, dataObject);
-    }
-
-    public override T LoadData<T>(string dataFile)
-    {
-        var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
-        if (!File.Exists(path))
-            throw new FileNotFoundException(path);
-        
-        return RubyMarshal.Load<T>(path, _deserializationSettings);
-    }
-
-    public override void SaveData<T>(string dataFile, T data)
-    {
-        var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
-        RubyMarshal.Dump(path, data);
-    }
-
-    public override void Preload()
-    {
-        base.Preload();
-        Scripts.Get();
-    }
-    
-    public override void SaveAll()
-    {
-        base.SaveAll();
-        Scripts.Save();
+        LoadListHolder(out Actors, FileName("Actors"));
+        LoadListHolder(out Animations, FileName("Animations"));
+        LoadListHolder(out Armors, FileName("Armors"));
+        LoadListHolder(out Classes, FileName("Classes"));
+        LoadListHolder(out CommonEvents, FileName("CommonEvents"));
+        LoadListHolder(out Enemies, FileName("Enemies"));
+        LoadListHolder(out Items, FileName("Items"));
+        LoadMapsHolder(out Maps);
+        LoadDictionaryHolder(out MapInfos, FileName("MapInfos"));
+        LoadListHolder(out Scripts, FileName("Scripts"));
+        LoadListHolder(out Skills, FileName("Skills"));
+        LoadListHolder(out States, FileName("States"));
+        LoadHolder(out System, FileName("System"));
+        LoadListHolder(out Tilesets, FileName("Tilesets"));
+        LoadListHolder(out Troops, FileName("Troops"));
+        LoadListHolder(out Weapons, FileName("Weapons"));
     }
 
     public async Task DumpScripts(string path)

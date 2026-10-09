@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using RPGMakerLibCoreV2.Data;
 using RPGMakerLibCoreV2.Data.Helpers.Dump;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
@@ -70,7 +71,30 @@ public abstract class AbstractTextStorage
 
     protected abstract string GetExtension<T>();
 
-    protected void LoadMaps<T>(string path, Storage storage) where T : IMap
+    private void InvokeCore(string method, Type[] typeArgs, params object?[] args)
+    {
+        typeof(AbstractTextStorage)
+            .GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic)!
+            .MakeGenericMethod(typeArgs)
+            .Invoke(this, args);
+    }
+
+    protected void LoadMaps(string path, Storage storage)
+    {
+        InvokeCore(nameof(LoadMapsCore), [storage.ConcreteType<IMap>()], path, storage);
+    }
+
+    protected void LoadHolder<TV>(Storage storage, string path, string entityName, DataLookupHolder<TV> holder)
+    {
+        InvokeCore(nameof(LoadHolderCore), [storage.ConcreteType<TV>(), typeof(TV)], path, entityName, holder);
+    }
+
+    protected void LoadHolder<TV>(Storage storage, string path, string entityName, DataHolder<TV> holder)
+    {
+        InvokeCore(nameof(LoadSingleHolderCore), [storage.ConcreteType<TV>(), typeof(TV)], path, entityName, holder);
+    }
+
+    private void LoadMapsCore<T>(string path, Storage storage) where T : IMap
     {
         if (NeedCancel)
             return;
@@ -133,7 +157,7 @@ public abstract class AbstractTextStorage
         await DumpEntity(path, entityName, holder.Get());
     }
 
-    protected void LoadHolder<T, TV>(string path, string entityName, DataLookupHolder<TV> holder) where T : TV
+    private void LoadHolderCore<T, TV>(string path, string entityName, DataLookupHolder<TV> holder) where T : TV
     {
         holder.Unload();
 
@@ -163,7 +187,7 @@ public abstract class AbstractTextStorage
         }
     }
 
-    protected void LoadHolder<T, TV>(string path, string entityName, DataHolder<TV> holder) where T : TV
+    private void LoadSingleHolderCore<T, TV>(string path, string entityName, DataHolder<TV> holder) where T : TV
     {
         if (NeedCancel)
             return;

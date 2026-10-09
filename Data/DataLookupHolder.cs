@@ -1,12 +1,12 @@
 ﻿using RPGMakerLibCoreV2.Data.Enums.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
+
 
 namespace RPGMakerLibCoreV2.Data;
 
 public class DataLookupHolder<TDataType> : DataHolder<Dictionary<int, TDataType?>>
 {
-    public DataLookupHolder(Storage storage, HolderType type, string path,
-        HolderLoader<Dictionary<int, TDataType?>> loader) : base(storage, path, loader)
+    public DataLookupHolder(HolderType type, string path,
+        HolderLoader<Dictionary<int, TDataType?>> loader, HolderSaver saver) : base(path, loader, saver)
     {
         Type = type;
     }

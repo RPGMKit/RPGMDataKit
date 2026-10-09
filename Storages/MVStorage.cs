@@ -1,60 +1,34 @@
-﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.MV.Classes;
+﻿using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Storages.Abstraction;
+using RPGMakerLibCoreV2.Storages.Serialization;
 
 namespace RPGMakerLibCoreV2.Storages;
 
 public class MVStorage : Storage
 {
-    public MVStorage(string projectPath, string dataDirectory = "data") : base(projectPath, dataDirectory)
+    public MVStorage(string projectPath, string dataDirectory = "data") : base(StorageVersion.MV,
+        new JsonDataSerializer(), TypeMap.Mv, projectPath,
+        dataDirectory)
     {
-        Version = StorageVersion.MV;
     }
-
-    protected override string MapPath(int index) => $"Map{index:D3}.json";
 
     protected override void Init()
     {
-        Actors = LoadListHolder<Actor, IActor>("Actors.json");
-        Animations = LoadListHolder<Animation, IAnimation>("Animations.json");
-        Armors = LoadListHolder<Armor, IArmor>("Armors.json");
-        Classes = LoadListHolder<Class, IClass>("Classes.json");
-        CommonEvents = LoadListHolder<CommonEvent, ICommonEvent>("CommonEvents.json");
-        Enemies = LoadListHolder<Enemy, IEnemy>("Enemies.json");
-        Items = LoadListHolder<Item, IItem>("Items.json");
-        Maps = new(this, MapPath, LoadData<Map>);
-        MapInfos = LoadListHolder<MapInfo, IMapInfo>("MapInfos.json");
-        Skills = LoadListHolder<Skill, ISkill>("Skills.json");
-        States = LoadListHolder<State, IState>("States.json");
-        System = LoadHolder<Data.MV.Classes.System, ISystem>("System.json");
-        Tilesets = LoadListHolder<Tileset, ITileSet>("Tilesets.json");
-        Troops = LoadListHolder<Troop, ITroop>("Troops.json");
-        Weapons = LoadListHolder<Weapon, IWeapon>("Weapons.json");
+        LoadListHolder(out Actors, FileName("Actors"));
+        LoadListHolder(out Animations, FileName("Animations"));
+        LoadListHolder(out Armors, FileName("Armors"));
+        LoadListHolder(out Classes, FileName("Classes"));
+        LoadListHolder(out CommonEvents, FileName("CommonEvents"));
+        LoadListHolder(out Enemies, FileName("Enemies"));
+        LoadListHolder(out Items, FileName("Items"));
+        LoadMapsHolder(out Maps);
+        LoadListHolder(out MapInfos, FileName("MapInfos"));
+        LoadListHolder(out Skills, FileName("Skills"));
+        LoadListHolder(out States, FileName("States"));
+        LoadHolder(out System, FileName("System"));
+        LoadListHolder(out Tilesets, FileName("Tilesets"));
+        LoadListHolder(out Troops, FileName("Troops"));
+        LoadListHolder(out Weapons, FileName("Weapons"));
     }
-
-    public override string DataPath(string dataObject)
-    {
-        return Path.Combine(DataDirectory, dataObject);
-    }
-
-    public override T LoadData<T>(string dataFile)
-    {
-        var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
-        if (!File.Exists(path))
-            throw new FileNotFoundException(path);
-
-        var contents = File.ReadAllText(path);
-        if (string.IsNullOrWhiteSpace(contents))
-            throw new FileLoadException(path);
-
-        return JsonConvert.DeserializeObject<T>(contents);
-    }
-
-    public override void SaveData<T>(string dataFile, T data)
-    {
-        var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
-        File.WriteAllText(path, JsonConvert.SerializeObject(data));
-    }
-}
+}   
