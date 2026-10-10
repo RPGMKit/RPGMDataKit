@@ -70,24 +70,22 @@ public class Troop : JsonEntity, ITroop
         [JsonProperty("conditions")]
         public ITroopPageCondition Condition { get; set; }
 
-        [JsonProperty(PropertyName = "list")]
-        public List<Command> List { get; set; }
+        private readonly CommandList<Command> _commands = new(StorageVersion.MV);
 
-        public List<NamedCommand> NamedCommands { get; set; }
+        [JsonProperty(PropertyName = "list")]
+        public List<Command> List
+        {
+            get => _commands.Raw!;
+            set => _commands.Raw = value;
+        }
+
+        public List<NamedCommand> NamedCommands
+        {
+            get => _commands.Named;
+            set => _commands.Named = value;
+        }
 
         public IEnumerable<ICommand> Commands => List;
-
-        public override void OnDeserialized()
-        {
-            base.OnDeserialized();
-            NamedCommands = CommandContainerHelper.Unpack(List, StorageVersion.MV);
-        }
-
-        public override void OnSerializing()
-        {
-            base.OnSerializing();
-            List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.MV);
-        }
 
         public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {

@@ -86,9 +86,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
             public int MoveFrequency { get; set; }
 
             [JsonProperty("moveRoute")]
-            public MoveRoute _MoveRoute { get; set; }
-
-            public IMoveRoute MoveRoute => _MoveRoute;
+            public IMoveRoute MoveRoute { get; set; }
 
             [JsonProperty("walkAnime")]
             public bool WalkAnime { get; set; }
@@ -108,8 +106,14 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
             [JsonProperty("trigger")]
             public int Trigger { get; set; }
 
+            private readonly CommandList<Command> _commands = new(StorageVersion.MV);
+
             [JsonProperty("list")]
-            public List<Command> List { get; set; }
+            public List<Command> List
+            {
+                get => _commands.Raw!;
+                set => _commands.Raw = value;
+            }
 
             public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
             {
@@ -123,22 +127,13 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
                 }
             }
 
-            public List<NamedCommand> NamedCommands { get; set; }
+            public List<NamedCommand> NamedCommands
+            {
+                get => _commands.Named;
+                set => _commands.Named = value;
+            }
+
             public IEnumerable<ICommand> Commands => List;
-
-            public override void OnDeserialized()
-            {
-                base.OnDeserialized();
-                NamedCommands = CommandContainerHelper.Unpack(List, StorageVersion.MV);
-                MoveRoute.NamedCommands = CommandContainerHelper.Unpack(_MoveRoute.List, StorageVersion.MV);
-            }
-
-            public override void OnSerializing()
-            {
-                base.OnSerializing();
-                List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.MV);
-                _MoveRoute.List = CommandContainerHelper.Pack<MoveCommand>(_MoveRoute.NamedCommands, StorageVersion.MV);
-            }
         }
 
         [JsonProperty(PropertyName = "id")]

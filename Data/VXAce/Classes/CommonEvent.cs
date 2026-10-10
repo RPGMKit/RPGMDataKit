@@ -21,24 +21,22 @@ public class CommonEvent : RubySerializationEntity, ICommonEvent
     [RubyProperty("@switch_id")]
     public int SwitchId { get; set; }
 
-    [RubyProperty("@list")]
-    public List<Command>? List;
+    private readonly CommandList<Command> _commands = new(StorageVersion.VXAce);
 
-    public List<NamedCommand> NamedCommands { get; set; }
+    [RubyProperty("@list")]
+    public List<Command>? List
+    {
+        get => _commands.Raw;
+        set => _commands.Raw = value;
+    }
+
+    public List<NamedCommand> NamedCommands
+    {
+        get => _commands.Named;
+        set => _commands.Named = value;
+    }
 
     public IEnumerable<ICommand>? Commands => List;
-
-    public override void OnDeserialized()
-    {
-        base.OnDeserialized();
-        NamedCommands = CommandContainerHelper.Unpack(List, StorageVersion.VXAce);
-    }
-
-    public override void OnSerializing()
-    {
-        base.OnSerializing();
-        List = CommandContainerHelper.Pack<Command>(NamedCommands, StorageVersion.VXAce);
-    }
 
     public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
     {

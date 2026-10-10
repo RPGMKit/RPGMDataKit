@@ -19,26 +19,25 @@ public class MoveRoute : RubySerializationEntity, IMoveRoute
     [RubyProperty("@wait")]
     public bool Wait { get; set; }
 
+    private readonly CommandList<MoveCommand> _commands = new(StorageVersion.VXAce) { Raw = new() };
+
     [RubyProperty("@list")]
-    public List<MoveCommand>? List { get; set; } = new();
-    
+    public List<MoveCommand>? List
+    {
+        get => _commands.Raw;
+        set => _commands.Raw = value;
+    }
+
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1;
 
-    public List<NamedCommand> NamedCommands { get; set; }
+    public List<NamedCommand> NamedCommands
+    {
+        get => _commands.Named;
+        set => _commands.Named = value;
+    }
+
     public IEnumerable<IMoveCommand> Commands => List;
-
-    public override void OnDeserialized()
-    {
-        base.OnDeserialized();
-        NamedCommands = CommandContainerHelper.Unpack(List, StorageVersion.VXAce);
-    }
-
-    public override void OnSerializing()
-    {
-        base.OnSerializing();
-        List = CommandContainerHelper.Pack<MoveCommand>(NamedCommands, StorageVersion.VXAce);
-    }
 
     public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
     {
