@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
+using RPGMakerLibCoreV2.Data.Structures;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes
 {
@@ -10,9 +12,8 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         public int Id { get; set; }
 
         [JsonProperty(PropertyName = "flags")]
-        public List<short> Flags { get; set; } = new();
-
-        IList<short> ITileSet.Flags => Flags;
+        [JsonConverter(typeof(FlatTableJsonConverter))]
+        public Table Flags { get; set; } = new();
 
         [JsonProperty(PropertyName = "mode")]
         public int Mode { get; set; }

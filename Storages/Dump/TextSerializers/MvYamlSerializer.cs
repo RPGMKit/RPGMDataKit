@@ -24,6 +24,7 @@ public class MvYamlSerializer : AbstractYamlSerializer
             .WithTypeInspector(inner => new MvObjectTypeInspector(inner))
             .WithTypeConverter(new JTokenConverter())
             .WithTypeConverter(new JsonEntityConverter())
+            .WithTypeConverter(new FlatTableConverter())
             ;
 
         foreach (var (type, tag) in ConverterHelper.TaggedTypes)

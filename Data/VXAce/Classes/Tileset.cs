@@ -1,6 +1,6 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
+using RPGMakerLibCoreV2.Data.Structures;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
@@ -23,9 +23,7 @@ public class Tileset : RubySerializationEntity, ITileSet
     IList<string> ITileSet.TilesetNames => TilesetNames;
 
     [RubyProperty("@flags")]
-    public Table _Flags { get; set; }
-
-    public IList<short> Flags => _Flags.Elements;
+    public Table Flags { get; set; } = new();
 
     [RubyProperty("@note")]
     public string Note { get; set; }

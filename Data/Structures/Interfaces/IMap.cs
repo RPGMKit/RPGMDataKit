@@ -10,8 +10,8 @@ public interface IMap
 
     public int Width { get; set; }
 
-    // ground 1 => ground 2? => bottom object => top object => shadow flags => region id
-    public IList<int> Data { get; }
+    // Width x Height x layers: ground 1 => ground 2? => bottom object => top object => shadow flags => region id
+    public Table Data { get; }
 
     public IDictionary<int, IEvent?> Events { get; }
     

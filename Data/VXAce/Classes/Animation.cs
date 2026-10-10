@@ -1,5 +1,6 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMakerLibCoreV2.Data.Structures;
 using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
 using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;

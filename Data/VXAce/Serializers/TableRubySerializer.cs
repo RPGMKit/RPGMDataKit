@@ -1,4 +1,4 @@
-﻿using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
+﻿using RPGMakerLibCoreV2.Data.Structures;
 using RubyMarshalCS.Serialization.Interfaces;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Serializers;
@@ -26,9 +26,9 @@ class TableSerializer : IRubyUserSerializer<Table>
         writer.Write((int)obj.SizeX);
         writer.Write((int)obj.SizeY);
         writer.Write((int)obj.SizeZ);
-        writer.Write((int)obj.NumOfElements);
-        for (var i = 0; i < obj.NumOfElements; ++i)
-            writer.Write((short)obj.Elements[i]);
+        writer.Write(obj.Elements.Count);
+        foreach (var element in obj.Elements)
+            writer.Write(checked((short)element));
 
         var p = writer.BaseStream.Position;
     }

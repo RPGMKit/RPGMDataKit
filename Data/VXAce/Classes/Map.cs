@@ -1,7 +1,6 @@
 ﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.VXAce.Serializers;
-using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
+using RPGMakerLibCoreV2.Data.Structures;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 
@@ -77,10 +76,7 @@ public class Map : RubySerializationEntity, IMap
     public string Note { get; set; }
 
     [RubyProperty("@data")]
-    [RubyPropertyConverter(typeof(MapDataConverter))]
-    public List<int> Data { get; set; } = new();
-
-    IList<int> IMap.Data => Data;
+    public Table Data { get; set; } = new();
 
     [RubyProperty("@events")]
     public Dictionary<int, IEvent?> Events { get; set; } = new();

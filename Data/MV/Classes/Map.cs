@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMakerLibCoreV2.Data.Structures;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
@@ -75,13 +76,20 @@ public class Map : JsonEntity, IMap
 
     // ground 1 => ground 2? => bottom object => top object => shadow flags => region id
     [JsonProperty(PropertyName = "data")]
-    public List<int> Data { get; set; } = new();
+    [JsonConverter(typeof(FlatTableJsonConverter))]
+    public Table Data { get; set; } = new();
 
     [JsonProperty(PropertyName = "events")]
     [JsonConverter(typeof(ListToDictionaryJsonConverter<IEvent, Event>))]
     public Dictionary<int, IEvent?> Events { get; set; } = new();
 
-    IList<int> IMap.Data => Data;
-
     IDictionary<int, IEvent?> IMap.Events => Events;
+
+    public override void OnDeserialized()
+    {
+        base.OnDeserialized();
+
+        var cells = Width * Height;
+        Data.Reshape(Width, Height, cells > 0 ? Data.Count / cells : 0);
+    }
 }
