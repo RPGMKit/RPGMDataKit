@@ -7,8 +7,15 @@ namespace RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
 
 public class MvYamlSerializer : AbstractYamlSerializer
 {
+    private readonly TypeMap _types;
+
     private ISerializer? _serializer;
-    
+
+    public MvYamlSerializer(TypeMap? types = null)
+    {
+        _types = types ?? TypeMap.Mv;
+    }
+
     private IDeserializer? _deserializer;
     
     protected void PrepareBuilder<T>(BuilderSkeleton<T> builder) where T : BuilderSkeleton<T>
@@ -51,6 +58,7 @@ public class MvYamlSerializer : AbstractYamlSerializer
         var builder = new DeserializerBuilder()
             .IgnoreUnmatchedProperties()
             .WithNodeDeserializer(new ForceIntDeserializer())
+            .WithNodeTypeResolver(new TypeMapNodeTypeResolver(_types))
             .WithAttemptingUnquotedStringTypeDeserialization();
 
         PrepareBuilder(builder);

@@ -3,7 +3,6 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
@@ -69,9 +68,7 @@ public class Troop : JsonEntity, ITroop
         public int Span { get; set; }
 
         [JsonProperty("conditions")]
-        public PageCondition _Condition { get; set; }
-
-        public ITroopPageCondition Condition => _Condition;
+        public ITroopPageCondition Condition { get; set; }
 
         [JsonProperty(PropertyName = "list")]
         public List<Command> List { get; set; }
@@ -112,13 +109,11 @@ public class Troop : JsonEntity, ITroop
     public string Name { get; set; }
 
     [JsonProperty("members")]
-    [JsonConverter(typeof(InterfaceListJsonConverter<IMember, Member>))]
     public List<IMember?> Members { get; set; } = new();
 
     IList<IMember?> ITroop.Members => Members;
 
     [JsonProperty("pages")]
-    [JsonConverter(typeof(InterfaceListJsonConverter<ITroopPage, EventPage>))]
     public List<ITroopPage?> Pages { get; set; } = new();
 
     IList<ITroopPage?> ITroop.Pages => Pages;

@@ -3,7 +3,6 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes
 {
@@ -72,14 +71,10 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
             }
 
             [JsonProperty("conditions")]
-            public EventPageCondition _Condition { get; set; }
-
-            public IEventPageCondition Condition => _Condition;
+            public IEventPageCondition Condition { get; set; }
 
             [JsonProperty("image")]
-            public PageGraphic _Graphic { get; set; }
-
-            public IPageGraphic Graphic => _Graphic;
+            public IPageGraphic Graphic { get; set; }
 
             [JsonProperty("moveType")]
             public int MoveType { get; set; }
@@ -156,7 +151,6 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
         public string Note { get; set; }
 
         [JsonProperty(PropertyName = "pages")]
-        [JsonConverter(typeof(InterfaceListJsonConverter<IEventPage, EventPage>))]
         public List<IEventPage?> Pages { get; set; } = new();
 
         IList<IEventPage?> IEvent.Pages => Pages;

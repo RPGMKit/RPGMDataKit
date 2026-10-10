@@ -69,9 +69,7 @@ public class Troop : RubySerializationEntity, ITroop
         }
 
         [RubyProperty("@condition")]
-        public PageCondition _Condition { get; set; }
-
-        public ITroopPageCondition Condition => _Condition;
+        public ITroopPageCondition Condition { get; set; }
 
         [RubyProperty("@span")]
         public int Span { get; set; }

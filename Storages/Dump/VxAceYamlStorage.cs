@@ -8,7 +8,7 @@ namespace RPGMakerLibCoreV2.Storages.Dump;
 
 public class VxAceYamlStorage : AbstractYamlStorage
 {
-    public VxAceYamlStorage() : base(new VxAceYamlSerializer())
+    public VxAceYamlStorage(TypeMap? types = null) : base(new VxAceYamlSerializer(types))
     {
         AddSpecialSerializer<Script>(new ScriptSerializer());
     }

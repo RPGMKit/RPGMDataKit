@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
@@ -104,7 +103,6 @@ public class System : JsonEntity, ISystem
     public List<string> SkillTypes { get; set; }
 
     [JsonProperty(PropertyName = "sounds")]
-    [JsonConverter(typeof(InterfaceListJsonConverter<IAudioFile, SoundData>))]
     public List<IAudioFile?> Sounds { get; set; } = new();
 
     [JsonProperty(PropertyName = "startMapId")]

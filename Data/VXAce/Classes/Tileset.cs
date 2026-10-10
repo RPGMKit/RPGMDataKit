@@ -18,9 +18,9 @@ public class Tileset : RubySerializationEntity, ITileSet
     public string Name { get; set; }
 
     [RubyProperty("@tileset_names")]
-    public List<string> _TilesetNames { get; set; }
+    public List<string> TilesetNames { get; set; } = new();
 
-    public IList<string> TilesetNames => _TilesetNames;
+    IList<string> ITileSet.TilesetNames => TilesetNames;
 
     [RubyProperty("@flags")]
     public Table _Flags { get; set; }

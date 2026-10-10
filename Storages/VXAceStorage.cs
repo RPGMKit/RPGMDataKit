@@ -11,8 +11,14 @@ public class VXAceStorage : Storage
 {
     public DataLookupHolder<Script> Scripts;
     
-    public VXAceStorage(string projectPath, string dataDirectory = "data") : base(StorageVersion.VXAce,
-        new RubyMarshalDataSerializer(), TypeMap.VXAce, projectPath, dataDirectory)
+    public VXAceStorage(string projectPath, string dataDirectory = "data") : this(projectPath, TypeMap.VXAce,
+        dataDirectory)
+    {
+    }
+
+    /// <param name="types">Entity implementations, e.g. <c>TypeMap.VXAce.Clone().Add&lt;IActor, MyActor&gt;()</c>.</param>
+    public VXAceStorage(string projectPath, TypeMap types, string dataDirectory = "data") : base(
+        StorageVersion.VXAce, new RubyMarshalDataSerializer(), types, projectPath, dataDirectory)
     {
     }
 

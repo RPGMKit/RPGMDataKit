@@ -82,14 +82,10 @@ public class Event : RubySerializationEntity, IEvent
         }
 
         [RubyProperty("@condition")]
-        public EventPageCondition _Condition { get; set; }
-
-        public IEventPageCondition Condition => _Condition;
+        public IEventPageCondition Condition { get; set; }
 
         [RubyProperty("@graphic")]
-        public PageGraphic _Graphic { get; set; }
-
-        public IPageGraphic Graphic => _Graphic;
+        public IPageGraphic Graphic { get; set; }
 
         [RubyProperty("@move_type")]
         public int MoveType { get; set; }

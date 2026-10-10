@@ -7,9 +7,14 @@ namespace RPGMakerLibCoreV2.Storages;
 
 public class MVStorage : Storage
 {
-    public MVStorage(string projectPath, string dataDirectory = "data") : base(StorageVersion.MV,
-        new JsonDataSerializer(), TypeMap.Mv, projectPath,
+    public MVStorage(string projectPath, string dataDirectory = "data") : this(projectPath, TypeMap.Mv,
         dataDirectory)
+    {
+    }
+
+    /// <param name="types">Entity implementations, e.g. <c>TypeMap.Mv.Clone().Add&lt;IActor, MyActor&gt;()</c>.</param>
+    public MVStorage(string projectPath, TypeMap types, string dataDirectory = "data") : base(StorageVersion.MV,
+        new JsonDataSerializer(types), types, projectPath, dataDirectory)
     {
     }
 

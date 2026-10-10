@@ -75,13 +75,13 @@ public class Map : JsonEntity, IMap
 
     // ground 1 => ground 2? => bottom object => top object => shadow flags => region id
     [JsonProperty(PropertyName = "data")]
-    public List<int> _Data { get; set; }
+    public List<int> Data { get; set; } = new();
 
     [JsonProperty(PropertyName = "events")]
     [JsonConverter(typeof(ListToDictionaryJsonConverter<IEvent, Event>))]
     public Dictionary<int, IEvent?> Events { get; set; } = new();
 
-    public IList<int> Data => _Data;
+    IList<int> IMap.Data => Data;
 
     IDictionary<int, IEvent?> IMap.Events => Events;
 }

@@ -5,48 +5,104 @@ namespace RPGMakerLibCoreV2.Storages;
 /// <summary>Maps entity interfaces to the concrete types of one maker version.</summary>
 public class TypeMap
 {
-    private readonly Dictionary<Type, Type> _map = new();
+    private static readonly string InterfacesNamespace = typeof(IActor).Namespace!;
 
+    private readonly Dictionary<Type, Type> _map = new();
+    private readonly Dictionary<Type, List<Type>> _ambiguous = new();
+    private bool _readOnly;
+
+    /// <summary>Built-in map for MV. Read-only: use <see cref="Clone"/> to customize.</summary>
+    public static TypeMap Mv { get; } = FromNamespace("RPGMakerLibCoreV2.Data.MV.Classes");
+
+    /// <summary>Built-in map for VXAce. Read-only: use <see cref="Clone"/> to customize.</summary>
+    public static TypeMap VXAce { get; } = FromNamespace("RPGMakerLibCoreV2.Data.VXAce.Classes");
+
+    /// <summary>Registers (or replaces) the implementation of an entity interface.</summary>
     public TypeMap Add<TInterface, TConcrete>() where TConcrete : TInterface
     {
+        if (_readOnly)
+            throw new InvalidOperationException("Built-in type maps are read-only, use Clone() first");
+
         _map[typeof(TInterface)] = typeof(TConcrete);
+        _ambiguous.Remove(typeof(TInterface));
+
         return this;
     }
 
-    /// <summary>Returns the registered concrete type, or <paramref name="type"/> itself when it has no mapping.</summary>
-    public Type Resolve(Type type) => _map.GetValueOrDefault(type, type);
+    /// <summary>Returns an editable copy.</summary>
+    public TypeMap Clone()
+    {
+        var copy = new TypeMap();
+        foreach (var (key, value) in _map)
+            copy._map[key] = value;
 
-    public static TypeMap Mv { get; } = new TypeMap()
-        .Add<IActor, Data.MV.Classes.Actor>()
-        .Add<IAnimation, Data.MV.Classes.Animation>()
-        .Add<IArmor, Data.MV.Classes.Armor>()
-        .Add<IClass, Data.MV.Classes.Class>()
-        .Add<ICommonEvent, Data.MV.Classes.CommonEvent>()
-        .Add<IEnemy, Data.MV.Classes.Enemy>()
-        .Add<IItem, Data.MV.Classes.Item>()
-        .Add<IMap, Data.MV.Classes.Map>()
-        .Add<IMapInfo, Data.MV.Classes.MapInfo>()
-        .Add<ISkill, Data.MV.Classes.Skill>()
-        .Add<IState, Data.MV.Classes.State>()
-        .Add<ISystem, Data.MV.Classes.System>()
-        .Add<ITileSet, Data.MV.Classes.Tileset>()
-        .Add<ITroop, Data.MV.Classes.Troop>()
-        .Add<IWeapon, Data.MV.Classes.Weapon>();
+        foreach (var (key, value) in _ambiguous)
+            copy._ambiguous[key] = new List<Type>(value);
 
-    public static TypeMap VXAce { get; } = new TypeMap()
-        .Add<IActor, Data.VXAce.Classes.Actor>()
-        .Add<IAnimation, Data.VXAce.Classes.Animation>()
-        .Add<IArmor, Data.VXAce.Classes.Armor>()
-        .Add<IClass, Data.VXAce.Classes.Class>()
-        .Add<ICommonEvent, Data.VXAce.Classes.CommonEvent>()
-        .Add<IEnemy, Data.VXAce.Classes.Enemy>()
-        .Add<IItem, Data.VXAce.Classes.Item>()
-        .Add<IMap, Data.VXAce.Classes.Map>()
-        .Add<IMapInfo, Data.VXAce.Classes.MapInfo>()
-        .Add<ISkill, Data.VXAce.Classes.Skill>()
-        .Add<IState, Data.VXAce.Classes.State>()
-        .Add<ISystem, Data.VXAce.Classes.System>()
-        .Add<ITileSet, Data.VXAce.Classes.Tileset>()
-        .Add<ITroop, Data.VXAce.Classes.Troop>()
-        .Add<IWeapon, Data.VXAce.Classes.Weapon>();
+        return copy;
+    }
+
+    /// <summary>
+    /// Returns the registered concrete type, or <paramref name="type"/> itself when it is not an entity interface.
+    /// </summary>
+    public Type Resolve(Type type)
+    {
+        if (_ambiguous.TryGetValue(type, out var candidates))
+            throw new InvalidOperationException(
+                $"{type.Name} is implemented by several types: {string.Join(", ", candidates.Select(c => c.FullName))}. " +
+                $"Pick one with TypeMap.Add<{type.Name}, TConcrete>()");
+
+        var concrete = _map.GetValueOrDefault(type, type);
+        if (concrete.IsInterface && concrete.Namespace == InterfacesNamespace)
+            throw new InvalidOperationException(
+                $"No implementation registered for {type.Name}. Register one with TypeMap.Add<{type.Name}, TConcrete>()");
+
+        return concrete;
+    }
+
+    /// <summary>
+    /// Maps every entity interface to the only non-abstract class that declares it in
+    /// <paramref name="classesNamespace"/> (including nested namespaces).
+    /// </summary>
+    private static TypeMap FromNamespace(string classesNamespace)
+    {
+        var candidates = new Dictionary<Type, List<Type>>();
+
+        var classes = typeof(TypeMap).Assembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false } &&
+                        t.Namespace != null &&
+                        (t.Namespace == classesNamespace || t.Namespace.StartsWith(classesNamespace + ".")));
+
+        foreach (var type in classes)
+        {
+            foreach (var entityInterface in DeclaredInterfaces(type).Where(i => i.Namespace == InterfacesNamespace))
+            {
+                if (!candidates.TryGetValue(entityInterface, out var list))
+                    candidates[entityInterface] = list = new();
+
+                list.Add(type);
+            }
+        }
+
+        var map = new TypeMap { _readOnly = true };
+        foreach (var (entityInterface, types) in candidates)
+        {
+            if (types.Count == 1)
+                map._map[entityInterface] = types[0];
+            else
+                map._ambiguous[entityInterface] = types;
+        }
+
+        return map;
+    }
+
+    /// <summary>Interfaces the type declares itself, without those inherited from its base type or other interfaces.</summary>
+    private static IEnumerable<Type> DeclaredInterfaces(Type type)
+    {
+        var all = type.GetInterfaces();
+        var inherited = all.SelectMany(i => i.GetInterfaces())
+            .Concat(type.BaseType?.GetInterfaces() ?? []);
+
+        return all.Except(inherited);
+    }
 }

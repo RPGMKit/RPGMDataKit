@@ -11,6 +11,13 @@ namespace RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
 
 public class VxAceYamlSerializer : AbstractYamlSerializer
 {
+    private readonly TypeMap _types;
+
+    public VxAceYamlSerializer(TypeMap? types = null)
+    {
+        _types = types ?? TypeMap.VXAce;
+    }
+
     private void PrepareBuilder<T>(BuilderSkeleton<T> builder) where T : BuilderSkeleton<T>
     {
         builder
@@ -49,6 +56,7 @@ public class VxAceYamlSerializer : AbstractYamlSerializer
         var builder = new DeserializerBuilder()
             .IgnoreUnmatchedProperties()
             .WithNodeDeserializer(new ForceIntDeserializer())
+            .WithNodeTypeResolver(new TypeMapNodeTypeResolver(_types))
             .WithAttemptingUnquotedStringTypeDeserialization();
 
         PrepareBuilder(builder);

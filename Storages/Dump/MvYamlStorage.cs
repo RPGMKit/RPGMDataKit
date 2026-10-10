@@ -8,7 +8,7 @@ namespace RPGMakerLibCoreV2.Storages.Dump;
 
 public class MvYamlStorage : AbstractYamlStorage
 {
-    public MvYamlStorage() : base(new MvYamlSerializer())
+    public MvYamlStorage(TypeMap? types = null) : base(new MvYamlSerializer(types))
     {
     }
 
