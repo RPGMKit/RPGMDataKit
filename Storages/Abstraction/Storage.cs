@@ -71,6 +71,8 @@ public abstract class Storage
 
     public virtual string DataPath(string dataObject) => Path.Combine(DataDirectory, dataObject);
 
+    public bool DataFileExists(string dataFile) => File.Exists(Path.Combine(ProjectPath, DataDirectory, dataFile));
+
     public virtual T LoadData<T>(string dataFile)
     {
         var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
@@ -179,7 +181,7 @@ public abstract class Storage
     private MapsHolder LoadMapsHolderCore<T, TV>()
         where T : class, TV
     {
-        return new(MapPath, path => (IMap)LoadData<T>(path)!, SaveObject);
+        return new(MapPath, path => DataFileExists(path) ? (IMap)LoadData<T>(path)! : null, SaveObject);
     }
 
     public ICommonEvent? GetCommonEvent(int id)

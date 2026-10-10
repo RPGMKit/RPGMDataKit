@@ -6,7 +6,7 @@ namespace RPGMakerLibCoreV2;
 
 public class MapsHolder : ITable
 {
-    private readonly Dictionary<int, DataHolder<IMap>?> _maps = new();
+    private readonly Dictionary<int, DataHolder<IMap>> _maps = new();
     private readonly HolderSaver _saver;
     private readonly Func<int, string> _pathLoader;
     private readonly HolderLoader<IMap> _loader;
@@ -27,24 +27,20 @@ public class MapsHolder : ITable
         _maps.Clear();
     }
 
+    /// <summary>Returns the map, loading it on first access, or null when the map file does not exist.</summary>
     public IMap? Get(int index)
     {
-        if (_maps.TryGetValue(index, out var map))
-            return map?.Get();
+        if (_maps.TryGetValue(index, out var holder))
+            return holder.Get();
 
-        try
-        {
-            map = CreateSubHolder(index);
-            map.Load();
-            _maps[index] = map;
+        holder = CreateSubHolder(index);
+        holder.Load();
 
-            return map.Get();
-        }
-        catch (FileNotFoundException)
-        {
-            _maps[index] = null;
-            return null;
-        }
+        var map = holder.Get();
+        if (map != null)
+            _maps[index] = holder;
+
+        return map;
     }
 
     private DataHolder<IMap> CreateSubHolder(int mapIndex)
@@ -62,7 +58,7 @@ public class MapsHolder : ITable
 
     public void Save()
     {
-        foreach (var (_, map) in _maps)
-            map?.Save();
+        foreach (var holder in _maps.Values)
+            holder.Save();
     }
 }
