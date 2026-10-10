@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
 namespace RPGMakerLibCoreV2.Storages;
@@ -58,6 +59,12 @@ public class TypeMap
                 $"No implementation registered for {type.Name}. Register one with TypeMap.Add<{type.Name}, TConcrete>()");
 
         return concrete;
+    }
+
+    /// <summary>Compiled parameterless constructor of the implementation registered for <typeparamref name="T"/>.</summary>
+    public Func<T> Factory<T>() where T : class
+    {
+        return Expression.Lambda<Func<T>>(Expression.New(Resolve(typeof(T)))).Compile();
     }
 
     /// <summary>

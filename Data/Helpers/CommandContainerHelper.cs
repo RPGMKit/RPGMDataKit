@@ -57,13 +57,21 @@ public static class CommandContainerHelper
     public static List<T>? Pack<T>(IEnumerable<NamedCommand>? commands, StorageVersion version)
         where T : ICommand, new()
     {
+        return Pack(commands, version, () => new T());
+    }
+
+    public static List<T>? Pack<T>(IEnumerable<NamedCommand>? commands, StorageVersion version, Func<T> create)
+        where T : ICommand
+    {
         if (commands == null)
             return null;
-        
+
         List<T> ret = new();
         ret.AddRange(commands.Select(c =>
         {
-            var comm = new T() { Code = c.Code, Indent = c.Indent };
+            var comm = create();
+            comm.Code = c.Code;
+            comm.Indent = c.Indent;
 
             c._Pack(comm, version);
             if (comm.Parameters == null && (comm.Code == 0 || comm.Indent != null))

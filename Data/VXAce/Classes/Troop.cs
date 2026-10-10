@@ -26,7 +26,7 @@ public class Troop : RubySerializationEntity, ITroop
     }
 
     [RubyObject("RPG::Troop::Page")]
-    public class EventPage : RubySerializationEntity, ITroopPage
+    public class EventPage : VxCommandContainer, ITroopPage
     {
         [RubyObject("RPG::Troop::Page::Condition")]
         public class PageCondition : RubySerializationEntity, ITroopPageCondition
@@ -73,23 +73,6 @@ public class Troop : RubySerializationEntity, ITroop
 
         [RubyProperty("@span")]
         public int Span { get; set; }
-
-        private readonly CommandList<Command> _commands = new(StorageVersion.VXAce);
-
-        [RubyProperty("@list")]
-        public List<Command> List
-        {
-            get => _commands.Raw!;
-            set => _commands.Raw = value;
-        }
-
-        public List<NamedCommand> NamedCommands
-        {
-            get => _commands.Named;
-            set => _commands.Named = value;
-        }
-
-        public IEnumerable<ICommand> Commands => List;
 
         public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {

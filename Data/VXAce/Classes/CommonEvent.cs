@@ -7,7 +7,7 @@ using RubyMarshalCS.Serialization.Attributes;
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::CommonEvent")]
-public class CommonEvent : RubySerializationEntity, ICommonEvent
+public class CommonEvent : VxCommandContainer, ICommonEvent
 {
     [RubyProperty("@id")]
     public int Id { get; set; }
@@ -20,23 +20,6 @@ public class CommonEvent : RubySerializationEntity, ICommonEvent
 
     [RubyProperty("@switch_id")]
     public int SwitchId { get; set; }
-
-    private readonly CommandList<Command> _commands = new(StorageVersion.VXAce);
-
-    [RubyProperty("@list")]
-    public List<Command>? List
-    {
-        get => _commands.Raw;
-        set => _commands.Raw = value;
-    }
-
-    public List<NamedCommand> NamedCommands
-    {
-        get => _commands.Named;
-        set => _commands.Named = value;
-    }
-
-    public IEnumerable<ICommand>? Commands => List;
 
     public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
     {

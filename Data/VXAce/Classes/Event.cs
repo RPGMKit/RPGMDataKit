@@ -11,7 +11,7 @@ namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 public class Event : RubySerializationEntity, IEvent
 {
     [RubyObject("RPG::Event::Page")]
-    public class EventPage : RubySerializationEntity, IEventPage
+    public class EventPage : VxCommandContainer, IEventPage
     {
         [RubyObject("RPG::Event::Page::Condition")]
         public class EventPageCondition : RubySerializationEntity, IEventPageCondition
@@ -117,25 +117,8 @@ public class Event : RubySerializationEntity, IEvent
         [RubyProperty("@trigger")]
         public int Trigger { get; set; }
 
-        private readonly CommandList<Command> _commands = new(StorageVersion.VXAce);
-
-        [RubyProperty("@list")]
-        public List<Command> List
-        {
-            get => _commands.Raw!;
-            set => _commands.Raw = value;
-        }
-
         [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
         public object _1;
-
-        public List<NamedCommand> NamedCommands
-        {
-            get => _commands.Named;
-            set => _commands.Named = value;
-        }
-
-        public IEnumerable<ICommand> Commands => List;
 
         public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {

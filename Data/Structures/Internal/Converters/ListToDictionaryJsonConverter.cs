@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
 
@@ -15,12 +14,14 @@ public class ListToDictionaryJsonConverter<TInterface, TConcrete> : JsonConverte
         if (reader.TokenType == JsonToken.Null)
             return null;
 
-        var array = JArray.Load(reader);
+        if (reader.TokenType != JsonToken.StartArray)
+            throw new JsonSerializationException($"Expected an array, got {reader.TokenType}");
+
         var dict = new Dictionary<int, TInterface?>();
-        for (var i = 0; i < array.Count; ++i)
+        for (var i = 0; reader.Read() && reader.TokenType != JsonToken.EndArray; ++i)
         {
-            if (array[i].Type != JTokenType.Null)
-                dict[i] = array[i].ToObject<TConcrete>(serializer);
+            if (reader.TokenType != JsonToken.Null)
+                dict[i] = serializer.Deserialize<TConcrete>(reader);
         }
 
         return dict;

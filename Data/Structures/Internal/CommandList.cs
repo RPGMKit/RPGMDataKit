@@ -9,21 +9,24 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 /// Named commands are built on first access. Until then the raw list is kept untouched, so entities nobody
 /// looked into are saved exactly as they were read.
 /// </summary>
-public class CommandList<TRaw> where TRaw : ICommand, new()
+public class CommandList<TCommand> where TCommand : ICommand
 {
     private readonly StorageVersion _version;
-    private List<TRaw>? _raw;
+    private readonly Func<TCommand> _create;
+    private List<TCommand>? _raw;
     private List<NamedCommand>? _named;
 
-    public CommandList(StorageVersion version)
+    /// <param name="create">Creates an empty raw command when named commands are packed.</param>
+    public CommandList(StorageVersion version, Func<TCommand> create)
     {
         _version = version;
+        _create = create;
     }
 
     /// <summary>Commands in the file form. Rebuilt from <see cref="Named"/> once those were accessed.</summary>
-    public List<TRaw>? Raw
+    public List<TCommand>? Raw
     {
-        get => _named != null ? CommandContainerHelper.Pack<TRaw>(_named, _version) : _raw;
+        get => _named != null ? CommandContainerHelper.Pack(_named, _version, _create) : _raw;
         set
         {
             _raw = value;

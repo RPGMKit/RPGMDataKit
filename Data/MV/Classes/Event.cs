@@ -8,7 +8,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
 {
     public class Event : JsonEntity, IEvent
     {
-        public class EventPage : JsonEntity, IEventPage
+        public class EventPage : MvCommandContainer, IEventPage
         {
             public class EventPageCondition : JsonEntity, IEventPageCondition
             {
@@ -106,15 +106,6 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
             [JsonProperty("trigger")]
             public int Trigger { get; set; }
 
-            private readonly CommandList<Command> _commands = new(StorageVersion.MV);
-
-            [JsonProperty("list")]
-            public List<Command> List
-            {
-                get => _commands.Raw!;
-                set => _commands.Raw = value;
-            }
-
             public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
             {
                 if (options.Format == DumpFormat.Text)
@@ -126,14 +117,6 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes
                     return;
                 }
             }
-
-            public List<NamedCommand> NamedCommands
-            {
-                get => _commands.Named;
-                set => _commands.Named = value;
-            }
-
-            public IEnumerable<ICommand> Commands => List;
         }
 
         [JsonProperty(PropertyName = "id")]

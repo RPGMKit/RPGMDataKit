@@ -6,7 +6,7 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
-public class CommonEvent : JsonEntity, ICommonEvent
+public class CommonEvent : MvCommandContainer, ICommonEvent
 {
     [JsonProperty(PropertyName = "id")]
     public int Id { get; set; }
@@ -19,23 +19,6 @@ public class CommonEvent : JsonEntity, ICommonEvent
         
     [JsonProperty(PropertyName = "switchId")]
     public int SwitchId { get; set; }
-
-    private readonly CommandList<Command> _commands = new(StorageVersion.MV);
-
-    [JsonProperty(PropertyName = "list")]
-    public List<Command>? List
-    {
-        get => _commands.Raw;
-        set => _commands.Raw = value;
-    }
-
-    public List<NamedCommand> NamedCommands
-    {
-        get => _commands.Named;
-        set => _commands.Named = value;
-    }
-
-    public IEnumerable<ICommand>? Commands => List;
 
     public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
     {

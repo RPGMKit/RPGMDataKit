@@ -23,7 +23,7 @@ public class Troop : JsonEntity, ITroop
         public bool Hidden { get; set; }
     }
 
-    public class EventPage : JsonEntity, ITroopPage
+    public class EventPage : MvCommandContainer, ITroopPage
     {
         public class PageCondition : JsonEntity, ITroopPageCondition
         {
@@ -69,23 +69,6 @@ public class Troop : JsonEntity, ITroop
 
         [JsonProperty("conditions")]
         public ITroopPageCondition Condition { get; set; }
-
-        private readonly CommandList<Command> _commands = new(StorageVersion.MV);
-
-        [JsonProperty(PropertyName = "list")]
-        public List<Command> List
-        {
-            get => _commands.Raw!;
-            set => _commands.Raw = value;
-        }
-
-        public List<NamedCommand> NamedCommands
-        {
-            get => _commands.Named;
-            set => _commands.Named = value;
-        }
-
-        public IEnumerable<ICommand> Commands => List;
 
         public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {

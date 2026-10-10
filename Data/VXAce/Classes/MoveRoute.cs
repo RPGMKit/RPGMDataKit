@@ -8,8 +8,13 @@ using RubyMarshalCS.Serialization.Enums;
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::MoveRoute")]
-public class MoveRoute : RubySerializationEntity, IMoveRoute
+public class MoveRoute : VxMoveCommandContainer, IMoveRoute
 {
+    public MoveRoute()
+    {
+        List = new();
+    }
+
     [RubyProperty("@repeat")]
     public bool Repeat { get; set; }
 
@@ -19,25 +24,8 @@ public class MoveRoute : RubySerializationEntity, IMoveRoute
     [RubyProperty("@wait")]
     public bool Wait { get; set; }
 
-    private readonly CommandList<MoveCommand> _commands = new(StorageVersion.VXAce) { Raw = new() };
-
-    [RubyProperty("@list")]
-    public List<MoveCommand>? List
-    {
-        get => _commands.Raw;
-        set => _commands.Raw = value;
-    }
-
     [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
     public object _1;
-
-    public List<NamedCommand> NamedCommands
-    {
-        get => _commands.Named;
-        set => _commands.Named = value;
-    }
-
-    public IEnumerable<IMoveCommand> Commands => List;
 
     public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
     {
