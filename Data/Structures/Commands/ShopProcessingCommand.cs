@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -16,28 +15,34 @@ public class ShopProcessingCommand : NamedCommand
         Armor = 2,
     }
     
-    public ItemType Type { get; set; }
-    public int ItemId { get; set; }
-    public bool HasCustomPrice { get; set; }
-    public int CustomPrice { get; set; }
-    public bool PurchaseOnly { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public ItemType Type
     {
-        Type = parameterProvider.GetParameter<ItemType>(0);
-        ItemId = parameterProvider.GetParameter<int>(1);
-        HasCustomPrice = parameterProvider.GetParameter<int>(2) != 0;
-        CustomPrice = parameterProvider.GetParameter<int>(3);
-        PurchaseOnly = parameterProvider.GetParameter<bool>(4);
+        get => Get<ItemType>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int ItemId
     {
-        parameterProvider.SetParameter(0, Type);
-        parameterProvider.SetParameter(1, ItemId);
-        parameterProvider.SetParameter(2, HasCustomPrice ? 1 : 0);
-        parameterProvider.SetParameter(3, CustomPrice);
-        parameterProvider.SetParameter(4, PurchaseOnly);
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
+
+    public bool HasCustomPrice
+    {
+        get => Get<int>(2) != 0;
+        set => Set(2, value ? 1 : 0);
+    }
+
+    public int CustomPrice
+    {
+        get => Get<int>(3);
+        set => Set(3, value);
+    }
+
+    public bool PurchaseOnly
+    {
+        get => Get<bool>(4);
+        set => Set(4, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

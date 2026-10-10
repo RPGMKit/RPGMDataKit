@@ -1,7 +1,7 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.MV.Classes;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -12,18 +12,15 @@ public class ChangeDefeatME : NamedCommand
 
     public override string GetCommandName(StorageVersion version) => "Change Defeat ME";
     
-    public IAudioFile SoundData { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public IAudioFile SoundData
     {
-        SoundData = version == StorageVersion.MV ? parameterProvider.GetParameter<SoundData>(0) : throw new Exception("Exists only in MV");
+        get => GetEntity<IAudioFile, SoundData>(0);
+        set => Set(0, AudioFiles.ForMv(value));
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    protected override void OnMadeInCodeBound(StorageVersion version)
     {
-        if (version == StorageVersion.MV)
-            parameterProvider.SetParameter(0, SoundData);
-        else
+        if (version != StorageVersion.MV)
             throw new Exception("Exists only in MV");
     }
 

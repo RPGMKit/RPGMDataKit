@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -21,28 +20,34 @@ public class ChangeWeaponsCommand : NamedCommand
         Variable = 1,
     }
 
-    public int WeaponId { get; set; }
-    public OperatorType Operator { get; set; }
-    public OperandType Operand { get; set; }
-    public int Value { get; set; }
-    public bool IncludeEquipment { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int WeaponId
     {
-        WeaponId = parameterProvider.GetParameter<int>(0);
-        Operator = parameterProvider.GetParameter<OperatorType>(1);
-        Operand = parameterProvider.GetParameter<OperandType>(2);
-        Value = parameterProvider.GetParameter<int>(3);
-        IncludeEquipment = parameterProvider.GetParameter<bool>(4);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public OperatorType Operator
     {
-        parameterProvider.SetParameter(0, WeaponId);
-        parameterProvider.SetParameter(1, Operator);
-        parameterProvider.SetParameter(2, Operand);
-        parameterProvider.SetParameter(3, Value);
-        parameterProvider.SetParameter(4, IncludeEquipment);
+        get => Get<OperatorType>(1);
+        set => Set(1, value);
+    }
+
+    public OperandType Operand
+    {
+        get => Get<OperandType>(2);
+        set => Set(2, value);
+    }
+
+    public int Value
+    {
+        get => Get<int>(3);
+        set => Set(3, value);
+    }
+
+    public bool IncludeEquipment
+    {
+        get => Get<bool>(4);
+        set => Set(4, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

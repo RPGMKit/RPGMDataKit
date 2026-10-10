@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -15,27 +14,29 @@ public class ChangePartyMemberCommand : NamedCommand
         Remove = 1,
     }
 
-    public int ActorId { get; set; }
-    public ChangeType Type { get; set; }
-    public bool DoInitialize { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int ActorId
     {
-        ActorId = parameterProvider.GetParameter<int>(0);
-        Type = parameterProvider.GetParameter<ChangeType>(1);
-        DoInitialize = version == StorageVersion.MV
-            ? parameterProvider.GetParameter<bool>(2)
-            : parameterProvider.GetParameter<int>(2) > 0;
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public ChangeType Type
     {
-        parameterProvider.SetParameter(0, ActorId);
-        parameterProvider.SetParameter(1, Type);
-        if (version == StorageVersion.MV)
-            parameterProvider.SetParameter(2, DoInitialize);
-        else
-            parameterProvider.SetParameter(2, DoInitialize ? 1 : 0);
+        get => Get<ChangeType>(1);
+        set => Set(1, value);
+    }
+
+    // a bool in MV, 0 or 1 in VXAce
+    public bool DoInitialize
+    {
+        get => Version == StorageVersion.MV ? Get<bool>(2) : Get<int>(2) > 0;
+        set
+        {
+            if (Version == StorageVersion.MV)
+                Set(2, value);
+            else
+                Set(2, value ? 1 : 0);
+        }
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

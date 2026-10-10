@@ -30,56 +30,12 @@ public static class CommandContainerHelper
         throw new Exception($"Dump format {options.Format} not implemented");
     }
 
-    public static List<NamedCommand>? Unpack<T>(IEnumerable<T>? commands, StorageVersion version) where T : ICommand
+    /// <summary>The named command (a view) over a raw command.</summary>
+    public static NamedCommand CreateNamed<T>(T command, StorageVersion version) where T : ICommand
     {
-        if (commands == null)
-            return null;
-
-        List<NamedCommand> namedCommands = new();
         if (typeof(IMoveCommand).IsAssignableFrom(typeof(T)))
-            namedCommands.AddRange(commands.Select(c => MovementCommandFactory.Create((IMoveCommand)c, version)));
-        else
-            namedCommands.AddRange(commands.Select(c =>
-            {
-                try
-                {
-                    return CommandFactory.Create(c, version);
-                }
-                catch (Exception ex)
-                {
-                    throw;
-                }
-            }));
+            return MovementCommandFactory.Create((IMoveCommand)command, version);
 
-        return namedCommands;
-    }
-
-    public static List<T>? Pack<T>(IEnumerable<NamedCommand>? commands, StorageVersion version)
-        where T : ICommand, new()
-    {
-        return Pack(commands, version, () => new T());
-    }
-
-    public static List<T>? Pack<T>(IEnumerable<NamedCommand>? commands, StorageVersion version, Func<T> create)
-        where T : ICommand
-    {
-        if (commands == null)
-            return null;
-
-        List<T> ret = new();
-        ret.AddRange(commands.Select(c =>
-        {
-            var comm = create();
-            comm.Code = c.Code;
-            comm.Indent = c.Indent;
-
-            c._Pack(comm, version);
-            if (comm.Parameters == null && (comm.Code == 0 || comm.Indent != null))
-                comm.Parameters = [];
-
-            return comm;
-        }));
-
-        return ret;
+        return CommandFactory.Create(command, version);
     }
 }

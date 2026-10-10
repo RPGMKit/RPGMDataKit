@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -27,25 +26,28 @@ public class ChangeItemsCommand : NamedCommand
         Variable = 1,
     }
 
-    public int ItemId { get; set; }
-    public OperatorType Operator { get; set; }
-    public OperandType Operand { get; set; }
-    public int Value { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int ItemId
     {
-        ItemId = parameterProvider.GetParameter<int>(0);
-        Operator = parameterProvider.GetParameter<OperatorType>(1);
-        Operand = parameterProvider.GetParameter<OperandType>(2);
-        Value = parameterProvider.GetParameter<int>(3);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public OperatorType Operator
     {
-        parameterProvider.SetParameter(0, ItemId);
-        parameterProvider.SetParameter(1, Operator);
-        parameterProvider.SetParameter(2, Operand);
-        parameterProvider.SetParameter(3, Value);
+        get => Get<OperatorType>(1);
+        set => Set(1, value);
+    }
+
+    public OperandType Operand
+    {
+        get => Get<OperandType>(2);
+        set => Set(2, value);
+    }
+
+    public int Value
+    {
+        get => Get<int>(3);
+        set => Set(3, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -16,25 +15,28 @@ public class ShowTextBaseCommand : NamedCommand
         Bottom = 2,
     }
         
-    public string Face { get; set; }
-    public int Offset { get; set; }
-    public BackgroundType Background { get; set; }
-    public PositionType Position { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public string Face
     {
-        Face = parameterProvider.GetParameter<string>(0);
-        Offset = parameterProvider.GetParameter<int>(1);
-        Background = parameterProvider.GetParameter<BackgroundType>(2);
-        Position = parameterProvider.GetParameter<PositionType>(3);
+        get => Get<string>(0);
+        set => Set(0, value);
     }
-    
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+
+    public int Offset
     {
-        parameterProvider.SetParameter(0, Face);
-        parameterProvider.SetParameter(1, Offset);
-        parameterProvider.SetParameter(2, Background);
-        parameterProvider.SetParameter(3, Position);
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
+
+    public BackgroundType Background
+    {
+        get => Get<BackgroundType>(2);
+        set => Set(2, value);
+    }
+
+    public PositionType Position
+    {
+        get => Get<PositionType>(3);
+        set => Set(3, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

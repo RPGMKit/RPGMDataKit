@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
@@ -5,38 +6,74 @@ using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 
 /// <summary>
-/// Commands of a container in two forms: raw commands as stored in the file and <see cref="NamedCommand"/>s.
-/// Named commands are built on first access. Until then the raw list is kept untouched, so entities nobody
-/// looked into are saved exactly as they were read.
+/// Commands of a container. Users work with <see cref="NamedCommand"/>s only: each of them is a view over its raw
+/// command, so editing one edits the raw data. The raw commands are only used to read and write the file
+/// (<see cref="LoadRaw"/>, <see cref="ToRaw"/>).
 /// </summary>
-public class CommandList<TCommand> where TCommand : ICommand
+public sealed class CommandList<TCommand> : Collection<NamedCommand> where TCommand : class, ICommand
 {
     private readonly StorageVersion _version;
     private readonly Func<TCommand> _create;
-    private List<TCommand>? _raw;
-    private List<NamedCommand>? _named;
 
-    /// <param name="create">Creates an empty raw command when named commands are packed.</param>
+    // a list that is absent in the file stays absent when saved, until a command is added
+    private bool _isNull = true;
+
+    /// <param name="create">Creates an empty raw command for a named command made in code.</param>
     public CommandList(StorageVersion version, Func<TCommand> create)
     {
         _version = version;
         _create = create;
     }
 
-    /// <summary>Commands in the file form. Rebuilt from <see cref="Named"/> once those were accessed.</summary>
-    public List<TCommand>? Raw
+    /// <summary>Builds the named commands over the raw commands that were read from the file.</summary>
+    public void LoadRaw(List<TCommand>? raw)
     {
-        get => _named != null ? CommandContainerHelper.Pack(_named, _version, _create) : _raw;
-        set
-        {
-            _raw = value;
-            _named = null;
-        }
+        base.ClearItems();
+        _isNull = raw == null;
+
+        if (raw == null)
+            return;
+
+        foreach (var command in raw)
+            base.InsertItem(Count, CommandContainerHelper.CreateNamed(command, _version));
     }
 
-    public List<NamedCommand> Named
+    /// <summary>The raw commands to write to the file.</summary>
+    public List<TCommand>? ToRaw()
     {
-        get => _named ??= CommandContainerHelper.Unpack(_raw, _version)!;
-        set => _named = value;
+        return _isNull ? null : this.Select(named => (TCommand)named.Raw).ToList();
+    }
+
+    /// <summary>Replaces all commands.</summary>
+    public void Assign(IEnumerable<NamedCommand> commands)
+    {
+        var items = commands.ToList(); // the source may be this very list
+
+        Clear();
+        _isNull = false;
+        foreach (var command in items)
+            Add(command);
+    }
+
+    protected override void InsertItem(int index, NamedCommand item)
+    {
+        _isNull = false;
+        base.InsertItem(index, Attach(item));
+    }
+
+    protected override void SetItem(int index, NamedCommand item)
+    {
+        base.SetItem(index, Attach(item));
+    }
+
+    /// <summary>A command made in code gets its raw command when it is put into the list.</summary>
+    private NamedCommand Attach(NamedCommand item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (item.IsDetached)
+            item.Bind(_create(), _version);
+
+        return item;
     }
 }

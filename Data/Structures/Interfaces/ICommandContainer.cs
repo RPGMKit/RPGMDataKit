@@ -4,7 +4,6 @@ namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
 public interface ICommandContainer<out T> : IDumpable
 {
-    public List<NamedCommand> NamedCommands { get; set; }
-
-    public IEnumerable<T>? Commands { get; }
+    /// <summary>The commands. Assigning replaces all of them.</summary>
+    public IList<NamedCommand> NamedCommands { get; set; }
 }

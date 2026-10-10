@@ -1,28 +1,20 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
 
 public class IfSwitchCommand : IfCommand
 {
-    public int SwitchId { get; set; }   
-    public OnOffState State { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int SwitchId
     {
-        base.Unpack(parameterProvider, version);
-
-        SwitchId = parameterProvider.GetParameter<int>(1);
-        State = parameterProvider.GetParameter<OnOffState>(2);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public OnOffState State
     {
-        base.Pack(parameterProvider, version);
-        
-        parameterProvider.SetParameter(1, SwitchId);
-        parameterProvider.SetParameter(2, State);
+        get => Get<OnOffState>(2);
+        set => Set(2, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

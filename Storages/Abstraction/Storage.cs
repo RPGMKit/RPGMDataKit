@@ -246,7 +246,7 @@ public abstract class Storage
         
         reporter?.SetStage(DumpStage.Progress);
 
-        async Task<bool> WalkCommands(List<NamedCommand> commands, Func<EntityContext> contextFactory)
+        async Task<bool> WalkCommands(IEnumerable<NamedCommand> commands, Func<EntityContext> contextFactory)
         {
             var commandIndex = 0;
             foreach (var command in commands)

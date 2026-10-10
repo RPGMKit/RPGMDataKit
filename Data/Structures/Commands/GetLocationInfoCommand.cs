@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -37,28 +36,34 @@ public class GetLocationInfoCommand : NamedCommand
         [InfoType.RegionI] = new("Region ID", ""),
     };
         
-    public int VariableId { get; set; }
-    public InfoType Type { get; set; }
-    public DesignationType Designation { get; set; }
-    public int Param1 { get; set; }
-    public int Param2 { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int VariableId
     {
-        VariableId = parameterProvider.GetParameter<int>(0);
-        Type = parameterProvider.GetParameter<InfoType>(1);
-        Designation = parameterProvider.GetParameter<DesignationType>(2);
-        Param1 = parameterProvider.GetParameter<int>(3);
-        Param2 = parameterProvider.GetParameter<int>(4);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public InfoType Type
     {
-        parameterProvider.SetParameter(0, VariableId);
-        parameterProvider.SetParameter(1, Type);
-        parameterProvider.SetParameter(2, Designation);
-        parameterProvider.SetParameter(3, Param1);
-        parameterProvider.SetParameter(4, Param2);
+        get => Get<InfoType>(1);
+        set => Set(1, value);
+    }
+
+    public DesignationType Designation
+    {
+        get => Get<DesignationType>(2);
+        set => Set(2, value);
+    }
+
+    public int Param1
+    {
+        get => Get<int>(3);
+        set => Set(3, value);
+    }
+
+    public int Param2
+    {
+        get => Get<int>(4);
+        set => Set(4, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

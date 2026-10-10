@@ -1,8 +1,9 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
 namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
-public class Tone : ITone
+/// <summary>A tone as MV stores it: an array of red, green, blue and gray.</summary>
+public class Tone : List<int>, ITone
 {
     public static Tone FromArray(IList<int> list)
     {
@@ -15,8 +16,27 @@ public class Tone : ITone
         };
     }
 
-    public int Red { get; set; }
-    public int Green { get; set; }
-    public int Blue { get; set; }
-    public int Gray { get; set; }
+    public int Red
+    {
+        get => this.Get(0);
+        set => this.Set(0, value);
+    }
+
+    public int Green
+    {
+        get => this.Get(1);
+        set => this.Set(1, value);
+    }
+
+    public int Blue
+    {
+        get => this.Get(2);
+        set => this.Set(2, value);
+    }
+
+    public int Gray
+    {
+        get => this.Get(3);
+        set => this.Set(3, value);
+    }
 }

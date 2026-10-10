@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -9,19 +8,16 @@ public class ShowScrollingTextBaseCommand : NamedCommand
     public override int Code => CommandCodes.ShowScrollingTextBase;
     public override string GetCommandName(StorageVersion version) => "Text(S)";
 
-    public int Speed { get; set; }
-    public bool NoFastForward { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int Speed
     {
-        Speed = parameterProvider.GetParameter<int>(0);
-        NoFastForward = parameterProvider.GetParameter<bool>(1);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public bool NoFastForward
     {
-        parameterProvider.SetParameter(0, Speed);
-        parameterProvider.SetParameter(1, NoFastForward);
+        get => Get<bool>(1);
+        set => Set(1, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

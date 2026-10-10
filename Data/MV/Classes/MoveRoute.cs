@@ -8,6 +8,11 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
 public class MoveRoute : MvMoveCommandContainer, IMoveRoute
 {
+    public MoveRoute()
+    {
+        NamedCommands = new List<NamedCommand>();
+    }
+
     [JsonProperty(PropertyName = "repeat")]
     public bool Repeat { get; set; }
 

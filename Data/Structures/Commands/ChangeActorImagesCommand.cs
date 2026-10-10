@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -16,33 +15,51 @@ public class ChangeActorImagesCommand : NamedCommand
             return "Change Actor Graphic";
     }
 
-    public int ActorId { get; set; }
-    public string CharacterImage { get; set; }
-    public int CharacterImageOffset { get; set; }
-    public string FaceImage { get; set; }
-    public int FaceImageOffset { get; set; }
-    public string SwBattler { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int ActorId
     {
-        ActorId = parameterProvider.GetParameter<int>(0);
-        CharacterImage = parameterProvider.GetParameter<string>(1);
-        CharacterImageOffset = parameterProvider.GetParameter<int>(2);
-        FaceImage = parameterProvider.GetParameter<string>(3);
-        FaceImageOffset = parameterProvider.GetParameter<int>(4);
-        if (version == StorageVersion.MV)
-            SwBattler = parameterProvider.GetParameter<string>(5);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public string CharacterImage
     {
-        parameterProvider.SetParameter(0, ActorId);
-        parameterProvider.SetParameter(1, CharacterImage);
-        parameterProvider.SetParameter(2, CharacterImageOffset);
-        parameterProvider.SetParameter(3, FaceImage);
-        parameterProvider.SetParameter(4, FaceImageOffset);
-        if (version == StorageVersion.MV)
-            parameterProvider.SetParameter(5, SwBattler);
+        get => Get<string>(1);
+        set => Set(1, value);
+    }
+
+    public int CharacterImageOffset
+    {
+        get => Get<int>(2);
+        set => Set(2, value);
+    }
+
+    public string FaceImage
+    {
+        get => Get<string>(3);
+        set => Set(3, value);
+    }
+
+    public int FaceImageOffset
+    {
+        get => Get<int>(4);
+        set => Set(4, value);
+    }
+
+    // exists only in MV; a command made in code keeps it until it is put into a VXAce list
+    public string SwBattler
+    {
+        get => Get<string>(5);
+        set
+        {
+            if (Version == StorageVersion.MV || IsDetached)
+                Set(5, value);
+        }
+    }
+
+    protected override void OnMadeInCodeBound(StorageVersion version)
+    {
+        if (version != StorageVersion.MV)
+            Raw.Parameters!.RemoveRange(5, Raw.Parameters.Count - 5);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

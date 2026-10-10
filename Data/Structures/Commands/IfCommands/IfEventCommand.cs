@@ -1,28 +1,20 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
 
 public class IfEventCommand : IfCommand
 {
-    public int EventId { get; set; }
-    public Direction Direction { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int EventId
     {
-        base.Unpack(parameterProvider, version);
-
-        EventId = parameterProvider.GetParameter<int>(1);
-        Direction = parameterProvider.GetParameter<Direction>(2);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public Direction Direction
     {
-        base.Pack(parameterProvider, version);
-        
-        parameterProvider.SetParameter(1, EventId);
-        parameterProvider.SetParameter(2, Direction);
+        get => Get<Direction>(2);
+        set => Set(2, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

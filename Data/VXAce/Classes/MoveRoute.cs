@@ -12,7 +12,7 @@ public class MoveRoute : VxMoveCommandContainer, IMoveRoute
 {
     public MoveRoute()
     {
-        List = new();
+        NamedCommands = new List<NamedCommand>();
     }
 
     [RubyProperty("@repeat")]

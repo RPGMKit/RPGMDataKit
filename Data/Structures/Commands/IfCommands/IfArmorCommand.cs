@@ -1,28 +1,20 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
 
 public class IfArmorCommand : IfCommand
 {
-    public int ArmorId { get; set; }
-    public bool IncludeEquipment { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int ArmorId
     {
-        base.Unpack(parameterProvider, version);
-
-        ArmorId = parameterProvider.GetParameter<int>(1);
-        IncludeEquipment = parameterProvider.GetParameter<bool>(2);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public bool IncludeEquipment
     {
-        base.Pack(parameterProvider, version);
-        
-        parameterProvider.SetParameter(1, ArmorId);
-        parameterProvider.SetParameter(2, IncludeEquipment);
+        get => Get<bool>(2);
+        set => Set(2, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

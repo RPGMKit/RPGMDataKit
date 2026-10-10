@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -21,25 +20,28 @@ public class ChangeStateCommand : NamedCommand
         Remove = 1,
     }
 
-    public SourceType SourceT { get; set; }
-    public int SourceId { get; set; }
-    public OperatorType Operator { get; set; }
-    public int StateId { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public SourceType SourceT
     {
-        SourceT = parameterProvider.GetParameter<SourceType>(0);
-        SourceId = parameterProvider.GetParameter<int>(1);
-        Operator = parameterProvider.GetParameter<OperatorType>(2);
-        StateId = parameterProvider.GetParameter<int>(3);
+        get => Get<SourceType>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int SourceId
     {
-        parameterProvider.SetParameter(0, SourceT);
-        parameterProvider.SetParameter(1, SourceId);
-        parameterProvider.SetParameter(2, Operator);
-        parameterProvider.SetParameter(3, StateId);
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
+
+    public OperatorType Operator
+    {
+        get => Get<OperatorType>(2);
+        set => Set(2, value);
+    }
+
+    public int StateId
+    {
+        get => Get<int>(3);
+        set => Set(3, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

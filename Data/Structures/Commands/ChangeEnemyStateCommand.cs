@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -15,22 +14,22 @@ public class ChangeEnemyStateCommand : NamedCommand
         Remove = 1,
     }
 
-    public int TroopId { get; set; }
-    public OperatorType Operator { get; set; }
-    public int StateId { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int TroopId
     {
-        TroopId = parameterProvider.GetParameter<int>(0);
-        Operator = parameterProvider.GetParameter<OperatorType>(1);
-        StateId = parameterProvider.GetParameter<int>(2);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public OperatorType Operator
     {
-        parameterProvider.SetParameter(0, TroopId);
-        parameterProvider.SetParameter(1, Operator);
-        parameterProvider.SetParameter(2, StateId);
+        get => Get<OperatorType>(1);
+        set => Set(1, value);
+    }
+
+    public int StateId
+    {
+        get => Get<int>(2);
+        set => Set(2, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

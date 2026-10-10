@@ -9,7 +9,6 @@ public static class CommandFactory
     public static NamedCommand Create(ICommand command, StorageVersion version)
     {
         NamedCommand returnCommand;
-        var parameterProvider = command.ParameterProvider;
 
         switch (command.Code)
         {
@@ -380,13 +379,11 @@ public static class CommandFactory
                 returnCommand = new ScriptLineCommand();
                 break;
             default:
-                returnCommand = new UnknownCommand(command.Code, parameterProvider);
+                returnCommand = new UnknownCommand(command.Code);
                 break;
         }
 
-        returnCommand.Unpack(parameterProvider, version);
-
-        returnCommand.Indent = command.Indent;
+        returnCommand.Bind(command, version);
 
         return returnCommand;
     }

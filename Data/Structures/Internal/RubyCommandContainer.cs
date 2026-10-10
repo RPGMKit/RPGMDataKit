@@ -13,18 +13,17 @@ public abstract class RubyCommandContainer<TCommand> : RubySerializationEntity w
 
     private readonly CommandList<TCommand> _commands = new(StorageVersion.VXAce, CreateCommand);
 
+    /// <summary>The commands as stored in the file; only used by the serializer.</summary>
     [RubyProperty("@list")]
-    public List<TCommand>? List
+    protected List<TCommand>? RawList
     {
-        get => _commands.Raw;
-        set => _commands.Raw = value;
+        get => _commands.ToRaw();
+        set => _commands.LoadRaw(value);
     }
 
-    public List<NamedCommand> NamedCommands
+    public IList<NamedCommand> NamedCommands
     {
-        get => _commands.Named;
-        set => _commands.Named = value;
+        get => _commands;
+        set => _commands.Assign(value);
     }
-
-    public IEnumerable<TCommand>? Commands => List;
 }

@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -14,16 +13,10 @@ public class CommentContinueCommand : NamedCommand
     public override int Code => CommandCodes.CommentContinue;
     public override string GetCommandName(StorageVersion version) => "       ";
 
-    public string Comment { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public string Comment
     {
-        Comment = parameterProvider.GetParameter<string>(0);
-    }
-    
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
-    {
-        parameterProvider.SetParameter(0, Comment);
+        get => Get<string>(0);
+        set => Set(0, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options) => Comment;

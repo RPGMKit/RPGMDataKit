@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -146,48 +145,62 @@ public class ControlVariableCommand : NamedCommand
         [OtherParameters.EscapeCount] = new("Escape Count", ""),
     };
         
-    public int StartVariable { get; set; }
-    public int EndVariable { get; set; }
-    public OperatorType Operator { get; set; }
-    public OperandType Operand { get; set; }
-    public object Value1 { get; set; }
-    public object Value2 { get; set; }
-    public object Value3 { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int StartVariable
     {
-        StartVariable = parameterProvider.GetParameter<int>(0);
-        EndVariable = parameterProvider.GetParameter<int>(1);
-        Operator = parameterProvider.GetParameter<OperatorType>(2);
-        Operand = parameterProvider.GetParameter<OperandType>(3);
-        Value1 = parameterProvider.GetParameter<object>(4);
-        Value2 = parameterProvider.GetParameter<object>(5);
-        Value3 = parameterProvider.GetParameter<object>(6);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int EndVariable
     {
-        parameterProvider.SetParameter(0, StartVariable);
-        parameterProvider.SetParameter(1, EndVariable);
-        parameterProvider.SetParameter(2, Operator);
-        parameterProvider.SetParameter(3, Operand);
-        parameterProvider.SetParameter(4, Value1);
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
 
-        if (Operand == OperandType.GameData)
+    public OperatorType Operator
+    {
+        get => Get<OperatorType>(2);
+        set => Set(2, value);
+    }
+
+    public OperandType Operand
+    {
+        get => Get<OperandType>(3);
+        set => Set(3, value);
+    }
+
+    public object Value1
+    {
+        get => Get<object>(4);
+        set => Set(4, value);
+    }
+
+    public object Value2
+    {
+        get => Get<object>(5);
+        set => Set(5, value);
+    }
+
+    public object Value3
+    {
+        get => Get<object>(6);
+        set => Set(6, value);
+    }
+
+    // a command made in code gets, like in the files, only the parameters its operand uses
+    protected override void OnMadeInCodeBound(StorageVersion version)
+    {
+        var count = Operand switch
         {
-            parameterProvider.SetParameter(5, Value2);
-            switch ((GameDataType)Convert.ToInt32(Value1))
-            {
-                case GameDataType.Actor:
-                case GameDataType.Enemy:
-                case GameDataType.Character:
-                    parameterProvider.SetParameter(6, Value3);
-                    break;
-            }
-        }
+            OperandType.GameData => Convert.ToInt32(Value1) is (int)GameDataType.Actor or (int)GameDataType.Enemy
+                or (int)GameDataType.Character
+                ? 7
+                : 6,
+            OperandType.Random => 6,
+            _ => 5,
+        };
 
-        if (Operand == OperandType.Random)
-            parameterProvider.SetParameter(5, Value2);
+        Raw.Parameters!.RemoveRange(count, Raw.Parameters.Count - count);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

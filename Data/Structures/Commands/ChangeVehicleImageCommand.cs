@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -16,22 +15,22 @@ public class ChangeVehicleImageCommand : NamedCommand
             return "Change Vehicle Graphic";
     }
     
-    public VehicleType VehicleType { get; set; }
-    public string Image { get; set; }
-    public int Offset { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public VehicleType VehicleType
     {
-        VehicleType = parameterProvider.GetParameter<VehicleType>(0);
-        Image = parameterProvider.GetParameter<string>(1);
-        Offset = parameterProvider.GetParameter<int>(2);
+        get => Get<VehicleType>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public string Image
     {
-        parameterProvider.SetParameter(0, VehicleType);
-        parameterProvider.SetParameter(1, Image);
-        parameterProvider.SetParameter(2, Offset);
+        get => Get<string>(1);
+        set => Set(1, value);
+    }
+
+    public int Offset
+    {
+        get => Get<int>(2);
+        set => Set(2, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -9,19 +8,16 @@ public class NameInputProcessingCommand : NamedCommand
     public override int Code => CommandCodes.NameInputProcessing;
     public override string GetCommandName(StorageVersion version) => "Name Input Processing";
         
-    public int ActorId { get; set; }
-    public int MaxCharacters { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int ActorId
     {
-        ActorId = parameterProvider.GetParameter<int>(0);
-        MaxCharacters = parameterProvider.GetParameter<int>(1);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int MaxCharacters
     {
-        parameterProvider.SetParameter(0, ActorId);
-        parameterProvider.SetParameter(1, MaxCharacters);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

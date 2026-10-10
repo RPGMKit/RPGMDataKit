@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -16,19 +15,16 @@ public class ChangeActorNicknameCommand : NamedCommand
             return "Change Actor Nickname";
     }
 
-    public int ActorId { get; set; }
-    public string NickName { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int ActorId
     {
-        ActorId = parameterProvider.GetParameter<int>(0);
-        NickName = parameterProvider.GetParameter<string>(1);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public string NickName
     {
-        parameterProvider.SetParameter(0, ActorId);
-        parameterProvider.SetParameter(1, NickName);
+        get => Get<string>(1);
+        set => Set(1, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

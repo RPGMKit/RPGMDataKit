@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -9,19 +8,16 @@ public class InputNumberCommand : NamedCommand
     public override int Code => CommandCodes.InputNumber;
     public override string GetCommandName(StorageVersion version) => "Input Number";
 
-    public int VariableId { get; set; }
-    public int DigitsCount { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int VariableId
     {
-        VariableId = parameterProvider.GetParameter<int>(0);
-        DigitsCount = parameterProvider.GetParameter<int>(1);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int DigitsCount
     {
-        parameterProvider.SetParameter(0, VariableId);
-        parameterProvider.SetParameter(1, DigitsCount);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

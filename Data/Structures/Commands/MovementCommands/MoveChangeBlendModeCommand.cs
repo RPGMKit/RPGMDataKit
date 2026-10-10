@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
@@ -15,19 +14,16 @@ public class MoveChangeBlendModeCommand : AbstractMoveCommand
             return "Change Blending";
     }
     
-    public BlendMode BlendMode{ get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public BlendMode BlendMode
     {
-        BlendMode = parameterProvider.GetParameter<BlendMode>(0);
-    }
+        get => Get<BlendMode>(0);
+        set
+        {
+            if (value == BlendMode.Screen && Version != StorageVersion.MV)
+                throw new Exception($"Unsupported blend mode {value}");
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
-    {
-        if (BlendMode == BlendMode.Screen && version != StorageVersion.MV)
-            throw new Exception($"Unsupported blend mode {BlendMode}");
-        
-        parameterProvider.SetParameter(0, BlendMode);
+            Set(0, value);
+        }
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
@@ -16,19 +15,16 @@ public class MoveChangeImageCommand : AbstractMoveCommand
             return "Graphic";
     }
     
-    public string Image { get; set; }
-    public int Offset { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public string Image
     {
-        Image = parameterProvider.GetParameter<string>(0);
-        Offset = parameterProvider.GetParameter<int>(1);
+        get => Get<string>(0);
+        set => Set(0, value);
     }
-    
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+
+    public int Offset
     {
-        parameterProvider.SetParameter(0, Image);
-        parameterProvider.SetParameter(1, Offset);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

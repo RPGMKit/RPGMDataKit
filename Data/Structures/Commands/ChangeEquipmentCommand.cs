@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -18,22 +17,22 @@ public class ChangeEquipmentCommand : NamedCommand
         Accessory = 4,
     }
         
-    public int ActorId { get; set; }
-    public int TypeId { get; set; }
-    public int ItemId { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int ActorId
     {
-        ActorId = parameterProvider.GetParameter<int>(0);
-        TypeId = parameterProvider.GetParameter<int>(1);
-        ItemId = parameterProvider.GetParameter<int>(2);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int TypeId
     {
-        parameterProvider.SetParameter(0, ActorId);
-        parameterProvider.SetParameter(1, TypeId);
-        parameterProvider.SetParameter(2, ItemId);
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
+
+    public int ItemId
+    {
+        get => Get<int>(2);
+        set => Set(2, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

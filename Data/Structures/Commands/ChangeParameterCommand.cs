@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -58,31 +57,40 @@ public class ChangeParameterCommand : NamedCommand
         [ActionParameterType.Luck] = new("Luck", "LUK"),
     };
         
-    public SourceType SourceT { get; set; }
-    public int SourceId { get; set; }
-    public ActionParameterType ActionParameter { get; set; }
-    public OperatorType Operator { get; set; }
-    public OperandType Operand { get; set; }
-    public int Value { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public SourceType SourceT
     {
-        SourceT = parameterProvider.GetParameter<SourceType>(0);
-        SourceId = parameterProvider.GetParameter<int>(1);
-        ActionParameter = parameterProvider.GetParameter<ActionParameterType>(2);
-        Operator = parameterProvider.GetParameter<OperatorType>(3);
-        Operand = parameterProvider.GetParameter<OperandType>(4);
-        Value = parameterProvider.GetParameter<int>(5);
+        get => Get<SourceType>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int SourceId
     {
-        parameterProvider.SetParameter(0, SourceT);
-        parameterProvider.SetParameter(1, SourceId);
-        parameterProvider.SetParameter(2, ActionParameter);
-        parameterProvider.SetParameter(3, Operator);
-        parameterProvider.SetParameter(4, Operand);
-        parameterProvider.SetParameter(5, Value);
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
+
+    public ActionParameterType ActionParameter
+    {
+        get => Get<ActionParameterType>(2);
+        set => Set(2, value);
+    }
+
+    public OperatorType Operator
+    {
+        get => Get<OperatorType>(3);
+        set => Set(3, value);
+    }
+
+    public OperandType Operand
+    {
+        get => Get<OperandType>(4);
+        set => Set(4, value);
+    }
+
+    public int Value
+    {
+        get => Get<int>(5);
+        set => Set(5, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

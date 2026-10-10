@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -21,46 +20,70 @@ public class ShowPictureCommand : NamedCommand
         ByVariable = 1,
     }
         
-    public int Layer { get; set; }
-    public string Picture { get; set; }
-    public ReferenceType Reference { get; set; }
-    public DesignationType Designation { get; set; }
-    public int Param1 { get; set; }
-    public int Param2 { get; set; }
-    public int Width { get; set; }
-    public int Height { get; set; }
-    public int Transparency { get; set; }
-    public BlendMode BlendMode { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int Layer
     {
-        Layer = parameterProvider.GetParameter<int>(0);
-        Picture = parameterProvider.GetParameter<string>(1);
-        Reference = parameterProvider.GetParameter<ReferenceType>(2);
-        Designation = parameterProvider.GetParameter<DesignationType>(3);
-        Param1 = parameterProvider.GetParameter<int>(4);
-        Param2 = parameterProvider.GetParameter<int>(5);
-        Width = parameterProvider.GetParameter<int>(6);
-        Height = parameterProvider.GetParameter<int>(7);    
-        Transparency = parameterProvider.GetParameter<int>(8);
-        BlendMode = parameterProvider.GetParameter<BlendMode>(9);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public string Picture
     {
-        if (BlendMode == BlendMode.Screen && version != StorageVersion.MV)
-            throw new Exception($"Unsupported blend mode {BlendMode}");
+        get => Get<string>(1);
+        set => Set(1, value);
+    }
 
-        parameterProvider.SetParameter(0, Layer);
-        parameterProvider.SetParameter(1, Picture);
-        parameterProvider.SetParameter(2, Reference);
-        parameterProvider.SetParameter(3, Designation);
-        parameterProvider.SetParameter(4, Param1);
-        parameterProvider.SetParameter(5, Param2);
-        parameterProvider.SetParameter(6, Width);
-        parameterProvider.SetParameter(7, Height);
-        parameterProvider.SetParameter(8, Transparency);
-        parameterProvider.SetParameter(9, BlendMode);
+    public ReferenceType Reference
+    {
+        get => Get<ReferenceType>(2);
+        set => Set(2, value);
+    }
+
+    public DesignationType Designation
+    {
+        get => Get<DesignationType>(3);
+        set => Set(3, value);
+    }
+
+    public int Param1
+    {
+        get => Get<int>(4);
+        set => Set(4, value);
+    }
+
+    public int Param2
+    {
+        get => Get<int>(5);
+        set => Set(5, value);
+    }
+
+    public int Width
+    {
+        get => Get<int>(6);
+        set => Set(6, value);
+    }
+
+    public int Height
+    {
+        get => Get<int>(7);
+        set => Set(7, value);
+    }
+
+    public int Transparency
+    {
+        get => Get<int>(8);
+        set => Set(8, value);
+    }
+
+    public BlendMode BlendMode
+    {
+        get => Get<BlendMode>(9);
+        set
+        {
+            if (value == BlendMode.Screen && Version != StorageVersion.MV)
+                throw new Exception($"Unsupported blend mode {value}");
+
+            Set(9, value);
+        }
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -9,19 +8,16 @@ public class EnemyTransformCommand : NamedCommand
     public override int Code => CommandCodes.EnemyTransform;
     public override string GetCommandName(StorageVersion version) => "Enemy Transform";
 
-    public int TroopId { get; set; }
-    public int EnemyId { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int TroopId
     {
-        TroopId = parameterProvider.GetParameter<int>(0);
-        EnemyId = parameterProvider.GetParameter<int>(1);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
-    
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+
+    public int EnemyId
     {
-        parameterProvider.SetParameter(0, TroopId);
-        parameterProvider.SetParameter(1, EnemyId);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
     
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

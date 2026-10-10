@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -21,22 +20,22 @@ public class ChangeGoldCommand : NamedCommand
         Variable = 1,
     }
 
-    public OperatorType Operator { get; set; }
-    public OperandType Operand { get; set; }
-    public int Value { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public OperatorType Operator
     {
-        Operator = parameterProvider.GetParameter<OperatorType>(0);
-        Operand = parameterProvider.GetParameter<OperandType>(1);
-        Value = parameterProvider.GetParameter<int>(2);
+        get => Get<OperatorType>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public OperandType Operand
     {
-        parameterProvider.SetParameter(0, Operator);
-        parameterProvider.SetParameter(1, Operand);
-        parameterProvider.SetParameter(2, Value);
+        get => Get<OperandType>(1);
+        set => Set(1, value);
+    }
+
+    public int Value
+    {
+        get => Get<int>(2);
+        set => Set(2, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

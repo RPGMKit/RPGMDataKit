@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -16,28 +15,34 @@ public class ChangeParallaxCommand : NamedCommand
             return "Change Parallax Back";
     }
         
-    public string Image { get; set; }
-    public bool LoopHorizontally { get; set; }
-    public bool LoopVertically { get; set; }
-    public int HorizontalScroll { get; set; }
-    public int VerticalScroll { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public string Image
     {
-        Image = parameterProvider.GetParameter<string>(0);
-        LoopHorizontally = parameterProvider.GetParameter<bool>(1);
-        LoopVertically = parameterProvider.GetParameter<bool>(2);
-        HorizontalScroll = parameterProvider.GetParameter<int>(3);
-        VerticalScroll = parameterProvider.GetParameter<int>(4);
+        get => Get<string>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public bool LoopHorizontally
     {
-        parameterProvider.SetParameter(0, Image);
-        parameterProvider.SetParameter(1, LoopHorizontally);
-        parameterProvider.SetParameter(2, LoopVertically);
-        parameterProvider.SetParameter(3, HorizontalScroll);
-        parameterProvider.SetParameter(4, VerticalScroll);
+        get => Get<bool>(1);
+        set => Set(1, value);
+    }
+
+    public bool LoopVertically
+    {
+        get => Get<bool>(2);
+        set => Set(2, value);
+    }
+
+    public int HorizontalScroll
+    {
+        get => Get<int>(3);
+        set => Set(3, value);
+    }
+
+    public int VerticalScroll
+    {
+        get => Get<int>(4);
+        set => Set(4, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

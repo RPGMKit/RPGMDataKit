@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
@@ -12,26 +11,22 @@ public class IfEnemyCommand : IfCommand
         State = 1,
     }
 
-    public int TroopId { get; set; }
-    public CheckType Check { get; set; }
-    public int Param { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int TroopId
     {
-        base.Unpack(parameterProvider, version);
-
-        TroopId = parameterProvider.GetParameter<int>(1);
-        Check = parameterProvider.GetParameter<CheckType>(2);
-        Param = parameterProvider.GetParameter<int>(3);  
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public CheckType Check
     {
-        base.Pack(parameterProvider, version);
-        
-        parameterProvider.SetParameter(1, TroopId);
-        parameterProvider.SetParameter(2, Check);
-        parameterProvider.SetParameter(3, Param);
+        get => Get<CheckType>(2);
+        set => Set(2, value);
+    }
+
+    public int Param
+    {
+        get => Get<int>(3);
+        set => Set(3, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

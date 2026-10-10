@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -20,31 +19,38 @@ public class ShowChoicesCommand : NamedCommand
     protected const int CancelChoiceBranch = -2;
     protected const int CancelChoiceDisallow = -1;
 
-    public List<string> Choices { get; set; }
-    public int CancelChoiceIndex { get; set; }
-    public int DefaultChoiceIndex { get; set; }
-    public PositionType Position { get; set; }
-    public BackgroundType Background { get; set; }
-    
+    // the list stored in the raw command, so changing it changes the command
+    public List<string> Choices
+    {
+        get => GetEntity<List<string>, List<string>>(0);
+        set => Set(0, value);
+    }
+
+    public int CancelChoiceIndex
+    {
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
+
+    public int DefaultChoiceIndex
+    {
+        get => Get<int>(2);
+        set => Set(2, value);
+    }
+
+    public PositionType Position
+    {
+        get => Get<PositionType>(3);
+        set => Set(3, value);
+    }
+
+    public BackgroundType Background
+    {
+        get => Get<BackgroundType>(4);
+        set => Set(4, value);
+    }
+
     public bool IsCancelChoiceBranch => CancelChoiceIndex == CancelChoiceBranch;
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
-    {
-        Choices = parameterProvider.GetParameter<List<string>>(0);
-        CancelChoiceIndex = parameterProvider.GetParameter<int>(1);
-        DefaultChoiceIndex = parameterProvider.GetParameter<int>(2);
-        Position = parameterProvider.GetParameter<PositionType>(3);
-        Background = parameterProvider.GetParameter<BackgroundType>(4);
-    }
-
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
-    {
-        parameterProvider.SetParameter(0, Choices);
-        parameterProvider.SetParameter(1, CancelChoiceIndex);
-        parameterProvider.SetParameter(2, DefaultChoiceIndex);
-        parameterProvider.SetParameter(3, Position);
-        parameterProvider.SetParameter(4, Background);
-    }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {

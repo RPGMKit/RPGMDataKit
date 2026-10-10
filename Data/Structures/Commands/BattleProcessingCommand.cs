@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -17,25 +16,28 @@ public class BattleProcessingCommand : NamedCommand
         SameAsRandomEncounter = 2,
     }
         
-    public DesignationType DsgType { get; set; }
-    public int SourceId { get; set; }
-    public bool CanEscape { get; set; }
-    public bool CanLoose { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion storageVersion)
+    public DesignationType DsgType
     {
-        DsgType = parameterProvider.GetParameter<DesignationType>(0);
-        SourceId = parameterProvider.GetParameter<int>(1);
-        CanEscape = parameterProvider.GetParameter<bool>(2);
-        CanLoose = parameterProvider.GetParameter<bool>(3);
+        get => Get<DesignationType>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int SourceId
     {
-        parameterProvider.SetParameter(0, DsgType);
-        parameterProvider.SetParameter(1, SourceId);
-        parameterProvider.SetParameter(2, CanEscape);
-        parameterProvider.SetParameter(3, CanLoose);
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
+
+    public bool CanEscape
+    {
+        get => Get<bool>(2);
+        set => Set(2, value);
+    }
+
+    public bool CanLoose
+    {
+        get => Get<bool>(3);
+        set => Set(3, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

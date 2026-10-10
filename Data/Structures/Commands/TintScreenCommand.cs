@@ -1,7 +1,7 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.MV.Classes;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -14,31 +14,22 @@ public class TintScreenCommand : NamedCommand
     public override int Code => CommandCodes.TintScreen;
     public override string GetCommandName(StorageVersion version) => "Tint Screen";
 
-    public ITone Tone { get; set; }
-    public int Duration { get; set; }
-    public bool WaitForCompletion { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public ITone Tone
     {
-        if (version == StorageVersion.MV)
-            Tone = MVTone.FromArray(parameterProvider.GetParameter<List<int>>(0));
-        else
-            Tone = parameterProvider.GetParameter<ITone>(0);
-        
-        Duration = parameterProvider.GetParameter<int>(1);
-        WaitForCompletion = parameterProvider.GetParameter<bool>(2);
+        get => GetEntity<ITone, MVTone>(0);
+        set => Set(0, IsDetached ? value : Tones.For(value, Version));
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int Duration
     {
-        if (version == StorageVersion.MV)
-            parameterProvider.SetParameter(0, new List<int> { Tone.Red, Tone.Green, Tone.Blue, Tone.Gray });
-        else
-            parameterProvider.SetParameter(0,
-                new VXTone() { Red = Tone.Red, Green = Tone.Green, Blue = Tone.Blue, Gray = Tone.Gray });
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
 
-        parameterProvider.SetParameter(1, Duration);
-        parameterProvider.SetParameter(2, WaitForCompletion);
+    public bool WaitForCompletion
+    {
+        get => Get<bool>(2);
+        set => Set(2, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

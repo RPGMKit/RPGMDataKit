@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
@@ -9,19 +8,16 @@ public class MoveJumpCommand : AbstractMoveCommand
     public override int Code => MovementRouteCommandCodes.Jump;
     public override string GetCommandName(StorageVersion version) => "Jump";
     
-    public int XDelta  { get; set; }
-    public int YDelta  { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int XDelta
     {
-        XDelta = parameterProvider.GetParameter<int>(0);
-        YDelta = parameterProvider.GetParameter<int>(1);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
-    
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+
+    public int YDelta
     {
-        parameterProvider.SetParameter(0, XDelta);
-        parameterProvider.SetParameter(1, YDelta);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -9,22 +8,22 @@ public class ControlSwitchCommand : NamedCommand
     public override int Code => CommandCodes.ControlSwitches;
     public override string GetCommandName(StorageVersion version) => "Control Switches";
         
-    public int StartSwitchId { get; set; }
-    public int EndSwitchId { get; set; }
-    public OnOffState State { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int StartSwitchId
     {
-        StartSwitchId = parameterProvider.GetParameter<int>(0);
-        EndSwitchId = parameterProvider.GetParameter<int>(1);
-        State = parameterProvider.GetParameter<OnOffState>(2);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int EndSwitchId
     {
-        parameterProvider.SetParameter(0, StartSwitchId);
-        parameterProvider.SetParameter(1, EndSwitchId);
-        parameterProvider.SetParameter(2, State);
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
+
+    public OnOffState State
+    {
+        get => Get<OnOffState>(2);
+        set => Set(2, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

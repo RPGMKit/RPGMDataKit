@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -14,19 +13,16 @@ public class ChoiceCaseCommand : NamedCommand
     public override int Code => CommandCodes.ChoiceCase;
     public override string GetCommandName(StorageVersion version) => "When";
 
-    public int ChoiceIndex { get; set; }
-    public string ChoiceName { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int ChoiceIndex
     {
-        ChoiceIndex = parameterProvider.GetParameter<int>(0);
-        ChoiceName = parameterProvider.GetParameter<string>(1);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public string ChoiceName
     {
-        parameterProvider.SetParameter(0, ChoiceIndex);
-        parameterProvider.SetParameter(1, ChoiceName);
+        get => Get<string>(1);
+        set => Set(1, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

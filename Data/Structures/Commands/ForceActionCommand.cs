@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -29,25 +28,28 @@ public class ForceActionCommand : NamedCommand
         Index8 = 7,
     }
 
-    public SubjectType Subject { get; set; }
-    public int SubjectId { get; set; }
-    public int SkillId { get; set; }
-    public TargetType Target { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public SubjectType Subject
     {
-        Subject = parameterProvider.GetParameter<SubjectType>(0);
-        SubjectId = parameterProvider.GetParameter<int>(1);
-        SkillId = parameterProvider.GetParameter<int>(2);
-        Target = parameterProvider.GetParameter<TargetType>(3);
+        get => Get<SubjectType>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int SubjectId
     {
-        parameterProvider.SetParameter(0, Subject);
-        parameterProvider.SetParameter(1, SubjectId);
-        parameterProvider.SetParameter(2, SkillId);
-        parameterProvider.SetParameter(3, Target);
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
+
+    public int SkillId
+    {
+        get => Get<int>(2);
+        set => Set(2, value);
+    }
+
+    public TargetType Target
+    {
+        get => Get<TargetType>(3);
+        set => Set(3, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

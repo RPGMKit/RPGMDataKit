@@ -1,11 +1,12 @@
 ﻿using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Helpers;
 
 public static class IndentHelper
 {
-    private delegate void IndentWalker(int currIndent, int commandIndex, ICommand? prevCommand, ICommand currCommand);
+    private delegate void IndentWalker(int currIndent, int commandIndex, NamedCommand? prevCommand, NamedCommand currCommand);
     
     public static void ValidateIndents(ICommandContainer<ICommand> container, StorageVersion version)
     {
@@ -26,10 +27,12 @@ public static class IndentHelper
 
     private static void WalkForIndents(ICommandContainer<ICommand> container, StorageVersion version, IndentWalker walker)
     {
-        ICommand? prevCommand = null;
+        NamedCommand? prevCommand = null;
+
+        var commands = container.NamedCommands.ToList();
 
         int i = 0, indentLevel = 0;
-        foreach (var c in container.Commands)
+        foreach (var c in commands)
         {
             switch (c.Code)
             {
@@ -84,7 +87,7 @@ public static class IndentHelper
                     ++indentLevel;
                     break;
                 case CommandCodes.BattleProcessing:
-                    var nextCommand = container.Commands.ElementAtOrDefault(i + 1);
+                    var nextCommand = commands.ElementAtOrDefault(i + 1);
                     if (nextCommand != null && (nextCommand.Code == CommandCodes.BattleProcessingIfLose
                                                 || nextCommand.Code == CommandCodes.BattleProcessingIfEscape
                                                 || nextCommand.Code == CommandCodes.BattleProcessingIfWin))

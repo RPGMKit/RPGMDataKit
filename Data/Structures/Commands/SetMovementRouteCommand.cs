@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.MV.Classes;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
@@ -14,38 +13,39 @@ public class SetMovementRouteCommand : NamedCommand
     public override int Code => CommandCodes.SetMovementRoute;
     public override string GetCommandName(StorageVersion version) => "Set Movement Route";
 
-    public int EventId { get; set; }
-    public IMoveRoute Route { get; set; }
-
-    public List<NamedCommand> Commands => Route.NamedCommands;
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int EventId
     {
-        EventId = parameterProvider.GetParameter<int>(0);
-        
-        if (version == StorageVersion.MV)
-            Route = parameterProvider.GetParameter<MoveRouteMV>(1);
-        else
-            Route = parameterProvider.GetParameter<MoveRouteVX>(1);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    // the route stored in the raw command, so changing it changes the command
+    public IMoveRoute Route
     {
-        parameterProvider.SetParameter(0, EventId);
+        get => Version == StorageVersion.MV
+            ? GetEntity<IMoveRoute, MoveRouteMV>(1)
+            : GetEntity<IMoveRoute, MoveRouteVX>(1);
+        set => Set(1, IsDetached ? value : RouteFor(value));
+    }
 
-        IMoveRoute route;
-        if (version == StorageVersion.MV)
-            route = new MoveRouteMV();
-        else
-            route = new MoveRouteVX();
-        
-        route.Repeat = Route.Repeat;
-        route.Skippable = Route.Skippable;
-        route.Wait = Route.Wait;
+    public IList<NamedCommand> Commands => Route.NamedCommands;
 
-        route.NamedCommands = Commands;
+    // the route as the version of the command stores it
+    private IMoveRoute? RouteFor(IMoveRoute? route)
+    {
+        if (route == null)
+            return null;
 
-        parameterProvider.SetParameter(1, route);
+        if (Version == StorageVersion.MV ? route is MoveRouteMV : route is MoveRouteVX)
+            return route;
+
+        IMoveRoute converted = Version == StorageVersion.MV ? new MoveRouteMV() : new MoveRouteVX();
+        converted.Repeat = route.Repeat;
+        converted.Skippable = route.Skippable;
+        converted.Wait = route.Wait;
+        converted.NamedCommands = route.NamedCommands;
+
+        return converted;
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

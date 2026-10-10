@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -15,28 +14,34 @@ public class SetVehicleLocationCommand : NamedCommand
         ByVariable = 1,
     }
         
-    public VehicleType VehicleType { get; set; }
-    public DesignationType Designation { get; set; }
-    public int Param1 { get; set; }
-    public int Param2 { get; set; }
-    public int Param3 { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public VehicleType VehicleType
     {
-        VehicleType = parameterProvider.GetParameter<VehicleType>(0);
-        Designation = parameterProvider.GetParameter<DesignationType>(1);
-        Param1 = parameterProvider.GetParameter<int>(2);
-        Param2 = parameterProvider.GetParameter<int>(3);    
-        Param3 = parameterProvider.GetParameter<int>(4);
+        get => Get<VehicleType>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public DesignationType Designation
     {
-        parameterProvider.SetParameter(0, VehicleType);
-        parameterProvider.SetParameter(1, Designation);
-        parameterProvider.SetParameter(2, Param1);
-        parameterProvider.SetParameter(3, Param2);
-        parameterProvider.SetParameter(4, Param3);
+        get => Get<DesignationType>(1);
+        set => Set(1, value);
+    }
+
+    public int Param1
+    {
+        get => Get<int>(2);
+        set => Set(2, value);
+    }
+
+    public int Param2
+    {
+        get => Get<int>(3);
+        set => Set(3, value);
+    }
+
+    public int Param3
+    {
+        get => Get<int>(4);
+        set => Set(4, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

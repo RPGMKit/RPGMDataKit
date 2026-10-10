@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
@@ -22,29 +21,28 @@ public class IfVariableCommand : IfCommand
         Variable = 1,
     }
     
-    public int VariableId { get; set; }
-    public OperandType Operand { get; set; }
-    public int Value { get; set; }
-    public OperatorType Operator { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int VariableId
     {
-        base.Unpack(parameterProvider, version);
-
-        VariableId = parameterProvider.GetParameter<int>(1);
-        Operand = parameterProvider.GetParameter<OperandType>(2);
-        Value = parameterProvider.GetParameter<int>(3);
-        Operator = parameterProvider.GetParameter<OperatorType>(4);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public OperandType Operand
     {
-        base.Pack(parameterProvider, version);
-        
-        parameterProvider.SetParameter(1, VariableId);
-        parameterProvider.SetParameter(2, Operand);
-        parameterProvider.SetParameter(3, Value);
-        parameterProvider.SetParameter(4, Operator);
+        get => Get<OperandType>(2);
+        set => Set(2, value);
+    }
+
+    public int Value
+    {
+        get => Get<int>(3);
+        set => Set(3, value);
+    }
+
+    public OperatorType Operator
+    {
+        get => Get<OperatorType>(4);
+        set => Set(4, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

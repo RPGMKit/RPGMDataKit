@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -15,19 +14,16 @@ public class RecoverAllCommand : NamedCommand
         Variable = 1,
     }
 
-    public SourceType Source { get; set; }
-    public int SourceId { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public SourceType Source
     {
-        Source = parameterProvider.GetParameter<SourceType>(0);
-        SourceId = parameterProvider.GetParameter<int>(1);
+        get => Get<SourceType>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int SourceId
     {
-        parameterProvider.SetParameter(0, Source);
-        parameterProvider.SetParameter(1, SourceId);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

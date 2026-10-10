@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -32,16 +31,18 @@ public abstract class IfCommand : NamedCommand
         Vehicle = 13,
     }
 
-    public IfType Type { get; set; }
+    private static readonly Dictionary<IfType, Type> Kinds =
+        Enum.GetValues<IfType>().ToDictionary(type => type, type => Factory(type).GetType());
 
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public IfType Type
     {
-        Type = parameterProvider.GetParameter<IfType>(0);
+        get => Get<IfType>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    protected override void OnMadeInCodeBound(StorageVersion version)
     {
-        parameterProvider.SetParameter(0, Type);
+        Type = Kinds.First(kind => kind.Value == GetType()).Key;
     }
 
     public static IfCommand Factory(IfType type)

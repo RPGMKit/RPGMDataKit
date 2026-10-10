@@ -1,7 +1,7 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.MV.Classes;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 using RPGMakerLibCoreV2.Data.VXAce.Classes;
 
@@ -12,20 +12,18 @@ public class PlaySECommand : NamedCommand
     public override int Code => CommandCodes.PlaySe;
     public override string GetCommandName(StorageVersion version) => "Play SE";
         
-    public IAudioFile SoundData { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public IAudioFile SoundData
     {
-        SoundData = version == StorageVersion.MV ? parameterProvider.GetParameter<SoundData>(0) : parameterProvider.GetParameter<IAudioFile>(0);
-    }
-    
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
-    {
-        if (version == StorageVersion.MV)
-            parameterProvider.SetParameter(0, SoundData);
-        else
-            parameterProvider.SetParameter(0,
-                new SE() { Name = SoundData.Name, Volume = SoundData.Volume, Pitch = SoundData.Pitch });
+        get => GetEntity<IAudioFile, SoundData>(0);
+        set
+        {
+            if (IsDetached || value == null)
+                Set(0, value);
+            else if (Version == StorageVersion.MV)
+                Set(0, AudioFiles.ForMv(value));
+            else
+                Set(0, AudioFiles.ForVxAce<SE>(value));
+        }
     }
 
         

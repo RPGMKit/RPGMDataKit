@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Factories.MovementCommands;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
@@ -19,25 +18,59 @@ public class MovementRouteCommand : NamedCommand
         IsSecondary = true;
     }
         
-    public NamedCommand MoveCommand { get; set; }
+    private NamedCommand? _pendingMoveCommand; // set in code, before this command has a container
+    private NamedCommand? _moveCommand;
+    private IMoveCommand? _moveCommandRaw;
 
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    // a view over the movement command stored in the raw command
+    public NamedCommand MoveCommand
     {
-        var eventCommand = version == StorageVersion.MV
-            ? parameterProvider.GetParameter<MoveCommandMV>(0)
-            : parameterProvider.GetParameter<IMoveCommand>(0);
-            
-        MoveCommand = MovementCommandFactory.Create(eventCommand!, version);
-    }
+        get
+        {
+            if (IsDetached && _pendingMoveCommand != null)
+                return _pendingMoveCommand;
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
-    {
-        IMoveCommand command = version == StorageVersion.MV ? new MoveCommandMV() : new MoveCommandVX();
+            var raw = Version == StorageVersion.MV
+                ? GetEntity<IMoveCommand, MoveCommandMV>(0)
+                : GetEntity<IMoveCommand, MoveCommandVX>(0);
+            if (raw == null)
+                return _pendingMoveCommand!;
 
-        command.Code = MoveCommand.Code;
-        MoveCommand._Pack(command, version);
+            if (_moveCommand == null || !ReferenceEquals(_moveCommandRaw, raw) || !_moveCommand.MatchesRaw())
+            {
+                _moveCommand = MovementCommandFactory.Create(raw, Version);
+                _moveCommandRaw = raw;
+            }
 
-        parameterProvider.SetParameter(0, command);
+            return _moveCommand;
+        }
+        set
+        {
+            if (IsDetached)
+            {
+                _pendingMoveCommand = value;
+                return;
+            }
+
+            if (value == null)
+                return;
+
+            IMoveCommand raw;
+            if (value.IsDetached)
+            {
+                raw = Version == StorageVersion.MV ? new MoveCommandMV() : new MoveCommandVX();
+                value.Bind(raw, Version);
+            }
+            else
+            {
+                raw = (IMoveCommand)value.Raw;
+            }
+
+            Set(0, raw);
+            _moveCommand = value;
+            _moveCommandRaw = raw;
+            _pendingMoveCommand = null;
+        }
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

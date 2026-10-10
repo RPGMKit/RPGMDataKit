@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -18,25 +17,28 @@ public class SetWeatherEffectCommand : NamedCommand
     
     protected const string TypeNone = "none";
 
-    public string EffectType { get; set; }
-    public int Power { get; set; }
-    public int Duration { get; set; }
-    public bool WaitForCompletion { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public string EffectType
     {
-        EffectType = parameterProvider.GetParameter<string>(0);
-        Power = parameterProvider.GetParameter<int>(1);
-        Duration = parameterProvider.GetParameter<int>(2);  
-        WaitForCompletion = parameterProvider.GetParameter<bool>(3);
+        get => Get<string>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int Power
     {
-        parameterProvider.SetParameter(0, EffectType);
-        parameterProvider.SetParameter(1, Power);
-        parameterProvider.SetParameter(2, Duration);
-        parameterProvider.SetParameter(3, WaitForCompletion);
+        get => Get<int>(1);
+        set => Set(1, value);
+    }
+
+    public int Duration
+    {
+        get => Get<int>(2);
+        set => Set(2, value);
+    }
+
+    public bool WaitForCompletion
+    {
+        get => Get<bool>(3);
+        set => Set(3, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

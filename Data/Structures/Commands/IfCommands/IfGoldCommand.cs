@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
@@ -13,23 +12,16 @@ public class IfGoldCommand : IfCommand
         Lt = 2,
     }
 
-    public int Amount { get; set; }
-    public OperatorType Operator { get; set; }
-    
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int Amount
     {
-        base.Unpack(parameterProvider, version);
-
-        Amount = parameterProvider.GetParameter<int>(1);
-        Operator = parameterProvider.GetParameter<OperatorType>(2);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public OperatorType Operator
     {
-        base.Pack(parameterProvider, version);
-        
-        parameterProvider.SetParameter(1, Amount);
-        parameterProvider.SetParameter(2, Operator);
+        get => Get<OperatorType>(2);
+        set => Set(2, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

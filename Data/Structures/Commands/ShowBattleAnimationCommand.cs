@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -9,19 +8,16 @@ public class ShowBattleAnimationCommand : NamedCommand
     public override int Code => CommandCodes.ShowBattleAnimation;
     public override string GetCommandName(StorageVersion version) => "Show Battle Animation";
     
-    public int TroopId { get; set; }
-    public int AnimationId { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    public int TroopId
     {
-        TroopId = parameterProvider.GetParameter<int>(0);
-        AnimationId = parameterProvider.GetParameter<int>(1);
+        get => Get<int>(0);
+        set => Set(0, value);
     }
 
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
+    public int AnimationId
     {
-        parameterProvider.SetParameter(0, TroopId);
-        parameterProvider.SetParameter(1, AnimationId);
+        get => Get<int>(1);
+        set => Set(1, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

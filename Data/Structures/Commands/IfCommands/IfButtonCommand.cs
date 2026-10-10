@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.IfCommands;
@@ -38,26 +37,13 @@ public class IfButtonCommand : IfCommand
         [Buttons.R] = "R",
     };
 
-    public Buttons Button { get; set; }
-
-    public override void Unpack(IParameterProvider parameterProvider, StorageVersion version)
+    // a name in MV, a number in VXAce
+    public Buttons Button
     {
-        base.Unpack(parameterProvider, version);
-
-        if (version == StorageVersion.MV)
-            Button = ButtonIdToName.First(_ => _.Value == parameterProvider.GetParameter<string>(1).UcFirst()).Key;
-        else 
-            Button = parameterProvider.GetParameter<Buttons>(1);
-    }
-
-    public override void Pack(IParameterProvider parameterProvider, StorageVersion version)
-    {
-        base.Pack(parameterProvider, version);
-        
-        if (version == StorageVersion.MV)
-            parameterProvider.SetParameter(1, ButtonIdToName[Button]);
-        else
-            parameterProvider.SetParameter(1, Button);
+        get => Version == StorageVersion.MV && Raw.Parameters?.Get(1) is string name
+            ? ButtonIdToName.First(_ => _.Value == name.UcFirst()).Key
+            : Get<Buttons>(1);
+        set => Set(1, Version == StorageVersion.MV ? ButtonIdToName[value] : (object)value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
