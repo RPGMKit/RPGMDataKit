@@ -30,6 +30,7 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
             var wtf = new JsonSerializerSettings();
             wtf.Error += Error;
             OnSerializing();
+            OnDump();
         }
 
         private void Error(object? sender, ErrorEventArgs e)
@@ -56,6 +57,11 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal
         public virtual void OnSerializing()
         {
             return;
+        }
+
+        /// <summary>Called before the entity is written to a YAML dump (and not before it is saved to a data file).</summary>
+        protected virtual void OnDump()
+        {
         }
     }
 }

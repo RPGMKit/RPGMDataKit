@@ -21,7 +21,7 @@ internal static class MoveRoutes
         converted.Repeat = route.Repeat;
         converted.Skippable = route.Skippable;
         converted.Wait = route.Wait;
-        converted.NamedCommands = route.NamedCommands;
+        converted.NamedCommands = route.NamedCommands.Select(command => command.Clone()).ToList();
 
         return converted;
     }

@@ -76,7 +76,7 @@ public static class MapEventHelper
             
             reporter?.CustomReport(filePath);
 
-            return !reporter?.NeedCancel ?? true;
+            return !(reporter?.NeedCancel ?? false);
         });
     }
 

@@ -70,6 +70,12 @@ public class MovementRouteCommand : NamedCommand
         }
     }
 
+    internal override void Materialize()
+    {
+        base.Materialize();
+        MoveCommand?.Materialize();
+    }
+
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
         return MoveCommand.AsString(context, new DumpOptions() {AppendCommandCode = options.AppendCommandCode, WithIndent = false, ExtendedFormat = options.ExtendedFormat});

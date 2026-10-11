@@ -3,6 +3,7 @@ using System.Reflection;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
+using RPGMakerLibCoreV2.Data.Structures.Exceptions;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Storages;
 
@@ -37,6 +38,60 @@ public abstract class NamedCommand
     public bool IsSecondary;
 
     public T Cast<T>() where T : NamedCommand => (T)this;
+
+    /// <summary>The list the command is in. A command that is in a list cannot be put into another one, use <see cref="Clone"/>.</summary>
+    internal object? Owner { get; set; }
+
+    /// <summary>
+    /// A new command of the same class with the same property values and its own objects (sounds, tones, routes...),
+    /// not in any list. Put into a list of any storage it gets the raw command of that storage.
+    /// </summary>
+    public NamedCommand Clone()
+    {
+        var copy = CreateBlank();
+        copy.Indent = Indent;
+        copy.IsSecondary = IsSecondary;
+
+        foreach (var property in ParameterProperties.GetOrAdd(GetType(), FindParameterProperties))
+        {
+            try
+            {
+                property.SetValue(copy, Copies.Of(property.GetValue(this)));
+            }
+            catch (TargetInvocationException e) when (e.InnerException is DoesNotExistInVersionException)
+            {
+                // the property does not exist in the version of this command
+            }
+        }
+
+        return copy;
+    }
+
+    /// <summary>
+    /// Reads every property, so the objects the command keeps in its parameters (a sound, a tone, a route...) are objects
+    /// of their classes and not the JSON objects of the file.
+    /// </summary>
+    internal virtual void Materialize()
+    {
+        // the end of a route can have no parameters in the file ({"code":0}); in the dump it has an empty list
+        if (Raw.Parameters == null && Raw.Code == 0)
+            Raw.Parameters = [];
+
+        foreach (var property in ParameterProperties.GetOrAdd(GetType(), FindParameterProperties))
+        {
+            try
+            {
+                property.GetValue(this);
+            }
+            catch (TargetInvocationException e) when (e.InnerException is DoesNotExistInVersionException)
+            {
+                // the property does not exist in the version of this command
+            }
+        }
+    }
+
+    /// <summary>An empty command of the same class; a class without a parameterless constructor overrides it.</summary>
+    protected virtual NamedCommand CreateBlank() => (NamedCommand)Activator.CreateInstance(GetType())!;
 
     /// <summary>Version of the raw command; VXAce until the command is bound.</summary>
     protected StorageVersion Version => _version;

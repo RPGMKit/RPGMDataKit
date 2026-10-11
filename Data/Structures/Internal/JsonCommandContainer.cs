@@ -28,6 +28,10 @@ public abstract class JsonCommandContainer<TCommand> : JsonEntity where TCommand
         set => _commands.LoadRaw(value);
     }
 
+    // an object in a parameter (a sound, a route...) is a plain JSON object until the command reads it; the dump is
+    // the same whether it did or not, so let every command read its parameters first
+    protected override void OnDump() => _commands.Materialize();
+
     public IList<NamedCommand> NamedCommands
     {
         get => _commands;

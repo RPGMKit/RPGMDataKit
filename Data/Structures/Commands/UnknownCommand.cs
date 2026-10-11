@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
@@ -19,6 +20,12 @@ public class UnknownCommand : NamedCommand
     public override string GetCommandName(StorageVersion version) => $"Unknown ({Code})";
 
     public IParameterProvider Parameters => GetParameterProvider();
+
+    // there are no properties to copy: the parameters are, as they are (JSON objects are copied)
+    protected override NamedCommand CreateBlank() => new UnknownCommand(Code)
+    {
+        Raw = { Parameters = Raw.Parameters?.Select(p => p is JToken token ? token.DeepClone() : p).ToList() },
+    };
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {

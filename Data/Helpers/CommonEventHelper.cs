@@ -46,7 +46,7 @@ public static class CommonEventHelper
             
             reporter?.CustomReport(filePath);
 
-            return !reporter?.NeedCancel ?? false;
+            return !(reporter?.NeedCancel ?? false);
         });
     }
 }
