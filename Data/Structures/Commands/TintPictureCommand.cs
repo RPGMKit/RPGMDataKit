@@ -1,6 +1,5 @@
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
@@ -20,7 +19,7 @@ public class TintPictureCommand : NamedCommand
     public ITone Tone
     {
         get => GetEntity<ITone>(1);
-        set => Set(1, IsDetached ? value : Tones.For(value, Map));
+        set => Set(1, value);
     }
 
     public int Duration

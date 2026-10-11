@@ -2,6 +2,7 @@
 using System.Reflection;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
+using RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Storages;
 
@@ -40,7 +41,10 @@ public abstract class NamedCommand
     /// <summary>Version of the raw command; VXAce until the command is bound.</summary>
     protected StorageVersion Version => _version;
 
-    protected IParameterProvider Parameters => _parameters ??= CreateProvider(Raw, _version, _types);
+    private IParameterProvider Parameters => _parameters ??= CreateProvider(Raw, _version, _types);
+
+    /// <summary>The parameters of the raw command, for the commands that expose them as they are.</summary>
+    internal IParameterProvider GetParameterProvider() => Parameters;
 
     /// <summary>The type map to make objects inside the command from: the one of the storage, else the built-in one.</summary>
     protected TypeMap Map => _types ?? (_version == StorageVersion.MV ? TypeMap.Mv : TypeMap.VXAce);
@@ -58,7 +62,30 @@ public abstract class NamedCommand
 
     protected T? Get<T>(int index) => Parameters.GetParameter<T>(index);
 
-    protected void Set<T>(int index, T? value) => Parameters.SetParameter(index, value);
+    /// <summary>
+    /// Writes a parameter. A tone, a color, a sound or a route is stored as the class of the type map. A command that
+    /// is not in a container yet does not know its map, so it keeps the value as it is until it is put into one.
+    /// </summary>
+    protected void Set<T>(int index, T? value)
+    {
+        if (typeof(T).IsInterface && value != null && !IsDetached)
+            value = (T)InMap(typeof(T), value);
+
+        Parameters.SetParameter(index, value);
+    }
+
+    private object InMap(Type type, object value)
+    {
+        if (type == typeof(ITone)) return Tones.For((ITone)value, Map)!;
+        if (type == typeof(IColor)) return Colors.For((IColor)value, Map)!;
+        if (type == typeof(IMoveRoute)) return MoveRoutes.For((IMoveRoute)value, Map)!;
+        if (type == typeof(IBGM)) return AudioFiles.For((IBGM)value, Map)!;
+        if (type == typeof(IBGS)) return AudioFiles.For((IBGS)value, Map)!;
+        if (type == typeof(IME)) return AudioFiles.For((IME)value, Map)!;
+        if (type == typeof(ISE)) return AudioFiles.For((ISE)value, Map)!;
+
+        return value;
+    }
 
     /// <summary>
     /// Reads a parameter that is an object (a sound, a route...). The object stored in the raw command is returned, so

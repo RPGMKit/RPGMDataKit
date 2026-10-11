@@ -18,7 +18,7 @@ public class UnknownCommand : NamedCommand
 
     public override string GetCommandName(StorageVersion version) => $"Unknown ({Code})";
 
-    public new IParameterProvider Parameters => base.Parameters;
+    public IParameterProvider Parameters => GetParameterProvider();
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {

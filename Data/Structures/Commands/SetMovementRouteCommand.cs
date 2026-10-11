@@ -19,28 +19,10 @@ public class SetMovementRouteCommand : NamedCommand
     public IMoveRoute Route
     {
         get => GetEntity<IMoveRoute>(1);
-        set => Set(1, IsDetached ? value : RouteFor(value));
+        set => Set(1, value);
     }
 
     public IList<NamedCommand> Commands => Route.NamedCommands;
-
-    // the route as the version of the command stores it
-    private IMoveRoute? RouteFor(IMoveRoute? route)
-    {
-        if (route == null)
-            return null;
-
-        if (Map.Resolve(typeof(IMoveRoute)).IsInstanceOfType(route))
-            return route;
-
-        var converted = Map.Factory<IMoveRoute>()();
-        converted.Repeat = route.Repeat;
-        converted.Skippable = route.Skippable;
-        converted.Wait = route.Wait;
-        converted.NamedCommands = route.NamedCommands;
-
-        return converted;
-    }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
