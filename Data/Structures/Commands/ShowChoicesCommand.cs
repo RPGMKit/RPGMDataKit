@@ -22,7 +22,7 @@ public class ShowChoicesCommand : NamedCommand
     // the list stored in the raw command, so changing it changes the command
     public List<string> Choices
     {
-        get => GetEntity<List<string>, List<string>>(0);
+        get => GetEntity<List<string>>(0);
         set => Set(0, value);
     }
 

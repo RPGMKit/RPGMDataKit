@@ -5,13 +5,11 @@ using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 
-/// <summary>Base of VXAce entities that hold a list of commands (<see cref="ICommandContainer{T}"/>).</summary>
+/// <summary>Base of VXAce entities that hold a list of commands (<see cref="ICommandContainer"/>).</summary>
 /// <typeparam name="TCommand">Command interface; the class is taken from <see cref="TypeMap.VXAce"/>.</typeparam>
 public abstract class RubyCommandContainer<TCommand> : RubySerializationEntity where TCommand : class, ICommand
 {
-    private static readonly Func<TCommand> CreateCommand = TypeMap.VXAce.Factory<TCommand>();
-
-    private readonly CommandList<TCommand> _commands = new(StorageVersion.VXAce, CreateCommand);
+    private readonly CommandList<TCommand> _commands = new(StorageVersion.VXAce, TypeMap.VXAce);
 
     /// <summary>The commands as stored in the file; only used by the serializer.</summary>
     [RubyProperty("@list")]

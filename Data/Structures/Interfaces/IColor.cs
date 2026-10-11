@@ -2,11 +2,11 @@
 
 public interface IColor
 {
-    public int Red { get; }
+    public int Red { get; set; }
 
-    public int Green { get; }
+    public int Green { get; set; }
 
-    public int Blue { get; }
+    public int Blue { get; set; }
 
-    public int Alpha { get; }
+    public int Alpha { get; set; }
 }

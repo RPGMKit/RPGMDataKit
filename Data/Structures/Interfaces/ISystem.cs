@@ -14,5 +14,5 @@ public interface ISystem
 
     public ITone WindowTone { get; set;  }
     
-    public IList<IAudioFile?> Sounds { get; }
+    public IList<ISE?> Sounds { get; }
 }

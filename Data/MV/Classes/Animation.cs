@@ -12,7 +12,7 @@ public class Animation : JsonEntity, IAnimation
         public int Frame;
 
         [JsonProperty("se")]
-        public SoundData SE;
+        public SE SE;
         
         [JsonProperty("conditions")]
         public int Condition;

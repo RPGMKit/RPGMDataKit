@@ -92,7 +92,10 @@ public static class ConverterHelper
 
     public static Dictionary<Type, string> TaggedTypes { get; } = new()
     {
-        [typeof(SoundData)] = "SoundData",
+        [typeof(BGM)] = "BGM",
+        [typeof(BGS)] = "BGS",
+        [typeof(ME)] = "ME",
+        [typeof(SE)] = "SE",
         [typeof(MoveRoute)] = "MoveRoute",
         [typeof(MoveCommand)] = "MoveCommand",
     };

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Storages;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 
@@ -13,17 +14,19 @@ namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 public sealed class CommandList<TCommand> : Collection<NamedCommand> where TCommand : class, ICommand
 {
     private readonly StorageVersion _version;
-    private readonly Func<TCommand> _create;
 
     // a list that is absent in the file stays absent when saved, until a command is added
     private bool _isNull = true;
 
-    /// <param name="create">Creates an empty raw command for a named command made in code.</param>
-    public CommandList(StorageVersion version, Func<TCommand> create)
+    /// <param name="types">Where the raw commands of commands made in code come from; replaced by the one of the storage.</param>
+    public CommandList(StorageVersion version, TypeMap types)
     {
         _version = version;
-        _create = create;
+        Types = types;
     }
+
+    /// <summary>The type map of the storage that the container belongs to.</summary>
+    public TypeMap Types { get; set; }
 
     /// <summary>Builds the named commands over the raw commands that were read from the file.</summary>
     public void LoadRaw(List<TCommand>? raw)
@@ -35,7 +38,11 @@ public sealed class CommandList<TCommand> : Collection<NamedCommand> where TComm
             return;
 
         foreach (var command in raw)
-            base.InsertItem(Count, CommandContainerHelper.CreateNamed(command, _version));
+        {
+            var named = CommandContainerHelper.CreateNamed(command, _version);
+            named.Types = Types;
+            base.InsertItem(Count, named);
+        }
     }
 
     /// <summary>The raw commands to write to the file.</summary>
@@ -72,7 +79,10 @@ public sealed class CommandList<TCommand> : Collection<NamedCommand> where TComm
         ArgumentNullException.ThrowIfNull(item);
 
         if (item.IsDetached)
-            item.Bind(_create(), _version);
+        {
+            item.Types = Types;
+            item.Bind(Types.Factory<TCommand>()(), _version);
+        }
 
         return item;
     }

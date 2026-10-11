@@ -21,10 +21,10 @@ public class Map : JsonEntity, IMap
     public string Battleback2Name { get; set; }
 
     [JsonProperty(PropertyName = "bgm")]
-    public SoundData Bgm { get; set; }
+    public BGM Bgm { get; set; }
 
     [JsonProperty(PropertyName = "bgs")]
-    public SoundData Bgs { get; set; }
+    public BGS Bgs { get; set; }
 
     [JsonProperty(PropertyName = "tilesetId")]
     public int TilesetId { get; set; }

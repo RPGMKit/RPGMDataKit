@@ -6,7 +6,7 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes;
 public class Vehicle : JsonEntity
 {
     [JsonProperty("bgm")]
-    public SoundData BGM { get; set; }
+    public BGM BGM { get; set; }
 
     [JsonProperty("characterIndex")]
     public int CharacterIndex { get; set; }

@@ -1,22 +1,28 @@
-using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Storages;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
 
-/// <summary>The color object a command stores: an array object in MV, a color object in VXAce.</summary>
 internal static class Colors
 {
-    /// <summary>The color as the given version stores it; <paramref name="color"/> itself when it already is.</summary>
-    public static IColor? For(IColor? color, StorageVersion version)
+    /// <summary>
+    /// The color as the type map stores <see cref="IColor"/>: <paramref name="color"/> itself when it already is,
+    /// else a new one with the same values (e.g. a color of the other maker version).
+    /// </summary>
+    public static IColor? For(IColor? color, TypeMap map)
     {
         if (color == null)
             return null;
 
-        if (version == StorageVersion.MV)
-            return color as MV.Classes.Color ??
-                   new MV.Classes.Color { Red = color.Red, Green = color.Green, Blue = color.Blue, Alpha = color.Alpha };
+        if (map.Resolve(typeof(IColor)).IsInstanceOfType(color))
+            return color;
 
-        return color as VXAce.Classes.Custom.Color ??
-               new VXAce.Classes.Custom.Color { Red = color.Red, Green = color.Green, Blue = color.Blue, Alpha = color.Alpha };
+        var converted = map.Factory<IColor>()();
+        converted.Red = color.Red;
+        converted.Green = color.Green;
+        converted.Blue = color.Blue;
+        converted.Alpha = color.Alpha;
+
+        return converted;
     }
 }

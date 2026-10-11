@@ -1,13 +1,10 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.MV.Classes;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
 
-using VXTone = VXAce.Classes.Custom.Tone;
-using MVTone = Tone;
 
 public class TintPictureCommand : NamedCommand
 {
@@ -22,8 +19,8 @@ public class TintPictureCommand : NamedCommand
 
     public ITone Tone
     {
-        get => GetEntity<ITone, MVTone>(1);
-        set => Set(1, IsDetached ? value : Tones.For(value, Version));
+        get => GetEntity<ITone>(1);
+        set => Set(1, IsDetached ? value : Tones.For(value, Map));
     }
 
     public int Duration

@@ -1,6 +1,6 @@
 ﻿namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
 
-public interface IMoveRoute : ICommandContainer<IMoveCommand>
+public interface IMoveRoute : ICommandContainer
 {
     public bool Repeat { get; set; }
 

@@ -1,5 +1,4 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.MV.Classes;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Abstraction;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
@@ -18,10 +17,10 @@ public class ChangeVehicleBGMCommand : NamedCommand
         set => Set(0, value);
     }
 
-    public IAudioFile SoundData
+    public IBGM SoundData
     {
-        get => GetEntity<IAudioFile, SoundData>(1);
-        set => Set(1, AudioFiles.ForMv(value));
+        get => GetEntity<IBGM>(1);
+        set => Set(1, IsDetached ? value : AudioFiles.For(value, Map));
     }
 
     protected override void OnMadeInCodeBound(StorageVersion version)

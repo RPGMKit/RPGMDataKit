@@ -16,7 +16,7 @@ public class System : JsonEntity, ISystem
     public List<AttackMotion> AttackMotions { get; set; }
 
     [JsonProperty(PropertyName = "battleBgm")]
-    public SoundData BattleBgm { get; set; }
+    public BGM BattleBgm { get; set; }
 
     [JsonProperty(PropertyName = "battleback1Name")]
     public string Battleback1Name { get; set; }
@@ -37,7 +37,7 @@ public class System : JsonEntity, ISystem
     public string CurrencyUnit { get; set; }
 
     [JsonProperty(PropertyName = "defeatMe")]
-    public SoundData DefeatMe { get; set; }
+    public ME DefeatMe { get; set; }
 
     [JsonProperty(PropertyName = "editMapId")]
     public int EditMapId { get; set; }
@@ -52,7 +52,7 @@ public class System : JsonEntity, ISystem
     public string GameTitle { get; set; }
 
     [JsonProperty(PropertyName = "gameoverMe")]
-    public SoundData GameOverMe { get; set; }
+    public ME GameOverMe { get; set; }
 
     [JsonProperty(PropertyName = "hasEncryptedAudio")]
     public bool HasEncryptedAudio { get; set; }
@@ -103,7 +103,7 @@ public class System : JsonEntity, ISystem
     public List<string> SkillTypes { get; set; }
 
     [JsonProperty(PropertyName = "sounds")]
-    public List<IAudioFile?> Sounds { get; set; } = new();
+    public List<ISE?> Sounds { get; set; } = new();
 
     [JsonProperty(PropertyName = "startMapId")]
     public int StartMapId { get; set; }
@@ -133,7 +133,7 @@ public class System : JsonEntity, ISystem
     public string Title2Name { get; set; }
 
     [JsonProperty("titleBgm")]
-    public SoundData TitleBgm { get; set; }
+    public BGM TitleBgm { get; set; }
 
     [JsonProperty(PropertyName = "equipTypes")]
     public List<string> EquipmentTypes { get; set; }
@@ -145,7 +145,7 @@ public class System : JsonEntity, ISystem
     public int VersionId { get; set; }
 
     [JsonProperty(PropertyName = "victoryMe")]
-    public SoundData VictoryMe { get; set; }
+    public ME VictoryMe { get; set; }
 
     [JsonProperty(PropertyName = "weaponTypes")]
     public List<string> WeaponTypes { get; set; }
@@ -153,7 +153,7 @@ public class System : JsonEntity, ISystem
     [JsonProperty(PropertyName = "windowTone")]
     public List<int> _WindowTone { get; set; }
 
-    IList<IAudioFile?> ISystem.Sounds => Sounds;
+    IList<ISE?> ISystem.Sounds => Sounds;
 
     public ITone WindowTone
     {

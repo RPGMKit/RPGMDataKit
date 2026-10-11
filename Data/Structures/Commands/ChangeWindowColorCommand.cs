@@ -2,12 +2,9 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
 
-using VXTone = Tone;
-using MVTone = RPGMakerLibCoreV2.Data.MV.Classes.Tone;
 
 public class ChangeWindowColorCommand : NamedCommand
 {
@@ -16,8 +13,8 @@ public class ChangeWindowColorCommand : NamedCommand
 
     public ITone Tone
     {
-        get => GetEntity<ITone, MVTone>(0);
-        set => Set(0, IsDetached ? value : Tones.For(value, Version));
+        get => GetEntity<ITone>(0);
+        set => Set(0, IsDetached ? value : Tones.For(value, Map));
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

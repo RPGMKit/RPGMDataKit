@@ -383,7 +383,7 @@ public static class CommandFactory
                 break;
         }
 
-        returnCommand.Bind(command, version);
+        returnCommand.Bind(command, version, loaded: true);
 
         return returnCommand;
     }

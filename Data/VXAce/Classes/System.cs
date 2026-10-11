@@ -43,7 +43,7 @@ public class System : RubySerializationEntity, ISystem
     public int BattlerHue { get; set; }
 
     [RubyProperty("@sounds")]
-    public List<IAudioFile?> Sounds { get; set; } = new();
+    public List<ISE?> Sounds { get; set; } = new();
 
     [RubyProperty("@variables")]
     public List<string> Variables { get; set; }
@@ -138,7 +138,7 @@ public class System : RubySerializationEntity, ISystem
     [RubyProperty("@opt_floor_death")]
     public bool OptFloorDeath { get; set; }
 
-    IList<IAudioFile?> ISystem.Sounds => Sounds;
+    IList<ISE?> ISystem.Sounds => Sounds;
     
     public List<string> EquipmentTypes => throw new DoesNotExistInVersionException($"{nameof(EquipmentTypes)}");
 

@@ -8,7 +8,7 @@ public static class IndentHelper
 {
     private delegate void IndentWalker(int currIndent, int commandIndex, NamedCommand? prevCommand, NamedCommand currCommand);
     
-    public static void ValidateIndents(ICommandContainer<ICommand> container, StorageVersion version)
+    public static void ValidateIndents(ICommandContainer container, StorageVersion version)
     {
         WalkForIndents(container, version, (indent, index, prevCommand, currCommand) =>
         {
@@ -20,12 +20,12 @@ public static class IndentHelper
         });
     }
 
-    public static void SetupIndents(ICommandContainer<ICommand> container, StorageVersion version)
+    public static void SetupIndents(ICommandContainer container, StorageVersion version)
     {
         WalkForIndents(container, version, (indent, _, _, command) => { command.Indent = indent; });
     }
 
-    private static void WalkForIndents(ICommandContainer<ICommand> container, StorageVersion version, IndentWalker walker)
+    private static void WalkForIndents(ICommandContainer container, StorageVersion version, IndentWalker walker)
     {
         NamedCommand? prevCommand = null;
 

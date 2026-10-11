@@ -1,12 +1,8 @@
 using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.MV.Classes;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
-
-using MoveRouteVX = VXAce.Classes.MoveRoute;
-using MoveRouteMV = MoveRoute;
 
 public class SetMovementRouteCommand : NamedCommand
 {
@@ -22,9 +18,7 @@ public class SetMovementRouteCommand : NamedCommand
     // the route stored in the raw command, so changing it changes the command
     public IMoveRoute Route
     {
-        get => Version == StorageVersion.MV
-            ? GetEntity<IMoveRoute, MoveRouteMV>(1)
-            : GetEntity<IMoveRoute, MoveRouteVX>(1);
+        get => GetEntity<IMoveRoute>(1);
         set => Set(1, IsDetached ? value : RouteFor(value));
     }
 
@@ -36,10 +30,10 @@ public class SetMovementRouteCommand : NamedCommand
         if (route == null)
             return null;
 
-        if (Version == StorageVersion.MV ? route is MoveRouteMV : route is MoveRouteVX)
+        if (Map.Resolve(typeof(IMoveRoute)).IsInstanceOfType(route))
             return route;
 
-        IMoveRoute converted = Version == StorageVersion.MV ? new MoveRouteMV() : new MoveRouteVX();
+        var converted = Map.Factory<IMoveRoute>()();
         converted.Repeat = route.Repeat;
         converted.Skippable = route.Skippable;
         converted.Wait = route.Wait;

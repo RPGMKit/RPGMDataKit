@@ -8,7 +8,7 @@ namespace RPGMakerLibCoreV2.Data.Helpers;
 
 public static class CommandContainerHelper
 {
-    public static IEnumerable<string> CommandsAsText<T>(ICommandContainer<T> container, EntityContext context, DumpOptions options)
+    public static IEnumerable<string> CommandsAsText(ICommandContainer container, EntityContext context, DumpOptions options)
     {
         if (options.Format == DumpFormat.Text)
         {

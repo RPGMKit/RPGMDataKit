@@ -155,7 +155,7 @@ public static class MovementCommandFactory
                 throw new Exception($"Unknown movement command code '{command.Code}'");
         }
 
-        returnCommand.Bind(command, version);
+        returnCommand.Bind(command, version, loaded: true);
 
         return returnCommand;
     }

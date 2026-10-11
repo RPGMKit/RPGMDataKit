@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Storages;
 using RubyMarshalCS.Serialization;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
@@ -7,10 +9,13 @@ namespace RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 public class JsonParameterProvider : IParameterProvider
 {
     private readonly ICommand _command;
+    private readonly JsonSerializer _serializer;
 
-    public JsonParameterProvider(ICommand command)
+    /// <param name="types">Objects inside the command (a route, a sound...) are made from its interfaces.</param>
+    public JsonParameterProvider(ICommand command, TypeMap? types = null)
     {
         _command = command;
+        _serializer = (types ?? TypeMap.Mv).JsonSerializer;
     }
 
     public T? GetParameter<T>(int index)
@@ -20,7 +25,7 @@ public class JsonParameterProvider : IParameterProvider
             return default;
 
         if (value is JToken t)
-            return t.ToObject<T>();
+            return t.ToObject<T>(_serializer);
 
         var retType = typeof(T);
         if (retType.IsPrimitive)

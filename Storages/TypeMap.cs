@@ -1,5 +1,8 @@
 using System.Linq.Expressions;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Storages.Serialization;
 
 namespace RPGMakerLibCoreV2.Storages;
 
@@ -10,6 +13,8 @@ public class TypeMap
 
     private readonly Dictionary<Type, Type> _map = new();
     private readonly Dictionary<Type, List<Type>> _ambiguous = new();
+    private readonly Dictionary<Type, Delegate> _factories = new();
+    private JsonSerializer? _json;
     private bool _readOnly;
 
     /// <summary>Built-in map for MV. Read-only: use <see cref="Clone"/> to customize.</summary>
@@ -26,6 +31,8 @@ public class TypeMap
 
         _map[typeof(TInterface)] = typeof(TConcrete);
         _ambiguous.Remove(typeof(TInterface));
+        _factories.Clear();
+        _json = null;
 
         return this;
     }
@@ -64,8 +71,26 @@ public class TypeMap
     /// <summary>Compiled parameterless constructor of the implementation registered for <typeparamref name="T"/>.</summary>
     public Func<T> Factory<T>() where T : class
     {
-        return Expression.Lambda<Func<T>>(Expression.New(Resolve(typeof(T)))).Compile();
+        lock (_factories)
+        {
+            if (!_factories.TryGetValue(typeof(T), out var factory))
+                _factories[typeof(T)] = factory = Expression.Lambda<Func<T>>(Expression.New(Resolve(typeof(T)))).Compile();
+
+            return (Func<T>)factory;
+        }
     }
+
+    /// <summary>
+    /// The JSON serializer that makes entities from this map. Its context holds the map, so the containers of
+    /// commands that it creates know it too (see <see cref="Data.Structures.Internal.JsonCommandContainer{TCommand}"/>).
+    /// </summary>
+    internal JsonSerializer JsonSerializer => _json ??= JsonSerializer.Create(CreateJsonSettings());
+
+    internal JsonSerializerSettings CreateJsonSettings() => new()
+    {
+        ContractResolver = new TypeMapContractResolver(this),
+        Context = new StreamingContext(StreamingContextStates.Other, this),
+    };
 
     /// <summary>
     /// Maps every entity interface to the only non-abstract class that declares it in

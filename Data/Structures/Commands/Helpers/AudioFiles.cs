@@ -1,24 +1,27 @@
-using RPGMakerLibCoreV2.Data.MV.Classes;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.VXAce.Classes;
+using RPGMakerLibCoreV2.Storages;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
 
-/// <summary>The sound object a command stores: <see cref="SoundData"/> in MV, an <see cref="AudioFile"/> of its kind in VXAce.</summary>
 internal static class AudioFiles
 {
-    /// <summary>The sound as MV stores it; <paramref name="sound"/> itself when it already is.</summary>
-    public static IAudioFile? ForMv(IAudioFile? sound)
+    /// <summary>
+    /// The sound as the type map stores <typeparamref name="T"/>: <paramref name="sound"/> itself when it already is,
+    /// else a new one with the same name, volume and pitch (e.g. a sound of the other maker version).
+    /// </summary>
+    public static T? For<T>(T? sound, TypeMap map) where T : class, IAudioFile
     {
         if (sound == null)
             return null;
 
-        return sound as SoundData ?? new SoundData { Name = sound.Name, Volume = sound.Volume, Pitch = sound.Pitch };
-    }
+        if (map.Resolve(typeof(T)).IsInstanceOfType(sound))
+            return sound;
 
-    /// <summary>The sound as VXAce stores it; <paramref name="sound"/> itself when it already is a <typeparamref name="T"/>.</summary>
-    public static IAudioFile ForVxAce<T>(IAudioFile sound) where T : AudioFile, new()
-    {
-        return sound as T ?? new T { Name = sound.Name, Volume = sound.Volume, Pitch = sound.Pitch };
+        var converted = map.Factory<T>()();
+        converted.Name = sound.Name;
+        converted.Volume = sound.Volume;
+        converted.Pitch = sound.Pitch;
+
+        return converted;
     }
 }

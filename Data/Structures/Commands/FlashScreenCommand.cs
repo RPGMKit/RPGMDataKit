@@ -2,8 +2,6 @@ using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
 using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
-using MVColor = RPGMakerLibCoreV2.Data.MV.Classes.Color;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
 
@@ -14,8 +12,8 @@ public class FlashScreenCommand : NamedCommand
 
     public IColor Color
     {
-        get => GetEntity<IColor, MVColor>(0);
-        set => Set(0, IsDetached ? value : Colors.For(value, Version));
+        get => GetEntity<IColor>(0);
+        set => Set(0, IsDetached ? value : Colors.For(value, Map));
     }
 
     public int Duration

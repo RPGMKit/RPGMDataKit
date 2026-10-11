@@ -17,13 +17,15 @@ public class ListToDictionaryJsonConverter<TInterface, TConcrete> : JsonConverte
         if (reader.TokenType != JsonToken.StartArray)
             throw new JsonSerializationException($"Expected an array, got {reader.TokenType}");
 
-        var dict = new Dictionary<int, TInterface?>();
-        for (var i = 0; reader.Read() && reader.TokenType != JsonToken.EndArray; ++i)
+        var dict = new SlotDictionary<TInterface?>();
+        var length = 0;
+        for (; reader.Read() && reader.TokenType != JsonToken.EndArray; ++length)
         {
             if (reader.TokenType != JsonToken.Null)
-                dict[i] = serializer.Deserialize<TConcrete>(reader);
+                dict[length] = serializer.Deserialize<TConcrete>(reader);
         }
 
+        dict.Slots = length;
         return dict;
     }
 
@@ -35,7 +37,8 @@ public class ListToDictionaryJsonConverter<TInterface, TConcrete> : JsonConverte
             return;
         }
 
-        var length = value.Count == 0 ? 0 : value.Keys.Max() + 1;
+        // the array keeps the length it had in the file, so the trailing nulls are not lost
+        var length = Math.Max(value.Count == 0 ? 0 : value.Keys.Max() + 1, (value as SlotDictionary<TInterface?>)?.Slots ?? 0);
 
         writer.WriteStartArray();
         for (var i = 0; i < length; ++i)

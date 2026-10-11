@@ -1,22 +1,28 @@
-using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Storages;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
 
-/// <summary>The tone object a command stores: an array object in MV, a tone object in VXAce.</summary>
 internal static class Tones
 {
-    /// <summary>The tone as the given version stores it; <paramref name="tone"/> itself when it already is.</summary>
-    public static ITone? For(ITone? tone, StorageVersion version)
+    /// <summary>
+    /// The tone as the type map stores <see cref="ITone"/>: <paramref name="tone"/> itself when it already is,
+    /// else a new one with the same values (e.g. a tone of the other maker version).
+    /// </summary>
+    public static ITone? For(ITone? tone, TypeMap map)
     {
         if (tone == null)
             return null;
 
-        if (version == StorageVersion.MV)
-            return tone as MV.Classes.Tone ??
-                   new MV.Classes.Tone { Red = tone.Red, Green = tone.Green, Blue = tone.Blue, Gray = tone.Gray };
+        if (map.Resolve(typeof(ITone)).IsInstanceOfType(tone))
+            return tone;
 
-        return tone as VXAce.Classes.Custom.Tone ??
-               new VXAce.Classes.Custom.Tone { Red = tone.Red, Green = tone.Green, Blue = tone.Blue, Gray = tone.Gray };
+        var converted = map.Factory<ITone>()();
+        converted.Red = tone.Red;
+        converted.Green = tone.Green;
+        converted.Blue = tone.Blue;
+        converted.Gray = tone.Gray;
+
+        return converted;
     }
 }

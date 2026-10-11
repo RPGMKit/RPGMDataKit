@@ -8,7 +8,7 @@ public class JsonDataSerializer : IDataSerializer
 
     public JsonDataSerializer(TypeMap types)
     {
-        _settings = new JsonSerializerSettings { ContractResolver = new TypeMapContractResolver(types) };
+        _settings = types.CreateJsonSettings();
     }
 
     public string FileExtension => ".json";

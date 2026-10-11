@@ -5,9 +5,6 @@ using RPGMakerLibCoreV2.Data.Structures.Internal;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Commands;
 
-using MoveCommandMV = MV.Classes.MoveCommand;
-using MoveCommandVX = VXAce.Classes.MoveCommand;
-
 public class MovementRouteCommand : NamedCommand
 {
     public override int Code => CommandCodes.MovementRouteCommand;
@@ -30,15 +27,14 @@ public class MovementRouteCommand : NamedCommand
             if (IsDetached && _pendingMoveCommand != null)
                 return _pendingMoveCommand;
 
-            var raw = Version == StorageVersion.MV
-                ? GetEntity<IMoveCommand, MoveCommandMV>(0)
-                : GetEntity<IMoveCommand, MoveCommandVX>(0);
+            var raw = GetEntity<IMoveCommand>(0);
             if (raw == null)
                 return _pendingMoveCommand!;
 
             if (_moveCommand == null || !ReferenceEquals(_moveCommandRaw, raw) || !_moveCommand.MatchesRaw())
             {
                 _moveCommand = MovementCommandFactory.Create(raw, Version);
+                _moveCommand.Types = Types;
                 _moveCommandRaw = raw;
             }
 
@@ -58,7 +54,8 @@ public class MovementRouteCommand : NamedCommand
             IMoveCommand raw;
             if (value.IsDetached)
             {
-                raw = Version == StorageVersion.MV ? new MoveCommandMV() : new MoveCommandVX();
+                raw = Map.Factory<IMoveCommand>()();
+                value.Types = Types;
                 value.Bind(raw, Version);
             }
             else

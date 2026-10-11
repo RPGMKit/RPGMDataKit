@@ -3,6 +3,7 @@ using System.Reflection;
 using RPGMakerLibCoreV2.Data.Enums;
 using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
 using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMakerLibCoreV2.Storages;
 
 namespace RPGMakerLibCoreV2.Data.Structures.Internal;
 
@@ -17,6 +18,7 @@ public abstract class NamedCommand
     private ICommand? _raw;
     private IParameterProvider? _parameters;
     private StorageVersion _version = StorageVersion.VXAce;
+    private TypeMap? _types;
 
     public abstract int Code { get; }
 
@@ -38,7 +40,21 @@ public abstract class NamedCommand
     /// <summary>Version of the raw command; VXAce until the command is bound.</summary>
     protected StorageVersion Version => _version;
 
-    protected IParameterProvider Parameters => _parameters ??= CreateProvider(Raw, _version);
+    protected IParameterProvider Parameters => _parameters ??= CreateProvider(Raw, _version, _types);
+
+    /// <summary>The type map to make objects inside the command from: the one of the storage, else the built-in one.</summary>
+    protected TypeMap Map => _types ?? (_version == StorageVersion.MV ? TypeMap.Mv : TypeMap.VXAce);
+
+    /// <summary>The type map of the storage; objects inside the command (a route, a sound) are made from it.</summary>
+    internal TypeMap? Types
+    {
+        get => _types;
+        set
+        {
+            _types = value;
+            _parameters = null;
+        }
+    }
 
     protected T? Get<T>(int index) => Parameters.GetParameter<T>(index);
 
@@ -61,11 +77,20 @@ public abstract class NamedCommand
         return converted;
     }
 
+    /// <summary>
+    /// <see cref="GetEntity{T,TJson}"/> for an object whose type is resolved by the type map, so the same type is
+    /// used to read it from JSON.
+    /// </summary>
+    protected T? GetEntity<T>(int index) where T : class => GetEntity<T, T>(index);
+
     /// <summary>True while the command has no container (and so no raw command of a file) yet.</summary>
     internal bool IsDetached => _raw == null || _raw is DetachedCommand;
 
-    /// <summary>Makes the command a view over <paramref name="raw"/>, carrying over what was set in code.</summary>
-    internal void Bind(ICommand raw, StorageVersion version)
+    /// <summary>
+    /// Makes the command a view over <paramref name="raw"/>, carrying over what was set in code.
+    /// A <paramref name="loaded"/> command is created over a raw command of a file and is left as it is.
+    /// </summary>
+    internal void Bind(ICommand raw, StorageVersion version, bool loaded = false)
     {
         if (_raw is DetachedCommand detached && !ReferenceEquals(detached, raw))
         {
@@ -73,7 +98,7 @@ public abstract class NamedCommand
             raw.Parameters = detached.Parameters;
         }
 
-        var madeInCode = IsDetached;
+        var madeInCode = !loaded && IsDetached;
         if (madeInCode)
             raw.Code = Code;
 
@@ -111,8 +136,8 @@ public abstract class NamedCommand
     /// <summary>False when the raw command was changed so that this class no longer describes it, e.g. its code.</summary>
     internal virtual bool MatchesRaw() => Raw.Code == Code;
 
-    private static IParameterProvider CreateProvider(ICommand command, StorageVersion version) =>
-        version == StorageVersion.MV ? new JsonParameterProvider(command) : new SimpleParameterProvider(command);
+    private static IParameterProvider CreateProvider(ICommand command, StorageVersion version, TypeMap? types) =>
+        version == StorageVersion.MV ? new JsonParameterProvider(command, types) : new SimpleParameterProvider(command);
 
     public virtual string GetParametersDescription(EntityContext context, DumpOptions options) => "";
 

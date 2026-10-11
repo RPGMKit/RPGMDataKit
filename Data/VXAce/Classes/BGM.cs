@@ -1,8 +1,9 @@
-﻿using RubyMarshalCS.Serialization.Attributes;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 
 [RubyObject("RPG::BGM")]
-public class BGM : AudioFile
+public class BGM : AudioFile, IBGM
 {
 }
