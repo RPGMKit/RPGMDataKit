@@ -43,6 +43,13 @@ class BinaryStringConverter : IYamlTypeConverter
     {
         var b = (BinaryString)value;
 
+        // text in UTF-8 is just a string; any other encoding is kept as it is
+        if (b.Encoding?.CodePage == Encoding.UTF8.CodePage)
+        {
+            serializer(b.Value, typeof(string));
+            return;
+        }
+
         emitter.Emit(new MappingStart(null, "!BinaryString", false, MappingStyle.Block));
 
         emitter.Emit(new Scalar("Encoding"));
