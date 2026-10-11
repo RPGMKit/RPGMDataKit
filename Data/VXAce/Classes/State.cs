@@ -28,9 +28,6 @@ public class State : BaseItem, IState
     [RubyProperty("@max_turns")]
     public int MaxTurns;
 
-    [RubyProperty("@release_by_damage", CandidateFlags.In)]
-    public bool ReleaseByDamage;
-    
     [RubyProperty("@remove_by_damage")]
     public bool RemoveByDamage;
     

@@ -60,10 +60,4 @@ public class Enemy : BaseItem, IEnemy
 
     [RubyProperty("@actions")]
     public List<Action> Actions { get; set; }
-
-    [RubyProperty("@hit", CandidateFlags.In)]
-    public int Hit { get; set; }
-    
-    [RubyProperty("@eva", CandidateFlags.In)]
-    public int Eva { get; set; }
 }
