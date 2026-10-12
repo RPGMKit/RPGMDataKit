@@ -1,4 +1,5 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+﻿using RPGMakerLibCoreV2.Data.Structures.Exceptions;
+using RPGMakerLibCoreV2.Data.Structures.Interfaces;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
@@ -32,4 +33,11 @@ public class Actor : BaseItem, IActor
 
     [RubyProperty("@max_level")]
     public int MaxLevel { get; set; }
+
+    // there is no side view battle in VX Ace; no [RubyProperty], so the serializer does not touch it
+    public string BattlerName
+    {
+        get => throw new DoesNotExistInVersionException();
+        set => throw new DoesNotExistInVersionException();
+    }
 }

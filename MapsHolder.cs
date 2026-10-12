@@ -61,4 +61,11 @@ public class MapsHolder : ITable
         foreach (var holder in _maps.Values)
             holder.Save();
     }
+
+    /// <summary>Saves one map; does nothing when the map was not loaded.</summary>
+    public void Save(int index)
+    {
+        if (_maps.TryGetValue(index, out var holder))
+            holder.Save();
+    }
 }

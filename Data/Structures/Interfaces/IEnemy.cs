@@ -4,4 +4,8 @@ public interface IEnemy : IHasId
 {
     
     public string Name { get; set; }
+
+    public string BattlerName { get; set; }
+
+    public int BattlerHue { get; set; }
 }
