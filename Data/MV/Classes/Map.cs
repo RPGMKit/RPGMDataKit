@@ -8,6 +8,17 @@ namespace RPGMakerLibCoreV2.Data.MV.Classes;
 
 public class Map : JsonEntity, IMap
 {
+    /// <summary>A troop that appears on the map in a random encounter.</summary>
+    public class Encounter : JsonEntity
+    {
+        [JsonProperty("regionSet")]
+        public List<int> RegionSet { get; set; } = new();
+        [JsonProperty("troopId")]
+        public int TroopId { get; set; }
+        [JsonProperty("weight")]
+        public int Weight { get; set; }
+    }
+
     [JsonProperty(PropertyName = "autoplayBgm")]
     public bool AutoPlayBgm { get; set; }
 
@@ -42,7 +53,7 @@ public class Map : JsonEntity, IMap
     public bool DisableDashing { get; set; }
 
     [JsonProperty(PropertyName = "encounterList")]
-    public List<object> EncounterList { get; set; }
+    public List<Encounter> EncounterList { get; set; } = new();
 
     [JsonProperty(PropertyName = "encounterStep")]
     public int EncounterStep { get; set; }

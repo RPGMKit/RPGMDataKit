@@ -9,6 +9,18 @@ namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
 [RubyObject("RPG::Map")]
 public class Map : RubySerializationEntity, IMap
 {
+    /// <summary>A troop that appears on the map in a random encounter.</summary>
+    [RubyObject("RPG::Map::Encounter")]
+    public class Encounter : RubySerializationEntity
+    {
+        [RubyProperty("@troop_id")]
+        public int TroopId { get; set; }
+        [RubyProperty("@weight")]
+        public int Weight { get; set; }
+        [RubyProperty("@region_set")]
+        public List<int> RegionSet { get; set; } = new();
+    }
+
     [RubyProperty("@display_name")]
     public string DisplayName { get; set; }
 
@@ -49,7 +61,7 @@ public class Map : RubySerializationEntity, IMap
     public bool DisableDashing { get; set; }
 
     [RubyProperty("@encounter_list")]
-    public List<object> EncounterList { get; set; }
+    public List<Encounter> EncounterList { get; set; } = new();
 
     [RubyProperty("@encounter_step")]
     public int EncounterStep { get; set; }

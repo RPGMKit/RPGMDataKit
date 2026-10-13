@@ -6,6 +6,9 @@ namespace RPGMakerLibCoreV2.Storages.Serialization;
 
 public class RubyMarshalDataSerializer : IDataSerializer
 {
+    /// <summary>Where the notes about the unknown members and objects of a file go; the console by default, <c>null</c> keeps quiet.</summary>
+    public static Action<string>? Log { get; set; } = null;
+
     private readonly DeserializationSettings _settings = new()
     {
         MissingMemberHandling = MissingMemberHandling.Error,
@@ -14,18 +17,17 @@ public class RubyMarshalDataSerializer : IDataSerializer
 
         MissingMember = (_, args) =>
         {
-            Console.WriteLine(
-                $"Missing member \"{args.Member.Key}\" found for object \"{args.RubyObject.GetRealClassName()}\"");
+            Log?.Invoke($"Missing member \"{args.Member.Key}\" found for object \"{args.RubyObject.GetRealClassName()}\"");
             args.Store();
         },
         UndefinedObject = (_, args) =>
         {
-            Console.WriteLine($"Undefined object found: \"{args.RubyObject.GetRealClassName()}\"");
+            Log?.Invoke($"Undefined object found: \"{args.RubyObject.GetRealClassName()}\"");
             args.Ignore();
         },
         UndefinedUserObject = (_, args) =>
         {
-            Console.WriteLine($"Undefined user object found: \"{args.RubyUserObject.GetRealClassName()}\"");
+            Log?.Invoke($"Undefined user object found: \"{args.RubyUserObject.GetRealClassName()}\"");
             args.Store();
         }
     };
