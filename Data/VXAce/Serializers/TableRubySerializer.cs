@@ -1,7 +1,7 @@
-﻿using RPGMakerLibCoreV2.Data.Structures;
+﻿using RPGMDataKit.Data.Structures;
 using RubyMarshalCS.Serialization.Interfaces;
 
-namespace RPGMakerLibCoreV2.Data.VXAce.Serializers;
+namespace RPGMDataKit.Data.VXAce.Serializers;
 
 class TableSerializer : IRubyUserSerializer<Table>
 {

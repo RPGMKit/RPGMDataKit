@@ -1,4 +1,4 @@
-﻿namespace RPGMakerLibCoreV2;
+﻿namespace RPGMDataKit;
 
 public static class LibExtensions
 {

@@ -1,9 +1,9 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.SpecialTypes;
 
-namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
+namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::UsableItem")]
 public class UsableItem : BaseItem

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
+namespace RPGMDataKit.Data.Structures.Internal.Converters;
 
 /// <summary>
 /// Reads a JSON array as a dictionary keyed by index (null slots are skipped) and writes it back as an array.

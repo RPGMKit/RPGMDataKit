@@ -1,6 +1,6 @@
 ﻿using RubyMarshalCS.Serialization.Attributes;
 
-namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
+namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::EquipItem")]
 public class EquipItem : BaseItem

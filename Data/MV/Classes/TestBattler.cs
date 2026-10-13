@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMDataKit.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.MV.Classes;
+namespace RPGMDataKit.Data.MV.Classes;
 
 public class TestBattler : JsonEntity
 {

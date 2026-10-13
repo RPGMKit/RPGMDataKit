@@ -1,4 +1,4 @@
-﻿namespace RPGMakerLibCoreV2.Diff
+﻿namespace RPGMDataKit.Diff
 {
     public enum DiffType
     {

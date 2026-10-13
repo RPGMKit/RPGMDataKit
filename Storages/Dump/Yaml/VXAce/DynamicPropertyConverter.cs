@@ -5,7 +5,7 @@ using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.Yaml.VXAce;
+namespace RPGMDataKit.Storages.Dump.Yaml.VXAce;
 
 public class DynamicPropertyConverter : IYamlTypeConverter
 {

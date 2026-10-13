@@ -1,4 +1,4 @@
-﻿namespace RPGMakerLibCoreV2.Data.Helpers.Dump;
+﻿namespace RPGMDataKit.Data.Helpers.Dump;
 
 public enum DumpStage
 {

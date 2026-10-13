@@ -1,7 +1,7 @@
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.Yaml;
+namespace RPGMDataKit.Storages.Dump.Yaml;
 
 /// <summary>Deserializes an untagged node declared as an entity interface into the concrete type from <see cref="TypeMap"/>.</summary>
 public class TypeMapNodeTypeResolver : INodeTypeResolver

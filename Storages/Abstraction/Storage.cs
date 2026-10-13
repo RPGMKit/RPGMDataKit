@@ -1,15 +1,15 @@
-﻿using RPGMakerLibCoreV2.Data;
-using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Enums.Internal;
-using RPGMakerLibCoreV2.Data.Helpers;
-using RPGMakerLibCoreV2.Data.Helpers.Dump;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMDataKit.Data;
+using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Enums.Internal;
+using RPGMDataKit.Data.Helpers;
+using RPGMDataKit.Data.Helpers.Dump;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 using System.Reflection;
-using RPGMakerLibCoreV2.Diff;
-using RPGMakerLibCoreV2.Storages.Serialization;
+using RPGMDataKit.Diff;
+using RPGMDataKit.Storages.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Abstraction;
+namespace RPGMDataKit.Storages.Abstraction;
 
 public abstract class Storage
 {

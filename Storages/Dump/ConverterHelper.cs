@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using RPGMakerLibCoreV2.Data.MV.Classes;
+using RPGMDataKit.Data.MV.Classes;
 
-namespace RPGMakerLibCoreV2.Storages.Dump;
+namespace RPGMDataKit.Storages.Dump;
 
 public static class ConverterHelper
 {

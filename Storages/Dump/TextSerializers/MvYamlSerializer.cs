@@ -1,9 +1,9 @@
-﻿using RPGMakerLibCoreV2.Storages.Dump.Yaml;
-using RPGMakerLibCoreV2.Storages.Dump.Yaml.MV;
+﻿using RPGMDataKit.Storages.Dump.Yaml;
+using RPGMDataKit.Storages.Dump.Yaml.MV;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
+namespace RPGMDataKit.Storages.Dump.TextSerializers;
 
 public class MvYamlSerializer : AbstractYamlSerializer
 {

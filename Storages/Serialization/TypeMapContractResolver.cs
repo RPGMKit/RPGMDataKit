@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Serialization;
+namespace RPGMDataKit.Storages.Serialization;
 
 /// <summary>Deserializes members declared as an entity interface into the concrete type from <see cref="TypeMap"/>.</summary>
 public class TypeMapContractResolver : DefaultContractResolver

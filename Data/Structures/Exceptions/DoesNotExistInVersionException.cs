@@ -1,4 +1,4 @@
-﻿namespace RPGMakerLibCoreV2.Data.Structures.Exceptions;
+﻿namespace RPGMDataKit.Data.Structures.Exceptions;
 
 public class DoesNotExistInVersionException : Exception
 {

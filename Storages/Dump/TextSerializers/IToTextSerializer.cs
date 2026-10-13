@@ -1,4 +1,4 @@
-﻿namespace RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
+﻿namespace RPGMDataKit.Storages.Dump.TextSerializers;
 
 public interface IToTextSerializer
 {

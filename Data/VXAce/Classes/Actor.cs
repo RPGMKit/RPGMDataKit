@@ -1,8 +1,8 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Exceptions;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data.Structures.Exceptions;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RubyMarshalCS.Serialization.Attributes;
 
-namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
+namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::Actor")]
 public class Actor : BaseItem, IActor

@@ -1,6 +1,6 @@
-﻿using RPGMakerLibCoreV2.Data.VXAce.Classes;
+﻿using RPGMDataKit.Data.VXAce.Classes;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
+namespace RPGMDataKit.Storages.Dump.TextSerializers;
 
 public class ScriptSerializer : IToTextSerializer
 {

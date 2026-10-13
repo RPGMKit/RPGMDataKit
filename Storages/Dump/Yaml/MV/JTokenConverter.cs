@@ -3,7 +3,7 @@ using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.Yaml.MV;
+namespace RPGMDataKit.Storages.Dump.Yaml.MV;
 
 public class JTokenConverter : IYamlTypeConverter
 {

@@ -1,4 +1,4 @@
-namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
+namespace RPGMDataKit.Data.Structures.Interfaces;
 
 public interface IBGM : IAudioFile
 {

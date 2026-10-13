@@ -1,10 +1,10 @@
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Storages.Serialization;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Storages.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages;
+namespace RPGMDataKit.Storages;
 
 /// <summary>Maps entity interfaces to the concrete types of one maker version.</summary>
 public class TypeMap
@@ -18,10 +18,10 @@ public class TypeMap
     private bool _readOnly;
 
     /// <summary>Built-in map for MV. Read-only: use <see cref="Clone"/> to customize.</summary>
-    public static TypeMap Mv { get; } = FromNamespace("RPGMakerLibCoreV2.Data.MV.Classes");
+    public static TypeMap Mv { get; } = FromNamespace("RPGMDataKit.Data.MV.Classes");
 
     /// <summary>Built-in map for VXAce. Read-only: use <see cref="Clone"/> to customize.</summary>
-    public static TypeMap VXAce { get; } = FromNamespace("RPGMakerLibCoreV2.Data.VXAce.Classes");
+    public static TypeMap VXAce { get; } = FromNamespace("RPGMDataKit.Data.VXAce.Classes");
 
     /// <summary>Registers (or replaces) the implementation of an entity interface.</summary>
     public TypeMap Add<TInterface, TConcrete>() where TConcrete : TInterface

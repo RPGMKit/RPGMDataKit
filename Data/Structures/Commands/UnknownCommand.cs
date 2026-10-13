@@ -1,9 +1,9 @@
 using Newtonsoft.Json.Linq;
-using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Commands.ParameterProviders;
+using RPGMDataKit.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+namespace RPGMDataKit.Data.Structures.Commands;
 
 /// <summary>A command with a code this library does not know; its parameters are available as they are.</summary>
 public class UnknownCommand : NamedCommand

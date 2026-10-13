@@ -1,6 +1,6 @@
-﻿using RPGMakerLibCoreV2.Storages.Abstraction;
+﻿using RPGMDataKit.Storages.Abstraction;
 
-namespace RPGMakerLibCoreV2.Data;
+namespace RPGMDataKit.Data;
 
 public delegate T? HolderLoader<T>(string path);
 

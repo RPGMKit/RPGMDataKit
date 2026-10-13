@@ -1,10 +1,10 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMDataKit.Data.Structures.Commands.ParameterProviders;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 
-namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
+namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::EventCommand")]
 public class Command : RubySerializationEntity, ICommand

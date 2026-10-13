@@ -1,7 +1,7 @@
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Storages;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Storages;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
+namespace RPGMDataKit.Data.Structures.Commands.Helpers;
 
 internal static class AudioFiles
 {

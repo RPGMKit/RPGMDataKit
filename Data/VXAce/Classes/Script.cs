@@ -1,4 +1,4 @@
-﻿namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
+﻿namespace RPGMDataKit.Data.VXAce.Classes;
 
 public class Script
 {

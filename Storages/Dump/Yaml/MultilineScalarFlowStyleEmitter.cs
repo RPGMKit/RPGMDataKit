@@ -2,7 +2,7 @@
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.EventEmitters;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.Yaml;
+namespace RPGMDataKit.Storages.Dump.Yaml;
 
 public class MultilineScalarFlowStyleEmitter : ChainedEventEmitter
 {

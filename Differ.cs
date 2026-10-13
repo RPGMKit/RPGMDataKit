@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Helpers;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Diff;
-using RPGMakerLibCoreV2.Diff.Text;
-using RPGMakerLibCoreV2.Storages.Abstraction;
+using RPGMDataKit.Data.Helpers;
+using RPGMDataKit.Data.Structures.Internal;
+using RPGMDataKit.Diff;
+using RPGMDataKit.Diff.Text;
+using RPGMDataKit.Storages.Abstraction;
 
-namespace RPGMakerLibCoreV2
+namespace RPGMDataKit
 {
     public static class Differ
     {

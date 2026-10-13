@@ -1,8 +1,8 @@
-﻿using RPGMakerLibCoreV2.Data;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data;
+using RPGMDataKit.Data.Structures.Interfaces;
 
 
-namespace RPGMakerLibCoreV2;
+namespace RPGMDataKit;
 
 public class MapsHolder : ITable
 {

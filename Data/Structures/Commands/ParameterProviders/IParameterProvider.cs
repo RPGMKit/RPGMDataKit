@@ -1,4 +1,4 @@
-﻿namespace RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
+﻿namespace RPGMDataKit.Data.Structures.Commands.ParameterProviders;
 
 public interface IParameterProvider
 {

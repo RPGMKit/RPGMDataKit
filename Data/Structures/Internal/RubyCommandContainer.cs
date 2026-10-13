@@ -1,9 +1,9 @@
-using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Storages;
+using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Storages;
 using RubyMarshalCS.Serialization.Attributes;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Internal;
+namespace RPGMDataKit.Data.Structures.Internal;
 
 /// <summary>Base of VXAce entities that hold a list of commands (<see cref="ICommandContainer"/>).</summary>
 /// <typeparam name="TCommand">Command interface; the class is taken from <see cref="TypeMap.VXAce"/>.</typeparam>

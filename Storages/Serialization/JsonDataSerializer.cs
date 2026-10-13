@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace RPGMakerLibCoreV2.Storages.Serialization;
+namespace RPGMDataKit.Storages.Serialization;
 
 public class JsonDataSerializer : IDataSerializer
 {

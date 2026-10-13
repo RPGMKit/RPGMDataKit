@@ -1,9 +1,9 @@
-using RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
+using RPGMDataKit.Data.Structures.Internal.Converters;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.Yaml.MV;
+namespace RPGMDataKit.Storages.Dump.Yaml.MV;
 
 /// <summary>
 /// A dictionary keyed by index (the events of a map) is written as the list it is in the data file, with an empty

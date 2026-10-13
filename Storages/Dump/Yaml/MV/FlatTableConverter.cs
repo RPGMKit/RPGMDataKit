@@ -1,8 +1,8 @@
-using RPGMakerLibCoreV2.Data.Structures;
+using RPGMDataKit.Data.Structures;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.Yaml.MV;
+namespace RPGMDataKit.Storages.Dump.Yaml.MV;
 
 /// <summary>MV keeps tables as flat arrays, so the YAML dump is a plain list of cells.</summary>
 public class FlatTableConverter : IYamlTypeConverter

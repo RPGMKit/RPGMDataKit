@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Text;
-using RPGMakerLibCoreV2.Data.VXAce.Classes;
+using RPGMDataKit.Data.VXAce.Classes;
 using RubyMarshalCS;
 using RubyMarshalCS.Conversion.Attributes;
 using RubyMarshalCS.Conversion.Interfaces;
@@ -8,7 +8,7 @@ using RubyMarshalCS.Entities;
 using RubyMarshalCS.Serialization;
 using RubyMarshalCS.SpecialTypes;
 
-namespace RPGMakerLibCoreV2.Data.VXAce.Serializers;
+namespace RPGMDataKit.Data.VXAce.Serializers;
 
 [RubyCustomConverter]
 public class ScriptConverter : IRubyCustomConverter

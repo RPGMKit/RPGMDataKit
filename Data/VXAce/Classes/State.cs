@@ -1,8 +1,8 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data.Structures.Interfaces;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 
-namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
+namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::State")]
 public class State : BaseItem, IState

@@ -1,11 +1,11 @@
-﻿using RPGMakerLibCoreV2.Data;
-using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.VXAce.Classes;
-using RPGMakerLibCoreV2.Storages.Abstraction;
-using RPGMakerLibCoreV2.Storages.Serialization;
+﻿using RPGMDataKit.Data;
+using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.VXAce.Classes;
+using RPGMDataKit.Storages.Abstraction;
+using RPGMDataKit.Storages.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages;
+namespace RPGMDataKit.Storages;
 
 public class VXAceStorage : Storage
 {

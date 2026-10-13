@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
-using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Helpers;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Storages;
+using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Helpers;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Storages;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Internal;
+namespace RPGMDataKit.Data.Structures.Internal;
 
 /// <summary>
 /// Commands of a container. Users work with <see cref="NamedCommand"/>s only: each of them is a view over its raw

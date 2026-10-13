@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
+namespace RPGMDataKit.Data.Structures.Internal.Converters;
 
 /// <summary>
 /// Reads a flat JSON array as a one-dimensional <see cref="Table"/> and writes the cells back as a flat array.

@@ -1,10 +1,10 @@
-﻿using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Helpers;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Helpers;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
 
-namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
+namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::Troop")]
 public class Troop : RubySerializationEntity, ITroop

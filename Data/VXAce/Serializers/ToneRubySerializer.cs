@@ -1,7 +1,7 @@
-﻿using RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
+﻿using RPGMDataKit.Data.VXAce.Classes.Custom;
 using RubyMarshalCS.Serialization.Interfaces;
 
-namespace RPGMakerLibCoreV2.Data.VXAce.Serializers;
+namespace RPGMDataKit.Data.VXAce.Serializers;
 
 class ToneSerializer : IRubyUserSerializer<Tone>
 {

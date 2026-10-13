@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ErrorEventArgs = Newtonsoft.Json.Serialization.ErrorEventArgs;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Internal
+namespace RPGMDataKit.Data.Structures.Internal
 {
     [JsonObject(MemberSerialization.OptIn)]
     public abstract class JsonEntity

@@ -1,8 +1,8 @@
-﻿using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Helpers;
-using RPGMakerLibCoreV2.Storages.Abstraction;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Helpers;
+using RPGMDataKit.Storages.Abstraction;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Internal;
+namespace RPGMDataKit.Data.Structures.Internal;
 
 public class EntityContext
 {

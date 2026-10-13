@@ -1,10 +1,10 @@
-﻿using RPGMakerLibCoreV2.Data.Helpers.Dump;
-using RPGMakerLibCoreV2.Data.MV.Classes;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Storages.Abstraction;
-using RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
+﻿using RPGMDataKit.Data.Helpers.Dump;
+using RPGMDataKit.Data.MV.Classes;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Storages.Abstraction;
+using RPGMDataKit.Storages.Dump.TextSerializers;
 
-namespace RPGMakerLibCoreV2.Storages.Dump;
+namespace RPGMDataKit.Storages.Dump;
 
 public class MvYamlStorage : AbstractYamlStorage
 {

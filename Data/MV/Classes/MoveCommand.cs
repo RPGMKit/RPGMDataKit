@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMDataKit.Data.Structures.Commands.ParameterProviders;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.MV.Classes;
+namespace RPGMDataKit.Data.MV.Classes;
 
 public class MoveCommand : JsonEntity, IMoveCommand
 {

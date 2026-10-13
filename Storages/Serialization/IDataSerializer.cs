@@ -1,4 +1,4 @@
-namespace RPGMakerLibCoreV2.Storages.Serialization;
+namespace RPGMDataKit.Storages.Serialization;
 
 public interface IDataSerializer
 {

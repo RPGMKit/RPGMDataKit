@@ -2,7 +2,7 @@ using RubyMarshalCS;
 using RubyMarshalCS.Enums;
 using RubyMarshalCS.Settings;
 
-namespace RPGMakerLibCoreV2.Storages.Serialization;
+namespace RPGMDataKit.Storages.Serialization;
 
 public class RubyMarshalDataSerializer : IDataSerializer
 {

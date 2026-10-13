@@ -1,6 +1,6 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data.Structures.Interfaces;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Internal;
+namespace RPGMDataKit.Data.Structures.Internal;
 
 public class TroopContext
 {

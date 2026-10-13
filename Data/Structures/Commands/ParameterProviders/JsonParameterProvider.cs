@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Storages;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Storages;
 using RubyMarshalCS.Serialization;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
+namespace RPGMDataKit.Data.Structures.Commands.ParameterProviders;
 
 public class JsonParameterProvider : IParameterProvider
 {

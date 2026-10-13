@@ -1,6 +1,6 @@
 ﻿using YamlDotNet.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
+namespace RPGMDataKit.Storages.Dump.TextSerializers;
 
 public abstract class AbstractYamlSerializer : IToTextSerializer
 {

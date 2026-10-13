@@ -1,6 +1,6 @@
-using RPGMakerLibCoreV2.Data.Enums;
+using RPGMDataKit.Data.Enums;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
+namespace RPGMDataKit.Data.Structures.Commands.MovementCommands;
 
 public class MoveLowerLeftCommand : AbstractMoveCommand
 {

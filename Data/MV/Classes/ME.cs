@@ -1,6 +1,6 @@
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Interfaces;
 
-namespace RPGMakerLibCoreV2.Data.MV.Classes;
+namespace RPGMDataKit.Data.MV.Classes;
 
 public class ME : AudioFile, IME
 {

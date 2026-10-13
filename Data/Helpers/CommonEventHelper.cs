@@ -1,8 +1,8 @@
-﻿using RPGMakerLibCoreV2.Data.Helpers.Dump;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Storages.Abstraction;
+﻿using RPGMDataKit.Data.Helpers.Dump;
+using RPGMDataKit.Data.Structures.Internal;
+using RPGMDataKit.Storages.Abstraction;
 
-namespace RPGMakerLibCoreV2.Data.Helpers;
+namespace RPGMDataKit.Data.Helpers;
 
 public static class CommonEventHelper
 {

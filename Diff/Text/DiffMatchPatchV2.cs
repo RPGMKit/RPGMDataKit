@@ -1,6 +1,6 @@
-﻿using RPGMakerLibCoreV2.Diff.Text.Internal;
+﻿using RPGMDataKit.Diff.Text.Internal;
 
-namespace RPGMakerLibCoreV2.Diff.Text
+namespace RPGMDataKit.Diff.Text
 {
     public class DiffMatchPatchV2 : diff_match_patch
     {

@@ -1,4 +1,4 @@
-﻿namespace RPGMakerLibCoreV2.Data;
+﻿namespace RPGMDataKit.Data;
 
 internal interface ITable
 {

@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
-using RPGMakerLibCoreV2.Data.Structures;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.Structures.Internal.Converters;
+using RPGMDataKit.Data.Structures;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
+using RPGMDataKit.Data.Structures.Internal.Converters;
 
-namespace RPGMakerLibCoreV2.Data.MV.Classes
+namespace RPGMDataKit.Data.MV.Classes
 {
     public class Tileset : JsonEntity, ITileSet
     {

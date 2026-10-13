@@ -1,4 +1,4 @@
-﻿namespace RPGMakerLibCoreV2.Data.Enums.Internal;
+﻿namespace RPGMDataKit.Data.Enums.Internal;
 
 public enum HolderType
 {

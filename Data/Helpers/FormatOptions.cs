@@ -1,6 +1,6 @@
-﻿using RPGMakerLibCoreV2.Data.Enums;
+﻿using RPGMDataKit.Data.Enums;
 
-namespace RPGMakerLibCoreV2.Data.Helpers;
+namespace RPGMDataKit.Data.Helpers;
 
 public class FormatOptions
 {

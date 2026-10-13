@@ -1,8 +1,8 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMDataKit.Data.Structures.Internal;
 using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 
-namespace RPGMakerLibCoreV2.Data.VXAce.Classes;
+namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::System::TestBattler")]
 public class TestBattler : RubySerializationEntity

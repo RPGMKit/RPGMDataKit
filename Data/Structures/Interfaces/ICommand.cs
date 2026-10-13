@@ -1,7 +1,7 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMDataKit.Data.Structures.Commands.ParameterProviders;
+using RPGMDataKit.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Interfaces;
+namespace RPGMDataKit.Data.Structures.Interfaces;
 
 public interface ICommand
 {

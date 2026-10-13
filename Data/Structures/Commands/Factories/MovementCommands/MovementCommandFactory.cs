@@ -1,9 +1,9 @@
-﻿using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.MovementCommands;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Commands.MovementCommands;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.Factories.MovementCommands;
+namespace RPGMDataKit.Data.Structures.Commands.Factories.MovementCommands;
 
 public static class MovementCommandFactory
 {

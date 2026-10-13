@@ -1,8 +1,8 @@
-﻿using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Storages.Abstraction;
-using RPGMakerLibCoreV2.Storages.Dump;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Storages.Abstraction;
+using RPGMDataKit.Storages.Dump;
 
-namespace RPGMakerLibCoreV2.Data.Helpers.Dump;
+namespace RPGMDataKit.Data.Helpers.Dump;
 
 public static class DumpHelper
 {

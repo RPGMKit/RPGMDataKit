@@ -2,7 +2,7 @@
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.TypeInspectors;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.Yaml.MV;
+namespace RPGMDataKit.Storages.Dump.Yaml.MV;
 
 class MvObjectTypeInspector : TypeInspectorSkeleton
 {

@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-using RPGMakerLibCoreV2.Data;
-using RPGMakerLibCoreV2.Data.Helpers.Dump;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Storages.Abstraction;
-using RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
+using RPGMDataKit.Data;
+using RPGMDataKit.Data.Helpers.Dump;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Storages.Abstraction;
+using RPGMDataKit.Storages.Dump.TextSerializers;
 
-namespace RPGMakerLibCoreV2.Storages.Dump;
+namespace RPGMDataKit.Storages.Dump;
 
 public abstract class AbstractTextStorage
 {

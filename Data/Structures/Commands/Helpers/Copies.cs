@@ -1,8 +1,8 @@
-using RPGMakerLibCoreV2.Data.Structures.Exceptions;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMDataKit.Data.Structures.Exceptions;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
+namespace RPGMDataKit.Data.Structures.Commands.Helpers;
 
 internal static class Copies
 {

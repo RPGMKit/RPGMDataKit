@@ -1,6 +1,6 @@
-﻿using RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
+﻿using RPGMDataKit.Storages.Dump.TextSerializers;
 
-namespace RPGMakerLibCoreV2.Storages.Dump;
+namespace RPGMDataKit.Storages.Dump;
 
 public abstract class AbstractYamlStorage(IToTextSerializer serializer) : AbstractTextStorage(serializer)
 {

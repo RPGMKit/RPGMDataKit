@@ -1,10 +1,10 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.VXAce.Serializers;
+﻿using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
+using RPGMDataKit.Data.VXAce.Serializers;
 using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 
-namespace RPGMakerLibCoreV2.Data.VXAce.Classes.Custom;
+namespace RPGMDataKit.Data.VXAce.Classes.Custom;
 
 [RubyObject("Tone")]
 [RubyUserSerializer(typeof(ToneSerializer), "")]

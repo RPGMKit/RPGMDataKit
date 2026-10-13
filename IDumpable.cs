@@ -1,6 +1,6 @@
-﻿using RPGMakerLibCoreV2.Data.Structures.Internal;
+﻿using RPGMDataKit.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2;
+namespace RPGMDataKit;
 
 public interface IDumpable
 {

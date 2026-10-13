@@ -20,7 +20,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace RPGMakerLibCoreV2.Diff.Text.Internal {
+namespace RPGMDataKit.Diff.Text.Internal {
   internal static class CompatibilityExtensions {
     // JScript splice function
     public static List<T> Splice<T>(this List<T> input, int start, int count,

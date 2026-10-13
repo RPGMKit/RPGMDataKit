@@ -1,4 +1,4 @@
-﻿namespace RPGMakerLibCoreV2.Data.Enums
+﻿namespace RPGMDataKit.Data.Enums
 {
     public enum ShadowFlag: int
     {

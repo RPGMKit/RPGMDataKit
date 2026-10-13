@@ -1,9 +1,9 @@
-using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.Abstraction;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Commands.Abstraction;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Commands;
+namespace RPGMDataKit.Data.Structures.Commands;
 
 public class ChangeVehicleBGMCommand : NamedCommand
 {

@@ -1,13 +1,13 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
-using RPGMakerLibCoreV2.Data.Enums;
-using RPGMakerLibCoreV2.Data.Structures.Commands.ParameterProviders;
-using RPGMakerLibCoreV2.Data.Structures.Commands.Helpers;
-using RPGMakerLibCoreV2.Data.Structures.Exceptions;
-using RPGMakerLibCoreV2.Data.Structures.Interfaces;
-using RPGMakerLibCoreV2.Storages;
+using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Commands.ParameterProviders;
+using RPGMDataKit.Data.Structures.Commands.Helpers;
+using RPGMDataKit.Data.Structures.Exceptions;
+using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Storages;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Internal;
+namespace RPGMDataKit.Data.Structures.Internal;
 
 /// <summary>
 /// A command with named properties. It is a view over a raw command: properties read and write the raw command's

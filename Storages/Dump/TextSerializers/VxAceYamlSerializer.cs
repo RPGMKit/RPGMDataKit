@@ -1,13 +1,13 @@
-﻿using RPGMakerLibCoreV2.Data.VXAce.Classes;
-using RPGMakerLibCoreV2.Storages.Dump.Yaml;
-using RPGMakerLibCoreV2.Storages.Dump.Yaml.VXAce;
+﻿using RPGMDataKit.Data.VXAce.Classes;
+using RPGMDataKit.Storages.Dump.Yaml;
+using RPGMDataKit.Storages.Dump.Yaml.VXAce;
 using RubyMarshalCS.Serialization;
 using RubyMarshalCS.SpecialTypes;
 using RubyMarshalCS.SpecialTypes.Interfaces;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.TextSerializers;
+namespace RPGMDataKit.Storages.Dump.TextSerializers;
 
 public class VxAceYamlSerializer : AbstractYamlSerializer
 {

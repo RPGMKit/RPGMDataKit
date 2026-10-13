@@ -2,7 +2,7 @@
 using RubyMarshalCS.Serialization.Attributes;
 using YamlDotNet.Serialization.Callbacks;
 
-namespace RPGMakerLibCoreV2.Data.Structures.Internal;
+namespace RPGMDataKit.Data.Structures.Internal;
 
 public abstract class RubySerializationEntity
 {

@@ -1,9 +1,9 @@
-using RPGMakerLibCoreV2.Data.Structures.Internal;
-using RPGMakerLibCoreV2.Data.VXAce.Serializers;
+using RPGMDataKit.Data.Structures.Internal;
+using RPGMDataKit.Data.VXAce.Serializers;
 using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 
-namespace RPGMakerLibCoreV2.Data.Structures;
+namespace RPGMDataKit.Data.Structures;
 
 /// <summary>
 /// Up to three dimensional array of ints, the same for MV and VXAce.

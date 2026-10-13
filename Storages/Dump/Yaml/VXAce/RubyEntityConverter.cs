@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
-using RPGMakerLibCoreV2.Data.Structures.Internal;
+using RPGMDataKit.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.Yaml.VXAce;
+namespace RPGMDataKit.Storages.Dump.Yaml.VXAce;
 
 public class RubyEntityConverter : IYamlTypeConverter
 {

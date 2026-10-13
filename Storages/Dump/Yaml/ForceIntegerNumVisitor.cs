@@ -3,7 +3,7 @@ using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.ObjectGraphVisitors;
 
-namespace RPGMakerLibCoreV2.Storages.Dump.Yaml;
+namespace RPGMDataKit.Storages.Dump.Yaml;
 
 public class ForceIntegerEnumVisitor : ChainedObjectGraphVisitor
 {
