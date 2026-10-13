@@ -8,14 +8,56 @@ using RubyMarshalCS.Serialization.Enums;
 namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::Event")]
-public class Event : RubySerializationEntity, IEvent
+public class Event : RubySerializationEntity, IEvent, INewEntity
 {
     [RubyObject("RPG::Event::Page")]
-    public class EventPage : VxCommandContainer, IEventPage
+    public class EventPage : VxCommandContainer, IEventPage, INewEntity
     {
-        [RubyObject("RPG::Event::Page::Condition")]
-        public class EventPageCondition : RubySerializationEntity, IEventPageCondition
+        /// <summary>The values of <c>RPG::Event::Page.new</c> of VX Ace: no condition, no picture, the command that ends the page.</summary>
+        public void InitializeNew()
         {
+            var condition = new EventPageCondition();
+            condition.InitializeNew();
+            Condition = condition;
+            var graphic = new PageGraphic();
+            graphic.InitializeNew();
+            Graphic = graphic;
+            MoveType = 0;
+            MoveSpeed = 3;
+            MoveFrequency = 3;
+            var route = new MoveRoute();
+            route.InitializeNew();
+            MoveRoute = route;
+            WalkAnime = true;
+            StepAnime = false;
+            DirectionFix = false;
+            Through = false;
+            PriorityType = 0;
+            Trigger = 0;
+            NamedCommands = [CommandContainerHelper.CreateNamed(new Command { Code = 0, Indent = 0, Parameters = [] }, StorageVersion.VXAce)];
+        }
+
+        [RubyObject("RPG::Event::Page::Condition")]
+        public class EventPageCondition : RubySerializationEntity, IEventPageCondition, INewEntity
+        {
+            /// <summary>The values of <c>RPG::Event::Page::Condition.new</c> of VX Ace: nothing is required.</summary>
+            public void InitializeNew()
+            {
+                Switch1Valid = false;
+                Switch2Valid = false;
+                VariableValid = false;
+                SelfSwitchValid = false;
+                ItemValid = false;
+                ActorValid = false;
+                Switch1Id = 1;
+                Switch2Id = 1;
+                VariableId = 1;
+                VariableValue = 0;
+                SelfSwitchCh = "A";
+                ItemId = 1;
+                ActorId = 1;
+            }
+
             [RubyProperty("@switch1_valid")]
             public bool Switch1Valid { get; set; }
 
@@ -60,8 +102,18 @@ public class Event : RubySerializationEntity, IEvent
         }
 
         [RubyObject("RPG::Event::Page::Graphic")]
-        public class PageGraphic : RubySerializationEntity, IPageGraphic
+        public class PageGraphic : RubySerializationEntity, IPageGraphic, INewEntity
         {
+            /// <summary>The values of <c>RPG::Event::Page::Graphic.new</c> of VX Ace: no picture, facing down.</summary>
+            public void InitializeNew()
+            {
+                TileId = 0;
+                CharacterName = "";
+                CharacterIndex = 0;
+                Direction = 2;
+                Pattern = 0;
+            }
+
             [RubyProperty("@tile_id")]
             public int TileId { get; set; }
             
@@ -146,6 +198,15 @@ public class Event : RubySerializationEntity, IEvent
 
     [RubyProperty("@y")]
     public int Y { get; set; }
+
+    /// <summary>The values of <c>RPG::Event.new</c> of VX Ace: one empty page; the place and the number are for the map to set.</summary>
+    public void InitializeNew()
+    {
+        Name = "";
+        var page = new EventPage();
+        page.InitializeNew();
+        Pages = [page];
+    }
 
     [RubyProperty("@pages")]
     public List<IEventPage?> Pages { get; set; } = new();

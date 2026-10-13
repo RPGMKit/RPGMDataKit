@@ -9,8 +9,17 @@ namespace RPGMDataKit.Data.VXAce.Classes;
 public class UsableItem : BaseItem
 {
     [RubyObject("RPG::UsableItem::Effect")]
-    public class Effect : RubySerializationEntity, IEffect
+    public class Effect : RubySerializationEntity, IEffect, INewEntity
     {
+        /// <summary>What the editor of VX Ace puts into an effect that is added and not changed: "Recover HP" with 0 and 0 (the numbers are floats).</summary>
+        public void InitializeNew()
+        {
+            Code = 11;
+            DataId = 1;
+            Value1 = 0.0;
+            Value2 = 0.0;
+        }
+
         [RubyProperty("@code")]
         public int Code { get; set; }
 
@@ -25,8 +34,18 @@ public class UsableItem : BaseItem
     }
 
     [RubyObject("RPG::UsableItem::Damage")]
-    public class ItemDamage : RubySerializationEntity, IItemDamage
+    public class ItemDamage : RubySerializationEntity, IItemDamage, INewEntity
     {
+        /// <summary>The values of <c>RPG::UsableItem::Damage.new</c> of VX Ace: no damage, the formula 0, the variance of 20%.</summary>
+        public void InitializeNew()
+        {
+            Type = 0;
+            ElementId = 0;
+            Formula = "0";
+            Variance = 20;
+            Critical = false;
+        }
+
         [RubyProperty("@type")]
         public int Type { get; set; }
         [RubyProperty("@element_id")]
@@ -59,4 +78,21 @@ public class UsableItem : BaseItem
     public ItemDamage Damage;
     [RubyProperty("@effects")]
     public List<Effect> Effects;
+
+    /// <summary>The values of <c>RPG::UsableItem.new</c> of VX Ace.</summary>
+    public override void InitializeNew()
+    {
+        base.InitializeNew();
+        Scope = 0;
+        Occasion = 0;
+        Speed = 0;
+        AnimationId = 0;
+        SuccessRate = 100;
+        Repeats = 1;
+        TpGain = 0;
+        HitType = 0;
+        Damage = new ItemDamage();
+        Damage.InitializeNew();
+        Effects = new();
+    }
 }

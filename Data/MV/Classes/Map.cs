@@ -6,8 +6,43 @@ using RPGMDataKit.Data.Structures.Internal.Converters;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Map : JsonEntity, IMap
+public class Map : JsonEntity, IMap, INewEntity
 {
+    /// <summary>The values that the editor of MV gives to a new map: an empty map of 17 x 13 tiles with the first tileset.</summary>
+    public void InitializeNew()
+    {
+        AutoPlayBgm = false;
+        AutoPlayBgs = false;
+        Battleback1Name = "";
+        Battleback2Name = "";
+        Bgm = new BGM();
+        Bgm.InitializeNew();
+        Bgs = new BGS();
+        Bgs.InitializeNew();
+        TilesetId = 1;
+        DisplayName = "";
+        Width = 17;
+        Height = 13;
+        DisableDashing = false;
+        EncounterList = new();
+        EncounterStep = 30;
+        Note = "";
+        ParallaxLoopX = false;
+        ParallaxLoopY = false;
+        ParallaxName = "";
+        ParallaxShow = false;
+        ParallaxSX = 0;
+        ParallaxSY = 0;
+        ScrollType = 0;
+        SpecifyBattleback = false;
+
+        // 6 layers: two of the ground, two of the upper tiles, the shadows, the regions
+        var data = Table.FromCells(new List<int>(new int[Width * Height * 6]));
+        data.Reshape(Width, Height, 6);
+        Data = data;
+        Events = new();
+    }
+
     /// <summary>A troop that appears on the map in a random encounter.</summary>
     public class Encounter : JsonEntity
     {

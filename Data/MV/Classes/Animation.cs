@@ -4,10 +4,36 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Animation : JsonEntity, IAnimation
+public class Animation : JsonEntity, IAnimation, INewEntity
 {
-    public class Timing : JsonEntity
+    /// <summary>The values that the editor of MV gives to a new animation: no pictures, one empty frame, no timings, shown on the middle of the target.</summary>
+    public void InitializeNew()
     {
+        Name = "";
+        Animation1Name = "";
+        Animation1Hue = 0;
+        Animation2Name = "";
+        Animation2Hue = 0;
+        Position = 1;
+        Frames = [new List<object>()];
+        Timings = new();
+    }
+
+    public class Timing : JsonEntity, INewEntity
+    {
+        /// <summary>The values that the editor of MV gives to a new timing: at the first frame, no sound, the white flash.</summary>
+        public void InitializeNew()
+        {
+            Frame = 0;
+            SE = new SE();
+            SE.InitializeNew();
+            SE.Volume = 80;
+            Condition = 0;
+            FlashScope = 0;
+            FlashColor = Color.FromArray([255, 255, 255, 255]);
+            FlashDuration = 5;
+        }
+
         [JsonProperty("frame")]
         public int Frame;
 

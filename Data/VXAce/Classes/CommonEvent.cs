@@ -7,8 +7,17 @@ using RubyMarshalCS.Serialization.Attributes;
 namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::CommonEvent")]
-public class CommonEvent : VxCommandContainer, ICommonEvent
+public class CommonEvent : VxCommandContainer, ICommonEvent, INewEntity
 {
+    /// <summary>The values of <c>RPG::CommonEvent.new</c> of VX Ace: it does not run by itself, only the command that ends it.</summary>
+    public void InitializeNew()
+    {
+        Name = "";
+        Trigger = 0;
+        SwitchId = 1;
+        NamedCommands = [CommandContainerHelper.CreateNamed(new Command { Code = 0, Indent = 0, Parameters = [] }, StorageVersion.VXAce)];
+    }
+
     [RubyProperty("@id")]
     public int Id { get; set; }
 

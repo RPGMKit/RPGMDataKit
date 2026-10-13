@@ -51,4 +51,25 @@ public class State : BaseItem, IState
 
     [RubyProperty("@message4")]
     public string Message4;
+
+    /// <summary>The values of <c>RPG::State.new</c> of VX Ace: lasts one turn, priority 50, 100 steps to remove by walking.</summary>
+    public override void InitializeNew()
+    {
+        base.InitializeNew();
+        Restriction = 0;
+        Priority = 50;
+        RemoveAtBattleEnd = false;
+        RemoveByRestriction = false;
+        AutoRemovalTiming = 0;
+        MinTurns = 1;
+        MaxTurns = 1;
+        RemoveByDamage = false;
+        ChanceByDamage = 100;
+        RemoveByWalking = false;
+        StepsToRemove = 100;
+        Message1 = "";
+        Message2 = "";
+        Message3 = "";
+        Message4 = "";
+    }
 }

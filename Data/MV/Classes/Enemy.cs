@@ -1,13 +1,22 @@
 ﻿using Newtonsoft.Json;
+using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Enemy : JsonEntity, IEnemy
+public class Enemy : JsonEntity, IEnemy, INewEntity
 {
-    public class DropItem : JsonEntity, IDropItem
+    public class DropItem : JsonEntity, IDropItem, INewEntity
     {
+        /// <summary>The values that the editor of MV gives to a new drop: nothing falls out.</summary>
+        public void InitializeNew()
+        {
+            Kind = 0;
+            DataId = 1;
+            Denominator = 1;
+        }
+
         [JsonProperty("kind")]
         public int Kind { get; set; }
 
@@ -18,8 +27,18 @@ public class Enemy : JsonEntity, IEnemy
         public int Denominator { get; set; }
     }
     
-    public class Action : JsonEntity, IAction
+    public class Action : JsonEntity, IAction, INewEntity
     {
+        /// <summary>The values that the editor of MV gives to a new action: the first skill (attack), always, rating 5.</summary>
+        public void InitializeNew()
+        {
+            SkillId = 1;
+            ConditionType = 0;
+            ConditionParam1 = 0;
+            ConditionParam2 = 0;
+            Rating = 5;
+        }
+
         [JsonProperty("skillId")]
         public int SkillId { get; set; }
 
@@ -65,7 +84,43 @@ public class Enemy : JsonEntity, IEnemy
 
     [JsonProperty("actions")]
     public List<Action> Actions { get; set; }
-    
+
     [JsonProperty("traits")]
     public List<Trait> Traits { get; set; }
+
+    /// <summary>The values that the editor of MV gives to a new enemy: three empty drops, one action (attack), the hit rate and the evasion.</summary>
+    public void InitializeNew()
+    {
+        Name = "";
+        Note = "";
+        BattlerName = "";
+        BattlerHue = 0;
+        Params = [100, 0, 10, 10, 10, 10, 10, 10];
+        Exp = 0;
+        Gold = 0;
+        DropItems = [NewDrop(), NewDrop(), NewDrop()];
+        Actions = [NewAction()];
+        Traits =
+        [
+            new Trait { Code = FeatureCodes.ExtraParameter, DataId = ExtraParameterIds.HitRate, Value = 0.95 },
+            new Trait { Code = FeatureCodes.ExtraParameter, DataId = ExtraParameterIds.Evasion, Value = 0.05 },
+            new Trait { Code = FeatureCodes.AttackElement, DataId = 1, Value = 0 },
+        ];
+
+        static DropItem NewDrop()
+        {
+            var drop = new DropItem();
+            drop.InitializeNew();
+
+            return drop;
+        }
+
+        static Action NewAction()
+        {
+            var action = new Action();
+            action.InitializeNew();
+
+            return action;
+        }
+    }
 }

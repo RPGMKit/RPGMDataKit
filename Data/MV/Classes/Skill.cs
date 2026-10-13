@@ -4,8 +4,35 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Skill : UsableItem, ISkill
+public class Skill : UsableItem, ISkill, INewEntity
 {
+    /// <summary>The values that the editor of MV gives to a new skill: on one enemy, in battle, of the first type of skills.</summary>
+    public void InitializeNew()
+    {
+        Name = "";
+        Note = "";
+        Description = "";
+        AnimationId = 0;
+        Damage = new ItemDamage();
+        Damage.InitializeNew();
+        Effects = new();
+        Occasion = 1;
+        Repeats = 1;
+        HitType = 0;
+        IconIndex = 0;
+        STypeId = 1;
+        MpCost = 0;
+        TpCost = 0;
+        TpGain = 0;
+        Scope = 1;
+        Speed = 0;
+        SuccessRate = 100;
+        Message1 = "";
+        Message2 = "";
+        RequiredWTypeId1 = 0;
+        RequiredWTypeId2 = 0;
+    }
+
     [JsonProperty("id")]
     public int Id { get; set; }
 

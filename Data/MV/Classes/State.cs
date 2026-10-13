@@ -4,7 +4,7 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class State : JsonEntity, IState
+public class State : JsonEntity, IState, INewEntity
 {
     [JsonProperty("id")]
     public int Id { get; set; }
@@ -71,4 +71,30 @@ public class State : JsonEntity, IState
     
     [JsonProperty("traits")]
     public List<Trait> Traits { get; set; }
+
+    /// <summary>The values that the editor of MV gives to a new state: lasts one turn, priority 50, 100 steps to remove by walking.</summary>
+    public void InitializeNew()
+    {
+        Name = "";
+        Note = "";
+        IconIndex = 0;
+        Restriction = 0;
+        Priority = 50;
+        Overlay = 0;
+        RemoveAtBattleEnd = false;
+        RemoveByRestriction = false;
+        AutoRemovalTiming = 0;
+        MinTurns = 1;
+        MaxTurns = 1;
+        Motion = 0;
+        RemoveByDamage = false;
+        ChanceByDamage = 100;
+        RemoveByWalking = false;
+        StepsToRemove = 100;
+        Message1 = "";
+        Message2 = "";
+        Message3 = "";
+        Message4 = "";
+        Traits = new();
+    }
 }

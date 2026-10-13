@@ -6,8 +6,22 @@ using RubyMarshalCS.Serialization.Enums;
 namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::MapInfo")]
-public class MapInfo : RubySerializationEntity, IMapInfo
+public class MapInfo : RubySerializationEntity, IMapInfo, INewEntity
 {
+    /// <summary>The values of <c>RPG::MapInfo.new</c> of VX Ace: no name, in the root of the tree, collapsed.</summary>
+    public void InitializeNew()
+    {
+        Expanded = false;
+        Name = "";
+        Order = 0;
+        Parent = 0;
+        ScrollX = 0;
+        ScrollY = 0;
+    }
+
+    /// <summary>The number of the map: it is the key of the list in the file, the entry itself has no such field (not saved).</summary>
+    public int Id { get; set; }
+
     [RubyProperty("@expanded")]
     public bool Expanded { get; set; }
 

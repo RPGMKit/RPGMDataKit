@@ -12,4 +12,14 @@ public class Item : UsableItem, IItem
     public int Price;
     [RubyProperty("@consumable")]
     public bool Consumable;
+
+    /// <summary>The values of <c>RPG::Item.new</c> of VX Ace: usable anywhere on one friend, a normal item that is used up.</summary>
+    public override void InitializeNew()
+    {
+        base.InitializeNew();
+        Scope = 7;
+        ITypeId = 1;
+        Price = 0;
+        Consumable = true;
+    }
 }

@@ -1,11 +1,31 @@
 ﻿using Newtonsoft.Json;
+using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Weapon : JsonEntity, IWeapon
+public class Weapon : JsonEntity, IWeapon, INewEntity
 {
+    /// <summary>The values that the editor of MV gives to a new weapon: the equipment type 1, the traits of the attack element and of the hit rate.</summary>
+    public void InitializeNew()
+    {
+        Name = "";
+        IconIndex = 0;
+        WTypeId = 0;
+        AnimationId = 0;
+        Price = 0;
+        ETypeId = 1;
+        Params = [0, 0, 0, 0, 0, 0, 0, 0];
+        Description = "";
+        Note = "";
+        Traits =
+        [
+            new Trait { Code = FeatureCodes.AttackElement, DataId = 1, Value = 0 },
+            new Trait { Code = FeatureCodes.ExtraParameter, DataId = ExtraParameterIds.HitRate, Value = 0 },
+        ];
+    }
+
     [JsonProperty("id")]
     public int Id { get; set; }
 

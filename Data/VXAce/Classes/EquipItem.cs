@@ -13,4 +13,13 @@ public class EquipItem : BaseItem
 
     [RubyProperty("@params")]
     public List<int> Params;
+
+    /// <summary>The values of <c>RPG::EquipItem.new</c> of VX Ace: no price, the parameters are 0.</summary>
+    public override void InitializeNew()
+    {
+        base.InitializeNew();
+        Price = 0;
+        ETypeId = 0;
+        Params = [0, 0, 0, 0, 0, 0, 0, 0];
+    }
 }

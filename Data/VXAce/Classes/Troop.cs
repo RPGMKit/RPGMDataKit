@@ -7,11 +7,30 @@ using RubyMarshalCS.Serialization.Attributes;
 namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::Troop")]
-public class Troop : RubySerializationEntity, ITroop
+public class Troop : RubySerializationEntity, ITroop, INewEntity
 {
-    [RubyObject("RPG::Troop::Member")]
-    public class Member : RubySerializationEntity, IMember
+    /// <summary>The values of <c>RPG::Troop.new</c> of VX Ace: no enemies, one empty page of the battle events.</summary>
+    public void InitializeNew()
     {
+        Name = "";
+        Members = new();
+        var page = new EventPage();
+        page.InitializeNew();
+        Pages = [page];
+    }
+
+    [RubyObject("RPG::Troop::Member")]
+    public class Member : RubySerializationEntity, IMember, INewEntity
+    {
+        /// <summary>What the editor of VX Ace gives to an enemy that is added to a troop: the first enemy at the middle of the field (272, 288), visible.</summary>
+        public void InitializeNew()
+        {
+            EnemyId = 1;
+            X = 272;
+            Y = 288;
+            Hidden = false;
+        }
+
         [RubyProperty("@enemy_id")]
         public int EnemyId { get; set; }
 
@@ -26,11 +45,38 @@ public class Troop : RubySerializationEntity, ITroop
     }
 
     [RubyObject("RPG::Troop::Page")]
-    public class EventPage : VxCommandContainer, ITroopPage
+    public class EventPage : VxCommandContainer, ITroopPage, INewEntity
     {
-        [RubyObject("RPG::Troop::Page::Condition")]
-        public class PageCondition : RubySerializationEntity, ITroopPageCondition
+        /// <summary>The values of <c>RPG::Troop::Page.new</c> of VX Ace: no condition, only the command that ends the page.</summary>
+        public void InitializeNew()
         {
+            var condition = new PageCondition();
+            condition.InitializeNew();
+            Condition = condition;
+            Span = 0;
+            NamedCommands = [CommandContainerHelper.CreateNamed(new Command { Code = 0, Indent = 0, Parameters = [] }, StorageVersion.VXAce)];
+        }
+
+        [RubyObject("RPG::Troop::Page::Condition")]
+        public class PageCondition : RubySerializationEntity, ITroopPageCondition, INewEntity
+        {
+            /// <summary>The values of <c>RPG::Troop::Page::Condition.new</c> of VX Ace: nothing is required.</summary>
+            public void InitializeNew()
+            {
+                TurnEnding = false;
+                TurnValid = false;
+                EnemyValid = false;
+                ActorValid = false;
+                SwitchValid = false;
+                TurnA = 0;
+                TurnB = 0;
+                EnemyIndex = 0;
+                EnemyHp = 50;
+                ActorId = 1;
+                ActorHp = 50;
+                SwitchId = 1;
+            }
+
             [RubyProperty("@turn_ending")]
             public bool TurnEnding { get; set; }
 

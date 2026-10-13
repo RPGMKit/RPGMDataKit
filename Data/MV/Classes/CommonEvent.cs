@@ -6,8 +6,17 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class CommonEvent : MvCommandContainer, ICommonEvent
+public class CommonEvent : MvCommandContainer, ICommonEvent, INewEntity
 {
+    /// <summary>The values that the editor of MV gives to a new common event: it does not run by itself, only the command that ends it.</summary>
+    public void InitializeNew()
+    {
+        Name = "";
+        Trigger = 0;
+        SwitchId = 1;
+        NamedCommands = [CommandContainerHelper.CreateNamed(new Command { Code = 0, Indent = 0, Parameters = [] }, StorageVersion.MV)];
+    }
+
     [JsonProperty(PropertyName = "id")]
     public int Id { get; set; }
     

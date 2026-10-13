@@ -8,8 +8,16 @@ using RubyMarshalCS.Serialization.Enums;
 namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::AudioFile")]
-public class AudioFile : RubySerializationEntity, IAudioFile
+public class AudioFile : RubySerializationEntity, IAudioFile, INewEntity
 {
+    /// <summary>The values of <c>RPG::AudioFile.new</c> of VX Ace: no file, the volume and the pitch of 100%.</summary>
+    public void InitializeNew()
+    {
+        Name = "";
+        Volume = 100;
+        Pitch = 100;
+    }
+
     [RubyProperty("@name")]
     public string Name { get; set; }
 

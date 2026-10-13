@@ -7,8 +7,40 @@ using RubyMarshalCS.Serialization.Enums;
 namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::Map")]
-public class Map : RubySerializationEntity, IMap
+public class Map : RubySerializationEntity, IMap, INewEntity
 {
+    /// <summary>The values of <c>RPG::Map.new(17, 13)</c> of VX Ace: an empty map of 17 x 13 tiles with the first tileset.</summary>
+    public void InitializeNew()
+    {
+        DisplayName = "";
+        TilesetId = 1;
+        Width = 17;
+        Height = 13;
+        ScrollType = 0;
+        SpecifyBattleback = false;
+        Battleback1Name = "";
+        Battleback2Name = "";
+        AutoplayBGM = false;
+        BGM = new BGM();
+        BGM.InitializeNew();
+        AutoplayBGS = false;
+        BGS = new BGS();
+        BGS.InitializeNew();
+        BGS.Volume = 80;
+        DisableDashing = false;
+        EncounterList = new();
+        EncounterStep = 30;
+        ParallaxName = "";
+        ParallaxLoopX = false;
+        ParallaxLoopY = false;
+        ParallaxSX = 0;
+        ParallaxSY = 0;
+        ParallaxShow = false;
+        Note = "";
+        Data = new Table(Width, Height, 4);
+        Events = new();
+    }
+
     /// <summary>A troop that appears on the map in a random encounter.</summary>
     [RubyObject("RPG::Map::Encounter")]
     public class Encounter : RubySerializationEntity

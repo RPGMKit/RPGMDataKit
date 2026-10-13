@@ -8,11 +8,34 @@ using RubyMarshalCS.Serialization.Attributes;
 namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::Animation")]
-public class Animation : RubySerializationEntity, IAnimation
+public class Animation : RubySerializationEntity, IAnimation, INewEntity
 {
-    [RubyObject("RPG::Animation::Frame")]
-    public class Frame : RubySerializationEntity
+    /// <summary>The values of <c>RPG::Animation.new</c> of VX Ace: no pictures, one empty frame, no timings, shown on the middle of the target.</summary>
+    public void InitializeNew()
     {
+        Name = "";
+        Animation1Name = "";
+        Animation1Hue = 0;
+        Animation2Name = "";
+        Animation2Hue = 0;
+        Position = 1;
+        FrameMax = 1;
+        var frame = new Frame();
+        frame.InitializeNew();
+        Frames = [frame];
+        Timings = new();
+    }
+
+    [RubyObject("RPG::Animation::Frame")]
+    public class Frame : RubySerializationEntity, INewEntity
+    {
+        /// <summary>The values of <c>RPG::Animation::Frame.new</c> of VX Ace: no cells, a table of 8 numbers for each (none yet).</summary>
+        public void InitializeNew()
+        {
+            CellMax = 0;
+            CellData = new Table(0, 8);
+        }
+
         [RubyProperty("@cell_max")]
         public int CellMax;
         
@@ -21,8 +44,21 @@ public class Animation : RubySerializationEntity, IAnimation
     }
 
     [RubyObject("RPG::Animation::Timing")]
-    public class Timing : RubySerializationEntity
+    public class Timing : RubySerializationEntity, INewEntity
     {
+        /// <summary>The values of <c>RPG::Animation::Timing.new</c> of VX Ace: at the first frame, no sound, the white flash of 5 frames of nothing.</summary>
+        public void InitializeNew()
+        {
+            Frame = 0;
+            SE = new SE();
+            SE.InitializeNew();
+            SE.Volume = 80;
+            Condition = 0;
+            FlashScope = 0;
+            FlashColor = new Color { Red = 255, Green = 255, Blue = 255, Alpha = 255 };
+            FlashDuration = 5;
+        }
+
         [RubyProperty("@frame")]
         public int Frame;
 

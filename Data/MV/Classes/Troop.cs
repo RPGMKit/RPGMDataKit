@@ -6,10 +6,29 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Troop : JsonEntity, ITroop
+public class Troop : JsonEntity, ITroop, INewEntity
 {
-    public class Member : JsonEntity, IMember
+    /// <summary>The values that the editor of MV gives to a new troop: no enemies, one empty page of the battle events.</summary>
+    public void InitializeNew()
     {
+        Name = "";
+        Members = new();
+        var page = new EventPage();
+        page.InitializeNew();
+        Pages = [page];
+    }
+
+    public class Member : JsonEntity, IMember, INewEntity
+    {
+        /// <summary>The values that the editor of MV gives to a new member: the first enemy at the left top corner, visible.</summary>
+        public void InitializeNew()
+        {
+            EnemyId = 1;
+            X = 0;
+            Y = 0;
+            Hidden = false;
+        }
+
         [JsonProperty("enemyId")]
         public int EnemyId { get; set; }
 
@@ -23,10 +42,37 @@ public class Troop : JsonEntity, ITroop
         public bool Hidden { get; set; }
     }
 
-    public class EventPage : MvCommandContainer, ITroopPage
+    public class EventPage : MvCommandContainer, ITroopPage, INewEntity
     {
-        public class PageCondition : JsonEntity, ITroopPageCondition
+        /// <summary>The values that the editor of MV gives to a new page: no condition, only the command that ends the page.</summary>
+        public void InitializeNew()
         {
+            var condition = new PageCondition();
+            condition.InitializeNew();
+            Condition = condition;
+            Span = 0;
+            NamedCommands = [CommandContainerHelper.CreateNamed(new Command { Code = 0, Indent = 0, Parameters = [] }, StorageVersion.MV)];
+        }
+
+        public class PageCondition : JsonEntity, ITroopPageCondition, INewEntity
+        {
+            /// <summary>The values that the editor of MV gives to a new condition: nothing is required.</summary>
+            public void InitializeNew()
+            {
+                TurnEnding = false;
+                TurnValid = false;
+                EnemyValid = false;
+                ActorValid = false;
+                SwitchValid = false;
+                TurnA = 0;
+                TurnB = 0;
+                EnemyIndex = 0;
+                EnemyHp = 50;
+                ActorId = 1;
+                ActorHp = 50;
+                SwitchId = 1;
+            }
+
             [JsonProperty("turnEnding")]
             public bool TurnEnding { get; set; }
 

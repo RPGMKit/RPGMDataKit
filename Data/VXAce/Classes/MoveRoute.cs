@@ -8,11 +8,20 @@ using RubyMarshalCS.Serialization.Enums;
 namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::MoveRoute")]
-public class MoveRoute : VxMoveCommandContainer, IMoveRoute
+public class MoveRoute : VxMoveCommandContainer, IMoveRoute, INewEntity
 {
     public MoveRoute()
     {
         NamedCommands = new List<NamedCommand>();
+    }
+
+    /// <summary>The values of <c>RPG::MoveRoute.new</c> of VX Ace: it repeats, does not wait, and has only the command that ends it.</summary>
+    public void InitializeNew()
+    {
+        Repeat = true;
+        Skippable = false;
+        Wait = false;
+        NamedCommands = [CommandContainerHelper.CreateNamed(new MoveCommand { Code = 0, Parameters = [] }, StorageVersion.VXAce)];
     }
 
     [RubyProperty("@repeat")]

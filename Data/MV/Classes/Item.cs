@@ -1,10 +1,34 @@
 ﻿using Newtonsoft.Json;
 using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Item : UsableItem, IItem
+public class Item : UsableItem, IItem, INewEntity
 {
+    /// <summary>The values that the editor of MV gives to a new item: usable anywhere on one friend, a normal item that is used up.</summary>
+    public void InitializeNew()
+    {
+        Name = "";
+        Note = "";
+        Description = "";
+        AnimationId = 0;
+        Damage = new ItemDamage();
+        Damage.InitializeNew();
+        Effects = new();
+        HitType = 0;
+        IconIndex = 0;
+        Occasion = 0;
+        Repeats = 1;
+        Scope = 7;
+        Speed = 0;
+        SuccessRate = 100;
+        TPGain = 0;
+        ITypeId = 1;
+        Price = 0;
+        Consumable = true;
+    }
+
     [JsonProperty("id")]
     public int Id { get; set; }
 

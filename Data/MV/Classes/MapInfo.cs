@@ -4,8 +4,19 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class MapInfo : JsonEntity, IMapInfo
+public class MapInfo : JsonEntity, IMapInfo, INewEntity
 {
+    /// <summary>The values that the editor of MV gives to a new map in the list: no name, in the root of the tree, collapsed.</summary>
+    public void InitializeNew()
+    {
+        Expanded = false;
+        Name = "";
+        Order = 0;
+        Parent = 0;
+        ScrollX = 0;
+        ScrollY = 0;
+    }
+
     [JsonProperty(PropertyName = "id")]
     public int Id { get; set; }
 

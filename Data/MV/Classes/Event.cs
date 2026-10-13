@@ -6,12 +6,64 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes
 {
-    public class Event : JsonEntity, IEvent
+    public class Event : JsonEntity, IEvent, INewEntity
     {
-        public class EventPage : MvCommandContainer, IEventPage
+        /// <summary>The values that the editor of MV gives to a new event: one empty page; the place and the number are for the map to set.</summary>
+        public void InitializeNew()
         {
-            public class EventPageCondition : JsonEntity, IEventPageCondition
+            Name = "";
+            Note = "";
+            var page = new EventPage();
+            page.InitializeNew();
+            Pages = [page];
+        }
+
+        public class EventPage : MvCommandContainer, IEventPage, INewEntity
+        {
+            /// <summary>The values that the editor of MV gives to a new page: no condition, no picture, the command that ends the page.</summary>
+            public void InitializeNew()
             {
+                var condition = new EventPageCondition();
+                condition.InitializeNew();
+                Condition = condition;
+                var graphic = new PageGraphic();
+                graphic.InitializeNew();
+                Graphic = graphic;
+                MoveType = 0;
+                MoveSpeed = 3;
+                MoveFrequency = 3;
+                var route = new MoveRoute();
+                route.InitializeNew();
+                MoveRoute = route;
+                WalkAnime = true;
+                StepAnime = false;
+                DirectionFix = false;
+                Through = false;
+                PriorityType = 0;
+                Trigger = 0;
+                NamedCommands = [CommandContainerHelper.CreateNamed(new Command { Code = 0, Indent = 0, Parameters = [] }, StorageVersion.MV)];
+            }
+
+            public class EventPageCondition : JsonEntity, IEventPageCondition, INewEntity
+            {
+                /// <summary>The values that the editor of MV gives to a new condition: nothing is required.</summary>
+                public void InitializeNew()
+                {
+                    Switch1Valid = false;
+                    Switch2Valid = false;
+                    VariableValid = false;
+                    SelfSwitchValid = false;
+                    ItemValid = false;
+                    ActorValid = false;
+                    Switch1Id = 1;
+                    Switch2Id = 1;
+                    VariableId = 1;
+                    VariableValue = 0;
+                    SelfSwitchCh = "A";
+                    ItemId = 1;
+                    ActorId = 1;
+                }
+
                 [JsonProperty("switch1Valid")]
                 public bool Switch1Valid { get; set; }
 
@@ -52,8 +104,18 @@ namespace RPGMDataKit.Data.MV.Classes
                 public int ActorId { get; set; }
             }
 
-            public class PageGraphic : JsonEntity, IPageGraphic
+            public class PageGraphic : JsonEntity, IPageGraphic, INewEntity
             {
+                /// <summary>The values that the editor of MV gives to a new picture of a page: nothing, facing down.</summary>
+                public void InitializeNew()
+                {
+                    TileId = 0;
+                    CharacterName = "";
+                    CharacterIndex = 0;
+                    Direction = 2;
+                    Pattern = 0;
+                }
+
                 [JsonProperty("tileId")]
                 public int TileId { get; set; }
 
