@@ -4,7 +4,7 @@ using RubyMarshalCS.Serialization.Attributes;
 namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::BaseItem")]
-public class BaseItem : RubySerializationEntity
+public class BaseItem : RubySerializationEntity, INewEntity
 {
     [RubyProperty("@id")]
     public int Id { get; set; }
@@ -23,4 +23,14 @@ public class BaseItem : RubySerializationEntity
 
     [RubyProperty("@note")]
     public string Note { get; set; }
+
+    /// <summary>The values of <c>RPG::BaseItem.new</c> of VX Ace.</summary>
+    public virtual void InitializeNew()
+    {
+        Name = "";
+        IconIndex = 0;
+        Description = "";
+        Features = new();
+        Note = "";
+    }
 }

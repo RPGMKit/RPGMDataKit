@@ -173,6 +173,7 @@ public abstract class AbstractTextStorage
         using var _ = Reporter?.IncLevel(files.Length);
         using var _2 = Reporter?.DoReport(level: _.Level - 1);
 
+        var started = false;
         foreach (var file in files)
         {
             if (NeedCancel)
@@ -183,7 +184,14 @@ public abstract class AbstractTextStorage
 
             using var _3 = Reporter?.DoReport($"{entityName} {id}");
 
-            holder.Set(id, LoadEntity<T>(file), false);
+            // the list is made of the files of the dump: the data file of the storage is not read
+            if (!started)
+            {
+                holder.Clear();
+                started = true;
+            }
+
+            holder.Set(id, LoadEntity<T>(file));
         }
     }
 

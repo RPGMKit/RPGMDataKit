@@ -30,13 +30,16 @@ public class DataLookupHolder<TDataType> : DataHolder<Dictionary<int, TDataType?
     public int Add(TDataType value)
     {
         var id = NextId();
-        Replace(id, value);
+        Set(id, value);
 
         return id;
     }
 
-    /// <summary>Puts the entity under the given id, replacing any existing one.</summary>
-    public void Replace(int id, TDataType value)
+    /// <summary>
+    /// Puts the entity under the id, replacing the one that is there. The entity gets the id as its <see cref="IHasId.Id"/>.
+    /// <c>null</c> makes the slot empty (it is saved as null).
+    /// </summary>
+    public void Set(int id, TDataType? value)
     {
         if (value is IHasId entity)
             entity.Id = id;
@@ -50,21 +53,14 @@ public class DataLookupHolder<TDataType> : DataHolder<Dictionary<int, TDataType?
         return Get().Remove(id);
     }
 
-    public void Set(int index, TDataType? value, bool load = true)
+    /// <summary>
+    /// Makes the list empty without reading the file (it can be absent): the start of a list that is built from nothing,
+    /// for example by a conversion. What was in the file is lost when the list is saved.
+    /// </summary>
+    public void Clear()
     {
-        if (load)
-        {
-            Get()[index] = value;
-            return;
-        }
-
-        if (!_isLoaded)
-        {
-            _data = new();
-            _isLoaded = true;
-        }
-
-        _data[index] = value;
+        _data = new();
+        _isLoaded = true;
     }
 
     public override void Save()

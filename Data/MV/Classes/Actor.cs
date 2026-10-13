@@ -4,7 +4,7 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Actor : JsonEntity, IActor
+public class Actor : JsonEntity, IActor, INewEntity
 {
     [JsonProperty(PropertyName = "id")]
     public int Id { get; set; }
@@ -50,4 +50,23 @@ public class Actor : JsonEntity, IActor
     
     [JsonProperty("profile")]
     public string Profile { get; set; }
+
+    /// <summary>The values that the editor of MV gives to a new actor.</summary>
+    public void InitializeNew()
+    {
+        BattlerName = "";
+        CharacterIndex = 0;
+        CharacterName = "";
+        ClassId = 1;
+        Equips = [0, 0, 0, 0, 0];
+        FaceIndex = 0;
+        FaceName = "";
+        Traits = new();
+        InitialLevel = 1;
+        MaxLevel = 99;
+        Name = "";
+        NickName = "";
+        Note = "";
+        Profile = "";
+    }
 }

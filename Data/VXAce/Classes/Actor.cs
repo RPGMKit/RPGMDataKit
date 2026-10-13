@@ -34,6 +34,21 @@ public class Actor : BaseItem, IActor
     [RubyProperty("@max_level")]
     public int MaxLevel { get; set; }
 
+    /// <summary>The values of <c>RPG::Actor.new</c> of VX Ace.</summary>
+    public override void InitializeNew()
+    {
+        base.InitializeNew();
+        NickName = "";
+        ClassId = 1;
+        InitialLevel = 1;
+        MaxLevel = 99;
+        CharacterName = "";
+        CharacterIndex = 0;
+        FaceName = "";
+        FaceIndex = 0;
+        Equips = [0, 0, 0, 0, 0];
+    }
+
     // there is no side view battle in VX Ace; no [RubyProperty], so the serializer does not touch it
     public string BattlerName
     {

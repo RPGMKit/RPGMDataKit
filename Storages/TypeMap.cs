@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 using RPGMDataKit.Storages.Serialization;
 
 namespace RPGMDataKit.Storages;
@@ -78,6 +79,19 @@ public class TypeMap
 
             return (Func<T>)factory;
         }
+    }
+
+    /// <summary>
+    /// A new entity of the implementation registered for <typeparamref name="T"/>, with the values that the editor gives to a new one
+    /// (<see cref="INewEntity"/>); an entity without such values is just constructed. Not for the entities that are read from a file.
+    /// </summary>
+    public T New<T>() where T : class
+    {
+        var entity = Factory<T>()();
+        if (entity is INewEntity fresh)
+            fresh.InitializeNew();
+
+        return entity;
     }
 
     /// <summary>

@@ -117,6 +117,12 @@ public abstract class Storage
     /// <summary>Concrete type of this storage's maker version for an entity interface.</summary>
     public Type ConcreteType<TV>() => _types.Resolve(typeof(TV));
 
+    /// <summary>
+    /// A new entity of this storage's maker version with the values that the editor gives to a new one, not in any list yet:
+    /// <c>storage.Actors.Add(storage.New&lt;IActor&gt;())</c>.
+    /// </summary>
+    public T New<T>() where T : class => _types.New<T>();
+
     private object InvokeCore(string method, Type concrete, Type entity, params object?[] args)
     {
         return typeof(Storage)
