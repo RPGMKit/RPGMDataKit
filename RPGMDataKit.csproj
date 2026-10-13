@@ -8,12 +8,19 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <!-- the submodule has its own project (referenced below): its files are not part of this one -->
+      <Compile Remove="external\**" />
+      <EmbeddedResource Remove="external\**" />
+      <None Remove="external\**" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="YamlDotNet" Version="16.3.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\RPGMakerVXConverter\RubyMarshalCS\RubyMarshalCS.csproj" />
+      <ProjectReference Include="external\RubyMarshalCS\RubyMarshalCS\RubyMarshalCS.csproj" />
     </ItemGroup>
 
 </Project>
