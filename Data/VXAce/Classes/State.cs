@@ -1,4 +1,5 @@
-﻿using RPGMDataKit.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
 
@@ -56,11 +57,11 @@ public class State : BaseItem, IState
     public override void InitializeNew()
     {
         base.InitializeNew();
-        Restriction = 0;
+        Restriction = StateRestriction.None;
         Priority = 50;
         RemoveAtBattleEnd = false;
         RemoveByRestriction = false;
-        AutoRemovalTiming = 0;
+        AutoRemovalTiming = Enums.AutoRemovalTiming.None;
         MinTurns = 1;
         MaxTurns = 1;
         RemoveByDamage = false;

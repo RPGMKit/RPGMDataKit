@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -11,7 +12,7 @@ public class UsableItem : JsonEntity
         /// <summary>The values of a new effect, as in VX Ace (not checked in the editor of MV yet): "Recover HP" with 0 and 0.</summary>
         public void InitializeNew()
         {
-            Code = 11;
+            Code = EffectCodes.RecoverHp;
             DataId = 1;
             Value1 = 0.0;
             Value2 = 0.0;
@@ -35,7 +36,7 @@ public class UsableItem : JsonEntity
         /// <summary>The values that the editor of MV gives to a new damage: no damage, the formula 0, the variance of 20%.</summary>
         public void InitializeNew()
         {
-            Type = 0;
+            Type = DamageType.None;
             ElementId = 0;
             Formula = "0";
             Variance = 20;

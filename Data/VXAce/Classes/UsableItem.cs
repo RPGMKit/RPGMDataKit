@@ -1,4 +1,5 @@
-﻿using RPGMDataKit.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.SpecialTypes;
@@ -14,7 +15,7 @@ public class UsableItem : BaseItem
         /// <summary>What the editor of VX Ace puts into an effect that is added and not changed: "Recover HP" with 0 and 0 (the numbers are floats).</summary>
         public void InitializeNew()
         {
-            Code = 11;
+            Code = EffectCodes.RecoverHp;
             DataId = 1;
             Value1 = 0.0;
             Value2 = 0.0;
@@ -39,7 +40,7 @@ public class UsableItem : BaseItem
         /// <summary>The values of <c>RPG::UsableItem::Damage.new</c> of VX Ace: no damage, the formula 0, the variance of 20%.</summary>
         public void InitializeNew()
         {
-            Type = 0;
+            Type = DamageType.None;
             ElementId = 0;
             Formula = "0";
             Variance = 20;
@@ -83,14 +84,14 @@ public class UsableItem : BaseItem
     public override void InitializeNew()
     {
         base.InitializeNew();
-        Scope = 0;
-        Occasion = 0;
+        Scope = ItemScope.None;
+        Occasion = ItemOccasion.Always;
         Speed = 0;
         AnimationId = 0;
         SuccessRate = 100;
         Repeats = 1;
         TpGain = 0;
-        HitType = 0;
+        HitType = Enums.HitType.CertainHit;
         Damage = new ItemDamage();
         Damage.InitializeNew();
         Effects = new();

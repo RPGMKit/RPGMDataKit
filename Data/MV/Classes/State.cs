@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -78,12 +79,12 @@ public class State : JsonEntity, IState, INewEntity
         Name = "";
         Note = "";
         IconIndex = 0;
-        Restriction = 0;
+        Restriction = StateRestriction.None;
         Priority = 50;
         Overlay = 0;
         RemoveAtBattleEnd = false;
         RemoveByRestriction = false;
-        AutoRemovalTiming = 0;
+        AutoRemovalTiming = Enums.AutoRemovalTiming.None;
         MinTurns = 1;
         MaxTurns = 1;
         Motion = 0;

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
@@ -11,7 +12,7 @@ namespace RPGMDataKit.Data.MV.Classes
         /// <summary>The values that the editor of MV gives to a new tileset: the mode of the world map, nine empty names, the flags of the empty tiles.</summary>
         public void InitializeNew()
         {
-            Mode = 1;
+            Mode = (int)TilesetMode.AreaType;
             Name = "";
             TilesetNames = [.. Enumerable.Repeat("", 9)];
             Flags = new Table(8192);

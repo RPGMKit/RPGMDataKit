@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -14,7 +15,7 @@ public class Animation : JsonEntity, IAnimation, INewEntity
         Animation1Hue = 0;
         Animation2Name = "";
         Animation2Hue = 0;
-        Position = 1;
+        Position = AnimationPosition.Center;
         Frames = [new List<object>()];
         Timings = new();
     }
@@ -29,7 +30,7 @@ public class Animation : JsonEntity, IAnimation, INewEntity
             SE.InitializeNew();
             SE.Volume = 80;
             Condition = 0;
-            FlashScope = 0;
+            FlashScope = Enums.FlashScope.None;
             FlashColor = Color.FromArray([255, 255, 255, 255]);
             FlashDuration = 5;
         }

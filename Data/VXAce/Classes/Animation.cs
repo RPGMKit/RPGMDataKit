@@ -1,4 +1,5 @@
-﻿using RPGMDataKit.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using RPGMDataKit.Data.Structures;
 using RPGMDataKit.Data.VXAce.Classes.Custom;
@@ -18,7 +19,7 @@ public class Animation : RubySerializationEntity, IAnimation, INewEntity
         Animation1Hue = 0;
         Animation2Name = "";
         Animation2Hue = 0;
-        Position = 1;
+        Position = AnimationPosition.Center;
         FrameMax = 1;
         var frame = new Frame();
         frame.InitializeNew();
@@ -54,7 +55,7 @@ public class Animation : RubySerializationEntity, IAnimation, INewEntity
             SE.InitializeNew();
             SE.Volume = 80;
             Condition = 0;
-            FlashScope = 0;
+            FlashScope = Enums.FlashScope.None;
             FlashColor = new Color { Red = 255, Green = 255, Blue = 255, Alpha = 255 };
             FlashDuration = 5;
         }

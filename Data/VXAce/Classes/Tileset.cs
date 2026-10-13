@@ -1,4 +1,5 @@
-﻿using RPGMDataKit.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using RPGMDataKit.Data.Structures;
 using RubyMarshalCS.Serialization.Attributes;
@@ -11,7 +12,7 @@ public class Tileset : RubySerializationEntity, ITileSet, INewEntity
     /// <summary>The values of <c>RPG::Tileset.new</c> of VX Ace: the mode of the world map, nine empty names, the flags that the editor gives to the tiles.</summary>
     public void InitializeNew()
     {
-        Mode = 1;
+        Mode = (int)TilesetMode.AreaType;
         Name = "";
         TilesetNames = [.. Enumerable.Repeat("", 9)];
         Flags = DefaultTilesetFlags.Create();

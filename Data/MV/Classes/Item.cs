@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -16,11 +17,11 @@ public class Item : UsableItem, IItem, INewEntity
         Damage = new ItemDamage();
         Damage.InitializeNew();
         Effects = new();
-        HitType = 0;
+        HitType = Enums.HitType.CertainHit;
         IconIndex = 0;
-        Occasion = 0;
+        Occasion = ItemOccasion.Always;
         Repeats = 1;
-        Scope = 7;
+        Scope = ItemScope.OneAlly;
         Speed = 0;
         SuccessRate = 100;
         TPGain = 0;

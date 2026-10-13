@@ -1,4 +1,5 @@
-﻿using RPGMDataKit.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMDataKit.Data.VXAce.Classes;
@@ -17,7 +18,7 @@ public class Item : UsableItem, IItem
     public override void InitializeNew()
     {
         base.InitializeNew();
-        Scope = 7;
+        Scope = ItemScope.OneAlly;
         ITypeId = 1;
         Price = 0;
         Consumable = true;

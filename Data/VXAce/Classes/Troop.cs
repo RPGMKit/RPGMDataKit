@@ -53,7 +53,7 @@ public class Troop : RubySerializationEntity, ITroop, INewEntity
             var condition = new PageCondition();
             condition.InitializeNew();
             Condition = condition;
-            Span = 0;
+            Span = TroopPageSpan.Battle;
             NamedCommands = [CommandContainerHelper.CreateNamed(new Command { Code = 0, Indent = 0, Parameters = [] }, StorageVersion.VXAce)];
         }
 

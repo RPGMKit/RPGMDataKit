@@ -15,7 +15,7 @@ public class Enemy : BaseItem, IEnemy
         /// <summary>The values of <c>RPG::Enemy::DropItem.new</c> of VX Ace: nothing falls out.</summary>
         public void InitializeNew()
         {
-            Kind = 0;
+            Kind = DropItemKind.None;
             DataId = 1;
             Denominator = 1;
         }
@@ -37,7 +37,7 @@ public class Enemy : BaseItem, IEnemy
         public void InitializeNew()
         {
             SkillId = 1;
-            ConditionType = 0;
+            ConditionType = EnemyActionCondition.Always;
             ConditionParam1 = 0;
             ConditionParam2 = 0;
             Rating = 5;

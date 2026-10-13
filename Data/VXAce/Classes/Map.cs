@@ -1,4 +1,5 @@
-﻿using RPGMDataKit.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using RPGMDataKit.Data.Structures;
 using RubyMarshalCS.Serialization.Attributes;
@@ -16,7 +17,7 @@ public class Map : RubySerializationEntity, IMap, INewEntity
         TilesetId = 1;
         Width = 17;
         Height = 13;
-        ScrollType = 0;
+        ScrollType = MapScrollType.NoLoop;
         SpecifyBattleback = false;
         Battleback1Name = "";
         Battleback2Name = "";

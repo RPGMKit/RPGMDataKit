@@ -29,7 +29,7 @@ namespace RPGMDataKit.Data.MV.Classes
                 var graphic = new PageGraphic();
                 graphic.InitializeNew();
                 Graphic = graphic;
-                MoveType = 0;
+                MoveType = EventMoveType.Fixed;
                 MoveSpeed = 3;
                 MoveFrequency = 3;
                 var route = new MoveRoute();
@@ -39,8 +39,8 @@ namespace RPGMDataKit.Data.MV.Classes
                 StepAnime = false;
                 DirectionFix = false;
                 Through = false;
-                PriorityType = 0;
-                Trigger = 0;
+                PriorityType = EventPriority.BelowCharacters;
+                Trigger = EventTriggerType.ActionButton;
                 NamedCommands = [CommandContainerHelper.CreateNamed(new Command { Code = 0, Indent = 0, Parameters = [] }, StorageVersion.MV)];
             }
 
@@ -112,7 +112,7 @@ namespace RPGMDataKit.Data.MV.Classes
                     TileId = 0;
                     CharacterName = "";
                     CharacterIndex = 0;
-                    Direction = 2;
+                    Direction = (int)Enums.Direction.Down;
                     Pattern = 0;
                 }
 

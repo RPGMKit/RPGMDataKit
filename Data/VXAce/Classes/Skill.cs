@@ -1,4 +1,5 @@
-﻿using RPGMDataKit.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMDataKit.Data.VXAce.Classes;
@@ -31,8 +32,8 @@ public class Skill : UsableItem, ISkill
     public override void InitializeNew()
     {
         base.InitializeNew();
-        Scope = 1;
-        Occasion = 0;
+        Scope = ItemScope.OneEnemy;
+        Occasion = ItemOccasion.Always;
         STypeId = 1;
         MpCost = 0;
         TpCost = 0;

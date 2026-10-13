@@ -13,7 +13,7 @@ public class CommonEvent : VxCommandContainer, ICommonEvent, INewEntity
     public void InitializeNew()
     {
         Name = "";
-        Trigger = 0;
+        Trigger = CommonEventTriggerType.None;
         SwitchId = 1;
         NamedCommands = [CommandContainerHelper.CreateNamed(new Command { Code = 0, Indent = 0, Parameters = [] }, StorageVersion.VXAce)];
     }

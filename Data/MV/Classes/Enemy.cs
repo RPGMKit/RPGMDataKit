@@ -12,7 +12,7 @@ public class Enemy : JsonEntity, IEnemy, INewEntity
         /// <summary>The values that the editor of MV gives to a new drop: nothing falls out.</summary>
         public void InitializeNew()
         {
-            Kind = 0;
+            Kind = DropItemKind.None;
             DataId = 1;
             Denominator = 1;
         }
@@ -33,7 +33,7 @@ public class Enemy : JsonEntity, IEnemy, INewEntity
         public void InitializeNew()
         {
             SkillId = 1;
-            ConditionType = 0;
+            ConditionType = EnemyActionCondition.Always;
             ConditionParam1 = 0;
             ConditionParam2 = 0;
             Rating = 5;

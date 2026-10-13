@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -16,15 +17,15 @@ public class Skill : UsableItem, ISkill, INewEntity
         Damage = new ItemDamage();
         Damage.InitializeNew();
         Effects = new();
-        Occasion = 1;
+        Occasion = ItemOccasion.Always; // as in VX Ace (not checked in the editor of MV yet)
         Repeats = 1;
-        HitType = 0;
+        HitType = Enums.HitType.CertainHit;
         IconIndex = 0;
         STypeId = 1;
         MpCost = 0;
         TpCost = 0;
         TpGain = 0;
-        Scope = 1;
+        Scope = ItemScope.OneEnemy;
         Speed = 0;
         SuccessRate = 100;
         Message1 = "";

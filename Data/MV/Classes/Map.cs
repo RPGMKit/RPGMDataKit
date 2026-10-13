@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
@@ -33,7 +34,7 @@ public class Map : JsonEntity, IMap, INewEntity
         ParallaxShow = false;
         ParallaxSX = 0;
         ParallaxSY = 0;
-        ScrollType = 0;
+        ScrollType = MapScrollType.NoLoop;
         SpecifyBattleback = false;
 
         // 6 layers: two of the ground, two of the upper tiles, the shadows, the regions
