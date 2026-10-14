@@ -1,10 +1,7 @@
 ﻿namespace RPGMDataKit.Data.Structures.Interfaces;
 
-public interface IEnemy : IHasId
+public interface IEnemy : IBaseItem, IHasFeatures
 {
-    
-    public string Name { get; set; }
-
     public string BattlerName { get; set; }
 
     public int BattlerHue { get; set; }

@@ -1,9 +1,8 @@
 ﻿namespace RPGMDataKit.Data.Structures.Interfaces;
 
-public interface IWeapon : IHasId
+public interface IWeapon : IEquipItem
 {
-    
-    public string Name { get; set; }
-    
-    public int IconIndex { get; set; }
+    public int WTypeId { get; set; }
+
+    public int AnimationId { get; set; }
 }

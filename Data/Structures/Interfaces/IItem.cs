@@ -1,9 +1,10 @@
 ﻿namespace RPGMDataKit.Data.Structures.Interfaces;
 
-public interface IItem : IHasId
+public interface IItem : IUsableItem
 {
-    
-    public string Name { get; set; }
-    
-    public int IconIndex { get; set; }
+    public int ITypeId { get; set; }
+
+    public int Price { get; set; }
+
+    public bool Consumable { get; set; }
 }

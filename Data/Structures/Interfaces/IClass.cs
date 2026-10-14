@@ -1,6 +1,5 @@
 ﻿namespace RPGMDataKit.Data.Structures.Interfaces;
 
-public interface IClass : IHasId
+public interface IClass : IBaseItem, IHasFeatures
 {
-    public string Name { get; set; }
 }

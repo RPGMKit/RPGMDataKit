@@ -1,12 +1,9 @@
 ﻿namespace RPGMDataKit.Data.Structures.Interfaces;
 
-public interface IActor : IHasId
+public interface IActor : IBaseItem, IHasFeatures
 {
-    
-    public string Name { get; set; }
-    
     public int ClassId { get; set; }
-    
+
     public string NickName { get; set; }
 
     public string CharacterName { get; set; }

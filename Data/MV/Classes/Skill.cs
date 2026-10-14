@@ -1,72 +1,11 @@
 ﻿using Newtonsoft.Json;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
-using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Skill : UsableItem, ISkill, INewEntity
+public class Skill : UsableItem, ISkill
 {
-    /// <summary>The values that the editor of MV gives to a new skill: on one enemy, in battle, of the first type of skills.</summary>
-    public void InitializeNew()
-    {
-        Name = "";
-        Note = "";
-        Description = "";
-        AnimationId = 0;
-        Damage = new ItemDamage();
-        Damage.InitializeNew();
-        Effects = new();
-        Occasion = ItemOccasion.Always; // as in VX Ace (not checked in the editor of MV yet)
-        Repeats = 1;
-        HitType = Enums.HitType.CertainHit;
-        IconIndex = 0;
-        STypeId = 1;
-        MpCost = 0;
-        TpCost = 0;
-        TpGain = 0;
-        Scope = ItemScope.OneEnemy;
-        Speed = 0;
-        SuccessRate = 100;
-        Message1 = "";
-        Message2 = "";
-        RequiredWTypeId1 = 0;
-        RequiredWTypeId2 = 0;
-    }
-
-    [JsonProperty("id")]
-    public int Id { get; set; }
-
-    [JsonProperty("name")]
-    public string Name { get; set; }
-    
-    [JsonProperty("note")]
-    public string Note { get; set; }
-    
-    [JsonProperty("description")]
-    public string Description { get; set; }
-    
-    [JsonProperty("animationId")]
-    public int AnimationId { get; set; }
-
-    [JsonProperty("damage")]
-    public ItemDamage Damage { get; set; }
-    
-    [JsonProperty("effects")]
-    public List<Effect> Effects { get; set; }
-    
-    [JsonProperty("occasion")]
-    public int Occasion { get; set; }
-
-    [JsonProperty("repeats")]
-    public int Repeats { get; set; }
-    
-    [JsonProperty("hitType")]
-    public int HitType { get; set; }
-    
-    [JsonProperty("iconIndex")]
-    public int IconIndex { get; set; }
-    
     [JsonProperty("stypeId")]
     public int STypeId { get; set; }
 
@@ -75,18 +14,6 @@ public class Skill : UsableItem, ISkill, INewEntity
 
     [JsonProperty("tpCost")]
     public int TpCost { get; set; }
-    
-    [JsonProperty("tpGain")]
-    public int TpGain { get; set; }
-    
-    [JsonProperty("scope")]
-    public int Scope { get; set; }
-
-    [JsonProperty("speed")]
-    public int Speed { get; set; }
-    
-    [JsonProperty("successRate")]
-    public int SuccessRate { get; set; }
 
     [JsonProperty("message1")]
     public string Message1 { get; set; }
@@ -99,4 +26,19 @@ public class Skill : UsableItem, ISkill, INewEntity
 
     [JsonProperty("requiredWtypeId2")]
     public int RequiredWTypeId2 { get; set; }
+
+    /// <summary>The values that the editor of MV gives to a new skill: on one enemy, in battle, of the first type of skills.</summary>
+    public override void InitializeNew()
+    {
+        base.InitializeNew();
+        Scope = ItemScope.OneEnemy;
+        Occasion = ItemOccasion.Always; // as in VX Ace (not checked in the editor of MV yet)
+        STypeId = 1;
+        MpCost = 0;
+        TpCost = 0;
+        Message1 = "";
+        Message2 = "";
+        RequiredWTypeId1 = 0;
+        RequiredWTypeId2 = 0;
+    }
 }

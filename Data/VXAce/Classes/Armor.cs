@@ -8,7 +8,7 @@ namespace RPGMDataKit.Data.VXAce.Classes;
 public class Armor : EquipItem, IArmor
 {
     [RubyProperty("@atype_id")]
-    public int ATypeId;
+    public int ATypeId { get; set; }
 
     /// <summary>The values of <c>RPG::Armor.new</c> of VX Ace: the second type of equipment (a shield), the feature of the evasion.</summary>
     public override void InitializeNew()

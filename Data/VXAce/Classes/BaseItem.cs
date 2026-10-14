@@ -1,10 +1,11 @@
-﻿using RPGMDataKit.Data.Structures.Internal;
+﻿using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
 
 namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::BaseItem")]
-public class BaseItem : RubySerializationEntity, INewEntity
+public class BaseItem : RubySerializationEntity, IBaseItem, IHasIcon, IHasDescription, IHasFeatures, INewEntity
 {
     [RubyProperty("@id")]
     public int Id { get; set; }
@@ -23,6 +24,8 @@ public class BaseItem : RubySerializationEntity, INewEntity
 
     [RubyProperty("@note")]
     public string Note { get; set; }
+
+    IReadOnlyList<IFeature> IHasFeatures.Features => Features;
 
     /// <summary>The values of <c>RPG::BaseItem.new</c> of VX Ace.</summary>
     public virtual void InitializeNew()

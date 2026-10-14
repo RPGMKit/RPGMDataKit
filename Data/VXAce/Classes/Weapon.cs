@@ -8,10 +8,10 @@ namespace RPGMDataKit.Data.VXAce.Classes;
 public class Weapon : EquipItem, IWeapon
 {
     [RubyProperty("@wtype_id")]
-    public int WTypeId;
+    public int WTypeId { get; set; }
 
     [RubyProperty("@animation_id")]
-    public int AnimationId;
+    public int AnimationId { get; set; }
 
     /// <summary>The values of <c>RPG::Weapon.new</c> of VX Ace: the features of the first type of the weapon and of the hit rate.</summary>
     public override void InitializeNew()

@@ -5,7 +5,7 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Enemy : JsonEntity, IEnemy, INewEntity
+public class Enemy : BaseItem, IEnemy
 {
     public class DropItem : JsonEntity, IDropItem, INewEntity
     {
@@ -55,15 +55,6 @@ public class Enemy : JsonEntity, IEnemy, INewEntity
         public int Rating { get; set; }
     }
     
-    [JsonProperty("id")]
-    public int Id { get; set; }
-    
-    [JsonProperty("name")]
-    public string Name { get; set; }
-    
-    [JsonProperty("note")]
-    public string Note { get; set; }
-    
     [JsonProperty("battlerName")]
     public string BattlerName { get; set; }
 
@@ -89,10 +80,11 @@ public class Enemy : JsonEntity, IEnemy, INewEntity
     public List<Trait> Traits { get; set; }
 
     /// <summary>The values that the editor of MV gives to a new enemy: three empty drops, one action (attack), the hit rate and the evasion.</summary>
-    public void InitializeNew()
+    IReadOnlyList<IFeature> IHasFeatures.Features => Traits;
+
+    public override void InitializeNew()
     {
-        Name = "";
-        Note = "";
+        base.InitializeNew();
         BattlerName = "";
         BattlerHue = 0;
         Params = [100, 0, 10, 10, 10, 10, 10, 10];

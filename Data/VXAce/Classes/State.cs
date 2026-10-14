@@ -9,49 +9,49 @@ namespace RPGMDataKit.Data.VXAce.Classes;
 public class State : BaseItem, IState
 {
     [RubyProperty("@restriction")]
-    public int Restriction;
+    public int Restriction { get; set; }
 
     [RubyProperty("@priority")]
-    public int Priority;
+    public int Priority { get; set; }
 
     [RubyProperty("@remove_at_battle_end")]
-    public bool RemoveAtBattleEnd;
+    public bool RemoveAtBattleEnd { get; set; }
 
     [RubyProperty("@remove_by_restriction")]
-    public bool RemoveByRestriction;
+    public bool RemoveByRestriction { get; set; }
 
     [RubyProperty("@auto_removal_timing")]
-    public int AutoRemovalTiming;
+    public int AutoRemovalTiming { get; set; }
 
     [RubyProperty("@min_turns")]
-    public int MinTurns;
+    public int MinTurns { get; set; }
 
     [RubyProperty("@max_turns")]
-    public int MaxTurns;
+    public int MaxTurns { get; set; }
 
     [RubyProperty("@remove_by_damage")]
-    public bool RemoveByDamage;
-    
+    public bool RemoveByDamage { get; set; }
+
     [RubyProperty("@chance_by_damage")]
-    public int ChanceByDamage;
+    public int ChanceByDamage { get; set; }
 
     [RubyProperty("@remove_by_walking")]
-    public bool RemoveByWalking;
+    public bool RemoveByWalking { get; set; }
 
     [RubyProperty("@steps_to_remove")]
-    public int StepsToRemove;
+    public int StepsToRemove { get; set; }
 
     [RubyProperty("@message1")]
-    public string Message1;
+    public string Message1 { get; set; }
 
     [RubyProperty("@message2")]
-    public string Message2;
+    public string Message2 { get; set; }
 
     [RubyProperty("@message3")]
-    public string Message3;
+    public string Message3 { get; set; }
 
     [RubyProperty("@message4")]
-    public string Message4;
+    public string Message4 { get; set; }
 
     /// <summary>The values of <c>RPG::State.new</c> of VX Ace: lasts one turn, priority 50, 100 steps to remove by walking.</summary>
     public override void InitializeNew()

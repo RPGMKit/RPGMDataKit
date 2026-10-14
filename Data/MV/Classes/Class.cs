@@ -5,7 +5,7 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Class : JsonEntity, IClass, INewEntity
+public class Class : BaseItem, IClass
 {
     public class Learning : JsonEntity, ILearning, INewEntity
     {
@@ -26,15 +26,6 @@ public class Class : JsonEntity, IClass, INewEntity
         [JsonProperty("note")]
         public string Note { get; set; }
     }
-    
-    [JsonProperty("id")]
-    public int Id { get; set; }
-    
-    [JsonProperty("name")]
-    public string Name { get; set; }
-    
-    [JsonProperty("note")]
-    public string Note { get; set; }
     
     [JsonProperty("traits")]
     public List<Trait> Traits { get; set; }
@@ -61,10 +52,11 @@ public class Class : JsonEntity, IClass, INewEntity
     ];
 
     /// <summary>The values that the editor of MV gives to a new class: the curves of the parameters and the basic traits.</summary>
-    public void InitializeNew()
+    IReadOnlyList<IFeature> IHasFeatures.Features => Traits;
+
+    public override void InitializeNew()
     {
-        Name = "";
-        Note = "";
+        base.InitializeNew();
         ExpParams = [30, 20, 30, 30];
 
         // 8 parameters, 100 levels each (the level 0 is not used)

@@ -7,7 +7,7 @@ using RubyMarshalCS.SpecialTypes;
 namespace RPGMDataKit.Data.VXAce.Classes;
 
 [RubyObject("RPG::UsableItem")]
-public class UsableItem : BaseItem
+public class UsableItem : BaseItem, IUsableItem
 {
     [RubyObject("RPG::UsableItem::Effect")]
     public class Effect : RubySerializationEntity, IEffect, INewEntity
@@ -60,25 +60,38 @@ public class UsableItem : BaseItem
     }
 
     [RubyProperty("@scope")]
-    public int Scope;
+    public int Scope { get; set; }
+
     [RubyProperty("@occasion")]
-    public int Occasion;
+    public int Occasion { get; set; }
+
     [RubyProperty("@speed")]
-    public int Speed;
+    public int Speed { get; set; }
+
     [RubyProperty("@animation_id")]
-    public int AnimationId;
+    public int AnimationId { get; set; }
+
     [RubyProperty("@success_rate")]
-    public int SuccessRate;
+    public int SuccessRate { get; set; }
+
     [RubyProperty("@repeats")]
-    public int Repeats;
+    public int Repeats { get; set; }
+
     [RubyProperty("@tp_gain")]
-    public int TpGain;
+    public int TpGain { get; set; }
+
     [RubyProperty("@hit_type")]
-    public int HitType;
+    public int HitType { get; set; }
+
     [RubyProperty("@damage")]
-    public ItemDamage Damage;
+    public ItemDamage Damage { get; set; }
+
     [RubyProperty("@effects")]
-    public List<Effect> Effects;
+    public List<Effect> Effects { get; set; }
+
+    IItemDamage IUsableItem.Damage => Damage;
+
+    IReadOnlyList<IEffect> IUsableItem.Effects => Effects;
 
     /// <summary>The values of <c>RPG::UsableItem.new</c> of VX Ace.</summary>
     public override void InitializeNew()

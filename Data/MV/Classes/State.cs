@@ -5,17 +5,8 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class State : JsonEntity, IState, INewEntity
+public class State : BaseItem, IState
 {
-    [JsonProperty("id")]
-    public int Id { get; set; }
-
-    [JsonProperty("name")]
-    public string Name { get; set; }
-    
-    [JsonProperty("note")]
-    public string Note { get; set; }
-
     [JsonProperty("iconIndex")]
     public int IconIndex { get; set; }
 
@@ -74,10 +65,11 @@ public class State : JsonEntity, IState, INewEntity
     public List<Trait> Traits { get; set; }
 
     /// <summary>The values that the editor of MV gives to a new state: lasts one turn, priority 50, 100 steps to remove by walking.</summary>
-    public void InitializeNew()
+    IReadOnlyList<IFeature> IHasFeatures.Features => Traits;
+
+    public override void InitializeNew()
     {
-        Name = "";
-        Note = "";
+        base.InitializeNew();
         IconIndex = 0;
         Restriction = StateRestriction.None;
         Priority = 50;
