@@ -12,6 +12,10 @@
       <Compile Remove="external\**" />
       <EmbeddedResource Remove="external\**" />
       <None Remove="external\**" />
+      <!-- the tests have their own project -->
+      <Compile Remove="tests\**" />
+      <EmbeddedResource Remove="tests\**" />
+      <None Remove="tests\**" />
     </ItemGroup>
 
     <ItemGroup>
