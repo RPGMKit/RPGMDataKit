@@ -9,13 +9,13 @@ public class UsableItem : JsonEntity
 {
     public class Effect : JsonEntity, IEffect, INewEntity
     {
-        /// <summary>The values of a new effect, as in VX Ace (not checked in the editor of MV yet): "Recover HP" with 0 and 0.</summary>
+        /// <summary>What the editor of MV puts into an effect that is added and not changed: "Recover HP" by 100% and 0.</summary>
         public void InitializeNew()
         {
             Code = EffectCodes.RecoverHp;
-            DataId = 1;
-            Value1 = 0.0;
-            Value2 = 0.0;
+            DataId = 0;
+            Value1 = 1;
+            Value2 = 0;
         }
 
         [JsonProperty("code")]

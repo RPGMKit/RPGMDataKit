@@ -31,7 +31,7 @@ public class Map : JsonEntity, IMap, INewEntity
         ParallaxLoopX = false;
         ParallaxLoopY = false;
         ParallaxName = "";
-        ParallaxShow = false;
+        ParallaxShow = true; // unlike VX Ace, the editor of MV shows the parallax picture of a new map
         ParallaxSX = 0;
         ParallaxSY = 0;
         ScrollType = MapScrollType.NoLoop;
@@ -45,8 +45,16 @@ public class Map : JsonEntity, IMap, INewEntity
     }
 
     /// <summary>A troop that appears on the map in a random encounter.</summary>
-    public class Encounter : JsonEntity
+    public class Encounter : JsonEntity, INewEntity
     {
+        /// <summary>What the editor of MV gives to a new encounter: the first troop, the weight 5, on the whole map.</summary>
+        public void InitializeNew()
+        {
+            TroopId = 1;
+            Weight = 5;
+            RegionSet = new();
+        }
+
         [JsonProperty("regionSet")]
         public List<int> RegionSet { get; set; } = new();
         [JsonProperty("troopId")]

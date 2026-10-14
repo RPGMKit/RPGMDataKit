@@ -44,8 +44,16 @@ public class Map : RubySerializationEntity, IMap, INewEntity
 
     /// <summary>A troop that appears on the map in a random encounter.</summary>
     [RubyObject("RPG::Map::Encounter")]
-    public class Encounter : RubySerializationEntity
+    public class Encounter : RubySerializationEntity, INewEntity
     {
+        /// <summary>The values of <c>RPG::Map::Encounter.new</c> of VX Ace: the first troop, the weight 10, on the whole map.</summary>
+        public void InitializeNew()
+        {
+            TroopId = 1;
+            Weight = 10;
+            RegionSet = new();
+        }
+
         [RubyProperty("@troop_id")]
         public int TroopId { get; set; }
         [RubyProperty("@weight")]

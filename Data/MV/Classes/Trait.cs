@@ -7,12 +7,12 @@ namespace RPGMDataKit.Data.MV.Classes;
 
 public class Trait : JsonEntity, IFeature, INewEntity
 {
-    /// <summary>The values of a new trait, as in VX Ace (not checked in the editor of MV yet): the attack element 1 with the value 1.</summary>
+    /// <summary>What the editor of MV puts into a trait that is added and not changed: the rate of damage from the element 1 is 100%.</summary>
     public void InitializeNew()
     {
-        Code = FeatureCodes.AttackElement;
+        Code = FeatureCodes.ElementRate;
         DataId = 1;
-        Value = 1.0;
+        Value = 1;
     }
 
     [JsonProperty("code")]

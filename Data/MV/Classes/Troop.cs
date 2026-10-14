@@ -20,12 +20,12 @@ public class Troop : JsonEntity, ITroop, INewEntity
 
     public class Member : JsonEntity, IMember, INewEntity
     {
-        /// <summary>The values that the editor of MV gives to a new member: the first enemy at the left top corner, visible.</summary>
+        /// <summary>What the editor of MV gives to an enemy that is added to a troop: the first enemy at the middle of the field (408, 436), visible.</summary>
         public void InitializeNew()
         {
             EnemyId = 1;
-            X = 0;
-            Y = 0;
+            X = 408;
+            Y = 436;
             Hidden = false;
         }
 

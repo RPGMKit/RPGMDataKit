@@ -22,13 +22,11 @@ public class Animation : JsonEntity, IAnimation, INewEntity
 
     public class Timing : JsonEntity, INewEntity
     {
-        /// <summary>The values that the editor of MV gives to a new timing: at the first frame, no sound, the white flash.</summary>
+        /// <summary>What the editor of MV gives to a new timing: at the first frame, no sound (null), the white flash.</summary>
         public void InitializeNew()
         {
             Frame = 0;
-            SE = new SE();
-            SE.InitializeNew();
-            SE.Volume = 80;
+            SE = null!;
             Condition = 0;
             FlashScope = Enums.FlashScope.None;
             FlashColor = Color.FromArray([255, 255, 255, 255]);

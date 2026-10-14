@@ -9,20 +9,14 @@ namespace RPGMDataKit.Data.MV.Classes
 {
     public class Tileset : JsonEntity, ITileSet, INewEntity
     {
-        /// <summary>The values that the editor of MV gives to a new tileset: the mode of the world map, nine empty names, the flags of the empty tiles.</summary>
+        /// <summary>What the editor of MV gives to a new tileset: the mode of the area map, nine empty names, one flag.</summary>
         public void InitializeNew()
         {
             Mode = (int)TilesetMode.AreaType;
             Name = "";
             TilesetNames = [.. Enumerable.Repeat("", 9)];
-            Flags = new Table(8192);
-            Flags[0] = 0x0010;
-            for (var tile = 2048; tile <= 2815; tile++)
-                Flags[tile] = 0x000F;
-
-            for (var tile = 4352; tile <= 8191; tile++)
-                Flags[tile] = 0x000F;
-
+            // the editor of MV writes only the first flag of a new tileset; the others are added when the tiles are set
+            Flags = Table.FromCells([0x0010]);
             Note = "";
         }
 
