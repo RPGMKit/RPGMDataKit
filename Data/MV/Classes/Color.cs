@@ -1,9 +1,17 @@
 ﻿using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
-public class Color : List<int>, IColor
+public class Color : List<int>, IColor, INewEntity
 {
+    /// <summary>An opaque white (255, 255, 255, 255); the array of MV has to have all four numbers.</summary>
+    public void InitializeNew()
+    {
+        Clear();
+        AddRange([255, 255, 255, 255]);
+    }
+
     public static Color FromArray(IList<int> list)
     {
         return new Color()

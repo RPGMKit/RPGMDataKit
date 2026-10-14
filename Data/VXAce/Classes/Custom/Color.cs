@@ -1,4 +1,5 @@
 ﻿using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 using RPGMDataKit.Data.VXAce.Serializers;
 using RubyMarshalCS.Serialization.Attributes;
 
@@ -6,8 +7,17 @@ namespace RPGMDataKit.Data.VXAce.Classes.Custom;
 
 [RubyObject("Color")]
 [RubyUserSerializer(typeof(ColorSerializer))]
-public class Color : IColor
+public class Color : IColor, INewEntity
 {
+    /// <summary>An opaque white (255, 255, 255, 255).</summary>
+    public void InitializeNew()
+    {
+        Red = 255;
+        Green = 255;
+        Blue = 255;
+        Alpha = 255;
+    }
+
     [RubyProperty("@red")]
     public double _Red;
 

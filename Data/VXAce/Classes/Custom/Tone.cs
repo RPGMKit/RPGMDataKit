@@ -8,8 +8,17 @@ namespace RPGMDataKit.Data.VXAce.Classes.Custom;
 
 [RubyObject("Tone")]
 [RubyUserSerializer(typeof(ToneSerializer), "")]
-public class Tone : RubySerializationEntity, ITone
+public class Tone : RubySerializationEntity, ITone, INewEntity
 {
+    /// <summary>Four zeros, as in a new "Tint Screen" command of the editor (no change of the colors).</summary>
+    public void InitializeNew()
+    {
+        Red = 0;
+        Green = 0;
+        Blue = 0;
+        Gray = 0;
+    }
+
     [RubyProperty("@red")]
     public double _Red;
 

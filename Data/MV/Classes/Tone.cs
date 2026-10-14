@@ -1,10 +1,18 @@
 using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.MV.Classes;
 
 /// <summary>A tone as MV stores it: an array of red, green, blue and gray.</summary>
-public class Tone : List<int>, ITone
+public class Tone : List<int>, ITone, INewEntity
 {
+    /// <summary>A tone of four zeros, as in a new "Tint Screen" command of the editor (no change of the colors); the array of MV has to have all four numbers.</summary>
+    public void InitializeNew()
+    {
+        Clear();
+        AddRange([0, 0, 0, 0]);
+    }
+
     public static Tone FromArray(IList<int> list)
     {
         return new Tone()
