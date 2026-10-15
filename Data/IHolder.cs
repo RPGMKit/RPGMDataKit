@@ -5,7 +5,11 @@ internal interface IHolder
 {
     void Preload();
 
+    Task PreloadAsync(CancellationToken cancellationToken);
+
     void Save();
+
+    Task SaveAsync(CancellationToken cancellationToken);
 
     void Unload();
 

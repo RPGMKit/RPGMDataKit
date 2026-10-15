@@ -221,8 +221,28 @@ namespace RPGMDataKit
             File.WriteAllText(filePath, JsonConvert.SerializeObject(patches, Formatting.Indented));
         }
 
+        public static Task DumpPatchesAsync(string filePath, List<Patch> patches, CancellationToken cancellationToken = default)
+        {
+            return File.WriteAllTextAsync(filePath, JsonConvert.SerializeObject(patches, Formatting.Indented), cancellationToken);
+        }
+
         public static void DumpPatchesAsText(string directoryName, List<Patch> patches, Storage old = null, Storage @new = null)
         {
+            foreach (var (name, text) in BuildTextPatches(patches, old, @new))
+                File.WriteAllText(Path.Combine(directoryName, name), text);
+        }
+
+        public static async Task DumpPatchesAsTextAsync(string directoryName, List<Patch> patches, Storage old = null,
+            Storage @new = null, CancellationToken cancellationToken = default)
+        {
+            foreach (var (name, text) in BuildTextPatches(patches, old, @new))
+                await File.WriteAllTextAsync(Path.Combine(directoryName, name), text, cancellationToken);
+        }
+
+        /// <summary>The files of the text form of the patches: the name and the text of each.</summary>
+        private static List<(string Name, string Text)> BuildTextPatches(List<Patch> patches, Storage old, Storage @new)
+        {
+            List<(string Name, string Text)> files = new();
             List<string> mapContent = new();
             List<string> switchContent = new();
             List<string> variableContent = new();
@@ -272,21 +292,31 @@ namespace RPGMDataKit
                         : $"Map_{p.MapEventPage.MapId:D3}_Event_{p.MapEventPage.EventId:D3}_Page_{p.MapEventPage.PageId}.patch";
 
                     var patchText = string.Concat(p.Patches.Select(_ => _.ToString() + "\r\n"));
-                    File.WriteAllText(Path.Combine(directoryName, fileName), patchText);
+                    files.Add((fileName, patchText));
                 }
             }
 
+            // a line each, ended by the line break of the system, as File.WriteAllLines writes them
+            static string Lines(List<string> lines) => string.Concat(lines.Select(line => line + Environment.NewLine));
+
             if (mapContent.Count > 0)
-                File.WriteAllLines(Path.Combine(directoryName, "Maps.patch"), switchContent);
+                files.Add(("Maps.patch", Lines(mapContent)));
             if (switchContent.Count > 0)
-                File.WriteAllLines(Path.Combine(directoryName, "Switches.patch"), switchContent);
+                files.Add(("Switches.patch", Lines(switchContent)));
             if (variableContent.Count > 0)
-                File.WriteAllLines(Path.Combine(directoryName, "Variables.patch"), variableContent);
+                files.Add(("Variables.patch", Lines(variableContent)));
+
+            return files;
         }
-        
+
         public static List<Patch> LoadPatches(string filePath)
         {
             return JsonConvert.DeserializeObject<List<Patch>>(File.ReadAllText(filePath));
+        }
+
+        public static async Task<List<Patch>> LoadPatchesAsync(string filePath, CancellationToken cancellationToken = default)
+        {
+            return JsonConvert.DeserializeObject<List<Patch>>(await File.ReadAllTextAsync(filePath, cancellationToken));
         }
 
         public enum PatchStatus

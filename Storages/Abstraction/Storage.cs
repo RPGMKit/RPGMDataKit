@@ -103,6 +103,22 @@ public abstract class Storage
         _serializer.Save(Path.Combine(ProjectPath, DataDirectory, dataFile), data);
     }
 
+    /// <summary>Like <see cref="LoadData{T}"/>, without blocking the thread while the file is read.</summary>
+    public virtual Task<T> LoadDataAsync<T>(string dataFile, CancellationToken cancellationToken = default)
+    {
+        var path = Path.Combine(ProjectPath, DataDirectory, dataFile);
+        if (!File.Exists(path))
+            throw new FileNotFoundException(path);
+
+        return _serializer.LoadAsync<T>(path, cancellationToken);
+    }
+
+    /// <summary>Like <see cref="SaveData{T}"/>, without blocking the thread while the file is written.</summary>
+    public virtual Task SaveDataAsync<T>(string dataFile, T data, CancellationToken cancellationToken = default)
+    {
+        return _serializer.SaveAsync(Path.Combine(ProjectPath, DataDirectory, dataFile), data, cancellationToken);
+    }
+
     protected string FileName(string name) => name + _serializer.FileExtension;
 
     public virtual void Preload()
@@ -114,6 +130,21 @@ public abstract class Storage
             Maps.Get(map.Key);
     }
 
+    /// <summary>
+    /// Like <see cref="Preload"/>, without blocking the thread while the files are read; the tables are loaded at the same time, then the maps.
+    /// The maps come second because their numbers are the keys of the map infos, so those have to be loaded first.
+    /// </summary>
+    /// <param name="maxDegreeOfParallelism">How many files are read at the same time; 0 is the number of processors.</param>
+    public virtual async Task PreloadAsync(CancellationToken cancellationToken = default, int maxDegreeOfParallelism = 0)
+    {
+        var options = ParallelismOptions(maxDegreeOfParallelism, cancellationToken);
+
+        await Parallel.ForEachAsync(_managed, options, async (holder, token) => await holder.PreloadAsync(token));
+
+        var maps = MapInfos.Get().Keys.ToList();
+        await Parallel.ForEachAsync(maps, options, async (id, token) => await Maps.GetAsync(id, token));
+    }
+
     public virtual void SaveAll()
     {
         foreach (var holder in _managed)
@@ -122,7 +153,26 @@ public abstract class Storage
         Maps.Save();
     }
 
+    /// <summary>Like <see cref="SaveAll"/>, without blocking the thread while the files are written; the files are written at the same time.</summary>
+    /// <param name="maxDegreeOfParallelism">How many files are written at the same time; 0 is the number of processors.</param>
+    public virtual async Task SaveAllAsync(CancellationToken cancellationToken = default, int maxDegreeOfParallelism = 0)
+    {
+        var options = ParallelismOptions(maxDegreeOfParallelism, cancellationToken);
+
+        await Parallel.ForEachAsync(_managed, options, async (holder, token) => await holder.SaveAsync(token));
+        await Maps.SaveAsync(cancellationToken, options.MaxDegreeOfParallelism);
+    }
+
+    private static ParallelOptions ParallelismOptions(int maxDegreeOfParallelism, CancellationToken cancellationToken) => new()
+    {
+        MaxDegreeOfParallelism = maxDegreeOfParallelism > 0 ? maxDegreeOfParallelism : Environment.ProcessorCount,
+        CancellationToken = cancellationToken,
+    };
+
     private void SaveObject(string path, object? data) => SaveData(path, data);
+
+    private Task SaveObjectAsync(string path, object? data, CancellationToken cancellationToken) =>
+        SaveDataAsync(path, data, cancellationToken);
 
     private THolder Register<THolder>(string fileName, THolder holder) where THolder : class, IHolder
     {
@@ -191,18 +241,24 @@ public abstract class Storage
     {
         _files.Add(fileName);
 
-        return Register<DataLookupHolder<TV>>(fileName, new(HolderType.List, fileName, path =>
-        {
-            var data = LoadData<List<T>>(path);
-            var dict = new Dictionary<int, TV?>();
-            for (var i = 0; i < data.Count; ++i)
-                dict[idGetter?.Invoke(data[i]) ?? i] = data[i];
+        return Register<DataLookupHolder<TV>>(fileName, new(HolderType.List, fileName,
+            path => ListToDictionary(path, LoadData<List<T>>(path), idGetter), SaveObject,
+            async (path, token) => ListToDictionary(path, await LoadDataAsync<List<T>>(path, token), idGetter), SaveObjectAsync));
+    }
 
-            if (idGetter == null)
-                ReportIdMismatches(path, dict);
+    // the id of an entity is its place in the list, as the engines take it
+    private Dictionary<int, TV?> ListToDictionary<T, TV>(string path, List<T> data, Func<TV?, int>? idGetter)
+        where T : class, TV
+        where TV : class
+    {
+        var dict = new Dictionary<int, TV?>();
+        for (var i = 0; i < data.Count; ++i)
+            dict[idGetter?.Invoke(data[i]) ?? i] = data[i];
 
-            return dict;
-        }, SaveObject));
+        if (idGetter == null)
+            ReportIdMismatches(path, dict);
+
+        return dict;
     }
 
     private DataLookupHolder<TV> LoadDictionaryHolderCore<T, TV>(string fileName, bool idIsStored)
@@ -211,24 +267,31 @@ public abstract class Storage
     {
         _files.Add(fileName);
 
-        return Register<DataLookupHolder<TV>>(fileName, new(HolderType.Dictionary, fileName, path =>
-        {
-            var dict = LoadData<Dictionary<int, T?>>(path).MorphToBase<T, TV>();
-            if (idIsStored)
-            {
-                ReportIdMismatches(path, dict);
-            }
-            else
-            {
-                foreach (var (key, item) in dict)
-                {
-                    if (item is IHasId entity)
-                        entity.Id = key;
-                }
-            }
+        return Register<DataLookupHolder<TV>>(fileName, new(HolderType.Dictionary, fileName,
+            path => CheckedDictionary<T, TV>(path, LoadData<Dictionary<int, T?>>(path), idIsStored), SaveObject,
+            async (path, token) => CheckedDictionary<T, TV>(path, await LoadDataAsync<Dictionary<int, T?>>(path, token), idIsStored),
+            SaveObjectAsync));
+    }
 
-            return dict;
-        }, SaveObject));
+    private Dictionary<int, TV?> CheckedDictionary<T, TV>(string path, Dictionary<int, T?> loaded, bool idIsStored)
+        where T : class, TV
+        where TV : class
+    {
+        var dict = loaded.MorphToBase<T, TV>();
+        if (idIsStored)
+        {
+            ReportIdMismatches(path, dict);
+        }
+        else
+        {
+            foreach (var (key, item) in dict)
+            {
+                if (item is IHasId entity)
+                    entity.Id = key;
+            }
+        }
+
+        return dict;
     }
 
     private DataHolder<TV> LoadHolderCore<T, TV>(string fileName)
@@ -237,8 +300,11 @@ public abstract class Storage
     {
         _files.Add(fileName);
 
-        return Register<DataHolder<TV>>(fileName, new(fileName, path => LoadData<T>(path), SaveObject));
+        return Register<DataHolder<TV>>(fileName, new(fileName, path => LoadData<T>(path), SaveObject,
+            async (path, token) => await LoadDataAsync<T>(path, token), SaveObjectAsync));
     }
+
+    private readonly object _mismatchGate = new();
 
     private void ReportIdMismatches<TV>(string file, Dictionary<int, TV?> items) where TV : class
     {
@@ -247,8 +313,10 @@ public abstract class Storage
 
         foreach (var (key, item) in items)
         {
+            // tables can be loaded at the same time (PreloadAsync): the subscribers are called one at a time
             if (item is IHasId entity && entity.Id != key)
-                IdMismatched?.Invoke(new IdMismatch(file, key, entity.Id, item));
+                lock (_mismatchGate)
+                    IdMismatched?.Invoke(new IdMismatch(file, key, entity.Id, item));
         }
     }
 
@@ -344,7 +412,8 @@ public abstract class Storage
     private MapsHolder LoadMapsHolderCore<T, TV>()
         where T : class, TV
     {
-        var holder = new MapsHolder(MapPath, path => DataFileExists(path) ? (IMap)LoadData<T>(path)! : null, SaveObject);
+        var holder = new MapsHolder(MapPath, path => DataFileExists(path) ? (IMap)LoadData<T>(path)! : null, SaveObject,
+            async (path, token) => DataFileExists(path) ? (IMap)(await LoadDataAsync<T>(path, token))! : null, SaveObjectAsync);
         _holders["Maps"] = holder;
 
         return holder;

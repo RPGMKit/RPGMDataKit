@@ -34,7 +34,36 @@ public class RubyMarshalDataSerializer : IDataSerializer
 
     public string FileExtension => ".rvdata2";
 
-    public T Load<T>(string path) => RubyMarshal.Load<T>(path, _settings);
+    // RubyMarshalCS keeps its caches of the types in static dictionaries that are not safe for several threads,
+    // so reading and writing the Ruby objects goes one at a time; the files themselves are read and written without blocking.
+    private static readonly object Gate = new();
 
-    public void Save<T>(string path, T data) => RubyMarshal.Dump(path, data);
+    public T Load<T>(string path)
+    {
+        lock (Gate)
+            return RubyMarshal.Load<T>(path, _settings)!;
+    }
+
+    public async Task<T> LoadAsync<T>(string path, CancellationToken cancellationToken = default)
+    {
+        var bytes = await File.ReadAllBytesAsync(path, cancellationToken);
+
+        lock (Gate)
+            return RubyMarshal.Load<T>(bytes, _settings)!;
+    }
+
+    public void Save<T>(string path, T data)
+    {
+        lock (Gate)
+            RubyMarshal.Dump(path, data);
+    }
+
+    public async Task SaveAsync<T>(string path, T data, CancellationToken cancellationToken = default)
+    {
+        byte[] bytes;
+        lock (Gate)
+            bytes = RubyMarshal.Dump(data);
+
+        await File.WriteAllBytesAsync(path, bytes, cancellationToken);
+    }
 }

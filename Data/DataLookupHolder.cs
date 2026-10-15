@@ -7,7 +7,9 @@ namespace RPGMDataKit.Data;
 public class DataLookupHolder<TDataType> : DataHolder<Dictionary<int, TDataType?>>
 {
     public DataLookupHolder(HolderType type, string path,
-        HolderLoader<Dictionary<int, TDataType?>> loader, HolderSaver saver) : base(path, loader, saver)
+        HolderLoader<Dictionary<int, TDataType?>> loader, HolderSaver saver,
+        HolderLoaderAsync<Dictionary<int, TDataType?>>? loaderAsync = null, HolderSaverAsync? saverAsync = null)
+        : base(path, loader, saver, loaderAsync, saverAsync)
     {
         Type = type;
     }
@@ -67,19 +69,31 @@ public class DataLookupHolder<TDataType> : DataHolder<Dictionary<int, TDataType?
 
     public override void Save()
     {
+        var data = DataToSave();
+        if (data != null)
+            _Save(data);
+    }
+
+    public override Task SaveAsync(CancellationToken cancellationToken = default)
+    {
+        var data = DataToSave();
+
+        return data != null ? _SaveAsync(data, cancellationToken) : Task.CompletedTask;
+    }
+
+    /// <summary>What goes to the file: the dictionary as it is, a list made of the dictionary by the ids; null when there is nothing to save.</summary>
+    private object? DataToSave()
+    {
         if (Type == HolderType.Dictionary)
-        {
-            _Save(_data);
-            return;
-        }
+            return _data;
 
         if (_data == default)
-            return;
+            return null;
 
         var list = new TDataType?[_data.Count == 0 ? 0 : _data.Max(p => p.Key + 1)];
         foreach (var (k, v) in _data)
             list[k] = v;
 
-        _Save(list);
+        return list;
     }
 }

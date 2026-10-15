@@ -136,6 +136,23 @@ yaml.Load(@"C:\dump");                        // fills the storage from the dump
 
 `yaml.Reporter` gives progress and lets you cancel. The dump contains every holder of the storage, the standard ones and the ones you added (a folder for a list or a dictionary, a file for a single entity). Loading leaves a holder as it is when the dump does not have it. The dump works with the entity types of the storage it was made by.
 
+### Without blocking the thread
+
+The files can be read and written without blocking the thread, and several at the same time:
+
+```csharp
+await mv.PreloadAsync();                 // the tables at the same time, then the maps
+await mv.SaveAllAsync();                 // the files at the same time
+await mv.PreloadAsync(maxDegreeOfParallelism: 4);
+
+await yaml.LoadAsync(@"C:\dump");        // the dump is read file by file
+await Differ.DumpPatchesAsync(path, patches);
+```
+
+`maxDegreeOfParallelism` is how many files are handled at once; 0 is the number of processors. The result is the same as with the methods that block. On the data of a game of 217 maps, reading is about three times faster for MV and about two times for VX Ace; writing is about three times faster for MV. VX Ace files are written at the same speed, because RubyMarshalCS keeps its caches in static dictionaries and the Ruby objects are converted one at a time (the files themselves are read and written without blocking).
+
+`IdMismatched` is raised from a thread of the pool while the tables are being loaded at the same time; the handlers are called one at a time.
+
 ### Compare two projects
 
 ```csharp
