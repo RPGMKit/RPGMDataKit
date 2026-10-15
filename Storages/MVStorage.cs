@@ -1,5 +1,6 @@
 ﻿using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Data.Structures.Internal;
 using RPGMDataKit.Storages.Abstraction;
 using RPGMDataKit.Storages.Serialization;
 
@@ -16,6 +17,16 @@ public class MVStorage : Storage
     public MVStorage(string projectPath, TypeMap types, string dataDirectory = "data") : base(StorageVersion.MV,
         new JsonDataSerializer(types), types, projectPath, dataDirectory)
     {
+    }
+
+    /// <summary>The members the class does not describe are kept by <see cref="JsonEntity"/>; any other class would lose them when saved.</summary>
+    protected override void CheckCustomType(Type concrete)
+    {
+        if (!typeof(JsonEntity).IsAssignableFrom(concrete))
+        {
+            throw new ArgumentException(
+                $"{concrete.Name} must derive from {nameof(JsonEntity)}: otherwise the members it does not describe are lost when the file is saved");
+        }
     }
 
     protected override void Init()

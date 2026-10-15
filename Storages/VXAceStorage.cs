@@ -32,7 +32,8 @@ public class VXAceStorage : Storage
         LoadListHolder(out Enemies, FileName("Enemies"));
         LoadListHolder(out Items, FileName("Items"));
         LoadMapsHolder(out Maps);
-        LoadDictionaryHolder(out MapInfos, FileName("MapInfos"));
+        // an entry of the file has no id (it is the key): the key becomes the id of the entity
+        LoadDictionaryHolder(out MapInfos, FileName("MapInfos"), idIsStored: false);
         LoadListHolder(out Scripts, FileName("Scripts"));
         LoadListHolder(out Skills, FileName("Skills"));
         LoadListHolder(out States, FileName("States"));

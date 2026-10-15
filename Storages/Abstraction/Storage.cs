@@ -35,9 +35,21 @@ public abstract class Storage
     public DataLookupHolder<ITroop> Troops;
     public DataLookupHolder<IWeapon> Weapons;
 
-    private readonly List<ITable> _tables = new();
+    // the holders that Preload, SaveAll and Unload go through (the maps are handled separately)
+    private readonly List<IHolder> _managed = new();
     private readonly IDataSerializer _serializer;
     private readonly TypeMap _types;
+    private readonly HashSet<string> _files = new(StringComparer.OrdinalIgnoreCase);
+    // every holder by its name, the name of its data file without the extension ("Actors", "Maps", "Quests")
+    private readonly Dictionary<string, object> _holders = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Raised while a list or a dictionary is loaded, for each entity whose own <see cref="IHasId.Id"/> differs from its place
+    /// (the index in the list, the key in the dictionary). The engines look an entity up by its place and take <c>entity.id</c> back from it,
+    /// so the two must be equal; the place is what counts and the entity is left as it is. Tables are loaded when first read:
+    /// subscribe before that, or call <see cref="Preload"/> after subscribing.
+    /// </summary>
+    public event Action<IdMismatch>? IdMismatched;
 
     protected Storage(StorageVersion version, IDataSerializer serializer, TypeMap types, string projectPath,
         string dataDirectory = "data")
@@ -59,8 +71,8 @@ public abstract class Storage
 
     public virtual void Unload()
     {
-        foreach (var table in _tables)
-            table.Unload();
+        foreach (var holder in _managed)
+            holder.Unload();
 
         Maps.Unload();
     }
@@ -91,8 +103,8 @@ public abstract class Storage
 
     public virtual void Preload()
     {
-        foreach (var table in _tables)
-            table.Preload();
+        foreach (var holder in _managed)
+            holder.Preload();
 
         foreach (var map in MapInfos.Get())
             Maps.Get(map.Key);
@@ -100,17 +112,18 @@ public abstract class Storage
 
     public virtual void SaveAll()
     {
-        foreach (var table in _tables)
-            table.Save();
+        foreach (var holder in _managed)
+            holder.Save();
 
         Maps.Save();
     }
 
     private void SaveObject(string path, object? data) => SaveData(path, data);
 
-    private THolder Register<THolder>(THolder holder) where THolder : ITable
+    private THolder Register<THolder>(string fileName, THolder holder) where THolder : class, IHolder
     {
-        _tables.Add(holder);
+        _managed.Add(holder);
+        _holders[Path.GetFileNameWithoutExtension(fileName)] = holder;
         return holder;
     }
 
@@ -138,10 +151,15 @@ public abstract class Storage
             fileName, idGetter);
     }
 
-    protected void LoadDictionaryHolder<TV>(out DataLookupHolder<TV> holder, string fileName) where TV : class
+    /// <param name="idIsStored">
+    /// Whether an entry keeps its own id. If so, it is compared with the key (<see cref="IdMismatched"/>); if not (VX Ace map infos),
+    /// the key is put into the entity's id when the dictionary is loaded.
+    /// </param>
+    protected void LoadDictionaryHolder<TV>(out DataLookupHolder<TV> holder, string fileName, bool idIsStored = true)
+        where TV : class
     {
         holder = (DataLookupHolder<TV>)InvokeCore(nameof(LoadDictionaryHolderCore), ConcreteType<TV>(), typeof(TV),
-            fileName);
+            fileName, idIsStored);
     }
 
     protected void LoadHolder<TV>(out DataHolder<TV> holder, string fileName) where TV : class
@@ -158,36 +176,165 @@ public abstract class Storage
         where T : class, TV
         where TV : class
     {
-        return Register<DataLookupHolder<TV>>(new(HolderType.List, fileName, path =>
+        _files.Add(fileName);
+
+        return Register<DataLookupHolder<TV>>(fileName, new(HolderType.List, fileName, path =>
         {
             var data = LoadData<List<T>>(path);
             var dict = new Dictionary<int, TV?>();
             for (var i = 0; i < data.Count; ++i)
                 dict[idGetter?.Invoke(data[i]) ?? i] = data[i];
 
+            if (idGetter == null)
+                ReportIdMismatches(path, dict);
+
             return dict;
         }, SaveObject));
     }
 
-    private DataLookupHolder<TV> LoadDictionaryHolderCore<T, TV>(string fileName)
+    private DataLookupHolder<TV> LoadDictionaryHolderCore<T, TV>(string fileName, bool idIsStored)
         where T : class, TV
         where TV : class
     {
-        return Register<DataLookupHolder<TV>>(new(HolderType.Dictionary, fileName,
-            path => LoadData<Dictionary<int, T?>>(path).MorphToBase<T, TV>(), SaveObject));
+        _files.Add(fileName);
+
+        return Register<DataLookupHolder<TV>>(fileName, new(HolderType.Dictionary, fileName, path =>
+        {
+            var dict = LoadData<Dictionary<int, T?>>(path).MorphToBase<T, TV>();
+            if (idIsStored)
+            {
+                ReportIdMismatches(path, dict);
+            }
+            else
+            {
+                foreach (var (key, item) in dict)
+                {
+                    if (item is IHasId entity)
+                        entity.Id = key;
+                }
+            }
+
+            return dict;
+        }, SaveObject));
     }
 
     private DataHolder<TV> LoadHolderCore<T, TV>(string fileName)
         where T : class, TV
         where TV : class
     {
-        return Register<DataHolder<TV>>(new(fileName, path => LoadData<T>(path), SaveObject));
+        _files.Add(fileName);
+
+        return Register<DataHolder<TV>>(fileName, new(fileName, path => LoadData<T>(path), SaveObject));
     }
+
+    private void ReportIdMismatches<TV>(string file, Dictionary<int, TV?> items) where TV : class
+    {
+        if (IdMismatched == null)
+            return;
+
+        foreach (var (key, item) in items)
+        {
+            if (item is IHasId entity && entity.Id != key)
+                IdMismatched?.Invoke(new IdMismatch(file, key, entity.Id, item));
+        }
+    }
+
+    /// <summary>
+    /// Adds a list of entities kept in its own data file, <c>&lt;name&gt;</c> plus the extension of the version (a JSON array in MV).
+    /// The id of an entity is its index in the list, as the engines take it; slot 0 is not used. The entity must have an id
+    /// (<see cref="IHasId"/>) and keep the members it does not describe (for MV, derive from <c>JsonEntity</c>).
+    /// </summary>
+    /// <param name="optional">The file may be absent: the list starts empty and the file is written when it is saved.</param>
+    public DataLookupHolder<T> AddList<T>(string name, bool optional = false) where T : class, IHasId
+    {
+        var file = CheckCustom<T>(name);
+        LoadListHolder(out DataLookupHolder<T> holder, file);
+        if (optional && !DataFileExists(file))
+            holder.Clear();
+
+        return holder;
+    }
+
+    /// <summary>
+    /// Adds a dictionary of entities (id to entity) kept in its own data file. The id is the key; an entity that has an id
+    /// (<see cref="IHasId"/>) is compared with it when loaded.
+    /// </summary>
+    /// <param name="optional">The file may be absent: the dictionary starts empty and the file is written when it is saved.</param>
+    public DataLookupHolder<T> AddDictionary<T>(string name, bool optional = false) where T : class
+    {
+        var file = CheckCustom<T>(name);
+        LoadDictionaryHolder(out DataLookupHolder<T> holder, file);
+        if (optional && !DataFileExists(file))
+            holder.Clear();
+
+        return holder;
+    }
+
+    /// <summary>Adds a single entity kept in its own data file.</summary>
+    /// <param name="optional">The file may be absent: a new entity (its parameterless constructor) is used and the file is written when it is saved.</param>
+    public DataHolder<T> AddEntity<T>(string name, bool optional = false) where T : class
+    {
+        var file = CheckCustom<T>(name);
+        LoadHolder(out DataHolder<T> holder, file);
+        if (optional && !DataFileExists(file))
+            holder.Set((T)Activator.CreateInstance(ConcreteType<T>())!);
+
+        return holder;
+    }
+
+    /// <summary>
+    /// The names of all holders: the standard ones (<c>Actors</c>, <c>Skills</c>, ..., <c>System</c>, <c>Maps</c>; the name of the data file
+    /// without the extension) and the ones added with <see cref="AddList{T}"/>, <see cref="AddDictionary{T}"/> and <see cref="AddEntity{T}"/>.
+    /// </summary>
+    public IReadOnlyCollection<string> HolderNames => _holders.Keys;
+
+    /// <summary>
+    /// A holder by name, e.g. <c>storage.GetHolder&lt;DataLookupHolder&lt;IActor&gt;&gt;("Actors")</c> or
+    /// <c>storage.GetHolder&lt;DataLookupHolder&lt;Quest&gt;&gt;("Quests")</c>. The names are not case sensitive.
+    /// Throws if there is no such holder or it is of another type.
+    /// </summary>
+    public THolder GetHolder<THolder>(string name) where THolder : class
+    {
+        if (!_holders.TryGetValue(name, out var holder))
+            throw new KeyNotFoundException($"There is no holder '{name}' (holders: {string.Join(", ", _holders.Keys)})");
+
+        return holder as THolder ??
+               throw new InvalidCastException($"The holder '{name}' is {holder.GetType().Name}, not {typeof(THolder).Name}");
+    }
+
+    /// <summary>Like <see cref="GetHolder{THolder}"/>, but false when there is no such holder or it is of another type.</summary>
+    public bool TryGetHolder<THolder>(string name, out THolder? holder) where THolder : class
+    {
+        holder = _holders.GetValueOrDefault(name) as THolder;
+
+        return holder != null;
+    }
+
+    private string CheckCustom<T>(string name) where T : class
+    {
+        if (string.IsNullOrWhiteSpace(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            throw new ArgumentException($"'{name}' is not a name of a data file", nameof(name));
+
+        CheckCustomType(ConcreteType<T>());
+
+        var file = FileName(name);
+        if (_files.Contains(file) || _holders.ContainsKey(name))
+            throw new ArgumentException($"The data file {file} is already used by another table", nameof(name));
+
+        return file;
+    }
+
+    /// <summary>Throws when the type cannot be kept in a data file of this version without losing members it does not describe.</summary>
+    protected virtual void CheckCustomType(Type concrete) =>
+        throw new NotSupportedException($"Tables of your own are not supported for {Version} yet");
 
     private MapsHolder LoadMapsHolderCore<T, TV>()
         where T : class, TV
     {
-        return new(MapPath, path => DataFileExists(path) ? (IMap)LoadData<T>(path)! : null, SaveObject);
+        var holder = new MapsHolder(MapPath, path => DataFileExists(path) ? (IMap)LoadData<T>(path)! : null, SaveObject);
+        _holders["Maps"] = holder;
+
+        return holder;
     }
 
     public ICommonEvent? GetCommonEvent(int id)

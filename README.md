@@ -74,6 +74,32 @@ skill.Name = "Fireball";
 var id = vx.Skills.Add(skill);
 ```
 
+### Tables of your own (MV)
+
+Data files that are not part of the editor, for example the data of a plugin, can be added to a storage. They are saved, preloaded and unloaded with the other tables:
+
+```csharp
+public class Quest : JsonEntity, IHasId
+{
+    [JsonProperty("id")]    public int Id { get; set; }
+    [JsonProperty("title")] public string Title { get; set; } = "";
+}
+
+var quests = mv.AddList<Quest>("Quests");                  // data/Quests.json: [null, {...}, {...}]
+var stats  = mv.AddDictionary<Quest>("Stats");             // data/Stats.json: {"3": {...}}
+var config = mv.AddEntity<Settings>("Settings");           // data/Settings.json: {...}
+
+var id = quests.Add(new Quest { Title = "First" });        // the index of the new entity
+mv.SaveAll();
+```
+
+- Any holder, standard or added, can be found by name (the name of its data file without the extension, not case sensitive): `mv.GetHolder<DataLookupHolder<Quest>>("quests")`, `mv.GetHolder<DataLookupHolder<IActor>>("Actors")`, or `TryGetHolder`; `mv.HolderNames` lists the names.
+- `optional: true` lets the file be absent: the table starts empty (a new entity for `AddEntity`) and the file is written on save.
+- The id of an entity is its **place**: the index in a list or the key in a dictionary, as the engines use it (`$dataItems[id]`). An entity in a list must have an id (`IHasId`).
+- When a table is loaded and the id written in an entity differs from its place, `mv.IdMismatched` is raised and the entity is left as it is. Subscribe before the table is first read, or call `Preload()` afterwards. The standard tables raise it too.
+- The class must derive from `JsonEntity`, which keeps the members the class does not describe. Another class is refused when added.
+- VX Ace does not support this yet.
+
 ### Event commands
 
 Pages of events, common events and troops are `ICommandContainer`s, and `NamedCommands` gives typed commands:

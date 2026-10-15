@@ -6,7 +6,7 @@ public delegate T? HolderLoader<T>(string path);
 
 public delegate void HolderSaver(string path, object? data);
 
-public class DataHolder<TDataType> : ITable
+public class DataHolder<TDataType> : IHolder
 {
     protected bool _isLoaded;
     private readonly HolderSaver _saver;
@@ -39,7 +39,7 @@ public class DataHolder<TDataType> : ITable
         return _data;
     }
 
-    void ITable.Preload() => Get();
+    void IHolder.Preload() => Get();
 
     public void Load()
     {

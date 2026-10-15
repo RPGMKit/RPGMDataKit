@@ -4,7 +4,7 @@ using RPGMDataKit.Data.Structures.Interfaces;
 
 namespace RPGMDataKit;
 
-public class MapsHolder : ITable
+public class MapsHolder : IHolder
 {
     private readonly Dictionary<int, DataHolder<IMap>> _maps = new();
     private readonly HolderSaver _saver;
@@ -18,7 +18,7 @@ public class MapsHolder : ITable
         _loader = loader;
     }
 
-    void ITable.Preload()
+    void IHolder.Preload()
     {
     }
 
