@@ -14,6 +14,8 @@ public class DataLookupHolder<TDataType> : DataHolder<Dictionary<int, TDataType?
 
     private HolderType Type { get; init; }
 
+    internal override Task Accept(IHolderVisitor visitor, string name) => visitor.Visit(this, name);
+
     public TDataType? Get(int index)
     {
         return Get().GetValueOrDefault(index);

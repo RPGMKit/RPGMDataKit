@@ -3,6 +3,7 @@ using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.VXAce.Classes;
 using RPGMDataKit.Storages.Abstraction;
+using RPGMDataKit.Storages.Dump;
 using RPGMDataKit.Storages.Serialization;
 
 namespace RPGMDataKit.Storages;
@@ -21,6 +22,8 @@ public class VXAceStorage : Storage
         StorageVersion.VXAce, new RubyMarshalDataSerializer(), types, projectPath, dataDirectory)
     {
     }
+
+    public override AbstractYamlStorage CreateYamlStorage() => new VxAceYamlStorage(this);
 
     protected override void Init()
     {

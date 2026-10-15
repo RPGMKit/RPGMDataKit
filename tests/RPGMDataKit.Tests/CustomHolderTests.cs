@@ -4,6 +4,7 @@ using RPGMDataKit.Data;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using RPGMDataKit.Storages;
+using RPGMDataKit.Storages.Dump;
 using RPGMDataKit.Storages.Abstraction;
 using Xunit;
 
@@ -164,6 +165,76 @@ public sealed class CustomHolderTests : IDisposable
         storage.Actors.Get(1);
 
         Assert.Equal(("Actors.json", 1, 4), (mismatches.Single().File, mismatches.Single().Key, mismatches.Single().EntityId));
+    }
+
+    private void CopyEmptyMvProject(string project)
+    {
+        var data = Path.Combine(project, "data");
+        Directory.CreateDirectory(data);
+        foreach (var file in Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "Projects", "Mv", "data")))
+            File.Copy(file, Path.Combine(data, Path.GetFileName(file)), true);
+    }
+
+    [Fact]
+    public async Task AddedHoldersAreDumpedAndLoadedWithTheStandardOnes()
+    {
+        CopyEmptyMvProject(_folder);
+        Write("Quests.json", """[null,{"id":1,"title":"A","extra":7},{"id":2,"title":"B"}]""");
+        Write("Stats.json", """{"3":{"id":3,"title":"x"}}""");
+        Write("Settings.json", """{"volume":3,"other":{"a":1}}""");
+        var storage = new MVStorage(_folder);
+        storage.AddList<Quest>("Quests");
+        storage.AddDictionary<Quest>("Stats");
+        storage.AddEntity<Settings>("Settings");
+        var dump = Path.Combine(_folder, "dump");
+        Directory.CreateDirectory(dump);
+
+        await storage.CreateYamlStorage().Dump(dump);
+
+        Assert.True(File.Exists(Path.Combine(dump, "Quests", "1.yaml")));
+        Assert.True(File.Exists(Path.Combine(dump, "Quests", "2.yaml")));
+        Assert.True(File.Exists(Path.Combine(dump, "Stats", "3.yaml")));
+        Assert.True(File.Exists(Path.Combine(dump, "Settings.yaml")));
+        Assert.True(File.Exists(Path.Combine(dump, "Actors", "1.yaml")));
+
+        var other = Path.Combine(Path.GetTempPath(), "RPGMDataKit.Tests." + Guid.NewGuid().ToString("N"));
+        try
+        {
+            CopyEmptyMvProject(other);
+            var loaded = new MVStorage(other);
+            var quests = loaded.AddList<Quest>("Quests", optional: true);
+            var stats = loaded.AddDictionary<Quest>("Stats", optional: true);
+            var settings = loaded.AddEntity<Settings>("Settings", optional: true);
+
+            loaded.CreateYamlStorage().Load(dump);
+            loaded.SaveAll();
+
+            Assert.Equal("A", quests.Get(1)!.Title);
+            Assert.Equal("B", quests.Get(2)!.Title);
+            Assert.Equal("x", stats.Get(3)!.Title);
+            Assert.Equal(3, settings.Get().Volume);
+            var saved = JArray.Parse(File.ReadAllText(Path.Combine(other, "data", "Quests.json")));
+            Assert.Equal(7, (int?)saved[1]["extra"]);
+        }
+        finally
+        {
+            Directory.Delete(other, true);
+        }
+    }
+
+    [Fact]
+    public void ALoadWithoutADumpOfAnAddedHolderLeavesItAsItIs()
+    {
+        CopyEmptyMvProject(_folder);
+        Write("Settings.json", """{"volume":3}""");
+        var storage = new MVStorage(_folder);
+        var settings = storage.AddEntity<Settings>("Settings");
+        var dump = Path.Combine(_folder, "dump");
+        Directory.CreateDirectory(dump);
+
+        storage.CreateYamlStorage().Load(dump);
+
+        Assert.Equal(3, settings.Get().Volume);
     }
 
     [Fact]

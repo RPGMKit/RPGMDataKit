@@ -72,7 +72,7 @@ public sealed class ProjectFilesTests : IDisposable
         storage.Preload();
 
         var dumpBefore = Path.Combine(_folder, "dump-before");
-        await Dump(version, storage, dumpBefore);
+        await Dump(storage, dumpBefore);
 
         storage.ChangeProjectPath(saved, DataFolder(version));
         Directory.CreateDirectory(Path.Combine(saved, DataFolder(version)));
@@ -84,7 +84,7 @@ public sealed class ProjectFilesTests : IDisposable
             var reopened = Open(version, saved);
             reopened.Preload();
             var dumpAfter = Path.Combine(_folder, "dump-after");
-            await Dump(version, reopened, dumpAfter);
+            await Dump(reopened, dumpAfter);
 
             Assert.NotEmpty(Directory.GetFiles(dumpBefore, "*", SearchOption.AllDirectories));
             var changed = Directory.GetFiles(dumpBefore, "*", SearchOption.AllDirectories)
@@ -112,13 +112,10 @@ public sealed class ProjectFilesTests : IDisposable
         Assert.Empty(different);
     }
 
-    private static async Task Dump(Version version, Storage storage, string folder)
+    private static async Task Dump(Storage storage, string folder)
     {
         Directory.CreateDirectory(folder);
-        if (version == Version.VXAce)
-            await new VxAceYamlStorage().Dump(folder, storage);
-        else
-            await new MvYamlStorage().Dump(folder, storage);
+        await storage.CreateYamlStorage().Dump(folder);
     }
 
     /// <summary>The same JSON in the file of MV (the order of the keys does not matter, nothing may be missing).</summary>

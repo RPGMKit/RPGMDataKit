@@ -41,6 +41,10 @@ public class DataHolder<TDataType> : IHolder
 
     void IHolder.Preload() => Get();
 
+    Task IHolder.Accept(IHolderVisitor visitor, string name) => Accept(visitor, name);
+
+    internal virtual Task Accept(IHolderVisitor visitor, string name) => visitor.Visit(this, name);
+
     public void Load()
     {
         if (_isLoaded)

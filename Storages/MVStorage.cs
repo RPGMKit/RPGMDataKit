@@ -2,6 +2,7 @@
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using RPGMDataKit.Storages.Abstraction;
+using RPGMDataKit.Storages.Dump;
 using RPGMDataKit.Storages.Serialization;
 
 namespace RPGMDataKit.Storages;
@@ -28,6 +29,8 @@ public class MVStorage : Storage
                 $"{concrete.Name} must derive from {nameof(JsonEntity)}: otherwise the members it does not describe are lost when the file is saved");
         }
     }
+
+    public override AbstractYamlStorage CreateYamlStorage() => new MvYamlStorage(this);
 
     protected override void Init()
     {

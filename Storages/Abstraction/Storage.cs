@@ -7,6 +7,7 @@ using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using System.Reflection;
 using RPGMDataKit.Diff;
+using RPGMDataKit.Storages.Dump;
 using RPGMDataKit.Storages.Serialization;
 
 namespace RPGMDataKit.Storages.Abstraction;
@@ -41,7 +42,10 @@ public abstract class Storage
     private readonly TypeMap _types;
     private readonly HashSet<string> _files = new(StringComparer.OrdinalIgnoreCase);
     // every holder by its name, the name of its data file without the extension ("Actors", "Maps", "Quests")
-    private readonly Dictionary<string, object> _holders = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, IHolder> _holders = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>Every holder by name, in the order they were added (the standard ones first).</summary>
+    internal IReadOnlyDictionary<string, IHolder> Holders => _holders;
 
     /// <summary>
     /// Raised while a list or a dictionary is loaded, for each entity whose own <see cref="IHasId.Id"/> differs from its place
@@ -135,6 +139,15 @@ public abstract class Storage
     /// <c>storage.Actors.Add(storage.New&lt;IActor&gt;())</c>.
     /// </summary>
     public T New<T>() where T : class => _types.New<T>();
+
+    /// <summary>The entity types of this storage.</summary>
+    protected internal TypeMap Types => _types;
+
+    /// <summary>
+    /// A YAML dump of this storage: <c>storage.CreateYamlStorage().Dump(folder)</c> writes every holder of the storage, the ones added to it too,
+    /// and <c>Load(folder)</c> fills them back. It works with the entity types of the storage.
+    /// </summary>
+    public abstract AbstractYamlStorage CreateYamlStorage();
 
     private object InvokeCore(string method, Type concrete, Type entity, params object?[] args)
     {

@@ -10,12 +10,16 @@ namespace RPGMDataKit.Storages.Dump;
 
 public abstract class AbstractTextStorage
 {
+    private readonly Storage _storage;
+
     private IToTextSerializer _serializer;
 
     private Dictionary<Type, IToTextSerializer> _specialSerializers = new();
 
-    public AbstractTextStorage(IToTextSerializer serializer)
+    /// <summary>Made by <see cref="Storage.CreateYamlStorage"/>, for the storage it is made by.</summary>
+    internal AbstractTextStorage(Storage storage, IToTextSerializer serializer)
     {
+        _storage = storage;
         _serializer = serializer;
     }
 
@@ -28,25 +32,82 @@ public abstract class AbstractTextStorage
 
     private bool NeedCancel => Reporter?.NeedCancel ?? false;
 
-    public async Task Dump(string path, Storage storage)
+    /// <summary>Writes the storage into the folder (it must exist).</summary>
+    public async Task Dump(string path)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist");
 
-        await _Dump(path, storage);
+        await _Dump(path, _storage);
     }
 
-    protected abstract Task _Dump(string path, Storage storage);
+    /// <summary>Dumps every holder of the storage (the standard ones and the ones added to it), the maps last.</summary>
+    protected virtual async Task _Dump(string path, Storage storage)
+    {
+        Reporter?.SetStage(DumpStage.Progress);
+        Reporter?.ResetTotal(storage.Holders.Count);
 
-    public void Load(string path, Storage storage)
+        var visitor = new DumpVisitor(this, path);
+        foreach (var (name, holder) in storage.Holders)
+            await holder.Accept(visitor, name);
+
+        await DumpMaps(path, storage);
+
+        Reporter?.SetStage(DumpStage.Finished);
+    }
+
+    /// <summary>Fills the storage from a dump in the folder; a holder that the dump does not have is left as it is.</summary>
+    public void Load(string path)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist");
 
-        _Load(path, storage);
+        _Load(path, _storage);
     }
 
-    protected abstract void _Load(string path, Storage storage);
+    /// <summary>Fills every holder of the storage from the dump; what the dump does not have is left as it is.</summary>
+    protected virtual void _Load(string path, Storage storage)
+    {
+        Reporter?.SetStage(DumpStage.Progress);
+        Reporter?.ResetTotal(storage.Holders.Count);
+
+        var visitor = new LoadVisitor(this, storage, path);
+        foreach (var (name, holder) in storage.Holders)
+            holder.Accept(visitor, name);
+
+        LoadMaps(path, storage);
+
+        Reporter?.SetStage(DumpStage.Finished);
+    }
+
+    // the maps are not a holder like the others: a file for each map, dumped and loaded after the rest (DumpMaps, LoadMaps)
+    private sealed class DumpVisitor(AbstractTextStorage owner, string path) : IHolderVisitor
+    {
+        public Task Visit<T>(DataLookupHolder<T> holder, string name) => owner.DumpHolder(path, name, holder);
+
+        public Task Visit<T>(DataHolder<T> holder, string name) => owner.DumpHolder(path, name, holder);
+
+        public Task Visit(MapsHolder holder, string name) => Task.CompletedTask;
+    }
+
+    private sealed class LoadVisitor(AbstractTextStorage owner, Storage storage, string path) : IHolderVisitor
+    {
+        public Task Visit<T>(DataLookupHolder<T> holder, string name)
+        {
+            owner.LoadHolder(storage, path, name, holder);
+
+            return Task.CompletedTask;
+        }
+
+        public Task Visit<T>(DataHolder<T> holder, string name)
+        {
+            owner.LoadHolder(storage, path, name, holder);
+
+            return Task.CompletedTask;
+        }
+
+        public Task Visit(MapsHolder holder, string name) => Task.CompletedTask;
+    }
 
     protected async Task DumpMaps(string path, Storage storage)
     {
@@ -204,7 +265,10 @@ public abstract class AbstractTextStorage
         using var _2 = Reporter?.DoReport(level: _.Level - 1);
         using var _3 = Reporter?.DoReport(entityName);
 
-        holder.Set(LoadEntity<T>(Path.Combine(path, entityName + "." + GetExtension<T>())));
+        // a dump made before the holder was added does not have it: the holder is left as it is, as a list is
+        var file = Path.Combine(path, entityName + "." + GetExtension<T>());
+        if (File.Exists(file))
+            holder.Set(LoadEntity<T>(file));
     }
 
     private IToTextSerializer GetSerializer<T>() => _specialSerializers.GetValueOrDefault(typeof(T), _serializer);

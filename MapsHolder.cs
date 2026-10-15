@@ -22,6 +22,8 @@ public class MapsHolder : IHolder
     {
     }
 
+    Task IHolder.Accept(IHolderVisitor visitor, string name) => visitor.Visit(this, name);
+
     public void Unload()
     {
         _maps.Clear();

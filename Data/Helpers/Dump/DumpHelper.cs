@@ -45,18 +45,7 @@ public static class DumpHelper
     public static async Task DumpYaml(string path, Storage storage,
         ProgressReporter.ProgressReporterCallback? reporterCallback = null, CancellationToken? token = null)
     {
-        AbstractYamlStorage yamlStorage;
-        switch (storage.Version)
-        {
-            case StorageVersion.VXAce:
-                yamlStorage = new VxAceYamlStorage();
-                break;
-            case StorageVersion.MV:
-                yamlStorage = new MvYamlStorage();
-                break;
-            default:
-                throw new Exception($"Unsupported storage version {storage.Version}");
-        }
+        var yamlStorage = storage.CreateYamlStorage();
 
         yamlStorage.Reporter = new ProgressReporter(token);
         if (reporterCallback != null)
@@ -71,7 +60,7 @@ public static class DumpHelper
                 createdFiles.Add(Path.GetFullPath(message));
         };
 
-        await yamlStorage.Dump(path, storage);
+        await yamlStorage.Dump(path);
 
         if (!yamlStorage.Reporter.NeedCancel)
         {
@@ -83,22 +72,11 @@ public static class DumpHelper
 
     public static void LoadYaml(string path, Storage storage, ProgressReporter.ProgressReporterCallback? reporter = null, CancellationToken? token = null)
     {
-        AbstractYamlStorage yamlStorage;
-        switch (storage.Version)
-        {
-            case StorageVersion.VXAce:
-                yamlStorage = new VxAceYamlStorage();
-                break;
-            case StorageVersion.MV:
-                yamlStorage = new MvYamlStorage();
-                break;
-            default:
-                throw new Exception($"Unsupported storage version {storage.Version}");
-        }
+        var yamlStorage = storage.CreateYamlStorage();
 
         yamlStorage.Reporter = reporter != null ? new ProgressReporter(token) : null;
         yamlStorage.Reporter?.Report += reporter;
 
-        yamlStorage.Load(path, storage);
+        yamlStorage.Load(path);
     }
 }

@@ -11,7 +11,7 @@ Code written against `IActor`, `ISkill`, `IMap` and the other interfaces works w
 - **Nothing is lost on save.** Members that the classes do not describe go to the unknown fields of the entity and are written back. Round trips of the data of empty VX Ace and MV projects are covered by tests.
 - **Factories for new entities.** `storage.New<IActor>()` creates an entity with the values the editor gives to a new one.
 - **Custom entity types.** A `TypeMap` decides which class implements each interface; copy a built-in map and register your own classes.
-- **Text dumps.** `VxAceYamlStorage` and `MvYamlStorage` write a project as YAML files, which makes data easy to read, review and keep in version control; the same classes load it back.
+- **Text dumps.** `storage.CreateYamlStorage()` writes a project as YAML files, which makes data easy to read, review and keep in version control; the same classes load it back.
 - **Diff of two projects.** `Differ` compares two storages (variables, switches, common events, map event pages) and returns patches.
 
 ## Requirements
@@ -129,12 +129,12 @@ The built-in maps `TypeMap.VXAce` and `TypeMap.Mv` are read-only; clone one to c
 ### YAML dump
 
 ```csharp
-var yaml = new VxAceYamlStorage();            // MvYamlStorage for MV
-await yaml.Dump(@"C:\dump", vx);              // the folder must exist
-yaml.Load(@"C:\dump", vx);                    // fills the storage from the dump
+var yaml = vx.CreateYamlStorage();            // the dump of this storage, VX Ace or MV
+await yaml.Dump(@"C:\dump");                  // the folder must exist
+yaml.Load(@"C:\dump");                        // fills the storage from the dump
 ```
 
-`yaml.Reporter` gives progress and lets you cancel.
+`yaml.Reporter` gives progress and lets you cancel. The dump contains every holder of the storage, the standard ones and the ones you added (a folder for a list or a dictionary, a file for a single entity). Loading leaves a holder as it is when the dump does not have it. The dump works with the entity types of the storage it was made by.
 
 ### Compare two projects
 
