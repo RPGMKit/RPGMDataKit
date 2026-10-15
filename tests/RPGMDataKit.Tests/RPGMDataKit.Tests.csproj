@@ -15,6 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- the data of an empty project of each editor (VX Ace without the standard scripts: they are not ours to keep) -->
+    <None Include="Projects\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\RPGMDataKit.csproj" />
   </ItemGroup>
 

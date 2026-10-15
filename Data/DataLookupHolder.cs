@@ -74,7 +74,7 @@ public class DataLookupHolder<TDataType> : DataHolder<Dictionary<int, TDataType?
         if (_data == default)
             return;
 
-        var list = new TDataType?[_data.Max(p => p.Key + 1)];
+        var list = new TDataType?[_data.Count == 0 ? 0 : _data.Max(p => p.Key + 1)];
         foreach (var (k, v) in _data)
             list[k] = v;
 

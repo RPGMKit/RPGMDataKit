@@ -50,7 +50,7 @@ public sealed class RoundTripTests : IDisposable
     /// Both makers keep what the class does not describe in a dictionary (<c>_unknownFields</c>); a new entity must not
     /// need it, because every member that the factory sets is described.
     /// </summary>
-    private static void FindUnknownFields(object? entity, string path, List<string> found, HashSet<object> seen)
+    internal static void FindUnknownFields(object? entity, string path, List<string> found, HashSet<object> seen)
     {
         if (entity is null or string || entity.GetType().IsPrimitive || entity.GetType().IsEnum)
             return;
@@ -81,7 +81,7 @@ public sealed class RoundTripTests : IDisposable
         {
             var field = t.GetField("_unknownFields", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
             if (field?.GetValue(entity) is IDictionary { Count: > 0 } unknown)
-                found.AddRange(unknown.Keys.Cast<object>().Select(key => $"{type.Name}{path}.{key}"));
+                found.AddRange(unknown.Keys.Cast<object>().Select(key => $"{type.FullName}.{key}"));
         }
 
         foreach (var property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => p.GetIndexParameters().Length == 0))
