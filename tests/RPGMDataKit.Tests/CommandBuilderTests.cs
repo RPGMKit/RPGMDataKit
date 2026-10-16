@@ -283,6 +283,17 @@ public sealed class CommandBuilderTests
 
     [Theory]
     [MemberData(nameof(Versions))]
+    public void AppendToAListWithTwoEmptyCommandsAtTheEndLeavesOne(Version v)
+    {
+        var container = EmptyCommandTests.EventOf(v, 230, 0, 0);
+
+        container.AppendCommands(b => b.Add(new WaitCommand()));
+
+        Expect("230@0 230@0 0@0", container);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
     public void AppendToAListWithoutTheEndGivesItOne(Version v)
     {
         var container = EmptyCommandTests.EventOf(v, 230);
