@@ -231,7 +231,8 @@ public abstract class NamedCommand
 
     private static PropertyInfo[] FindParameterProperties(Type type) => type
         .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        .Where(p => p.CanRead && p.CanWrite && p.GetIndexParameters().Length == 0 && p.DeclaringType != typeof(NamedCommand))
+        .Where(p => p.CanRead && p.CanWrite && p.GetIndexParameters().Length == 0 && p.DeclaringType != typeof(NamedCommand)
+                    && p.GetCustomAttribute<RawValueAttribute>() == null)
         .ToArray();
 
     /// <summary>False when the raw command was changed so that this class no longer describes it, e.g. its code.</summary>

@@ -184,7 +184,7 @@ public sealed class CommandBuilder
         header ??= new ShowChoicesCommand();
         header.Choices = choices.Options.Select(o => o.Text).ToList();
         if (choices.HasCancel)
-            header.SetCancelBranch();
+            header.Cancel = ShowChoicesCommand.CancelType.Branch;
         else if (header.IsCancelChoiceBranch)
             throw new ArgumentException("Cancel of the command is a branch, but the choices have no Cancel.", nameof(header));
 

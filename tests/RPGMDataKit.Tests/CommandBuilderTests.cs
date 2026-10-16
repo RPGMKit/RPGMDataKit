@@ -204,7 +204,7 @@ public sealed class CommandBuilderTests
         Assert.Equal(v.Name == "MV" ? 1 : 2, container.NamedCommands.OfType<ShowChoicesCommand>().Single().CancelChoiceIndex);
 
         var branchHeader = new ShowChoicesCommand();
-        branchHeader.SetCancelBranch();
+        branchHeader.Cancel = ShowChoicesCommand.CancelType.Branch;
         Assert.Throws<ArgumentException>(() => new CommandBuilder().Choices(c => c.When("A"), branchHeader));
     }
 

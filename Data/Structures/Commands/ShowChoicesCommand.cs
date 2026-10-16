@@ -17,22 +17,22 @@ public class ShowChoicesCommand : NamedCommand
 
     protected const int DefaultChoiceNone = -1;
 
-    // what the cancel value of MV is (the choices are counted from 0)
-    private const int MvCancelBranch = -2;
-    private const int MvCancelDisallow = -1;
-
-    // what the cancel value of VX Ace is (the choices are counted from 1)
-    private const int VxCancelBranch = 5;
-    private const int VxCancelDisallow = 0;
-
-    private enum CancelKind
+    /// <summary>What Cancel (the Cancel button, Escape) does.</summary>
+    public enum CancelType
     {
+        /// <summary>Cancel is not allowed.</summary>
         Disallow,
+
+        /// <summary>Cancel works as one of the choices, <see cref="CancelChoice"/>.</summary>
+        Choice,
+
+        /// <summary>Cancel is a branch of its own (When Cancel).</summary>
         Branch,
     }
 
-    // set while the command is made in code and does not know its version yet
-    private CancelKind? _pendingCancel;
+    // what is told to the command while it is made in code and does not know its maker yet; it gets the raw value when it is put into a list
+    private CancelType? _pendingCancel;
+    private int _pendingCancelChoice;
     private bool _cancelIsSet;
     private bool _positionIsSet;
 
@@ -44,10 +44,32 @@ public class ShowChoicesCommand : NamedCommand
     }
 
     /// <summary>
-    /// The raw value of what Cancel does, which differs between the makers: MV counts the choices from 0 and has -1 for Disallow and -2 for
-    /// Branch, VX Ace counts them from 1 and has 0 for Disallow and 5 for Branch. To set Disallow or Branch for any maker use
-    /// <see cref="SetCancelDisallow"/> and <see cref="SetCancelBranch"/>.
+    /// What Cancel does, the same for both makers. MV counts the choices from 0 and has -1 for Disallow and -2 for Branch, VX Ace counts
+    /// them from 1 and has 0 for Disallow and 5 for Branch; this property takes that into account (<see cref="CancelChoiceIndex"/> is the raw value).
+    /// Can be set before the command is put into a list, it then gets the value of the maker of the list. A command that is not told
+    /// anything does not allow Cancel.
     /// </summary>
+    public CancelType Cancel
+    {
+        get => IsDetached ? _pendingCancel ?? CancelType.Disallow : Read().Type;
+        set => WriteCancel(value, Math.Max(CancelChoice, 0));
+    }
+
+    /// <summary>The choice (from 0) that Cancel stands for when <see cref="Cancel"/> is <see cref="CancelType.Choice"/>, -1 otherwise. Setting it makes Cancel a choice; a negative value is ignored.</summary>
+    public int CancelChoice
+    {
+        get => IsDetached ? (_pendingCancel == CancelType.Choice ? _pendingCancelChoice : -1) : Read().Choice;
+        set
+        {
+            if (value >= 0)
+                WriteCancel(CancelType.Choice, value);
+        }
+    }
+
+    /// <summary>
+    /// The raw value of Cancel, which depends on the maker: see <see cref="Cancel"/>. Use that one unless the raw value is what is needed.
+    /// </summary>
+    [RawValue]
     public int CancelChoiceIndex
     {
         get => Get<int>(1);
@@ -55,37 +77,53 @@ public class ShowChoicesCommand : NamedCommand
         {
             // only what is set before the command is in a list counts: putting it there sets all properties
             if (IsDetached)
+            {
                 _cancelIsSet = true;
+                _pendingCancel = null;
+            }
 
             Set(1, value);
         }
     }
 
-    /// <summary>Cancel is not allowed. Can be called before the command is put into a list, it then gets the value of the maker of the list.</summary>
-    public void SetCancelDisallow() => SetCancel(CancelKind.Disallow);
+    public bool IsCancelChoiceBranch => Cancel == CancelType.Branch;
 
-    /// <summary>Cancel is a branch of its own (When Cancel). Can be called before the command is put into a list, it then gets the value of the maker of the list.</summary>
-    public void SetCancelBranch() => SetCancel(CancelKind.Branch);
+    private (CancelType Type, int Choice) Read() => Version == StorageVersion.MV
+        ? CancelChoiceIndex switch
+        {
+            -2 => (CancelType.Branch, -1),
+            < 0 => (CancelType.Disallow, -1),
+            var choice => (CancelType.Choice, choice),
+        }
+        : CancelChoiceIndex switch
+        {
+            5 => (CancelType.Branch, -1),
+            >= 1 and <= 4 => (CancelType.Choice, CancelChoiceIndex - 1),
+            _ => (CancelType.Disallow, -1),
+        };
 
-    private void SetCancel(CancelKind kind)
+    private void WriteCancel(CancelType type, int choice)
     {
         if (IsDetached)
         {
             _cancelIsSet = true;
-            _pendingCancel = kind;
+            _pendingCancel = type;
+            _pendingCancelChoice = choice;
         }
         else
         {
-            CancelChoiceIndex = RawCancel(kind, Version);
+            Set(1, Encode(type, choice, Version));
         }
     }
 
-    private static int RawCancel(CancelKind kind, StorageVersion version) => (kind, version) switch
+    private static int Encode(CancelType type, int choice, StorageVersion version) => (type, version) switch
     {
-        (CancelKind.Branch, StorageVersion.MV) => MvCancelBranch,
-        (CancelKind.Disallow, StorageVersion.MV) => MvCancelDisallow,
-        (CancelKind.Branch, _) => VxCancelBranch,
-        _ => VxCancelDisallow,
+        (CancelType.Branch, StorageVersion.MV) => -2,
+        (CancelType.Disallow, StorageVersion.MV) => -1,
+        (CancelType.Choice, StorageVersion.MV) => choice,
+        (CancelType.Branch, _) => 5,
+        (CancelType.Choice, _) => choice + 1,
+        _ => 0,
     };
 
     protected override void OnMadeInCodeBound(StorageVersion version)
@@ -94,9 +132,9 @@ public class ShowChoicesCommand : NamedCommand
         if (version == StorageVersion.VXAce && Raw.Parameters is { Count: > 2 } parameters)
             parameters.RemoveRange(2, parameters.Count - 2);
 
-        // a command that was not told what Cancel does does not allow it, as the editors make it
+        // a command that was not told what Cancel does does not allow it
         if (_pendingCancel != null || !_cancelIsSet)
-            CancelChoiceIndex = RawCancel(_pendingCancel ?? CancelKind.Disallow, version);
+            Set(1, Encode(_pendingCancel ?? CancelType.Disallow, _pendingCancelChoice, version));
 
         _pendingCancel = null;
 
@@ -105,17 +143,32 @@ public class ShowChoicesCommand : NamedCommand
             Position = PositionType.Right;
     }
 
+    /// <summary>The choice that is selected when the window opens, from 0, -1 for none. MV only: VX Ace throws <c>DoesNotExistInVersionException</c>.</summary>
     public int DefaultChoiceIndex
     {
-        get => Get<int>(2);
-        set => Set(2, value);
-    }
-
-    public PositionType Position
-    {
-        get => Get<PositionType>(3);
+        get
+        {
+            RequireVersion(StorageVersion.MV, nameof(DefaultChoiceIndex));
+            return Get<int>(2);
+        }
         set
         {
+            RequireVersion(StorageVersion.MV, nameof(DefaultChoiceIndex));
+            Set(2, value);
+        }
+    }
+
+    /// <summary>MV only: VX Ace throws <c>DoesNotExistInVersionException</c>.</summary>
+    public PositionType Position
+    {
+        get
+        {
+            RequireVersion(StorageVersion.MV, nameof(Position));
+            return Get<PositionType>(3);
+        }
+        set
+        {
+            RequireVersion(StorageVersion.MV, nameof(Position));
             if (IsDetached)
                 _positionIsSet = true;
 
@@ -123,18 +176,29 @@ public class ShowChoicesCommand : NamedCommand
         }
     }
 
+    /// <summary>MV only: VX Ace throws <c>DoesNotExistInVersionException</c>.</summary>
     public BackgroundType Background
     {
-        get => Get<BackgroundType>(4);
-        set => Set(4, value);
+        get
+        {
+            RequireVersion(StorageVersion.MV, nameof(Background));
+            return Get<BackgroundType>(4);
+        }
+        set
+        {
+            RequireVersion(StorageVersion.MV, nameof(Background));
+            Set(4, value);
+        }
     }
-
-    public bool IsCancelChoiceBranch => IsDetached
-        ? _pendingCancel == CancelKind.Branch
-        : CancelChoiceIndex == (Version == StorageVersion.MV ? MvCancelBranch : VxCancelBranch);
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
+        var cancelChoice = Cancel == CancelType.Choice ? "#" + (CancelChoice + 1) : "-";
+
+        // VX Ace has no window settings and no default choice
+        if (context.Version != StorageVersion.MV)
+            return string.Join(", ", Choices) + $", ({cancelChoice})";
+
         var background = Background switch
         {
             BackgroundType.Window => "Window",
@@ -155,12 +219,6 @@ public class ShowChoicesCommand : NamedCommand
         {
             DefaultChoiceNone => "-",
             _ => "#" + (DefaultChoiceIndex + 1)
-        };
-
-        var cancelChoice = CancelChoiceIndex switch
-        {
-            MvCancelBranch or MvCancelDisallow => "-",
-            _ => "#" + (CancelChoiceIndex + 1)
         };
 
         return string.Join(", ", Choices) + $", ({background}, {position}, {defaultChoice}, {cancelChoice})";
