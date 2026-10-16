@@ -93,6 +93,16 @@ public abstract class NamedCommand
     /// <summary>An empty command of the same class; a class without a parameterless constructor overrides it.</summary>
     protected virtual NamedCommand CreateBlank() => (NamedCommand)Activator.CreateInstance(GetType())!;
 
+    /// <summary>
+    /// For a property that is a parameter of one maker only: throws <see cref="DoesNotExistInVersionException"/> when the command is in a list of
+    /// another maker. A command that is not in a list yet has no maker and can have the property set; it is dropped when the command gets one.
+    /// </summary>
+    protected void RequireVersion(StorageVersion version, string property)
+    {
+        if (!IsDetached && _version != version)
+            throw new DoesNotExistInVersionException($"{property} exists in {version} only");
+    }
+
     /// <summary>Version of the raw command; VXAce until the command is bound.</summary>
     protected StorageVersion Version => _version;
 
@@ -204,7 +214,16 @@ public abstract class NamedCommand
     private void CompleteMadeInCode()
     {
         foreach (var property in ParameterProperties.GetOrAdd(GetType(), FindParameterProperties))
-            property.SetValue(this, property.GetValue(this));
+        {
+            try
+            {
+                property.SetValue(this, property.GetValue(this));
+            }
+            catch (TargetInvocationException e) when (e.InnerException is DoesNotExistInVersionException)
+            {
+                // the property does not exist in the version of this command
+            }
+        }
 
         if (Raw.Parameters == null && (Raw.Code == 0 || Raw.Indent != null))
             Raw.Parameters = [];

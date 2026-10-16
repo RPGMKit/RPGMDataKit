@@ -25,6 +25,17 @@ public class ChoiceCaseCancelCommand : NamedCommand
         set => Set(1, value);
     }
 
+    // what the editors write: MV has 6 (the number of the Cancel choice) and null, VX Ace nothing
+    protected override void OnMadeInCodeBound(StorageVersion version)
+    {
+        if (Raw.Parameters is { Count: 2 } parameters && parameters[0] == null && parameters[1] == null)
+        {
+            parameters.Clear();
+            if (version == StorageVersion.MV)
+                parameters.AddRange([6, null]);
+        }
+    }
+
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
         return "Cancel";

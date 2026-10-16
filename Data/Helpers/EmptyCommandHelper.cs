@@ -157,5 +157,5 @@ public static class EmptyCommandHelper
         return problems;
     }
 
-    private static bool IsBranchOrEnd(int code) => Array.IndexOf(Branches, code) >= 0 || Array.IndexOf(Ends, code) >= 0;
+    internal static bool IsBranchOrEnd(int code) => Array.IndexOf(Branches, code) >= 0 || Array.IndexOf(Ends, code) >= 0;
 }

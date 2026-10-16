@@ -135,6 +135,12 @@ public static class IndentHelper
 
     private static CommandStructureException Wrong(int index, int code, string what) => new($"Command {code} at index {index} {what}", index, code);
 
+    /// <summary>The same as the one with the version: the blocks are the same in all makers.</summary>
+    public static void ValidateIndents(ICommandContainer container) => ValidateIndents(container, StorageVersion.VXAce);
+
+    /// <summary>The same as the one with the version: the blocks are the same in all makers.</summary>
+    public static void SetupIndents(ICommandContainer container) => SetupIndents(container, StorageVersion.VXAce);
+
     public static void SetupIndents(ICommandContainer container, StorageVersion version)
     {
         WalkForIndents(container, version, (indent, _, _, command) => { command.Indent = indent; });

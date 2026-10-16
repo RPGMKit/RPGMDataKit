@@ -8,6 +8,7 @@ Code written against `IActor`, `ISkill`, `IMap` and the other interfaces works w
 
 - **One API for two engines.** `VXAceStorage` and `MVStorage` expose the same typed tables: actors, classes, skills, items, weapons, armor, enemies, states, animations, tilesets, troops, common events, maps, map infos and `System`.
 - **Typed event commands.** The commands of events, common events and troops are classes (`ChangeGoldCommand`, `ShowTextBaseCommand`, `TransferPlayerCommand` and so on) with named properties instead of raw parameter lists. Unknown commands are kept as they are.
+- **Blocks of commands without the bookkeeping.** `CommandBuilder` makes `If`, `Loop`, `Show Choices` and `Battle Processing` with their branches from nested functions, and sets the indents and the empty commands the way the editors do; validators say which command of a list is wrong.
 - **Nothing is lost on save.** Members that the classes do not describe go to the unknown fields of the entity and are written back. Round trips of the data of empty VX Ace and MV projects are covered by tests.
 - **Factories for new entities.** `storage.New<IActor>()` creates an entity with the values the editor gives to a new one.
 - **Custom entity types.** A `TypeMap` decides which class implements each interface; copy a built-in map and register your own classes.
@@ -117,6 +118,48 @@ foreach (var ev in map.Events.Values)
 
 `MapEventHelper.WalkMapEventPages` walks every page of every map event with its context (map, event, page).
 
+#### Building commands with blocks
+
+A list of commands is flat: an `If` with an `Else` is five commands in the right order, each with its indent, and every branch ends with an empty command. `CommandBuilder` takes the structure and makes the commands:
+
+```csharp
+using RPGMDataKit.Data.Helpers;
+using RPGMDataKit.Data.Structures.Commands;
+
+page.AppendCommands(b => b
+    .Text("Hello", "again")                               // a text, one line for each string
+    .IfSwitch(5,
+        then: t => t.Text("The switch is on"),
+        @else: e => e.Add(new WaitCommand { FrameCount = 30 }))
+    .Choices(c => c
+        .When("Yes", y => y.Text("Fine"))                 // a choice and what it runs
+        .When("No")                                       // an empty branch
+        .Cancel())                                        // Cancel is a branch (When Cancel)
+    .Loop(l => l.IfSwitch(2, then: t => t.BreakLoop()))
+    .Battle(3, win: w => w.Text("Won"), escape: _ => { }));
+```
+
+- `Add(command)` puts any command; `Text`, `Comment` and `Script` make the first command and the lines that follow it. `Text` cuts each string at the line breaks (`\n`) and drops the `\r`, so `Text("a\r\nb")` has two lines.
+- `If(condition, then, @else)` takes a condition command; `IfSwitch`, `IfVariable`, `IfVariableWithVariable`, `IfSelfSwitch`, `IfScript`, `IfGold` and `IfItem` make the common ones. The Else branch is there when the function is given, even an empty one.
+- `Choices` takes the choices together with their branches, so there is no branch without a choice. Without `Cancel()` the cancel is not allowed. The command with the position and the background can be given as the second argument.
+- `Battle(troopId, win, escape, lose)`: the branches that are given decide what the battle can do (`escape` sets "Can Escape", `lose` sets "Continue Even When Loser"). The Win branch is there whenever there is another one.
+- `AppendCommands` puts the commands at the end of the list (before the empty command that ends it), `InsertCommands(index, ...)` before the command with the index (at the end of a block, into that block), `ReplaceCommands` instead of all of them. They set the empty commands and the indents of the whole list afterwards, so the list is as the editor makes it.
+- The commands of the builder have the parameters that the editors write for the maker of the list: for example Cancel of `Show Choices` is `-1`/`-2` in MV and `0`/`5` in VX Ace, and `When Cancel` has `[6, null]` in MV and nothing in VX Ace.
+
+#### Indents, empty commands and structure
+
+The engines find the end of a branch by the indents (a branch is the commands that are deeper than its `If`) and the editors expect an empty command (code 0, the `@>` line) as the last command of every block: the list itself, each branch of `If`, the body of `Loop`, each `When` of `Show Choices`, each branch of `Battle Processing`. Both can be checked and set:
+
+```csharp
+IndentHelper.SetupIndents(page);                   // the indents from the blocks
+EmptyCommandHelper.SetupEmptyCommands(page);       // adds the missing empty commands, removes the ones that end no block
+IndentHelper.ValidateIndents(page);                // throws if an indent is not the one of its place
+EmptyCommandHelper.ValidateEmptyCommands(page);    // throws if an empty command is missing or extra
+IndentHelper.ValidateStructure(page);              // throws if the blocks are not closed or are mixed up
+```
+
+The checks throw `CommandIndentException`, `EmptyCommandException` and `CommandStructureException`. All of them derive from `CommandListException` and say which command is the first wrong one (`CommandIndex`, `CommandCode`). Loading does not check or change the commands; the text dump (`DumpHelper.Dump`) checks the indents.
+
 ### Your own entity classes
 
 ```csharp
@@ -169,7 +212,7 @@ var patches = await Differ.CalculatePatches(left, right, new DumpOptions());
 | `Data/Structures/Interfaces/` | the entity interfaces shared by both versions |
 | `Data/VXAce/Classes/`, `Data/MV/Classes/` | the implementations for each version |
 | `Data/Structures/Commands/` | typed event commands and movement commands |
-| `Data/Helpers/` | walkers and formatters for maps, common events and troops |
+| `Data/Helpers/` | walkers and formatters for maps, common events and troops; `CommandBuilder` and the checks and setters of indents, empty commands and block structure |
 | `Diff/`, `Differ.cs` | text diff of two projects |
 | `tests/RPGMDataKit.Tests/` | xUnit tests with the data of empty projects of both editors |
 | `external/RubyMarshalCS/` | the Ruby Marshal library (submodule) |
@@ -180,7 +223,7 @@ var patches = await Differ.CalculatePatches(left, right, new DumpOptions());
 dotnet test tests/RPGMDataKit.Tests
 ```
 
-The tests check the default values of the factories, the class hierarchies, saving and loading of the data of empty VX Ace and MV projects, and that no members are lost on the way.
+The tests check the default values of the factories, the class hierarchies, saving and loading of the data of empty VX Ace and MV projects, that no members are lost on the way, and the blocks of commands: what the builder makes, indents, empty commands and block structure, for both versions.
 
 ## Notes
 

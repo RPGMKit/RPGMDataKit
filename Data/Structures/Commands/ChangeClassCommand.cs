@@ -21,10 +21,26 @@ public class ChangeClassCommand : NamedCommand
         set => Set(1, value);
     }
 
-    public int Unk
+    /// <summary>"Save Level" of the editor of MV (the engine calls it <c>keepExp</c>). VX Ace has no such parameter and throws <c>DoesNotExistInVersionException</c>.</summary>
+    public bool SaveLevel
     {
-        get => Get<int>(2);
-        set => Set(2, value);
+        get
+        {
+            RequireVersion(StorageVersion.MV, nameof(SaveLevel));
+            return Get<bool>(2);
+        }
+        set
+        {
+            RequireVersion(StorageVersion.MV, nameof(SaveLevel));
+            Set(2, value);
+        }
+    }
+
+    protected override void OnMadeInCodeBound(StorageVersion version)
+    {
+        // VX Ace has the actor and the class only
+        if (version == StorageVersion.VXAce && Raw.Parameters is { Count: > 2 } parameters)
+            parameters.RemoveRange(2, parameters.Count - 2);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
