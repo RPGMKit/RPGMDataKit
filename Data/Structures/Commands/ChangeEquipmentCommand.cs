@@ -1,4 +1,5 @@
 using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.Structures.Commands;
@@ -7,6 +8,8 @@ public class ChangeEquipmentCommand : NamedCommand
 {
     public override int Code => CommandCodes.ChangeEquipment;
     public override string GetCommandName(StorageVersion version) => "Change Equipment";
+
+    private const int WeaponTypeIdOfMv = 1;
 
     public enum LegacyEquipmentType
     {
@@ -35,38 +38,82 @@ public class ChangeEquipmentCommand : NamedCommand
         set => Set(2, value);
     }
 
+    // the names of the slots in the editor of VX Ace; an actor with two weapons has "Weapon 1" and "Weapon 2" in place of Weapon and Shield
+    private static readonly Dictionary<LegacyEquipmentType, string> LegacySlotNames = new()
+    {
+        [LegacyEquipmentType.Weapon] = "Weapon",
+        [LegacyEquipmentType.Shield] = "Shield",
+        [LegacyEquipmentType.Head] = "Head",
+        [LegacyEquipmentType.Body] = "Body",
+        [LegacyEquipmentType.Accessory] = "Accessory",
+    };
+    private const int DualWeaponSlotId = 1;
+
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
+        var mv = context.Version == StorageVersion.MV;
+        var dualWield = IsDualWield(context, ActorId);
         var str = $"{context.NameFormatter.FormatActor(ActorId)}, ";
 
-        if (context.Version == StorageVersion.MV)
+        // the type of the equipment that the slot holds: MV counts the slots from 1, the second one is a weapon too for an actor with two weapons
+        var equipmentType = mv && dualWield && TypeId == DualWeaponSlotId + 1 ? WeaponTypeIdOfMv : TypeId;
+        if (mv)
         {
-            var typeName = context.Storage.System.Get().EquipmentTypes.Get(TypeId);
+            var typeName = context.Storage.System.Get().EquipmentTypes.Get(equipmentType);
             if (string.IsNullOrEmpty(typeName))
                 throw new Exception($"Unknown equipment type {TypeId} for change equipment command");
 
             str += $"{typeName} = ";
         }
         else
-            str += $"{TypeId} = ";
+        {
+            str += VxSlotName(TypeId, dualWield) + " = ";
+        }
 
         if (ItemId == 0)
         {
-            str += context.Version == StorageVersion.MV ? "None" : "(None)";
+            str += mv ? "None" : "(None)";
             return str;
         }
 
-        if (context.Version == StorageVersion.MV)
-            str += context.NameFormatter.FormatArmor(ItemId);
-        else
-        {
-            str += (LegacyEquipmentType)TypeId switch
-            {
-                LegacyEquipmentType.Weapon => context.NameFormatter.FormatWeapon(ItemId),
-                _ => context.NameFormatter.FormatArmor(ItemId)
-            };
-        }
+        // the weapon slots take the item from the weapons, the others from the armors (the engines choose by the slots of the actor)
+        var isWeapon = mv
+            ? equipmentType == WeaponTypeIdOfMv
+            : (LegacyEquipmentType)TypeId == LegacyEquipmentType.Weapon || (dualWield && TypeId == DualWeaponSlotId);
+        str += isWeapon ? context.NameFormatter.FormatWeapon(ItemId) : context.NameFormatter.FormatArmor(ItemId);
 
         return str;
     }
+
+    private static string VxSlotName(int slotId, bool dualWield)
+    {
+        if (dualWield && slotId is 0 or DualWeaponSlotId)
+            return $"Weapon {slotId + 1}";
+
+        return LegacySlotNames.TryGetValue((LegacyEquipmentType)slotId, out var name) ? name : slotId.ToString();
+    }
+
+    /// <summary>
+    /// The actor has two weapons: the feature "Slot Type" (code 55) with the value 1 of the actor or of its class, the way the editors show the slots.
+    /// (The engines also take the equipment and the states of the actor into account, which the data does not know.)
+    /// </summary>
+    private static bool IsDualWield(EntityContext context, int actorId)
+    {
+        var actor = context.Storage.Actors.Get(actorId);
+        if (actor == null)
+            return false;
+
+        var slotType = SlotType(actor);
+        var @class = context.Storage.Classes.Get(actor.ClassId);
+        if (@class != null)
+            slotType = Math.Max(slotType, SlotType(@class));
+
+        return slotType == 1;
+    }
+
+    // The engines take the maximum of the "Slot Type" values and compare it with 1 (dual wield), which is roundabout: the editors only offer 0
+    // (normal, only in MV) and 1 (dual wield, both VXAce and MV), so "the actor or its class has a feature with FeatureCodes.SlotType and DataId == 1" is enough in both
+    // engines. The maximum is kept to do what the engines do, also for a value that is not 0 or 1 and was put into the data by hand.
+    private static int SlotType(IHasFeatures owner) =>
+        owner.Features.Where(f => f.Code == FeatureCodes.SlotType).Select(f => f.DataId).DefaultIfEmpty(0).Max();
 }
