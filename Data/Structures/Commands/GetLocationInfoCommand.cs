@@ -15,6 +15,10 @@ public class GetLocationInfoCommand : NamedCommand
         ByVariables = 1,
     }
 
+    /// <summary>
+    /// What is asked about the place, the same for both makers. The numbers are the ones of MV: VX Ace writes the Region ID as 5 (it has no fourth
+    /// layer of tiles), and the property <see cref="Type"/> takes it into account. <see cref="TileIdLayer4"/> exists in MV only.
+    /// </summary>
     public enum InfoType
     {
         TerrainTag = 0,
@@ -23,7 +27,7 @@ public class GetLocationInfoCommand : NamedCommand
         TileIdLayer2 = 3,
         TileIdLayer3 = 4,
         TileIdLayer4 = 5,
-        RegionI = 6,
+        Region = 6,
     }
 
     private static readonly Dictionary<InfoType, Tuple<string, string>> InfoTypeIdsMap = new()
@@ -34,7 +38,7 @@ public class GetLocationInfoCommand : NamedCommand
         [InfoType.TileIdLayer2] = new("Tile ID (Layer 2)", "Tile ID (Layer 2)"),
         [InfoType.TileIdLayer3] = new("Tile ID (Layer 3)", "Tile ID (Layer 3)"),
         [InfoType.TileIdLayer4] = new("Tile ID (Layer 4)", ""),
-        [InfoType.RegionI] = new("Region ID", "Region ID"),
+        [InfoType.Region] = new("Region ID", "Region ID"),
     };
         
     public int VariableId
@@ -43,51 +47,33 @@ public class GetLocationInfoCommand : NamedCommand
         set => Set(0, value);
     }
 
-    // the number of the Region ID in VX Ace, which has no fourth layer of tiles to give: the numbers of MV have the layer and then the region
-    private const InfoType VxAceRegion = InfoType.TileIdLayer4;
-
     private bool IsInVxAce => !IsDetached && Version == StorageVersion.VXAce;
 
     /// <summary>
     /// What is asked about the place, the same for both makers: the raw number of the Region ID is 5 in VX Ace and 6 in MV, and this property is
-    /// <see cref="InfoType.RegionI"/> for it in both. <see cref="InfoType.TileIdLayer4"/> does not exist in VX Ace.
+    /// <see cref="InfoType.Region"/> for it in both. Can be set before the command is put into a list. <see cref="InfoType.TileIdLayer4"/> does not
+    /// exist in VX Ace: <see cref="DoesNotExistInVersionException"/>.
     /// </summary>
     public InfoType Type
     {
-        get
-        {
-            var raw = Get<InfoType>(1);
-
-            return IsInVxAce && raw == VxAceRegion ? InfoType.RegionI : raw;
-        }
-        set
-        {
-            if (IsInVxAce)
-            {
-                if (value == InfoType.TileIdLayer4)
-                    throw new DoesNotExistInVersionException($"{value} exists in MV only");
-
-                Set(1, value == InfoType.RegionI ? VxAceRegion : value);
-            }
-            else
-            {
-                Set(1, value);
-            }
-        }
+        get => IsInVxAce ? FromVxAce(Get<int>(1)) : (InfoType)Get<int>(1);
+        set => Set(1, IsInVxAce ? ToVxAce(value) : (int)value);
     }
 
-    // a command that was made in code has the number of MV (the neutral one) until it is put into a list
+    private static int ToVxAce(InfoType type) => type switch
+    {
+        InfoType.Region => 5,
+        InfoType.TileIdLayer4 => throw new DoesNotExistInVersionException($"{type} exists in MV only"),
+        _ => (int)type,
+    };
+
+    private static InfoType FromVxAce(int raw) => raw == 5 ? InfoType.Region : (InfoType)raw;
+
+    // what was set in code is the number of MV until the command has a maker
     protected override void OnBinding(StorageVersion version)
     {
-        if (version != StorageVersion.VXAce)
-            return;
-
-        var type = Get<InfoType>(1);
-        if (type == InfoType.TileIdLayer4)
-            throw new DoesNotExistInVersionException($"{type} exists in MV only");
-
-        if (type == InfoType.RegionI)
-            Set(1, VxAceRegion);
+        if (version == StorageVersion.VXAce)
+            Set(1, ToVxAce((InfoType)Get<int>(1)));
     }
 
     public DesignationType Designation

@@ -174,7 +174,7 @@ The makers write some parameters differently. For these commands a property says
 |---|---|---|
 | Show Choices | `Cancel` (`Disallow`, `Branch`, `Choice1` … `Choice6`; VX Ace has up to 4 choices) | VX Ace: 0, 5, n; MV: -1, -2, n-1 (`CancelChoiceIndex`) |
 | Change Equipment | `SlotIndex` (from 0) | VX Ace counts the slots from 0, MV from 1 (`TypeId`) |
-| Get Location Info | `Type` (`InfoType.RegionI` for the region) | the region is 5 in VX Ace and 6 in MV |
+| Get Location Info | `Type` (`InfoType.Region` for the region) | the region is 5 in VX Ace and 6 in MV |
 | If, a button | `Button`, and `MvName` (null for the buttons X, Y and Z, which MV has no name for) | a number in VX Ace, a name in MV |
 
 Some parameters exist in one maker only: the position, the background and the default choice of Show Choices, the type of Select Item and "Save Level" of Change Class (`SaveLevel`) are MV only, and the parameter "purchase only" belongs to the first line of a shop. In the other maker such a property throws `DoesNotExistInVersionException` (such a property is marked with `[DoesNotExistInVersion]`, and `HasProperty(nameof(...))` of `IHasOptionalProperties` tells it without calling the property: on a command, whose class is the same for both makers, the attribute names the makers, `[DoesNotExistInVersion(StorageVersion.VXAce)]`, and the answer is for the maker of the list that the command is in; the sound, the actor and the system have it too, where the class of VX Ace marks the property, such as the pan of a sound, with no makers); a command with it that is put into a list of VX Ace loses the parameter, so `Clone()` of a command of one maker into a list of the other keeps what the command means:

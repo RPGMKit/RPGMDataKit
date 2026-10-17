@@ -69,10 +69,10 @@ public sealed class CommandMeaningTests
     [MemberData(nameof(Versions))]
     public void TheRegionIsTheSameInfoInBothMakers(Version v)
     {
-        var command = InList(v, new GetLocationInfoCommand { VariableId = 1, Type = GetLocationInfoCommand.InfoType.RegionI });
+        var command = InList(v, new GetLocationInfoCommand { VariableId = 1, Type = GetLocationInfoCommand.InfoType.Region });
 
         Assert.Equal(IsMv(v) ? 6 : 5, RawInt(command, 1));
-        Assert.Equal(GetLocationInfoCommand.InfoType.RegionI, command.Type);
+        Assert.Equal(GetLocationInfoCommand.InfoType.Region, command.Type);
     }
 
     [Theory]
@@ -105,13 +105,13 @@ public sealed class CommandMeaningTests
     [Fact]
     public void ARegionCopiedFromVxAceToMvIsStillTheRegion()
     {
-        var vx = InList(Version.VXAce, new GetLocationInfoCommand { Type = GetLocationInfoCommand.InfoType.RegionI });
+        var vx = InList(Version.VXAce, new GetLocationInfoCommand { Type = GetLocationInfoCommand.InfoType.Region });
         Assert.Equal(5, RawInt(vx, 1));
 
         var mv = InList(Version.Mv, vx.Clone().Cast<GetLocationInfoCommand>());
 
         Assert.Equal(6, RawInt(mv, 1));
-        Assert.Equal(GetLocationInfoCommand.InfoType.RegionI, mv.Type);
+        Assert.Equal(GetLocationInfoCommand.InfoType.Region, mv.Type);
     }
 
     // ---- 319 Change Equipment ----
