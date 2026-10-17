@@ -1,4 +1,5 @@
 using RPGMDataKit.Data.Helpers;
+using RPGMDataKit.Data.Helpers;
 using RPGMDataKit.Data.Structures.Exceptions;
 using RPGMDataKit.Data.Structures.Interfaces;
 using Xunit;
@@ -52,6 +53,58 @@ public sealed class HasPropertyTests
         Assert.Equal(v.Name == "MV", actor.HasProperty(nameof(actor.BattlerName)));
         Assert.Equal(v.Name == "MV", system.HasProperty(nameof(system.EquipmentTypes)));
         Assert.True(actor.HasProperty(nameof(actor.Name)));
+    }
+
+    // ---- commands: the same class for both makers, so it depends on the maker of the list that the command is in ----
+
+    private static T InList<T>(Version v, T command) where T : RPGMDataKit.Data.Structures.Internal.NamedCommand
+    {
+        EmptyCommandTests.EventOf(v).AppendCommands(b => b.Add(command));
+
+        return command;
+    }
+
+    [Fact]
+    public void ACommandWithoutAMakerHasEveryProperty()
+    {
+        var choices = new RPGMDataKit.Data.Structures.Commands.ShowChoicesCommand();
+
+        Assert.True(choices.HasProperty(nameof(choices.Position)));
+        Assert.True(choices.HasProperty(nameof(choices.DefaultChoiceIndex)));
+        Assert.True(choices.HasProperty(nameof(choices.Background)));
+        Assert.True(choices.HasProperty(nameof(choices.Choices)));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ACommandInAListHasWhatTheMakerOfTheListHas(Version v)
+    {
+        var mv = v.Name == "MV";
+        var choices = InList(v, new RPGMDataKit.Data.Structures.Commands.ShowChoicesCommand { Choices = ["A"] });
+        var changeClass = InList(v, new RPGMDataKit.Data.Structures.Commands.ChangeClassCommand());
+        var selectItem = InList(v, new RPGMDataKit.Data.Structures.Commands.SelectItemCommand());
+
+        Assert.Equal(mv, choices.HasProperty(nameof(choices.Position)));
+        Assert.Equal(mv, choices.HasProperty(nameof(choices.DefaultChoiceIndex)));
+        Assert.Equal(mv, choices.HasProperty(nameof(choices.Background)));
+        Assert.True(choices.HasProperty(nameof(choices.Choices)));
+        Assert.True(choices.HasProperty(nameof(choices.Cancel)));
+        Assert.Equal(mv, changeClass.HasProperty(nameof(changeClass.SaveLevel)));
+        Assert.True(changeClass.HasProperty(nameof(changeClass.ActorId)));
+        Assert.Equal(mv, selectItem.HasProperty(nameof(selectItem.Type)));
+        Assert.True(selectItem.HasProperty(nameof(selectItem.VariableId)));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void TheCheckOfACommandAgreesWithWhatItsPropertyDoes(Version v)
+    {
+        var choices = InList(v, new RPGMDataKit.Data.Structures.Commands.ShowChoicesCommand { Choices = ["A"] });
+
+        if (choices.HasProperty(nameof(choices.Position)))
+            Assert.Equal(RPGMDataKit.Data.Structures.Commands.ShowChoicesCommand.PositionType.Right, choices.Position);
+        else
+            Assert.Throws<DoesNotExistInVersionException>(() => choices.Position);
     }
 
     [Fact]

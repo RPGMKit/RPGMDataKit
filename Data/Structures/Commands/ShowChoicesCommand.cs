@@ -145,31 +145,20 @@ public class ShowChoicesCommand : NamedCommand
     }
 
     /// <summary>The choice that is selected when the window opens, from 0, -1 for none. MV only: VX Ace throws <c>DoesNotExistInVersionException</c>.</summary>
+    [DoesNotExistInVersion(StorageVersion.VXAce)]
     public int DefaultChoiceIndex
     {
-        get
-        {
-            RequireVersion(StorageVersion.MV, nameof(DefaultChoiceIndex));
-            return Get<int>(2);
-        }
-        set
-        {
-            RequireVersion(StorageVersion.MV, nameof(DefaultChoiceIndex));
-            Set(2, value);
-        }
+        get => Get<int>(2);
+        set => Set(2, value);
     }
 
     /// <summary>MV only: VX Ace throws <c>DoesNotExistInVersionException</c>.</summary>
+    [DoesNotExistInVersion(StorageVersion.VXAce)]
     public PositionType Position
     {
-        get
-        {
-            RequireVersion(StorageVersion.MV, nameof(Position));
-            return Get<PositionType>(3);
-        }
+        get => Get<PositionType>(3);
         set
         {
-            RequireVersion(StorageVersion.MV, nameof(Position));
             if (IsDetached)
                 _positionIsSet = true;
 
@@ -178,18 +167,11 @@ public class ShowChoicesCommand : NamedCommand
     }
 
     /// <summary>MV only: VX Ace throws <c>DoesNotExistInVersionException</c>.</summary>
+    [DoesNotExistInVersion(StorageVersion.VXAce)]
     public BackgroundType Background
     {
-        get
-        {
-            RequireVersion(StorageVersion.MV, nameof(Background));
-            return Get<BackgroundType>(4);
-        }
-        set
-        {
-            RequireVersion(StorageVersion.MV, nameof(Background));
-            Set(4, value);
-        }
+        get => Get<BackgroundType>(4);
+        set => Set(4, value);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

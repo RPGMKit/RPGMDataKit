@@ -1,6 +1,7 @@
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.MV.Classes;
 using RPGMDataKit.Data.Structures.Internal;
+using RPGMDataKit.Data.Structures.Attributes;
 
 namespace RPGMDataKit.Data.Structures.Commands;
 
@@ -22,18 +23,11 @@ public class ChangeClassCommand : NamedCommand
     }
 
     /// <summary>"Save Level" of the editor of MV (the engine calls it <c>keepExp</c>). VX Ace has no such parameter and throws <c>DoesNotExistInVersionException</c>.</summary>
+    [DoesNotExistInVersion(StorageVersion.VXAce)]
     public bool SaveLevel
     {
-        get
-        {
-            RequireVersion(StorageVersion.MV, nameof(SaveLevel));
-            return Get<bool>(2);
-        }
-        set
-        {
-            RequireVersion(StorageVersion.MV, nameof(SaveLevel));
-            Set(2, value);
-        }
+        get => Get<bool>(2);
+        set => Set(2, value);
     }
 
     protected override void OnMadeInCodeBound(StorageVersion version)

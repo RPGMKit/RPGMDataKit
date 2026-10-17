@@ -14,7 +14,7 @@ namespace RPGMDataKit.Data.Structures.Internal;
 /// A command with named properties. It is a view over a raw command: properties read and write the raw command's
 /// parameters directly, so there is nothing to unpack, pack or keep in sync.
 /// </summary>
-public abstract class NamedCommand
+public abstract class NamedCommand : IHasOptionalProperties
 {
     private static readonly ConcurrentDictionary<Type, PropertyInfo[]> ParameterProperties = new();
 
@@ -55,14 +55,9 @@ public abstract class NamedCommand
 
         foreach (var property in ParameterProperties.GetOrAdd(GetType(), FindParameterProperties))
         {
-            try
-            {
+            // a property that the maker of this command does not have is left as it is
+            if (HasProperty(property.Name))
                 property.SetValue(copy, Copies.Of(property.GetValue(this)));
-            }
-            catch (TargetInvocationException e) when (e.InnerException is DoesNotExistInVersionException)
-            {
-                // the property does not exist in the version of this command
-            }
         }
 
         return copy;
@@ -80,14 +75,8 @@ public abstract class NamedCommand
 
         foreach (var property in ParameterProperties.GetOrAdd(GetType(), FindParameterProperties))
         {
-            try
-            {
+            if (HasProperty(property.Name))
                 property.GetValue(this);
-            }
-            catch (TargetInvocationException e) when (e.InnerException is DoesNotExistInVersionException)
-            {
-                // the property does not exist in the version of this command
-            }
         }
     }
 
@@ -95,8 +84,17 @@ public abstract class NamedCommand
     protected virtual NamedCommand CreateBlank() => (NamedCommand)Activator.CreateInstance(GetType())!;
 
     /// <summary>
-    /// For a property that is a parameter of one maker only: throws <see cref="DoesNotExistInVersionException"/> when the command is in a list of
-    /// another maker. A command that is not in a list yet has no maker and can have the property set; it is dropped when the command gets one.
+    /// False if the maker of the list that the command is in does not have the property (<see cref="DoesNotExistInVersionAttribute"/> with
+    /// the makers). A command that is not in a list yet has no maker and has the property; it is dropped when the command gets a maker that
+    /// has not.
+    /// </summary>
+    /// <exception cref="ArgumentException">The class of the command has no such property.</exception>
+    public bool HasProperty(string propertyName) =>
+        OptionalProperties.Has(GetType(), propertyName, IsDetached ? null : _version);
+
+    /// <summary>
+    /// For a value (not a property) that is of one maker only, as a blend mode: throws <see cref="DoesNotExistInVersionException"/> when the
+    /// command is in a list of another maker. A command that is not in a list yet has no maker; it is checked when the command gets one.
     /// </summary>
     protected void RequireVersion(StorageVersion version, string property)
     {
@@ -126,14 +124,32 @@ public abstract class NamedCommand
         }
     }
 
-    protected T? Get<T>(int index) => Parameters.GetParameter<T>(index);
+    /// <summary>
+    /// Reads a parameter. <paramref name="property"/> is the name of the caller, which the compiler fills in: when the caller is a property that is
+    /// marked with <see cref="DoesNotExistInVersionAttribute"/> and the maker of the command does not have it, this throws
+    /// <see cref="DoesNotExistInVersionException"/>, so a property does not check that itself.
+    /// </summary>
+    protected T? Get<T>(int index, [System.Runtime.CompilerServices.CallerMemberName] string? property = null)
+    {
+        ThrowIfMissing(property);
+
+        return Parameters.GetParameter<T>(index);
+    }
+
+    private void ThrowIfMissing(string? property)
+    {
+        if (OptionalProperties.IsMissing(GetType(), property, IsDetached ? null : _version))
+            throw new DoesNotExistInVersionException($"{property} does not exist in {_version}");
+    }
 
     /// <summary>
     /// Writes a parameter. A tone, a color, a sound or a route is stored as the class of the type map. A command that
     /// is not in a container yet does not know its map, so it keeps the value as it is until it is put into one.
     /// </summary>
-    protected void Set<T>(int index, T? value)
+    protected void Set<T>(int index, T? value, [System.Runtime.CompilerServices.CallerMemberName] string? property = null)
     {
+        ThrowIfMissing(property);
+
         if (typeof(T).IsInterface && value != null && !IsDetached)
             value = (T)InMap(typeof(T), value);
 
@@ -157,8 +173,10 @@ public abstract class NamedCommand
     /// Reads a parameter that is an object (a sound, a route...). The object stored in the raw command is returned, so
     /// changing it changes the command. A JSON object of MV is replaced by <typeparamref name="TJson"/> on the first read.
     /// </summary>
-    protected T? GetEntity<T, TJson>(int index) where T : class where TJson : class, T
+    protected T? GetEntity<T, TJson>(int index, [System.Runtime.CompilerServices.CallerMemberName] string? property = null) where T : class where TJson : class, T
     {
+        ThrowIfMissing(property);
+
         var value = Raw.Parameters?.Get(index);
         if (value is T entity)
             return entity;
@@ -174,7 +192,7 @@ public abstract class NamedCommand
     /// <see cref="GetEntity{T,TJson}"/> for an object whose type is resolved by the type map, so the same type is
     /// used to read it from JSON.
     /// </summary>
-    protected T? GetEntity<T>(int index) where T : class => GetEntity<T, T>(index);
+    protected T? GetEntity<T>(int index, [System.Runtime.CompilerServices.CallerMemberName] string? property = null) where T : class => GetEntity<T, T>(index, property);
 
     /// <summary>True while the command has no container (and so no raw command of a file) yet.</summary>
     internal bool IsDetached => _raw == null || _raw is DetachedCommand;
@@ -232,14 +250,8 @@ public abstract class NamedCommand
     {
         foreach (var property in ParameterProperties.GetOrAdd(GetType(), FindParameterProperties))
         {
-            try
-            {
+            if (HasProperty(property.Name))
                 property.SetValue(this, property.GetValue(this));
-            }
-            catch (TargetInvocationException e) when (e.InnerException is DoesNotExistInVersionException)
-            {
-                // the property does not exist in the version of this command
-            }
         }
 
         if (Raw.Parameters == null && (Raw.Code == 0 || Raw.Indent != null))

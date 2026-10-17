@@ -1,5 +1,6 @@
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
+using RPGMDataKit.Data.Structures.Attributes;
 
 namespace RPGMDataKit.Data.Structures.Commands;
 
@@ -43,16 +44,15 @@ public class SelectItemCommand : NamedCommand
     /// The kind of the items to select. MV only: VX Ace selects key items and has no such parameter, so it throws
     /// <c>DoesNotExistInVersionException</c>. A new command of MV selects regular items, as the editor makes it.
     /// </summary>
+    [DoesNotExistInVersion(StorageVersion.VXAce)]
     public KeyItemType Type
     {
         get
         {
-            RequireVersion(StorageVersion.MV, nameof(Type));
             return Get<KeyItemType>(1);
         }
         set
         {
-            RequireVersion(StorageVersion.MV, nameof(Type));
             if (IsDetached)
                 _typeIsSet = true;
 
