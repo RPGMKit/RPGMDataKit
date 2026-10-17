@@ -23,14 +23,9 @@ internal static class Copies
                 copy.Name = sound.Name;
                 copy.Volume = sound.Volume;
                 copy.Pitch = sound.Pitch;
-                try
-                {
+                // VXAce sounds have no pan
+                if (copy.HasProperty(nameof(copy.Pan)) && sound.HasProperty(nameof(sound.Pan)))
                     copy.Pan = sound.Pan;
-                }
-                catch (DoesNotExistInVersionException)
-                {
-                    // VXAce sounds have no pan
-                }
 
                 return copy;
             }

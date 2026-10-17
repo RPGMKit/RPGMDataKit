@@ -1,6 +1,6 @@
 ﻿namespace RPGMDataKit.Data.Structures.Interfaces;
 
-public interface IAudioFile
+public interface IAudioFile : IHasOptionalProperties
 {
     public string Name { get; set; }
 

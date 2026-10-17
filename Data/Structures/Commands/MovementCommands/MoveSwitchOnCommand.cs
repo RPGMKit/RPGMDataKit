@@ -13,6 +13,13 @@ public class MoveSwitchOnCommand : AbstractMoveCommand
         get => Get<int>(0);
         set => Set(0, value);
     }
+
+    // a new command is for the switch 1 in the editors
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (!IsParameterSet(0))
+            Set(0, 1);
+    }
     
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {

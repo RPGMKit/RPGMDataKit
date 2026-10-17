@@ -1,11 +1,14 @@
 ﻿using RubyMarshalCS.Entities;
 using RubyMarshalCS.Serialization.Attributes;
+using RPGMDataKit.Data.Structures.Interfaces;
 using YamlDotNet.Serialization.Callbacks;
 
 namespace RPGMDataKit.Data.Structures.Internal;
 
-public abstract class RubySerializationEntity
+public abstract class RubySerializationEntity : IHasOptionalProperties
 {
+    public bool HasProperty(string propertyName) => OptionalProperties.Has(GetType(), propertyName);
+
     [RubyExtensionData]
     public Dictionary<string, object?> _unknownFields = new();
     

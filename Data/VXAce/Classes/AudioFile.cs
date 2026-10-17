@@ -4,6 +4,7 @@ using RPGMDataKit.Data.Structures.Internal;
 using RubyMarshalCS.Serialization;
 using RubyMarshalCS.Serialization.Attributes;
 using RubyMarshalCS.Serialization.Enums;
+using RPGMDataKit.Data.Structures.Attributes;
 
 namespace RPGMDataKit.Data.VXAce.Classes;
 
@@ -27,6 +28,7 @@ public class AudioFile : RubySerializationEntity, IAudioFile, INewEntity
     [RubyProperty("@pitch")]
     public int Pitch { get; set; }
 
+    [DoesNotExistInVersion]
     public int Pan
     {
         get => throw new DoesNotExistInVersionException();

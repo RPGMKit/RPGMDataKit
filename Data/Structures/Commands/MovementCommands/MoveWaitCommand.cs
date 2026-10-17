@@ -14,6 +14,13 @@ public class MoveWaitCommand : AbstractMoveCommand
         set => Set(0, value);
     }
 
+    // a new command waits for 60 frames in the editors
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (!IsParameterSet(0))
+            Set(0, 60);
+    }
+
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
         return $"{Frames} frame(s)";

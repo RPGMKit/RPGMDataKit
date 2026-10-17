@@ -31,7 +31,7 @@ public static class CommandContainerExtensions
     /// <summary>Replaces all commands of the list with the commands.</summary>
     public static void ReplaceCommands(this ICommandContainer container, Action<CommandBuilder> build)
     {
-        var made = Make(build);
+        var made = Make(container, build);
 
         container.NamedCommands.Clear();
         Put(container, 0, made);
@@ -39,7 +39,7 @@ public static class CommandContainerExtensions
 
     private static void Splice(ICommandContainer container, int position, Action<CommandBuilder> build)
     {
-        var made = Make(build);
+        var made = Make(container, build);
 
         // the empty command in front of the end of a block (or of the list) ends the block: the new commands go before it, into the block
         var commands = container.NamedCommands;
@@ -52,9 +52,13 @@ public static class CommandContainerExtensions
         Put(container, position, made);
     }
 
-    private static List<NamedCommand> Make(Action<CommandBuilder> build)
+    // the builder is for the maker of the container: the objects in the commands (a route, a sound) are of the classes of that maker
+    private static List<NamedCommand> Make(ICommandContainer container, Action<CommandBuilder> build)
     {
-        var builder = new CommandBuilder();
+        if (container.NamedCommands is not ICommandListTypes list)
+            throw new NotSupportedException("The commands of this container are not a list of the library, so its maker is not known.");
+
+        var builder = new CommandBuilder(list.Types);
         build(builder);
 
         return builder.Commands.ToList();

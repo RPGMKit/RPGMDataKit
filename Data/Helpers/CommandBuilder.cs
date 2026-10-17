@@ -1,7 +1,11 @@
 ﻿using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Commands;
 using RPGMDataKit.Data.Structures.Commands.IfCommands;
+using RPGMDataKit.Data.Structures.Commands.MovementCommands;
+using RPGMDataKit.Data.Structures.Exceptions;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
+using RPGMDataKit.Storages;
 
 namespace RPGMDataKit.Data.Helpers;
 
@@ -21,6 +25,19 @@ namespace RPGMDataKit.Data.Helpers;
 public sealed class CommandBuilder
 {
     private readonly List<NamedCommand> _commands = [];
+
+    /// <param name="types">
+    /// The type map of the maker whose list the commands are for (the one of the storage, <c>TypeMap.VXAce</c> or <c>TypeMap.Mv</c>), by which the
+    /// objects in the commands, such as a movement route or a sound, are made. The methods that put the commands into a container
+    /// (<see cref="CommandContainerExtensions"/>) take it from the container.
+    /// </param>
+    public CommandBuilder(TypeMap types)
+    {
+        Types = types ?? throw new ArgumentNullException(nameof(types));
+    }
+
+    /// <summary>The type map of the maker that the commands are for.</summary>
+    public TypeMap Types { get; }
 
     /// <summary>The commands that were made.</summary>
     public IReadOnlyList<NamedCommand> Commands => _commands;
@@ -327,6 +344,188 @@ public sealed class CommandBuilder
         }
 
         return Add(new BattleProcessingEndCommand());
+    }
+
+    // ---- Set Movement Route ----
+
+    /// <summary>
+    /// Set Movement Route: the steps are given in the order they are walked (<see cref="RouteBuilder"/>). The empty command that ends every route
+    /// is added. The commands of the route have the values the editor of the maker of the list gives them.
+    /// </summary>
+    /// <param name="define">Makes the steps of the route.</param>
+    /// <param name="eventId">Whose route: -1 is the player (as the editors have it), 0 is the event that runs the commands, a positive number is the event.</param>
+    /// <param name="repeat">Repeat Movement.</param>
+    /// <param name="skippable">Skip If Cannot Move.</param>
+    /// <param name="wait">Wait for Completion.</param>
+    public CommandBuilder MoveRoute(Action<RouteBuilder> define, int eventId = SetMovementRouteCommand.PlayerEventId, bool repeat = false,
+        bool skippable = false, bool wait = true)
+    {
+        var steps = new RouteBuilder(Types);
+        define(steps);
+
+        // the route is of the maker of the list, so its steps get the values that the editor of that maker gives them
+        var route = Types.New<IMoveRoute>();
+        route.Repeat = repeat;
+        route.Skippable = skippable;
+        route.Wait = wait;
+        route.NamedCommands = [.. steps.Steps, new MoveEmptyCommand()];
+
+        return Add(new SetMovementRouteCommand { EventId = eventId, Route = route });
+    }
+
+    /// <summary>The steps of <see cref="MoveRoute"/>.</summary>
+    public sealed class RouteBuilder
+    {
+        private readonly TypeMap _types;
+
+        internal RouteBuilder(TypeMap types)
+        {
+            _types = types;
+        }
+
+        internal List<NamedCommand> Steps { get; } = [];
+
+        /// <summary>Any step, which is put as it is. The empty command that ends the route is not to be added: it is added by <see cref="MoveRoute"/>.</summary>
+        public RouteBuilder Add(params NamedCommand[] steps)
+        {
+            foreach (var step in steps)
+            {
+                ArgumentNullException.ThrowIfNull(step);
+                Steps.Add(step);
+            }
+
+            return this;
+        }
+
+        private RouteBuilder Add(NamedCommand step, int times)
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(times, 1);
+            Steps.Add(step);
+            for (var i = 1; i < times; i++)
+                Steps.Add(step.Clone());
+
+            return this;
+        }
+
+        // ---- steps (a number of times) ----
+
+        public RouteBuilder Down(int times = 1) => Add(new MoveDownCommand(), times);
+
+        public RouteBuilder Left(int times = 1) => Add(new MoveLeftCommand(), times);
+
+        public RouteBuilder Right(int times = 1) => Add(new MoveRightCommand(), times);
+
+        public RouteBuilder Up(int times = 1) => Add(new MoveUpCommand(), times);
+
+        public RouteBuilder LowerLeft(int times = 1) => Add(new MoveLowerLeftCommand(), times);
+
+        public RouteBuilder LowerRight(int times = 1) => Add(new MoveLowerRightCommand(), times);
+
+        public RouteBuilder UpperLeft(int times = 1) => Add(new MoveUpperLeftCommand(), times);
+
+        public RouteBuilder UpperRight(int times = 1) => Add(new MoveUpperRightCommand(), times);
+
+        public RouteBuilder Forward(int times = 1) => Add(new MoveForwardCommand(), times);
+
+        public RouteBuilder Backward(int times = 1) => Add(new MoveBackwardCommand(), times);
+
+        // ---- other movement ----
+
+        public RouteBuilder Random() => Add(new MoveRandomCommand());
+
+        public RouteBuilder TowardPlayer() => Add(new MoveTowardPlayerCommand());
+
+        public RouteBuilder AwayFromPlayer() => Add(new MoveAwayFromPlayerCommand());
+
+        /// <summary>Jump by the number of tiles to the right (x) and down (y); negative numbers are to the left and up.</summary>
+        public RouteBuilder Jump(int x = 0, int y = 0) => Add(new MoveJumpCommand { XDelta = x, YDelta = y });
+
+        /// <summary>Wait for the number of frames (60 are a second).</summary>
+        public RouteBuilder Wait(int frames = 60) => Add(new MoveWaitCommand { Frames = frames });
+
+        // ---- turns ----
+
+        public RouteBuilder TurnDown() => Add(new MoveTurnDownCommand());
+
+        public RouteBuilder TurnLeft() => Add(new MoveTurnLeftCommand());
+
+        public RouteBuilder TurnRight() => Add(new MoveTurnRightCommand());
+
+        public RouteBuilder TurnUp() => Add(new MoveTurnUpCommand());
+
+        public RouteBuilder Turn90Right() => Add(new MoveTurn90DegreesRightCommand());
+
+        public RouteBuilder Turn90Left() => Add(new MoveTurn90DegreesLeftCommand());
+
+        public RouteBuilder Turn180() => Add(new MoveTurn180DegreesCommand());
+
+        public RouteBuilder Turn90RightOrLeft() => Add(new MoveTurn90DegreesRightOrLeftCommand());
+
+        public RouteBuilder TurnAtRandom() => Add(new MoveTurnAtRandomCommand());
+
+        public RouteBuilder TurnTowardPlayer() => Add(new MoveTurnTowardPlayerCommand());
+
+        public RouteBuilder TurnAwayFromPlayer() => Add(new MoveTurnAwayFromPlayerCommand());
+
+        // ---- switches and the settings of the character ----
+
+        public RouteBuilder SwitchOn(int switchId) => Add(new MoveSwitchOnCommand { SwitchId = switchId });
+
+        public RouteBuilder SwitchOff(int switchId) => Add(new MoveSwitchOffCommand { SwitchId = switchId });
+
+        public RouteBuilder Speed(MoveChangeSpeedCommand.SpeedType speed) => Add(new MoveChangeSpeedCommand { Speed = speed });
+
+        public RouteBuilder Frequency(MoveChangeFrequencyCommand.FrequencyType frequency) =>
+            Add(new MoveChangeFrequencyCommand { Frequency = frequency });
+
+        public RouteBuilder WalkingAnimation(bool on) => on ? Add(new MoveWalkingAnimationOnCommand()) : Add(new MoveWalkingAnimationOffCommand());
+
+        public RouteBuilder SteppingAnimation(bool on) => on ? Add(new MoveSteppingAnimationOnCommand()) : Add(new MoveSteppingAnimationOffCommand());
+
+        public RouteBuilder DirectionFix(bool on) => on ? Add(new MoveDirectionFixOnCommand()) : Add(new MoveDirectionFixOffCommand());
+
+        public RouteBuilder Through(bool on) => on ? Add(new MoveThroughOnCommand()) : Add(new MoveThroughOffCommand());
+
+        public RouteBuilder Transparent(bool on) => on ? Add(new MoveTransparentOnCommand()) : Add(new MoveTransparentOffCommand());
+
+        /// <summary>The image of the character: the name of the file (empty is none) and the place in it (0-7).</summary>
+        public RouteBuilder Image(string name, int index = 0) => Add(new MoveChangeImageCommand { Image = name, Offset = index });
+
+        /// <param name="opacity">From 0 to 255.</param>
+        public RouteBuilder Opacity(int opacity)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(opacity);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(opacity, 255);
+
+            return Add(new MoveChangeOpacityCommand { Opacity = opacity });
+        }
+
+        /// <summary>The blend mode of the character; Screen is MV only.</summary>
+        public RouteBuilder Blend(BlendMode mode) => Add(new MoveChangeBlendModeCommand { BlendMode = mode });
+
+        /// <summary>A sound. The volume is from 0 to 100, the pitch from 50 to 150, the pan (MV only, left to right) from -100 to 100.</summary>
+        public RouteBuilder PlaySe(string name, int volume = 90, int pitch = 100, int pan = 0)
+        {
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentOutOfRangeException.ThrowIfLessThan(volume, 0);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(volume, 100);
+            ArgumentOutOfRangeException.ThrowIfLessThan(pitch, 50);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(pitch, 150);
+            ArgumentOutOfRangeException.ThrowIfLessThan(pan, -100);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(pan, 100);
+
+            // the sound is of the maker of the list; VX Ace has no pan
+            var sound = _types.New<ISE>();
+            sound.Name = name;
+            sound.Volume = volume;
+            sound.Pitch = pitch;
+            if (sound.HasProperty(nameof(sound.Pan)))
+                sound.Pan = pan;
+
+            return Add(new MovePlaySeCommand { SoundData = sound });
+        }
+
+        public RouteBuilder Script(string script) => Add(new MoveScriptCommand { Script = script });
     }
 
     // ---- Shop Processing ----

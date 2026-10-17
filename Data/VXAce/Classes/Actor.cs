@@ -1,6 +1,7 @@
 ﻿using RPGMDataKit.Data.Structures.Exceptions;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RubyMarshalCS.Serialization.Attributes;
+using RPGMDataKit.Data.Structures.Attributes;
 
 namespace RPGMDataKit.Data.VXAce.Classes;
 
@@ -50,6 +51,7 @@ public class Actor : BaseItem, IActor
     }
 
     // there is no side view battle in VX Ace; no [RubyProperty], so the serializer does not touch it
+    [DoesNotExistInVersion]
     public string BattlerName
     {
         get => throw new DoesNotExistInVersionException();

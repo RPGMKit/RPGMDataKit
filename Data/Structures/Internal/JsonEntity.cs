@@ -1,13 +1,16 @@
 ﻿using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RPGMDataKit.Data.Structures.Interfaces;
 using ErrorEventArgs = Newtonsoft.Json.Serialization.ErrorEventArgs;
 
 namespace RPGMDataKit.Data.Structures.Internal
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public abstract class JsonEntity
+    public abstract class JsonEntity : IHasOptionalProperties
     {
+        public bool HasProperty(string propertyName) => OptionalProperties.Has(GetType(), propertyName);
+
         [JsonExtensionData]
         private IDictionary<string, JToken> _unknownFields;
 

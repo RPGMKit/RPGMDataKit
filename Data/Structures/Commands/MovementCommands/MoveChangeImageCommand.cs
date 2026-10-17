@@ -27,6 +27,13 @@ public class MoveChangeImageCommand : AbstractMoveCommand
         set => Set(1, value);
     }
 
+    // a new command has no image in the editors (an empty name, not none)
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (!IsParameterSet(0))
+            Set(0, "");
+    }
+
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
         if (string.IsNullOrWhiteSpace(Image))

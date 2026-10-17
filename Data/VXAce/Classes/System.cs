@@ -3,6 +3,7 @@ using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using RPGMDataKit.Data.VXAce.Classes.Custom;
 using RubyMarshalCS.Serialization.Attributes;
+using RPGMDataKit.Data.Structures.Attributes;
 
 namespace RPGMDataKit.Data.VXAce.Classes;
 
@@ -140,6 +141,7 @@ public class System : RubySerializationEntity, ISystem
 
     IList<ISE?> ISystem.Sounds => Sounds;
     
+    [DoesNotExistInVersion]
     public List<string> EquipmentTypes => throw new DoesNotExistInVersionException($"{nameof(EquipmentTypes)}");
 
     public ITone WindowTone

@@ -6,6 +6,7 @@ using RPGMDataKit.Data.Structures.Commands.Helpers;
 using RPGMDataKit.Data.Structures.Exceptions;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Storages;
+using RPGMDataKit.Data.Structures.Attributes;
 
 namespace RPGMDataKit.Data.Structures.Internal;
 
@@ -214,6 +215,12 @@ public abstract class NamedCommand
     protected virtual void OnBinding(StorageVersion version)
     {
     }
+
+    /// <summary>
+    /// True if the parameter was set in code before the command got its raw command. In <see cref="OnBinding"/> it tells what the editor's value
+    /// is to be given to (the value of a new command) from what the user has set.
+    /// </summary>
+    protected bool IsParameterSet(int index) => Raw.Parameters != null && index < Raw.Parameters.Count && Raw.Parameters[index] != null;
 
     /// <summary>Called after a command made in code got its raw command, for parameters that depend on the version.</summary>
     protected virtual void OnMadeInCodeBound(StorageVersion version)

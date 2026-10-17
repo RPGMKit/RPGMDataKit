@@ -1,5 +1,6 @@
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
+using RPGMDataKit.Data.Structures.Attributes;
 
 namespace RPGMDataKit.Data.Structures.Commands;
 

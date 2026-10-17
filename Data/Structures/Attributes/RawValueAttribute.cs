@@ -1,4 +1,4 @@
-﻿namespace RPGMDataKit.Data.Structures.Internal;
+﻿namespace RPGMDataKit.Data.Structures.Attributes;
 
 /// <summary>
 /// Marks a property of a command that is the raw value of another property, which holds the same thing in a way that does not depend on the maker

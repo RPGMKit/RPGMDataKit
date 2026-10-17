@@ -2,7 +2,10 @@ using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Helpers;
 using RPGMDataKit.Data.Structures.Commands;
 using RPGMDataKit.Data.Structures.Commands.IfCommands;
+using RPGMDataKit.Data.Structures.Commands.MovementCommands;
+using RPGMDataKit.Data.Structures.Exceptions;
 using RPGMDataKit.Data.Structures.Interfaces;
+using RPGMDataKit.Storages;
 using Xunit;
 
 namespace RPGMDataKit.Tests;
@@ -205,14 +208,14 @@ public sealed class CommandBuilderTests
 
         var branchHeader = new ShowChoicesCommand();
         branchHeader.Cancel = ShowChoicesCommand.CancelType.Branch;
-        Assert.Throws<ArgumentException>(() => new CommandBuilder().Choices(c => c.When("A"), branchHeader));
+        Assert.Throws<ArgumentException>(() => new CommandBuilder(TypeMap.Mv).Choices(c => c.When("A"), branchHeader));
     }
 
     [Fact]
     public void ChoicesNeedAChoiceAndOneCancel()
     {
-        Assert.Throws<ArgumentException>(() => new CommandBuilder().Choices(_ => { }));
-        Assert.Throws<InvalidOperationException>(() => new CommandBuilder().Choices(c => c.When("A").Cancel().Cancel()));
+        Assert.Throws<ArgumentException>(() => new CommandBuilder(TypeMap.Mv).Choices(_ => { }));
+        Assert.Throws<InvalidOperationException>(() => new CommandBuilder(TypeMap.Mv).Choices(c => c.When("A").Cancel().Cancel()));
     }
 
     [Theory]
@@ -240,7 +243,7 @@ public sealed class CommandBuilderTests
 
     [Fact]
     public void TheWinBranchAloneIsAnError() =>
-        Assert.Throws<ArgumentException>(() => new CommandBuilder().Battle(5, win: _ => { }));
+        Assert.Throws<ArgumentException>(() => new CommandBuilder(TypeMap.Mv).Battle(5, win: _ => { }));
 
     [Theory]
     [MemberData(nameof(Versions))]
@@ -348,6 +351,173 @@ public sealed class CommandBuilderTests
         Expect(string.Join(" ", Enumerable.Repeat("111@0 0@1 412@0", 14)) + " 0@0", container);
     }
 
+    // ---- Set Movement Route ----
+
+    private static List<int> RouteCodes(ICommandContainer container) =>
+        container.NamedCommands.OfType<SetMovementRouteCommand>().Single().Route.NamedCommands.Select(c => c.Code).ToList();
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ARouteIsOneCommandWithTheStepsAndTheEmptyCommandThatEndsIt(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.MoveRoute(r => r.Down(2).Wait(30).TurnLeft()));
+
+        Expect("205@0 0@0", container); // the steps are in the route, not in the list of the event
+        var command = container.NamedCommands.OfType<SetMovementRouteCommand>().Single();
+        Assert.Equal(SetMovementRouteCommand.PlayerEventId, command.EventId);
+        Assert.Equal([1, 1, 15, 17, 0], RouteCodes(container));
+        Assert.Equal(30, command.Route.NamedCommands.OfType<MoveWaitCommand>().Single().Frames);
+        Assert.Equal((false, false, true), (command.Route.Repeat, command.Route.Skippable, command.Route.Wait)); // what the editors give
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void TheOptionsOfARouteAreKept(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.MoveRoute(r => r.Forward(), eventId: 3, repeat: true, skippable: true, wait: false));
+
+        var command = container.NamedCommands.OfType<SetMovementRouteCommand>().Single();
+        Assert.Equal(3, command.EventId);
+        Assert.Equal((true, true, false), (command.Route.Repeat, command.Route.Skippable, command.Route.Wait));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ARouteWithNoStepsHasTheEmptyCommandOnly(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.MoveRoute(_ => { }));
+
+        Assert.Equal([0], RouteCodes(container));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ANewCommandOfARouteIsForThePlayerAndHasAnEmptyRoute(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.Add(new SetMovementRouteCommand()));
+
+        var command = container.NamedCommands.OfType<SetMovementRouteCommand>().Single();
+        Assert.Equal(-1, command.EventId);
+        Assert.Equal([0], RouteCodes(container));
+        Assert.Equal((false, false, true), (command.Route.Repeat, command.Route.Skippable, command.Route.Wait));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void TheStepsGetTheValuesTheEditorGivesThem(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.MoveRoute(r => r.Wait().Speed(MoveChangeSpeedCommand.SpeedType.Fasterx2)
+            .Frequency(MoveChangeFrequencyCommand.FrequencyType.Higher).Opacity(128).Image("Actor1", 2).SwitchOn(5).Script("x = 1")));
+
+        var steps = container.NamedCommands.OfType<SetMovementRouteCommand>().Single().Route.NamedCommands;
+        Assert.Equal(60, steps.OfType<MoveWaitCommand>().Single().Frames);
+        Assert.Equal(MoveChangeSpeedCommand.SpeedType.Fasterx2, steps.OfType<MoveChangeSpeedCommand>().Single().Speed);
+        Assert.Equal(MoveChangeFrequencyCommand.FrequencyType.Higher, steps.OfType<MoveChangeFrequencyCommand>().Single().Frequency);
+        Assert.Equal(128, steps.OfType<MoveChangeOpacityCommand>().Single().Opacity);
+        var image = steps.OfType<MoveChangeImageCommand>().Single();
+        Assert.Equal(("Actor1", 2), (image.Image, image.Offset));
+        Assert.Equal(5, steps.OfType<MoveSwitchOnCommand>().Single().SwitchId);
+        Assert.Equal("x = 1", steps.OfType<MoveScriptCommand>().Single().Script);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void TheTurnsAndTheSwitchesOfACharacterHaveTheirCommands(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.MoveRoute(r => r
+            .Random().TowardPlayer().AwayFromPlayer().Jump(2, -1)
+            .TurnDown().TurnRight().TurnUp().Turn90Right().Turn90Left().Turn180().Turn90RightOrLeft().TurnAtRandom().TurnTowardPlayer().TurnAwayFromPlayer()
+            .SwitchOff(2).WalkingAnimation(true).WalkingAnimation(false).SteppingAnimation(true).SteppingAnimation(false)
+            .DirectionFix(true).DirectionFix(false).Through(true).Through(false).Transparent(true).Transparent(false)
+            .Blend(BlendMode.Add).LowerLeft().LowerRight().UpperLeft().UpperRight().Backward(2).Left().Right().Up()));
+
+        Assert.Equal(
+            [9, 10, 11, 14, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 43, 5, 6, 7, 8, 13, 13, 2, 3, 4, 0],
+            RouteCodes(container));
+        var jump = container.NamedCommands.OfType<SetMovementRouteCommand>().Single().Route.NamedCommands.OfType<MoveJumpCommand>().Single();
+        Assert.Equal((2, -1), (jump.XDelta, jump.YDelta));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ASoundOfARouteKeepsItsValuesAndVxAceHasNoPan(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.MoveRoute(r => r.PlaySe("Absorb1", volume: 80, pitch: 120, pan: 30)));
+
+        var sound = container.NamedCommands.OfType<SetMovementRouteCommand>().Single().Route.NamedCommands.OfType<MovePlaySeCommand>().Single().SoundData;
+        Assert.Equal(("Absorb1", 80, 120), (sound.Name, sound.Volume, sound.Pitch));
+        if (v.Name == "MV")
+            Assert.Equal(30, sound.Pan);
+        else
+            Assert.Throws<DoesNotExistInVersionException>(() => sound.Pan);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ARouteInABranchIsOneCommandOfTheBranch(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.IfSwitch(1, then: t => t.MoveRoute(r => r.Up())));
+
+        Expect("111@0 205@1 0@1 412@0 0@0", container);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void TheRouteAndTheSoundAreMadeByTheTypeMapOfTheBuilder(Version v)
+    {
+        // the builder is made for a maker, so the objects in its commands are of the classes of that maker from the start
+        var builder = new CommandBuilder(v.Types).MoveRoute(r => r.PlaySe("Absorb1", volume: 80));
+
+        var command = builder.Commands.OfType<SetMovementRouteCommand>().Single();
+        Assert.IsType(v.Types.Resolve(typeof(IMoveRoute)), command.Route);
+        var sound = command.Route.NamedCommands.OfType<MovePlaySeCommand>().Single().SoundData;
+        Assert.IsType(v.Types.Resolve(typeof(ISE)), sound);
+        Assert.Equal(80, sound.Volume);
+        Assert.Same(v.Types, builder.Types);
+    }
+
+    [Fact]
+    public void ABuilderNeedsATypeMap() => Assert.Throws<ArgumentNullException>(() => new CommandBuilder(null!));
+
+    [Fact]
+    public void ABlendModeOfMvOnlyIsRefusedInAListOfVxAce()
+    {
+        var mv = Empty(Version.Mv);
+        mv.ReplaceCommands(b => b.MoveRoute(r => r.Blend(BlendMode.Screen)));
+        Assert.Contains(43, RouteCodes(mv));
+
+        Assert.Throws<DoesNotExistInVersionException>(() => Empty(Version.VXAce).ReplaceCommands(b => b.MoveRoute(r => r.Blend(BlendMode.Screen))));
+    }
+
+    [Fact]
+    public void TheValuesOfARouteMustBeInTheRangeOfTheEditor()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CommandBuilder(TypeMap.Mv).MoveRoute(r => r.Opacity(256)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CommandBuilder(TypeMap.Mv).MoveRoute(r => r.Opacity(-1)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CommandBuilder(TypeMap.Mv).MoveRoute(r => r.PlaySe("x", volume: 101)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CommandBuilder(TypeMap.Mv).MoveRoute(r => r.PlaySe("x", pitch: 49)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CommandBuilder(TypeMap.Mv).MoveRoute(r => r.PlaySe("x", pitch: 151)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CommandBuilder(TypeMap.Mv).MoveRoute(r => r.PlaySe("x", pan: -101)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CommandBuilder(TypeMap.Mv).MoveRoute(r => r.PlaySe("x", pan: 101)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CommandBuilder(TypeMap.Mv).MoveRoute(r => r.Down(0)));
+    }
+
     [Theory]
     [MemberData(nameof(Versions))]
     public void AShopIsTheFirstThingAndTheLinesAfterIt(Version v)
@@ -380,7 +550,7 @@ public sealed class CommandBuilderTests
     }
 
     [Fact]
-    public void AShopNeedsSomethingToSell() => Assert.Throws<ArgumentException>(() => new CommandBuilder().Shop(_ => { }));
+    public void AShopNeedsSomethingToSell() => Assert.Throws<ArgumentException>(() => new CommandBuilder(TypeMap.Mv).Shop(_ => { }));
 
     [Theory]
     [MemberData(nameof(Versions))]

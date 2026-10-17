@@ -1,4 +1,5 @@
 using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Exceptions;
 using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.Structures.Commands;
@@ -79,11 +80,18 @@ public class ShowPictureCommand : NamedCommand
         get => Get<BlendMode>(9);
         set
         {
-            if (value == BlendMode.Screen && Version != StorageVersion.MV)
-                throw new Exception($"Unsupported blend mode {value}");
+            if (value == BlendMode.Screen)
+                RequireVersion(StorageVersion.MV, nameof(BlendMode) + " " + value);
 
             Set(9, value);
         }
+    }
+
+    // a command made in code does not know its maker yet, so the blend mode that only MV has is refused when it is put into a list of VX Ace
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (version != StorageVersion.MV && Get<BlendMode>(9) == BlendMode.Screen)
+            throw new DoesNotExistInVersionException($"{BlendMode.Screen} exists in MV only");
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

@@ -11,7 +11,7 @@ namespace RPGMDataKit.Data.Structures.Internal;
 /// command, so editing one edits the raw data. The raw commands are only used to read and write the file
 /// (<see cref="LoadRaw"/>, <see cref="ToRaw"/>).
 /// </summary>
-public sealed class CommandList<TCommand> : Collection<NamedCommand> where TCommand : class, ICommand
+public sealed class CommandList<TCommand> : Collection<NamedCommand>, ICommandListTypes where TCommand : class, ICommand
 {
     private readonly StorageVersion _version;
 
@@ -27,6 +27,8 @@ public sealed class CommandList<TCommand> : Collection<NamedCommand> where TComm
 
     /// <summary>The type map of the storage that the container belongs to.</summary>
     public TypeMap Types { get; set; }
+
+    TypeMap ICommandListTypes.Types => Types;
 
     /// <summary>Builds the named commands over the raw commands that were read from the file.</summary>
     public void LoadRaw(List<TCommand>? raw)

@@ -15,6 +15,13 @@ public class MovePlaySeCommand : AbstractMoveCommand
         set => Set(0, value);
     }
 
+    // a new command has an empty sound with what the factory of the maker gives to a new one (MV: volume 90, pitch 100, pan 0)
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (!IsParameterSet(0))
+            Set(0, Map.New<ISE>());
+    }
+
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
         return context.NameFormatter.FormatSoundData(SoundData);

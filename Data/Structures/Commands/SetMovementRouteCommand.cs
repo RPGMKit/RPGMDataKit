@@ -24,6 +24,26 @@ public class SetMovementRouteCommand : NamedCommand
 
     public IList<NamedCommand> Commands => Route.NamedCommands;
 
+    protected override void OnBinding(StorageVersion version)
+    {
+        // a new command is for the player, and its route is empty (the empty command that ends every route), not repeated, not skipped, waited for
+        if (!IsParameterSet(0))
+            Set(0, PlayerEventId);
+
+        if (!IsParameterSet(1))
+        {
+            var route = Map.New<IMoveRoute>();
+            route.Repeat = false;
+            route.Skippable = false;
+            route.Wait = true;
+            route.NamedCommands = [new MovementCommands.MoveEmptyCommand()];
+            Set(1, route);
+        }
+    }
+
+    /// <summary>The number of the event for the player in a route; 0 is the event that runs the commands.</summary>
+    public const int PlayerEventId = -1;
+
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
         var str = context.NameFormatter.FormatEvent(EventId);

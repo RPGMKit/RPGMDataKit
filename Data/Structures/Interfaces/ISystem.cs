@@ -1,6 +1,6 @@
 ﻿namespace RPGMDataKit.Data.Structures.Interfaces;
 
-public interface ISystem
+public interface ISystem : IHasOptionalProperties
 {
     public List<string> Switches { get; }
 

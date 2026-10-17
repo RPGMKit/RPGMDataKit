@@ -14,5 +14,12 @@ public class MoveScriptCommand : AbstractMoveCommand
         set => Set(0, value);
     }
 
+    // a new command has an empty script, not none
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (!IsParameterSet(0))
+            Set(0, "");
+    }
+
     public override string GetParametersDescription(EntityContext context, DumpOptions options) => Script;
 }
