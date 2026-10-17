@@ -157,7 +157,7 @@ public sealed class CommandBuilderTests
         // what the editors make for a new Show Choices with Yes and No (both were looked at in the editors themselves): Cancel is the choice #2,
         // and in MV the first choice is the default one, the window is on the right and has a background
         var container = Empty(v);
-        var header = new ShowChoicesCommand { CancelChoiceIndex = v.Name == "MV" ? 1 : 2 };
+        var header = new ShowChoicesCommand { Cancel = ShowChoicesCommand.CancelType.Choice2 };
 
         container.ReplaceCommands(b => b.Choices(c => c.When("Yes").When("No"), header));
 
@@ -202,7 +202,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        var header = new ShowChoicesCommand { CancelChoiceIndex = v.Name == "MV" ? 1 : 2 }; // the second choice
+        var header = new ShowChoicesCommand { Cancel = ShowChoicesCommand.CancelType.Choice2 }; // the second choice
         container.ReplaceCommands(b => b.Choices(c => c.When("A").When("B"), header));
         Assert.Equal(v.Name == "MV" ? 1 : 2, container.NamedCommands.OfType<ShowChoicesCommand>().Single().CancelChoiceIndex);
 

@@ -168,7 +168,7 @@ The makers write some parameters differently. For these commands a property says
 
 | Command | Property | The raw parameter |
 |---|---|---|
-| Show Choices | `Cancel` (`Disallow`, `Choice`, `Branch`) and `CancelChoice` (from 0) | VX Ace: 0, n+1, 5; MV: -1, n, -2 (`CancelChoiceIndex`) |
+| Show Choices | `Cancel` (`Disallow`, `Branch`, `Choice1` … `Choice6`; VX Ace has up to 4 choices) | VX Ace: 0, 5, n; MV: -1, -2, n-1 (`CancelChoiceIndex`) |
 | Change Equipment | `SlotIndex` (from 0) | VX Ace counts the slots from 0, MV from 1 (`TypeId`) |
 | Get Location Info | `Type` (`InfoType.RegionI` for the region) | the region is 5 in VX Ace and 6 in MV |
 | If, a button | `Button`, and `MvName` (null for the buttons X, Y and Z, which MV has no name for) | a number in VX Ace, a name in MV |

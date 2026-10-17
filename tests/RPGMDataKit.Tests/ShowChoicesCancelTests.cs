@@ -17,15 +17,15 @@ public sealed class ShowChoicesCancelTests
 {
     public static IEnumerable<object[]> Versions() => Version.All.Select(v => new object[] { v });
 
-    private static int Raw(Version v, CancelType type, int choice = 0) => (type, v.Name) switch
-    {
-        (CancelType.Disallow, "MV") => -1,
-        (CancelType.Branch, "MV") => -2,
-        (CancelType.Choice, "MV") => choice,
-        (CancelType.Disallow, _) => 0,
-        (CancelType.Branch, _) => 5,
-        _ => choice + 1,
-    };
+    // the number that the maker writes for what Cancel does
+    private static int Raw(Version v, CancelType type) => v.Name == "MV"
+        ? (int)type
+        : type switch
+        {
+            CancelType.Disallow => 0,
+            CancelType.Branch => 5,
+            _ => (int)type + 1,
+        };
 
     private static ShowChoicesCommand InList(Version v, ShowChoicesCommand command)
     {
@@ -34,44 +34,34 @@ public sealed class ShowChoicesCancelTests
         return command;
     }
 
+    private static readonly CancelType[] InBoth =
+        [CancelType.Disallow, CancelType.Branch, CancelType.Choice1, CancelType.Choice2, CancelType.Choice3, CancelType.Choice4];
+
     public static IEnumerable<object[]> Cancels() =>
-        Version.All.SelectMany(v => new[]
-        {
-            new object[] { v, CancelType.Disallow, 0 },
-            new object[] { v, CancelType.Branch, 0 },
-            new object[] { v, CancelType.Choice, 0 },
-            new object[] { v, CancelType.Choice, 1 },
-            new object[] { v, CancelType.Choice, 3 },
-        });
+        Version.All.SelectMany(v => InBoth.Select(type => new object[] { v, type }));
 
     [Theory]
     [MemberData(nameof(Cancels))]
-    public void WhatIsSetBeforeTheCommandIsInAListGetsTheValueOfItsMaker(Version v, CancelType type, int choice)
+    public void WhatIsSetBeforeTheCommandIsInAListGetsTheValueOfItsMaker(Version v, CancelType type)
     {
         var command = new ShowChoicesCommand { Choices = ["A", "B", "C", "D"], Cancel = type };
-        if (type == CancelType.Choice)
-            command.CancelChoice = choice;
 
         InList(v, command);
 
-        Assert.Equal(Raw(v, type, choice), command.CancelChoiceIndex);
+        Assert.Equal(Raw(v, type), command.CancelChoiceIndex);
         Assert.Equal(type, command.Cancel);
-        Assert.Equal(type == CancelType.Choice ? choice : -1, command.CancelChoice);
         Assert.Equal(type == CancelType.Branch, command.IsCancelChoiceBranch);
     }
 
     [Theory]
     [MemberData(nameof(Cancels))]
-    public void WhatIsSetInAListIsWrittenAtOnce(Version v, CancelType type, int choice)
+    public void WhatIsSetInAListIsWrittenAtOnce(Version v, CancelType type)
     {
         var command = InList(v, new ShowChoicesCommand { Choices = ["A", "B", "C", "D"] });
 
-        if (type == CancelType.Choice)
-            command.CancelChoice = choice;
-        else
-            command.Cancel = type;
+        command.Cancel = type;
 
-        Assert.Equal(Raw(v, type, choice), command.CancelChoiceIndex);
+        Assert.Equal(Raw(v, type), command.CancelChoiceIndex);
         Assert.Equal(type, command.Cancel);
     }
 
@@ -86,50 +76,64 @@ public sealed class ShowChoicesCancelTests
     }
 
     [Theory]
-    [InlineData(-1, CancelType.Disallow, -1)]
-    [InlineData(-2, CancelType.Branch, -1)]
-    [InlineData(0, CancelType.Choice, 0)]
-    [InlineData(1, CancelType.Choice, 1)]
-    [InlineData(3, CancelType.Choice, 3)]
-    [InlineData(5, CancelType.Choice, 5)]
-    public void TheRawValueOfMvIsRead(int raw, CancelType type, int choice)
+    [InlineData(-1, CancelType.Disallow)]
+    [InlineData(-2, CancelType.Branch)]
+    [InlineData(0, CancelType.Choice1)]
+    [InlineData(1, CancelType.Choice2)]
+    [InlineData(3, CancelType.Choice4)]
+    [InlineData(5, CancelType.Choice6)]
+    public void TheRawValueOfMvIsRead(int raw, CancelType type)
     {
         var command = InList(Version.Mv, new ShowChoicesCommand { Choices = ["A"] });
         command.CancelChoiceIndex = raw;
 
-        Assert.Equal((type, choice), (command.Cancel, command.CancelChoice));
+        Assert.Equal(type, command.Cancel);
     }
 
     [Theory]
-    [InlineData(0, CancelType.Disallow, -1)]
-    [InlineData(1, CancelType.Choice, 0)]
-    [InlineData(2, CancelType.Choice, 1)]
-    [InlineData(4, CancelType.Choice, 3)]
-    [InlineData(5, CancelType.Branch, -1)]
-    public void TheRawValueOfVxAceIsRead(int raw, CancelType type, int choice)
+    [InlineData(0, CancelType.Disallow)]
+    [InlineData(1, CancelType.Choice1)]
+    [InlineData(2, CancelType.Choice2)]
+    [InlineData(4, CancelType.Choice4)]
+    [InlineData(5, CancelType.Branch)]
+    public void TheRawValueOfVxAceIsRead(int raw, CancelType type)
     {
         var command = InList(Version.VXAce, new ShowChoicesCommand { Choices = ["A"] });
         command.CancelChoiceIndex = raw;
 
-        Assert.Equal((type, choice), (command.Cancel, command.CancelChoice));
+        Assert.Equal(type, command.Cancel);
     }
+
+    [Fact]
+    public void VxAceHasFourChoicesAndMvSix()
+    {
+        Assert.Equal(4, RawInList(Version.Mv, CancelType.Choice5));
+        Assert.Equal(5, RawInList(Version.Mv, CancelType.Choice6));
+
+        foreach (var type in new[] { CancelType.Choice5, CancelType.Choice6 })
+        {
+            Assert.Throws<DoesNotExistInVersionException>(() => InList(Version.VXAce, new ShowChoicesCommand { Choices = ["A"], Cancel = type }));
+
+            var inVx = InList(Version.VXAce, new ShowChoicesCommand { Choices = ["A"] });
+            Assert.Throws<DoesNotExistInVersionException>(() => inVx.Cancel = type);
+        }
+    }
+
+    private static int RawInList(Version v, CancelType type) => InList(v, new ShowChoicesCommand { Choices = ["A"], Cancel = type }).CancelChoiceIndex;
 
     [Fact]
     public void ACommandOfVxAceCopiedToMvKeepsWhatCancelDoes()
     {
-        foreach (var (type, choice) in new[] { (CancelType.Disallow, -1), (CancelType.Branch, -1), (CancelType.Choice, 2) })
+        foreach (var type in InBoth)
         {
-            var vx = InList(Version.VXAce, new ShowChoicesCommand { Choices = ["A", "B", "C"] });
-            vx.Cancel = type;
-            if (choice >= 0)
-                vx.CancelChoice = choice;
+            var vx = InList(Version.VXAce, new ShowChoicesCommand { Choices = ["A", "B", "C", "D"], Cancel = type });
 
             var mv = InList(Version.Mv, vx.Clone().Cast<ShowChoicesCommand>());
 
-            Assert.Equal((type, choice), (mv.Cancel, mv.CancelChoice));
-            Assert.Equal(Raw(Version.Mv, type, Math.Max(choice, 0)), mv.CancelChoiceIndex);
-            Assert.Equal(["A", "B", "C"], mv.Choices);
-            // the window of a command of MV has what the editor gives: on the right, with a background, the first choice is the default one
+            Assert.Equal(type, mv.Cancel);
+            Assert.Equal((int)type, mv.CancelChoiceIndex); // the number of MV is the number of the value
+            Assert.Equal(["A", "B", "C", "D"], mv.Choices);
+            // the window of a command of MV has what the editor gives: on the right, the first choice is the default one
             Assert.Equal((PositionType.Right, 0), (mv.Position, mv.DefaultChoiceIndex));
         }
     }
@@ -137,15 +141,14 @@ public sealed class ShowChoicesCancelTests
     [Fact]
     public void ACommandOfMvCopiedToVxAceHasOnlyTheChoicesAndTheCancel()
     {
-        var mv = InList(Version.Mv, new ShowChoicesCommand { Choices = ["A", "B"] });
-        mv.CancelChoice = 1;
+        var mv = InList(Version.Mv, new ShowChoicesCommand { Choices = ["A", "B"], Cancel = CancelType.Choice2 });
         mv.Position = PositionType.Left;
 
         var vx = InList(Version.VXAce, mv.Clone().Cast<ShowChoicesCommand>());
 
         Assert.Equal(2, vx.Raw.Parameters!.Count);
         Assert.Equal(2, vx.CancelChoiceIndex);
-        Assert.Equal(1, vx.CancelChoice);
+        Assert.Equal(CancelType.Choice2, vx.Cancel);
     }
 
     [Fact]
@@ -164,6 +167,16 @@ public sealed class ShowChoicesCancelTests
         Assert.Equal((1, PositionType.Middle), (mv.DefaultChoiceIndex, mv.Position));
     }
 
+    [Fact]
+    public void APositionThatIsSetBeforeTheCommandIsInAListIsKept()
+    {
+        var left = InList(Version.Mv, new ShowChoicesCommand { Choices = ["A"], Position = PositionType.Left });
+        var none = InList(Version.Mv, new ShowChoicesCommand { Choices = ["A"] });
+
+        Assert.Equal(PositionType.Left, left.Position);
+        Assert.Equal(PositionType.Right, none.Position);
+    }
+
     // ---- the text dump ----
 
     private static string Describe(Version v, ShowChoicesCommand command)
@@ -180,7 +193,7 @@ public sealed class ShowChoicesCancelTests
         var command = InList(Version.VXAce, new ShowChoicesCommand { Choices = ["Yes", "No", "Maybe"] });
         Assert.Equal("Yes, No, Maybe, (-)", Describe(Version.VXAce, command));
 
-        command.CancelChoice = 2;
+        command.Cancel = CancelType.Choice3;
         Assert.Equal("Yes, No, Maybe, (#3)", Describe(Version.VXAce, command));
 
         command.Cancel = CancelType.Branch;
@@ -193,7 +206,7 @@ public sealed class ShowChoicesCancelTests
         var command = InList(Version.Mv, new ShowChoicesCommand { Choices = ["Yes", "No"] });
         Assert.Equal("Yes, No, (Window, Right, #1, -)", Describe(Version.Mv, command));
 
-        command.CancelChoice = 1;
+        command.Cancel = CancelType.Choice2;
         command.DefaultChoiceIndex = -1;
         Assert.Equal("Yes, No, (Window, Right, -, #2)", Describe(Version.Mv, command));
     }

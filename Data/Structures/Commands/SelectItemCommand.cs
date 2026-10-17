@@ -38,8 +38,6 @@ public class SelectItemCommand : NamedCommand
         set => Set(0, value);
     }
 
-    private bool _typeIsSet;
-
     /// <summary>
     /// The kind of the items to select. MV only: VX Ace selects key items and has no such parameter, so it throws
     /// <c>DoesNotExistInVersionException</c>. A new command of MV selects regular items, as the editor makes it.
@@ -47,31 +45,22 @@ public class SelectItemCommand : NamedCommand
     [DoesNotExistInVersion(StorageVersion.VXAce)]
     public KeyItemType Type
     {
-        get
-        {
-            return Get<KeyItemType>(1);
-        }
-        set
-        {
-            if (IsDetached)
-                _typeIsSet = true;
+        get => Get<KeyItemType>(1);
+        set => Set(1, value);
+    }
 
-            Set(1, value);
-        }
+    protected override void OnBinding(StorageVersion version)
+    {
+        // a new command of MV selects regular items
+        if (version == StorageVersion.MV && !IsParameterSet(1))
+            Set(1, KeyItemType.Regular);
     }
 
     protected override void OnMadeInCodeBound(StorageVersion version)
     {
-        if (version == StorageVersion.VXAce)
-        {
-            // the variable only
-            if (Raw.Parameters is { Count: > 1 } parameters)
-                parameters.RemoveRange(1, parameters.Count - 1);
-        }
-        else if (!_typeIsSet)
-        {
-            Type = KeyItemType.Regular;
-        }
+        // VX Ace has the variable only
+        if (version == StorageVersion.VXAce && Raw.Parameters is { Count: > 1 } parameters)
+            parameters.RemoveRange(1, parameters.Count - 1);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
