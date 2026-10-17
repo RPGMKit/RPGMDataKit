@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using RPGMDataKit.Storages.Serialization;
@@ -18,11 +19,14 @@ public class TypeMap
     private JsonSerializer? _json;
     private bool _readOnly;
 
+    /// <summary>The maker whose classes the map holds (a copy of a map is of the same maker).</summary>
+    public StorageVersion Version { get; private init; }
+
     /// <summary>Built-in map for MV. Read-only: use <see cref="Clone"/> to customize.</summary>
-    public static TypeMap Mv { get; } = FromNamespace("RPGMDataKit.Data.MV.Classes");
+    public static TypeMap Mv { get; } = FromNamespace("RPGMDataKit.Data.MV.Classes", StorageVersion.MV);
 
     /// <summary>Built-in map for VXAce. Read-only: use <see cref="Clone"/> to customize.</summary>
-    public static TypeMap VXAce { get; } = FromNamespace("RPGMDataKit.Data.VXAce.Classes");
+    public static TypeMap VXAce { get; } = FromNamespace("RPGMDataKit.Data.VXAce.Classes", StorageVersion.VXAce);
 
     /// <summary>Registers (or replaces) the implementation of an entity interface.</summary>
     public TypeMap Add<TInterface, TConcrete>() where TConcrete : TInterface
@@ -41,7 +45,7 @@ public class TypeMap
     /// <summary>Returns an editable copy.</summary>
     public TypeMap Clone()
     {
-        var copy = new TypeMap();
+        var copy = new TypeMap { Version = Version };
         foreach (var (key, value) in _map)
             copy._map[key] = value;
 
@@ -110,7 +114,7 @@ public class TypeMap
     /// Maps every entity interface to the only non-abstract class that declares it in
     /// <paramref name="classesNamespace"/> (including nested namespaces).
     /// </summary>
-    private static TypeMap FromNamespace(string classesNamespace)
+    private static TypeMap FromNamespace(string classesNamespace, StorageVersion version)
     {
         var candidates = new Dictionary<Type, List<Type>>();
 
@@ -130,7 +134,7 @@ public class TypeMap
             }
         }
 
-        var map = new TypeMap { _readOnly = true };
+        var map = new TypeMap { _readOnly = true, Version = version };
         foreach (var (entityInterface, types) in candidates)
         {
             if (types.Count == 1)

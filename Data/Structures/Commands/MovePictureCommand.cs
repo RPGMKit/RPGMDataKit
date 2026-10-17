@@ -102,9 +102,10 @@ public class MovePictureCommand : NamedCommand
             throw new DoesNotExistInVersionException($"{BlendMode.Screen} exists in MV only");
     }
 
+    // the second parameter is not used: 0 in MV (it cannot be blank there), nil in VX Ace
     protected override void OnMadeInCodeBound(StorageVersion version)
     {
-        Set(1, 0);
+        Set(1, version == StorageVersion.MV ? 0 : (int?)null);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

@@ -25,7 +25,26 @@ public class IfActorCommand : IfCommand
     public CheckType Check
     {
         get => Get<CheckType>(2);
-        set => Set(2, value);
+        set
+        {
+            Set(2, value);
+            if (value == CheckType.InParty && !IsDetached)
+                DropParam();
+        }
+    }
+
+    // "in the party" has no fourth parameter in the files of the editors; the other kinds have what they check
+    protected override void OnMadeInCodeBound(StorageVersion version)
+    {
+        base.OnMadeInCodeBound(version);
+        if (Check == CheckType.InParty)
+            DropParam();
+    }
+
+    private void DropParam()
+    {
+        if (Raw.Parameters is { Count: > 3 } parameters)
+            parameters.RemoveRange(3, parameters.Count - 3);
     }
 
     public object Param

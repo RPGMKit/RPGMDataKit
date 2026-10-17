@@ -187,15 +187,25 @@ public class ControlVariableCommand : NamedCommand
         set => Set(6, value);
     }
 
+    // game data has seven parameters in the files of the editors for every kind of it (the last two are 0 when the kind needs less)
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (Operand != OperandType.GameData)
+            return;
+
+        for (var i = 5; i <= 6; i++)
+        {
+            if (!IsParameterSet(i))
+                Set(i, 0);
+        }
+    }
+
     // a command made in code gets, like in the files, only the parameters its operand uses
     protected override void OnMadeInCodeBound(StorageVersion version)
     {
         var count = Operand switch
         {
-            OperandType.GameData => Convert.ToInt32(Value1) is (int)GameDataType.Actor or (int)GameDataType.Enemy
-                or (int)GameDataType.Character
-                ? 7
-                : 6,
+            OperandType.GameData => 7,
             OperandType.Random => 6,
             _ => 5,
         };

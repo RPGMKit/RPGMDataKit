@@ -510,12 +510,16 @@ public sealed class CommandBuilder
         /// <summary>The blend mode of the character; Screen is MV only.</summary>
         public RouteBuilder Blend(BlendMode mode) => Add(new MoveChangeBlendModeCommand { BlendMode = mode });
 
-        /// <summary>A sound. The volume is from 0 to 100, the pitch from 50 to 150, the pan (MV only, left to right) from -100 to 100.</summary>
-        public RouteBuilder PlaySe(string name, int volume = 90, int pitch = 100, int pan = 0)
+        /// <summary>
+        /// A sound. The volume is from 0 to 100 (the one the editor gives to a new sound if it is not given: 90 in MV, 80 in VX Ace), the pitch from 50
+        /// to 150, the pan (MV only, left to right) from -100 to 100.
+        /// </summary>
+        public RouteBuilder PlaySe(string name, int? volume = null, int pitch = 100, int pan = 0)
         {
             ArgumentNullException.ThrowIfNull(name);
-            ArgumentOutOfRangeException.ThrowIfLessThan(volume, 0);
-            ArgumentOutOfRangeException.ThrowIfGreaterThan(volume, 100);
+            volume ??= MovePlaySeCommand.DefaultVolume(_types.Version);
+            ArgumentOutOfRangeException.ThrowIfLessThan(volume.Value, 0);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(volume.Value, 100);
             ArgumentOutOfRangeException.ThrowIfLessThan(pitch, 50);
             ArgumentOutOfRangeException.ThrowIfGreaterThan(pitch, 150);
             ArgumentOutOfRangeException.ThrowIfLessThan(pan, -100);
@@ -524,7 +528,7 @@ public sealed class CommandBuilder
             // the sound is of the maker of the list; VX Ace has no pan
             var sound = _types.New<ISE>();
             sound.Name = name;
-            sound.Volume = volume;
+            sound.Volume = volume.Value;
             sound.Pitch = pitch;
             if (sound.HasProperty(nameof(sound.Pan)))
                 sound.Pan = pan;

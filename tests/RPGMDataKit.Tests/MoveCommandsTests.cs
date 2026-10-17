@@ -145,6 +145,14 @@ public sealed class MoveCommandsTests
 
     [Theory]
     [MemberData(nameof(Versions))]
+    public void ANewSoundHasTheVolumeTheEditorGives(Version v)
+    {
+        // 90 in MV, 80 in VX Ace (seen in the editors, in the sounds of the steps of a route)
+        Assert.Equal(v.Name == "MV" ? 90 : 80, InRoute(v, new MovePlaySeCommand()).SoundData.Volume);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
     public void ANewSoundIsEmptyWithTheValuesOfTheFactoryOfTheMaker(Version v)
     {
         var sound = InRoute(v, new MovePlaySeCommand()).SoundData;

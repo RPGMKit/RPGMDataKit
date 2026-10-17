@@ -15,11 +15,18 @@ public class MovePlaySeCommand : AbstractMoveCommand
         set => Set(0, value);
     }
 
-    // a new command has an empty sound with what the factory of the maker gives to a new one (MV: volume 90, pitch 100, pan 0)
+    /// <summary>The volume that the editors give to the sound of a new command of a route: 90 in MV, 80 in VX Ace.</summary>
+    public static int DefaultVolume(StorageVersion version) => version == StorageVersion.MV ? 90 : 80;
+
+    // a new command has an empty sound with the volume of the editor and what the factory of the maker gives (the pitch 100, in MV the pan 0)
     protected override void OnBinding(StorageVersion version)
     {
-        if (!IsParameterSet(0))
-            Set(0, Map.New<ISE>());
+        if (IsParameterSet(0))
+            return;
+
+        var sound = Map.New<ISE>();
+        sound.Volume = DefaultVolume(version);
+        Set(0, sound);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

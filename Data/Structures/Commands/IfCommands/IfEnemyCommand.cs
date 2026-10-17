@@ -20,7 +20,26 @@ public class IfEnemyCommand : IfCommand
     public CheckType Check
     {
         get => Get<CheckType>(2);
-        set => Set(2, value);
+        set
+        {
+            Set(2, value);
+            if (value == CheckType.Appeared && !IsDetached)
+                DropParam();
+        }
+    }
+
+    // "has appeared" has no fourth parameter, the state has the state (the parameter is dropped for the kind that has none, as in the files of the editors)
+    protected override void OnMadeInCodeBound(StorageVersion version)
+    {
+        base.OnMadeInCodeBound(version);
+        if (Check == CheckType.Appeared)
+            DropParam();
+    }
+
+    private void DropParam()
+    {
+        if (Raw.Parameters is { Count: > 3 } parameters)
+            parameters.RemoveRange(3, parameters.Count - 3);
     }
 
     public int Param

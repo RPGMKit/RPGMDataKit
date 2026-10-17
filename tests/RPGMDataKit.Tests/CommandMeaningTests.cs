@@ -1,3 +1,5 @@
+using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Storages;
 using RPGMDataKit.Data.Helpers;
 using RPGMDataKit.Data.Structures.Commands;
 using RPGMDataKit.Data.Structures.Commands.IfCommands;
@@ -214,5 +216,94 @@ public sealed class CommandMeaningTests
         Assert.Equal(4, line.Raw.Parameters!.Count);
         Assert.Equal((70, true), (line.CustomPrice, line.HasCustomPrice));
         Assert.Equal([2, 6, 1, 70], line.Raw.Parameters.Select(Convert.ToInt32)); // the type (armor), the item, the flag of the price, the price
+    }
+
+    // ---- the parameters that the editors write, and nothing else ----
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void TheConditionAboutAnActorHasTheParameterOfItsKindOnly(Version v)
+    {
+        var inParty = InList(v, new IfActorCommand { ActorId = 4, Check = IfActorCommand.CheckType.InParty });
+        var name = InList(v, new IfActorCommand { ActorId = 4, Check = IfActorCommand.CheckType.Name, Param = "Eric" });
+        var state = InList(v, new IfActorCommand { ActorId = 4, Check = IfActorCommand.CheckType.State, Param = 7 });
+
+        Assert.Equal(3, inParty.Raw.Parameters!.Count);   // [4, actor, 0]
+        Assert.Equal(4, name.Raw.Parameters!.Count);
+        Assert.Equal(4, state.Raw.Parameters!.Count);
+
+        name.Check = IfActorCommand.CheckType.InParty;      // changed in a list
+        Assert.Equal(3, name.Raw.Parameters.Count);
+        name.Check = IfActorCommand.CheckType.Skill;
+        name.Param = 9;
+        Assert.Equal([4, 4, 3, 9], name.Raw.Parameters.Select(Convert.ToInt32));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void TheConditionAboutAnEnemyHasTheParameterOfItsKindOnly(Version v)
+    {
+        var appeared = InList(v, new IfEnemyCommand { TroopId = 1, Check = IfEnemyCommand.CheckType.Appeared });
+        var state = InList(v, new IfEnemyCommand { TroopId = 1, Check = IfEnemyCommand.CheckType.State, Param = 5 });
+
+        Assert.Equal(3, appeared.Raw.Parameters!.Count);
+        Assert.Equal(4, state.Raw.Parameters!.Count);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void GameDataOfAVariableHasSevenParametersWhateverTheKind(Version v)
+    {
+        foreach (var kind in new[] { ControlVariableCommand.GameDataType.ItemInInventory, ControlVariableCommand.GameDataType.Actor, ControlVariableCommand.GameDataType.Character, ControlVariableCommand.GameDataType.Other })
+        {
+            var command = InList(v, new ControlVariableCommand
+            {
+                StartVariable = 15, EndVariable = 15, Operand = ControlVariableCommand.OperandType.GameData, Value1 = (int)kind,
+            });
+
+            Assert.Equal(7, command.Raw.Parameters!.Count);
+            Assert.Equal([0, 0], command.Raw.Parameters.Skip(5).Select(Convert.ToInt32)); // what is not told is 0, as in the files
+        }
+
+        Assert.Equal(6, InList(v, new ControlVariableCommand { Operand = ControlVariableCommand.OperandType.Random, Value1 = 1, Value2 = 6 }).Raw.Parameters!.Count);
+        Assert.Equal(5, InList(v, new ControlVariableCommand { Operand = ControlVariableCommand.OperandType.Constant, Value1 = 3 }).Raw.Parameters!.Count);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void StoppingTheTimerHasNoSeconds(Version v)
+    {
+        var start = InList(v, new ControlTimerCommand { State = OnOffState.On, Seconds = 90 });
+        var stop = InList(v, new ControlTimerCommand { State = OnOffState.Off });
+
+        Assert.Equal([0, 90], start.Raw.Parameters!.Select(Convert.ToInt32));
+        Assert.Equal([1], stop.Raw.Parameters!.Select(Convert.ToInt32));
+
+        stop.State = OnOffState.On;
+        stop.Seconds = 10;
+        Assert.Equal([0, 10], stop.Raw.Parameters!.Select(Convert.ToInt32));
+        stop.State = OnOffState.Off;
+        Assert.Equal([1], stop.Raw.Parameters!.Select(Convert.ToInt32));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void TheSecondParameterOfMovePictureIsZeroInMvAndNilInVxAce(Version v)
+    {
+        var command = InList(v, new MovePictureCommand { Layer = 3, Frames = 30 });
+
+        if (IsMv(v))
+            Assert.Equal(0, command.Raw.Parameters![1]);
+        else
+            Assert.Null(command.Raw.Parameters![1]);
+    }
+
+    [Fact]
+    public void TheTypeMapKnowsItsMaker()
+    {
+        Assert.Equal(StorageVersion.MV, TypeMap.Mv.Version);
+        Assert.Equal(StorageVersion.VXAce, TypeMap.VXAce.Version);
+        Assert.Equal(StorageVersion.VXAce, TypeMap.VXAce.Clone().Version);
+        Assert.Equal(StorageVersion.MV, TypeMap.Mv.Clone().Version);
     }
 }

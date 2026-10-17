@@ -11,7 +11,25 @@ public class ControlTimerCommand : NamedCommand
     public OnOffState State
     {
         get => Get<OnOffState>(0);
-        set => Set(0, value);
+        set
+        {
+            Set(0, value);
+            if (value == OnOffState.Off && !IsDetached)
+                DropSeconds();
+        }
+    }
+
+    // stopping the timer has no seconds in the files of the editors
+    protected override void OnMadeInCodeBound(StorageVersion version)
+    {
+        if (State == OnOffState.Off)
+            DropSeconds();
+    }
+
+    private void DropSeconds()
+    {
+        if (Raw.Parameters is { Count: > 1 } parameters)
+            parameters.RemoveRange(1, parameters.Count - 1);
     }
 
     public int Seconds
