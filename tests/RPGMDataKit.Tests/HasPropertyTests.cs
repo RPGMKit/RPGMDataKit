@@ -59,7 +59,7 @@ public sealed class HasPropertyTests
 
     private static T InList<T>(Version v, T command) where T : RPGMDataKit.Data.Structures.Internal.NamedCommand
     {
-        EmptyCommandTests.EventOf(v).AppendCommands(b => b.Add(command));
+        EmptyCommandTests.EventOf(v).Append(b => b.Add(command));
 
         return command;
     }

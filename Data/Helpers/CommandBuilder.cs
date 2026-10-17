@@ -14,7 +14,7 @@ namespace RPGMDataKit.Data.Helpers;
 /// the blocks hold, so that the commands that open, divide and close a block do not have to be put one by one. The commands go in the order
 /// of the calls; a block takes the function that makes its commands:
 /// <code>
-/// container.AppendCommands(b => b
+/// container.Append(b => b
 ///     .Text("Hello", "again")
 ///     .IfSwitch(5, then: t => t.Text("On"), @else: e => e.Add(new WaitCommand { FrameCount = 30 }))
 ///     .Choices(c => c.When("Yes", y => y.Text("Fine")).When("No").Cancel()));

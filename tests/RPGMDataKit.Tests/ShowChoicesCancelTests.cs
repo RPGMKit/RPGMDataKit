@@ -29,7 +29,7 @@ public sealed class ShowChoicesCancelTests
 
     private static ShowChoicesCommand InList(Version v, ShowChoicesCommand command)
     {
-        EmptyCommandTests.EventOf(v).AppendCommands(b => b.Add(command));
+        EmptyCommandTests.EventOf(v).Append(b => b.Add(command));
 
         return command;
     }

@@ -126,7 +126,7 @@ A list of commands is flat: an `If` with an `Else` is five commands in the right
 using RPGMDataKit.Data.Helpers;
 using RPGMDataKit.Data.Structures.Commands;
 
-page.AppendCommands(b => b
+page.Append(b => b
     .Text("Hello", "again")                               // a text, one line for each string
     .IfSwitch(5,
         then: t => t.Text("The switch is on"),
@@ -145,7 +145,7 @@ page.AppendCommands(b => b
 - `Battle(troopId, win, escape, lose)`: the branches that are given decide what the battle can do (`escape` sets "Can Escape", `lose` sets "Continue Even When Loser"). The Win branch is there whenever there is another one.
 - `MoveRoute(r => r.Down(2).Wait(30).TurnLeft().Speed(MoveChangeSpeedCommand.SpeedType.Fasterx2), eventId: -1, repeat: false, skippable: false, wait: true)`: Set Movement Route with the steps in the order they are walked (`Down`, `Left`, `Up`, `Forward(times)`, `Jump`, `Wait`, the turns, `SwitchOn`, `Speed`, `Frequency`, `Image`, `Opacity`, `Blend`, `PlaySe`, `Script` and the others, `Add` for any step). The empty command that ends every route is added, the line after the command for each step (the command 505, which the editors write and show the route from) is added too, and the steps get the values the editor of the maker of the list gives a new one. The event is -1 for the player (the editors' default), 0 for the event that runs the commands.
 - `Shop(s => s.Item(1).Weapon(4, price: 70).Armor(6), purchaseOnly: false)`: the goods in the order they are sold, the first one is the shop command and the others are the lines after it; without a price a thing is sold at the price of the database.
-- `AppendCommands` puts the commands at the end of the list (before the empty command that ends it), `InsertCommands(index, ...)` before the command with the index (at the end of a block, into that block), `ReplaceCommands` instead of all of them. They set the empty commands and the indents of the whole list afterwards, so the list is as the editor makes it.
+- `Append` puts the commands at the end of the list (before the empty command that ends it), `InsertAt(index, ...)` in place of the command with the index, which goes down, as the editors do (the end of a block is its empty command, so give its index to put the commands at the end of the block; the length of the list is the end of it), `Replace` instead of all of them, `ReplaceAt(index, ...)` instead of the command with the index, `RemoveAt(index)`. Each of them but `RemoveAt` takes the function of the builder or commands that are made by hand (`page.Append(new WaitCommand())`, `page.ReplaceAt(3, new CommentCommand { Comment = "x" })`; the lines of a command of several lines are then to be given too). A command that is replaced or removed goes with all it holds: a text with its lines, an `If` with its branches up to `Branch End`, a movement route with its lines. The index of a line of a command of several lines (text, scrolling text, comment, script, shop, movement route) and of what divides or ends a block (`When`, `When Cancel`, `Branch End`, `Else`, `End Loop`, `If Win`...) is refused by all of them, and the empty command that ends a block or the list is refused by `ReplaceAt` and `RemoveAt`: a `CommandPlaceException` says where to go instead. They set the empty commands, the lines of the movement routes and the indents of the whole list afterwards, so the list is as the editor makes it.
 - The commands of the builder have the parameters that the editors write for the maker of the list: for example Cancel of `Show Choices` is `-1`/`-2` in MV and `0`/`5` in VX Ace, and `When Cancel` has `[6, null]` in MV and nothing in VX Ace.
 
 #### Indents, empty commands and structure
@@ -158,9 +158,13 @@ EmptyCommandHelper.SetupEmptyCommands(page);       // adds the missing empty com
 IndentHelper.ValidateIndents(page);                // throws if an indent is not the one of its place
 EmptyCommandHelper.ValidateEmptyCommands(page);    // throws if an empty command is missing or extra
 IndentHelper.ValidateStructure(page);              // throws if the blocks are not closed or are mixed up
+RouteLinesHelper.SetupRouteLines(page);            // writes the lines (505) after each Set Movement Route again from its route
+RouteLinesHelper.ValidateRouteLines(page);         // throws if the lines are not the steps of the route
 ```
 
-The checks throw `CommandIndentException`, `EmptyCommandException` and `CommandStructureException`. All of them derive from `CommandListException` and say which command is the first wrong one (`CommandIndex`, `CommandCode`). Loading does not check or change the commands; the text dump (`DumpHelper.Dump`) checks the indents.
+The route of Set Movement Route is what counts (the engines run it from the command); the editors also write a line (the command 505) for each step of it and show the route from them, so after the steps of `SetMovementRouteCommand.Route` are changed the lines are written again by `SetupRouteLines`. A line that is changed by itself is written again from the route too.
+
+The checks throw `CommandIndentException`, `EmptyCommandException`, `CommandStructureException` and `RouteLinesException`. All of them derive from `CommandListException` and say which command is the first wrong one (`CommandIndex`, `CommandCode`). Loading does not check or change the commands; the text dump (`DumpHelper.Dump`) checks the indents.
 
 #### Commands that differ between VX Ace and MV
 
@@ -177,7 +181,7 @@ Some parameters exist in one maker only: the position, the background and the de
 
 ```csharp
 var choices = vxPage.NamedCommands.OfType<ShowChoicesCommand>().First();
-mvPage.AppendCommands(b => b.Add(choices.Clone()));   // Cancel, the choices... as MV writes them; the window gets what the editor of MV gives
+mvPage.Append(b => b.Add(choices.Clone()));   // Cancel, the choices... as MV writes them; the window gets what the editor of MV gives
 ```
 
 ### Your own entity classes

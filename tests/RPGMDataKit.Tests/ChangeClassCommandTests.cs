@@ -15,7 +15,7 @@ public sealed class ChangeClassCommandTests
     private static ChangeClassCommand Made(Version v, ChangeClassCommand command)
     {
         var container = EmptyCommandTests.EventOf(v);
-        container.AppendCommands(b => b.Add(command));
+        container.Append(b => b.Add(command));
 
         return command;
     }

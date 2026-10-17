@@ -38,7 +38,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b
+        container.Replace(b => b
             .Text("a", "b")
             .IfSwitch(5, then: t => t.Text("on"), @else: e => e.Add(new WaitCommand { FrameCount = 30 })));
 
@@ -54,7 +54,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Text("a\r\nb", "c", "d\ne\r", "", "f\n"));
+        container.Replace(b => b.Text("a\r\nb", "c", "d\ne\r", "", "f\n"));
 
         // a, b | c | d, e | an empty line for "" | f and the empty one after its line break
         Expect("101@0 401@0 401@0 401@0 401@0 401@0 401@0 401@0 401@0 0@0", container);
@@ -68,7 +68,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Text(new ShowTextBaseCommand { Face = "Actor1" }, "x\r\ny"));
+        container.Replace(b => b.Text(new ShowTextBaseCommand { Face = "Actor1" }, "x\r\ny"));
 
         Assert.Equal(["x", "y"], container.NamedCommands.OfType<ShowTextLineCommand>().Select(c => c.Text));
         Assert.Equal("Actor1", container.NamedCommands.OfType<ShowTextBaseCommand>().Single().Face);
@@ -80,10 +80,10 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.IfSwitch(1));
+        container.Replace(b => b.IfSwitch(1));
         Expect("111@0 0@1 412@0 0@0", container);
 
-        container.ReplaceCommands(b => b.IfSwitch(1, @else: _ => { }));
+        container.Replace(b => b.IfSwitch(1, @else: _ => { }));
         Expect("111@0 0@1 411@0 0@1 412@0 0@0", container);
     }
 
@@ -93,7 +93,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b
+        container.Replace(b => b
             .IfSwitch(3, state: OnOffState.Off)
             .IfVariable(4, IfVariableCommand.OperatorType.Gte, 10)
             .IfVariableWithVariable(5, IfVariableCommand.OperatorType.Lt, 6)
@@ -122,7 +122,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Choices(c => c
+        container.Replace(b => b.Choices(c => c
             .When("Yes", y => y.Text("ok"))
             .When("No")
             .Cancel()));
@@ -142,7 +142,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Choices(c => c.When("A").When("B")));
+        container.Replace(b => b.Choices(c => c.When("A").When("B")));
 
         Expect("102@0 402@0 0@1 402@0 0@1 404@0 0@0", container);
         var choices = container.NamedCommands.OfType<ShowChoicesCommand>().Single();
@@ -159,7 +159,7 @@ public sealed class CommandBuilderTests
         var container = Empty(v);
         var header = new ShowChoicesCommand { Cancel = ShowChoicesCommand.CancelType.Choice2 };
 
-        container.ReplaceCommands(b => b.Choices(c => c.When("Yes").When("No"), header));
+        container.Replace(b => b.Choices(c => c.When("Yes").When("No"), header));
 
         Expect("102@0 402@0 0@1 402@0 0@1 404@0 0@0", container);
         var parameters = container.NamedCommands[0].Raw.Parameters!;
@@ -174,7 +174,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Choices(c => c.When("A"), new ShowChoicesCommand { Position = ShowChoicesCommand.PositionType.Left }));
+        container.Replace(b => b.Choices(c => c.When("A"), new ShowChoicesCommand { Position = ShowChoicesCommand.PositionType.Left }));
 
         if (v.Name == "MV")
             Assert.Equal(ShowChoicesCommand.PositionType.Left, container.NamedCommands.OfType<ShowChoicesCommand>().Single().Position);
@@ -186,7 +186,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Choices(c => c.When("A").Cancel()));
+        container.Replace(b => b.Choices(c => c.When("A").Cancel()));
 
         var choices = container.NamedCommands.OfType<ShowChoicesCommand>().Single();
         Assert.Equal(v.Name == "MV" ? 5 : 2, choices.Raw.Parameters!.Count); // VX Ace has the choices and the cancel only
@@ -203,7 +203,7 @@ public sealed class CommandBuilderTests
         var container = Empty(v);
 
         var header = new ShowChoicesCommand { Cancel = ShowChoicesCommand.CancelType.Choice2 }; // the second choice
-        container.ReplaceCommands(b => b.Choices(c => c.When("A").When("B"), header));
+        container.Replace(b => b.Choices(c => c.When("A").When("B"), header));
         Assert.Equal(v.Name == "MV" ? 1 : 2, container.NamedCommands.OfType<ShowChoicesCommand>().Single().CancelChoiceIndex);
 
         var branchHeader = new ShowChoicesCommand();
@@ -224,20 +224,20 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Battle(5, win: w => w.Add(new WaitCommand { FrameCount = 1 }), escape: _ => { }));
+        container.Replace(b => b.Battle(5, win: w => w.Add(new WaitCommand { FrameCount = 1 }), escape: _ => { }));
         Expect("301@0 601@0 230@1 0@1 602@0 0@1 604@0 0@0", container);
         var battle = container.NamedCommands.OfType<BattleProcessingCommand>().Single();
         Assert.Equal((5, true, false), (battle.SourceId, battle.CanEscape, battle.CanLoose));
 
-        container.ReplaceCommands(b => b.Battle(5, lose: _ => { }));
+        container.Replace(b => b.Battle(5, lose: _ => { }));
         Expect("301@0 601@0 0@1 603@0 0@1 604@0 0@0", container);
         battle = container.NamedCommands.OfType<BattleProcessingCommand>().Single();
         Assert.Equal((false, true), (battle.CanEscape, battle.CanLoose));
 
-        container.ReplaceCommands(b => b.Battle(5, escape: _ => { }, lose: _ => { }));
+        container.Replace(b => b.Battle(5, escape: _ => { }, lose: _ => { }));
         Expect("301@0 601@0 0@1 602@0 0@1 603@0 0@1 604@0 0@0", container);
 
-        container.ReplaceCommands(b => b.Battle(5));
+        container.Replace(b => b.Battle(5));
         Expect("301@0 0@0", container);
     }
 
@@ -251,7 +251,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.ScrollingText("a\r\nb", "c"));
+        container.Replace(b => b.ScrollingText("a\r\nb", "c"));
 
         Expect("105@0 405@0 405@0 405@0 0@0", container);
         var header = container.NamedCommands.OfType<ShowScrollingTextBaseCommand>().Single();
@@ -265,11 +265,11 @@ public sealed class CommandBuilderTests
     {
         // a text is not a block: no empty command after its lines, only the one that ends the whole list
         var container = Empty(v);
-        container.ReplaceCommands(b => b.ScrollingText("a", "b").Add(new WaitCommand()).Text("c"));
+        container.Replace(b => b.ScrollingText("a", "b").Add(new WaitCommand()).Text("c"));
         Expect("105@0 405@0 405@0 230@0 101@0 401@0 0@0", container);
 
         // and the same when the commands are added in another call: they go before the empty command at the end
-        container.AppendCommands(b => b.Add(new WaitCommand()));
+        container.Append(b => b.Add(new WaitCommand()));
         Expect("105@0 405@0 405@0 230@0 101@0 401@0 230@0 0@0", container);
     }
 
@@ -285,7 +285,7 @@ public sealed class CommandBuilderTests
         IndentHelper.SetupIndents(container); // the commands are made by hand, so they have no indents yet; the ones of a file have
         Expect("125@0 125@0 0@0", container);
 
-        container.InsertCommands(1, b => b.ScrollingText("a"));
+        container.InsertAt(1, b => b.ScrollingText("a"));
 
         Expect("125@0 105@0 405@0 125@0 0@0", container);
     }
@@ -296,7 +296,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.ScrollingText(new ShowScrollingTextBaseCommand { Speed = 5, NoFastForward = true }, "x"));
+        container.Replace(b => b.ScrollingText(new ShowScrollingTextBaseCommand { Speed = 5, NoFastForward = true }, "x"));
 
         var header = container.NamedCommands.OfType<ShowScrollingTextBaseCommand>().Single();
         Assert.Equal((5, true), (header.Speed, header.NoFastForward));
@@ -308,7 +308,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b
+        container.Replace(b => b
             .IfWeapon(3, includeEquipment: true)
             .IfArmor(4)
             .IfTimer(60, IfTimerCommand.OperatorType.Lte)
@@ -362,7 +362,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.MoveRoute(r => r.Down(2).Wait(30).TurnLeft()));
+        container.Replace(b => b.MoveRoute(r => r.Down(2).Wait(30).TurnLeft()));
 
         Expect("205@0 505@0 505@0 505@0 505@0 0@0", container); // the route, and a line after it for each step
         var command = container.NamedCommands.OfType<SetMovementRouteCommand>().Single();
@@ -378,7 +378,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.MoveRoute(r => r.Down().Jump(2, -1).Wait(30).Script("x = 1").Speed(MoveChangeSpeedCommand.SpeedType.Fasterx2)));
+        container.Replace(b => b.MoveRoute(r => r.Down().Jump(2, -1).Wait(30).Script("x = 1").Speed(MoveChangeSpeedCommand.SpeedType.Fasterx2)));
 
         var steps = container.NamedCommands.OfType<SetMovementRouteCommand>().Single().Route.NamedCommands.Where(c => c.Code != 0).ToList();
         var lines = container.NamedCommands.OfType<MovementRouteCommand>().ToList();
@@ -404,7 +404,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.MoveRoute(_ => { }));
+        container.Replace(b => b.MoveRoute(_ => { }));
 
         Expect("205@0 0@0", container);
     }
@@ -418,7 +418,7 @@ public sealed class CommandBuilderTests
 
         Assert.Same(step, line.MoveCommand); // it has no maker yet
 
-        EmptyCommandTests.EventOf(v).AppendCommands(b => b.Add(line));
+        EmptyCommandTests.EventOf(v).Append(b => b.Add(line));
 
         Assert.IsAssignableFrom<IMoveCommand>(line.Raw.Parameters![0]);
         Assert.Equal(15, line.MoveCommand.Code);
@@ -431,7 +431,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.MoveRoute(r => r.Forward(), eventId: 3, repeat: true, skippable: true, wait: false));
+        container.Replace(b => b.MoveRoute(r => r.Forward(), eventId: 3, repeat: true, skippable: true, wait: false));
 
         var command = container.NamedCommands.OfType<SetMovementRouteCommand>().Single();
         Assert.Equal(3, command.EventId);
@@ -444,7 +444,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.MoveRoute(_ => { }));
+        container.Replace(b => b.MoveRoute(_ => { }));
 
         Assert.Equal([0], RouteCodes(container));
     }
@@ -455,7 +455,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Add(new SetMovementRouteCommand()));
+        container.Replace(b => b.Add(new SetMovementRouteCommand()));
 
         var command = container.NamedCommands.OfType<SetMovementRouteCommand>().Single();
         Assert.Equal(-1, command.EventId);
@@ -469,7 +469,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.MoveRoute(r => r.Wait().Speed(MoveChangeSpeedCommand.SpeedType.Fasterx2)
+        container.Replace(b => b.MoveRoute(r => r.Wait().Speed(MoveChangeSpeedCommand.SpeedType.Fasterx2)
             .Frequency(MoveChangeFrequencyCommand.FrequencyType.Higher).Opacity(128).Image("Actor1", 2).SwitchOn(5).Script("x = 1")));
 
         var steps = container.NamedCommands.OfType<SetMovementRouteCommand>().Single().Route.NamedCommands;
@@ -489,7 +489,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.MoveRoute(r => r
+        container.Replace(b => b.MoveRoute(r => r
             .Random().TowardPlayer().AwayFromPlayer().Jump(2, -1)
             .TurnDown().TurnRight().TurnUp().Turn90Right().Turn90Left().Turn180().Turn90RightOrLeft().TurnAtRandom().TurnTowardPlayer().TurnAwayFromPlayer()
             .SwitchOff(2).WalkingAnimation(true).WalkingAnimation(false).SteppingAnimation(true).SteppingAnimation(false)
@@ -509,7 +509,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.MoveRoute(r => r.PlaySe("Absorb1", volume: 80, pitch: 120, pan: 30)));
+        container.Replace(b => b.MoveRoute(r => r.PlaySe("Absorb1", volume: 80, pitch: 120, pan: 30)));
 
         var sound = container.NamedCommands.OfType<SetMovementRouteCommand>().Single().Route.NamedCommands.OfType<MovePlaySeCommand>().Single().SoundData;
         Assert.Equal(("Absorb1", 80, 120), (sound.Name, sound.Volume, sound.Pitch));
@@ -525,7 +525,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.IfSwitch(1, then: t => t.MoveRoute(r => r.Up())));
+        container.Replace(b => b.IfSwitch(1, then: t => t.MoveRoute(r => r.Up())));
 
         Expect("111@0 205@1 505@1 0@1 412@0 0@0", container);
     }
@@ -552,10 +552,10 @@ public sealed class CommandBuilderTests
     public void ABlendModeOfMvOnlyIsRefusedInAListOfVxAce()
     {
         var mv = Empty(Version.Mv);
-        mv.ReplaceCommands(b => b.MoveRoute(r => r.Blend(BlendMode.Screen)));
+        mv.Replace(b => b.MoveRoute(r => r.Blend(BlendMode.Screen)));
         Assert.Contains(43, RouteCodes(mv));
 
-        Assert.Throws<DoesNotExistInVersionException>(() => Empty(Version.VXAce).ReplaceCommands(b => b.MoveRoute(r => r.Blend(BlendMode.Screen))));
+        Assert.Throws<DoesNotExistInVersionException>(() => Empty(Version.VXAce).Replace(b => b.MoveRoute(r => r.Blend(BlendMode.Screen))));
     }
 
     [Fact]
@@ -577,7 +577,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Shop(s => s.Item(1).Weapon(4, price: 70).Armor(6), purchaseOnly: true));
+        container.Replace(b => b.Shop(s => s.Item(1).Weapon(4, price: 70).Armor(6), purchaseOnly: true));
 
         Expect("302@0 605@0 605@0 0@0", container); // a shop is not a block: no empty command between the lines
         var first = container.NamedCommands.OfType<ShopProcessingCommand>().Single();
@@ -596,7 +596,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Shop(s => s.Item(9)));
+        container.Replace(b => b.Shop(s => s.Item(9)));
 
         Expect("302@0 0@0", container);
         Assert.False(container.NamedCommands.OfType<ShopProcessingCommand>().Single().PurchaseOnly);
@@ -611,7 +611,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Loop(l => l.IfSwitch(2, then: t => t.BreakLoop())));
+        container.Replace(b => b.Loop(l => l.IfSwitch(2, then: t => t.BreakLoop())));
 
         Expect("112@0 111@1 113@2 0@2 412@1 0@1 413@0 0@0", container);
     }
@@ -622,7 +622,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.ReplaceCommands(b => b.Comment("a", "b", "c").Script("x", "y"));
+        container.Replace(b => b.Comment("a", "b", "c").Script("x", "y"));
 
         Expect("108@0 408@0 408@0 355@0 655@0 0@0", container);
         Assert.Equal("a", container.NamedCommands.OfType<CommentCommand>().Single().Comment);
@@ -639,7 +639,7 @@ public sealed class CommandBuilderTests
     {
         var container = EmptyCommandTests.EventOf(v, 230, 0);
 
-        container.AppendCommands(b => b.IfSwitch(1));
+        container.Append(b => b.IfSwitch(1));
 
         Expect("230@0 111@0 0@1 412@0 0@0", container);
     }
@@ -650,7 +650,7 @@ public sealed class CommandBuilderTests
     {
         var container = EmptyCommandTests.EventOf(v, 230, 0, 0);
 
-        container.AppendCommands(b => b.Add(new WaitCommand()));
+        container.Append(b => b.Add(new WaitCommand()));
 
         Expect("230@0 230@0 0@0", container);
     }
@@ -661,7 +661,7 @@ public sealed class CommandBuilderTests
     {
         var container = EmptyCommandTests.EventOf(v, 230);
 
-        container.AppendCommands(b => b.Add(new WaitCommand()));
+        container.Append(b => b.Add(new WaitCommand()));
 
         Expect("230@0 230@0 0@0", container);
     }
@@ -672,7 +672,7 @@ public sealed class CommandBuilderTests
     {
         var container = Empty(v);
 
-        container.AppendCommands(b => b.Add(new WaitCommand()));
+        container.Append(b => b.Add(new WaitCommand()));
 
         Expect("230@0 0@0", container);
     }
@@ -682,10 +682,10 @@ public sealed class CommandBuilderTests
     public void InsertAtTheEndOfABranchGoesIntoTheBranch(Version v)
     {
         var container = Empty(v);
-        container.ReplaceCommands(b => b.IfSwitch(1, then: t => t.Add(new WaitCommand())));
+        container.Replace(b => b.IfSwitch(1, then: t => t.Add(new WaitCommand())));
         Expect("111@0 230@1 0@1 412@0 0@0", container);
 
-        container.InsertCommands(3, b => b.Add(new WaitCommand())); // before Branch End
+        container.InsertAt(2, b => b.Add(new WaitCommand())); // before the empty command that ends the branch: at the end of the branch
 
         Expect("111@0 230@1 230@1 0@1 412@0 0@0", container);
     }
@@ -695,12 +695,12 @@ public sealed class CommandBuilderTests
     public void InsertInTheMiddleOfAListKeepsTheRest(Version v)
     {
         var container = Empty(v);
-        container.ReplaceCommands(b => b.Add(new WaitCommand()).IfSwitch(1, then: t => t.Add(new WaitCommand())));
+        container.Replace(b => b.Add(new WaitCommand()).IfSwitch(1, then: t => t.Add(new WaitCommand())));
 
-        container.InsertCommands(0, b => b.Text("first"));
+        container.InsertAt(0, b => b.Text("first"));
         Expect("101@0 401@0 230@0 111@0 230@1 0@1 412@0 0@0", container);
 
-        container.InsertCommands(4, b => b.IfSwitch(2)); // before the Wait in the branch
+        container.InsertAt(4, b => b.IfSwitch(2)); // before the Wait in the branch
         Expect("101@0 401@0 230@0 111@0 111@1 0@2 412@1 230@1 0@1 412@0 0@0", container);
     }
 
@@ -709,13 +709,13 @@ public sealed class CommandBuilderTests
     public void ABattleWithoutBranchesBeforeABranchOfAnotherOneIsNotTakenForItsBranch(Version v)
     {
         var container = Empty(v);
-        container.ReplaceCommands(b => b.Battle(1, win: w => w.Battle(2), escape: _ => { }));
+        container.Replace(b => b.Battle(1, win: w => w.Battle(2), escape: _ => { }));
         Expect("301@0 601@0 301@1 0@1 602@0 0@1 604@0 0@0", container);
 
-        container.InsertCommands(4, b => b.Battle(3)); // before the empty command that ends Win
+        container.InsertAt(3, b => b.Battle(3)); // before the empty command that ends Win
         Expect("301@0 601@0 301@1 301@1 0@1 602@0 0@1 604@0 0@0", container);
 
-        container.InsertCommands(5, b => b.Battle(4)); // at the end of Win, after the empty command of it
+        container.InsertAt(4, b => b.Battle(4)); // the same place again: the empty command that ends Win is at the index 4 now
         Expect("301@0 601@0 301@1 301@1 301@1 0@1 602@0 0@1 604@0 0@0", container);
     }
 
@@ -725,11 +725,11 @@ public sealed class CommandBuilderTests
     {
         var container = EmptyCommandTests.EventOf(v, 230, 230, 0);
 
-        container.ReplaceCommands(b => b.Text("only"));
+        container.Replace(b => b.Text("only"));
         Expect("101@0 401@0 0@0", container);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => container.InsertCommands(-1, _ => { }));
-        Assert.Throws<ArgumentOutOfRangeException>(() => container.InsertCommands(4, _ => { }));
+        Assert.Throws<ArgumentOutOfRangeException>(() => container.InsertAt(-1, _ => { }));
+        Assert.Throws<ArgumentOutOfRangeException>(() => container.InsertAt(4, _ => { }));
     }
 
     [Theory]
@@ -738,7 +738,7 @@ public sealed class CommandBuilderTests
     {
         var container = EmptyCommandTests.EventOf(v, 230, 0);
 
-        container.ReplaceCommands(_ => { });
+        container.Replace(_ => { });
 
         Expect("0@0", container);
     }
@@ -755,7 +755,7 @@ public sealed class CommandBuilderTests
             var expected = new List<(int Code, int Indent)>();
             var container = Empty(v);
 
-            container.ReplaceCommands(b => Fill(random, b, expected, 0, 0));
+            container.Replace(b => Fill(random, b, expected, 0, 0));
             expected.Add((0, 0)); // the end of the list
 
             Assert.Equal(string.Join(" ", expected.Select(c => $"{c.Code}@{c.Indent}")), Shape(container));
