@@ -244,6 +244,112 @@ public sealed class CommandBuilderTests
 
     [Theory]
     [MemberData(nameof(Versions))]
+    public void ScrollingTextIsCutIntoLinesLikeText(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.ScrollingText("a\r\nb", "c"));
+
+        Expect("105@0 405@0 405@0 405@0 0@0", container);
+        var header = container.NamedCommands.OfType<ShowScrollingTextBaseCommand>().Single();
+        Assert.Equal((2, false), (header.Speed, header.NoFastForward)); // what the editor gives to a new one
+        Assert.Equal(["a", "b", "c"], container.NamedCommands.OfType<ShowScrollingTextLine>().Select(c => c.Text));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ACommandAfterATextIsRightAfterItAndTheEmptyCommandStaysAtTheEndOfTheList(Version v)
+    {
+        // a text is not a block: no empty command after its lines, only the one that ends the whole list
+        var container = Empty(v);
+        container.ReplaceCommands(b => b.ScrollingText("a", "b").Add(new WaitCommand()).Text("c"));
+        Expect("105@0 405@0 405@0 230@0 101@0 401@0 0@0", container);
+
+        // and the same when the commands are added in another call: they go before the empty command at the end
+        container.AppendCommands(b => b.Add(new WaitCommand()));
+        Expect("105@0 405@0 405@0 230@0 101@0 401@0 230@0 0@0", container);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ATextInsertedIntoTheMiddleOfAListHasNoEmptyCommandAfterIt(Version v)
+    {
+        // Change Gold, Change Gold, Empty Command: a text at the index 1 goes between the two, and the one empty command stays at the end
+        var container = Empty(v);
+        container.NamedCommands.Add(new ChangeGoldCommand());
+        container.NamedCommands.Add(new ChangeGoldCommand());
+        container.NamedCommands.Add(new EmptyCommand());
+        IndentHelper.SetupIndents(container); // the commands are made by hand, so they have no indents yet; the ones of a file have
+        Expect("125@0 125@0 0@0", container);
+
+        container.InsertCommands(1, b => b.ScrollingText("a"));
+
+        Expect("125@0 105@0 405@0 125@0 0@0", container);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ScrollingTextKeepsTheSpeedOfItsHeader(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.ScrollingText(new ShowScrollingTextBaseCommand { Speed = 5, NoFastForward = true }, "x"));
+
+        var header = container.NamedCommands.OfType<ShowScrollingTextBaseCommand>().Single();
+        Assert.Equal((5, true), (header.Speed, header.NoFastForward));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void TheOtherConditionsHaveShortcutsToo(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b
+            .IfWeapon(3, includeEquipment: true)
+            .IfArmor(4)
+            .IfTimer(60, IfTimerCommand.OperatorType.Lte)
+            .IfEventFacing(2, Direction.Left)
+            .IfVehicle(VehicleType.Airship)
+            .IfActorInParty(1)
+            .IfActorName(1, "Eric")
+            .IfActorClass(1, 5)
+            .IfActorSkill(1, 6)
+            .IfActorWeapon(1, 7)
+            .IfActorArmor(1, 8)
+            .IfActorState(1, 9)
+            .IfEnemyAppeared(0)
+            .IfEnemyState(1, 10));
+
+        var weapon = container.NamedCommands.OfType<IfWeaponCommand>().Single();
+        Assert.Equal((3, true), (weapon.WeaponId, weapon.IncludeEquipment));
+        var armor = container.NamedCommands.OfType<IfArmorCommand>().Single();
+        Assert.Equal((4, false), (armor.ArmorId, armor.IncludeEquipment));
+        var timer = container.NamedCommands.OfType<IfTimerCommand>().Single();
+        Assert.Equal((60, IfTimerCommand.OperatorType.Lte), (timer.Seconds, timer.Operator));
+        var facing = container.NamedCommands.OfType<IfEventCommand>().Single();
+        Assert.Equal((2, Direction.Left), (facing.EventId, facing.Direction));
+        Assert.Equal(VehicleType.Airship, container.NamedCommands.OfType<IfVehicleCommand>().Single().VehicleType);
+
+        var actors = container.NamedCommands.OfType<IfActorCommand>().ToList();
+        Assert.Equal(
+            [
+                (IfActorCommand.CheckType.InParty, 0), (IfActorCommand.CheckType.Name, "Eric"), (IfActorCommand.CheckType.Class, 5),
+                (IfActorCommand.CheckType.Skill, 6), (IfActorCommand.CheckType.WeaponEquipped, 7), (IfActorCommand.CheckType.ArmorEquipped, 8),
+                (IfActorCommand.CheckType.State, 9),
+            ],
+            actors.Select(a => (a.Check, (object)(a.Param is string text ? text : Convert.ToInt32(a.Param)))));
+        Assert.All(actors, a => Assert.Equal(1, a.ActorId));
+
+        var enemies = container.NamedCommands.OfType<IfEnemyCommand>().ToList();
+        Assert.Equal([(IfEnemyCommand.CheckType.Appeared, 0, 0), (IfEnemyCommand.CheckType.State, 1, 10)], enemies.Select(e => (e.Check, e.TroopId, e.Param)));
+
+        // every one of them is a condition with its branches
+        Expect(string.Join(" ", Enumerable.Repeat("111@0 0@1 412@0", 14)) + " 0@0", container);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
     public void AShopIsTheFirstThingAndTheLinesAfterIt(Version v)
     {
         var container = Empty(v);

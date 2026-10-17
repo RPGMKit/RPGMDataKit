@@ -139,8 +139,8 @@ page.AppendCommands(b => b
     .Battle(3, win: w => w.Text("Won"), escape: _ => { }));
 ```
 
-- `Add(command)` puts any command; `Text`, `Comment` and `Script` make the first command and the lines that follow it. `Text` cuts each string at the line breaks (`\n`) and drops the `\r`, so `Text("a\r\nb")` has two lines.
-- `If(condition, then, @else)` takes a condition command; `IfSwitch`, `IfVariable`, `IfVariableWithVariable`, `IfSelfSwitch`, `IfScript`, `IfGold` and `IfItem` make the common ones. The Else branch is there when the function is given, even an empty one.
+- `Add(command)` puts any command; `Text`, `ScrollingText`, `Comment` and `Script` make the first command and the lines that follow it. `Text` and `ScrollingText` cut each string at the line breaks (`\n`) and drop the `\r`, so `Text("a\r\nb")` has two lines.
+- `If(condition, then, @else)` takes a condition command. The conditions have shortcuts: `IfSwitch`, `IfVariable`, `IfVariableWithVariable`, `IfSelfSwitch`, `IfScript`, `IfGold`, `IfItem`, `IfWeapon`, `IfArmor`, `IfTimer`, `IfEventFacing`, `IfVehicle`, the kinds of the condition about an actor (`IfActorInParty`, `IfActorName`, `IfActorClass`, `IfActorSkill`, `IfActorWeapon`, `IfActorArmor`, `IfActorState`) and about an enemy (`IfEnemyAppeared`, `IfEnemyState`). The Else branch is there when the function is given, even an empty one. The button condition is `new IfButtonCommand { Button = ... }`.
 - `Choices` takes the choices together with their branches, so there is no branch without a choice. Without `Cancel()` the cancel is not allowed. The command with the position and the background can be given as the second argument.
 - `Battle(troopId, win, escape, lose)`: the branches that are given decide what the battle can do (`escape` sets "Can Escape", `lose` sets "Continue Even When Loser"). The Win branch is there whenever there is another one.
 - `Shop(s => s.Item(1).Weapon(4, price: 70).Armor(6), purchaseOnly: false)`: the goods in the order they are sold, the first one is the shop command and the others are the lines after it; without a price a thing is sold at the price of the database.

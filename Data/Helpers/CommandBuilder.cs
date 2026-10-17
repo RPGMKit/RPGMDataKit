@@ -63,14 +63,38 @@ public sealed class CommandBuilder
     public CommandBuilder Text(ShowTextBaseCommand header, params string[] lines)
     {
         Add(header);
-        foreach (var text in lines)
+        foreach (var line in LinesOf(lines))
+            Add(new ShowTextLineCommand { Text = line });
+
+        return this;
+    }
+
+    /// <summary>
+    /// A text that scrolls up the screen, as the editor makes it (speed 2, it can be fast forwarded); one line for each line of the strings,
+    /// see <see cref="Text(ShowTextBaseCommand, string[])"/>.
+    /// </summary>
+    public CommandBuilder ScrollingText(params string[] lines) =>
+        ScrollingText(new ShowScrollingTextBaseCommand { Speed = 2, NoFastForward = false }, lines);
+
+    /// <summary>A text that scrolls with the speed and the fast forward of <paramref name="header"/>.</summary>
+    public CommandBuilder ScrollingText(ShowScrollingTextBaseCommand header, params string[] lines)
+    {
+        Add(header);
+        foreach (var line in LinesOf(lines))
+            Add(new ShowScrollingTextLine { Text = line });
+
+        return this;
+    }
+
+    /// <summary>The lines of the strings: each string is cut at the line breaks (<c>\n</c>) and the <c>\r</c> are dropped.</summary>
+    private static IEnumerable<string> LinesOf(string[] strings)
+    {
+        foreach (var text in strings)
         {
             ArgumentNullException.ThrowIfNull(text);
             foreach (var line in text.Replace("\r", "").Split('\n'))
-                Add(new ShowTextLineCommand { Text = line });
+                yield return line;
         }
-
-        return this;
     }
 
     /// <summary>A comment, one line for each string.</summary>
@@ -153,6 +177,65 @@ public sealed class CommandBuilder
     /// <summary>The party has the item.</summary>
     public CommandBuilder IfItem(int itemId, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
         If(new IfItemCommand { ItemId = itemId }, then, @else);
+
+    /// <summary>The party has the weapon; with <paramref name="includeEquipment"/> also when it is equipped.</summary>
+    public CommandBuilder IfWeapon(int weaponId, bool includeEquipment = false, Action<CommandBuilder>? then = null,
+        Action<CommandBuilder>? @else = null) =>
+        If(new IfWeaponCommand { WeaponId = weaponId, IncludeEquipment = includeEquipment }, then, @else);
+
+    /// <summary>The party has the armor; with <paramref name="includeEquipment"/> also when it is equipped.</summary>
+    public CommandBuilder IfArmor(int armorId, bool includeEquipment = false, Action<CommandBuilder>? then = null,
+        Action<CommandBuilder>? @else = null) =>
+        If(new IfArmorCommand { ArmorId = armorId, IncludeEquipment = includeEquipment }, then, @else);
+
+    /// <summary>The timer has run for at least (or at most) <paramref name="seconds"/>.</summary>
+    public CommandBuilder IfTimer(int seconds, IfTimerCommand.OperatorType @operator = IfTimerCommand.OperatorType.Gte,
+        Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
+        If(new IfTimerCommand { Seconds = seconds, Operator = @operator }, then, @else);
+
+    /// <summary>The event faces the direction (the engines: a negative number is the player, 0 is the event that runs the commands).</summary>
+    public CommandBuilder IfEventFacing(int eventId, Direction direction, Action<CommandBuilder>? then = null,
+        Action<CommandBuilder>? @else = null) =>
+        If(new IfEventCommand { EventId = eventId, Direction = direction }, then, @else);
+
+    public CommandBuilder IfVehicle(VehicleType vehicle, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
+        If(new IfVehicleCommand { VehicleType = vehicle }, then, @else);
+
+    // the conditions about an actor and an enemy have several kinds: one method for each
+
+    public CommandBuilder IfActorInParty(int actorId, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
+        IfActor(actorId, IfActorCommand.CheckType.InParty, 0, then, @else);
+
+    public CommandBuilder IfActorName(int actorId, string name, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
+        IfActor(actorId, IfActorCommand.CheckType.Name, name, then, @else);
+
+    public CommandBuilder IfActorClass(int actorId, int classId, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
+        IfActor(actorId, IfActorCommand.CheckType.Class, classId, then, @else);
+
+    public CommandBuilder IfActorSkill(int actorId, int skillId, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
+        IfActor(actorId, IfActorCommand.CheckType.Skill, skillId, then, @else);
+
+    /// <summary>The actor has the weapon equipped.</summary>
+    public CommandBuilder IfActorWeapon(int actorId, int weaponId, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
+        IfActor(actorId, IfActorCommand.CheckType.WeaponEquipped, weaponId, then, @else);
+
+    /// <summary>The actor has the armor equipped.</summary>
+    public CommandBuilder IfActorArmor(int actorId, int armorId, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
+        IfActor(actorId, IfActorCommand.CheckType.ArmorEquipped, armorId, then, @else);
+
+    public CommandBuilder IfActorState(int actorId, int stateId, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
+        IfActor(actorId, IfActorCommand.CheckType.State, stateId, then, @else);
+
+    private CommandBuilder IfActor(int actorId, IfActorCommand.CheckType check, object param, Action<CommandBuilder>? then,
+        Action<CommandBuilder>? @else) =>
+        If(new IfActorCommand { ActorId = actorId, Check = check, Param = param }, then, @else);
+
+    /// <summary>The enemy of the troop has appeared; <paramref name="enemyIndex"/> is its place in the troop counted from 0 (the editors show it from 1).</summary>
+    public CommandBuilder IfEnemyAppeared(int enemyIndex, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
+        If(new IfEnemyCommand { TroopId = enemyIndex, Check = IfEnemyCommand.CheckType.Appeared, Param = 0 }, then, @else);
+
+    public CommandBuilder IfEnemyState(int enemyIndex, int stateId, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
+        If(new IfEnemyCommand { TroopId = enemyIndex, Check = IfEnemyCommand.CheckType.State, Param = stateId }, then, @else);
 
     // ---- Loop ----
 
