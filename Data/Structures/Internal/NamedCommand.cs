@@ -200,9 +200,19 @@ public abstract class NamedCommand
 
         if (madeInCode)
         {
+            OnBinding(version);
             CompleteMadeInCode();
             OnMadeInCodeBound(version);
         }
+    }
+
+    /// <summary>
+    /// Called when a command made in code gets its raw command, before its parameters are completed. A command that is not in a list has no maker and
+    /// keeps what was set in code in one form for all makers (the neutral one, which the property says); here the parameters that are written
+    /// differently by the makers are changed into the form of <paramref name="version"/>.
+    /// </summary>
+    protected virtual void OnBinding(StorageVersion version)
+    {
     }
 
     /// <summary>Called after a command made in code got its raw command, for parameters that depend on the version.</summary>

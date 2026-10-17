@@ -1,4 +1,5 @@
 using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Structures.Exceptions;
 using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.Structures.Commands;
@@ -32,8 +33,8 @@ public class GetLocationInfoCommand : NamedCommand
         [InfoType.TileIdLayer1] = new("Tile ID (Layer 1)", "Tile ID (Layer 1)"),
         [InfoType.TileIdLayer2] = new("Tile ID (Layer 2)", "Tile ID (Layer 2)"),
         [InfoType.TileIdLayer3] = new("Tile ID (Layer 3)", "Tile ID (Layer 3)"),
-        [InfoType.TileIdLayer4] = new("Tile ID (Layer 4)", "Region ID"),
-        [InfoType.RegionI] = new("Region ID", ""),
+        [InfoType.TileIdLayer4] = new("Tile ID (Layer 4)", ""),
+        [InfoType.RegionI] = new("Region ID", "Region ID"),
     };
         
     public int VariableId
@@ -42,10 +43,51 @@ public class GetLocationInfoCommand : NamedCommand
         set => Set(0, value);
     }
 
+    // the number of the Region ID in VX Ace, which has no fourth layer of tiles to give: the numbers of MV have the layer and then the region
+    private const InfoType VxAceRegion = InfoType.TileIdLayer4;
+
+    private bool IsInVxAce => !IsDetached && Version == StorageVersion.VXAce;
+
+    /// <summary>
+    /// What is asked about the place, the same for both makers: the raw number of the Region ID is 5 in VX Ace and 6 in MV, and this property is
+    /// <see cref="InfoType.RegionI"/> for it in both. <see cref="InfoType.TileIdLayer4"/> does not exist in VX Ace.
+    /// </summary>
     public InfoType Type
     {
-        get => Get<InfoType>(1);
-        set => Set(1, value);
+        get
+        {
+            var raw = Get<InfoType>(1);
+
+            return IsInVxAce && raw == VxAceRegion ? InfoType.RegionI : raw;
+        }
+        set
+        {
+            if (IsInVxAce)
+            {
+                if (value == InfoType.TileIdLayer4)
+                    throw new DoesNotExistInVersionException($"{value} exists in MV only");
+
+                Set(1, value == InfoType.RegionI ? VxAceRegion : value);
+            }
+            else
+            {
+                Set(1, value);
+            }
+        }
+    }
+
+    // a command that was made in code has the number of MV (the neutral one) until it is put into a list
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (version != StorageVersion.VXAce)
+            return;
+
+        var type = Get<InfoType>(1);
+        if (type == InfoType.TileIdLayer4)
+            throw new DoesNotExistInVersionException($"{type} exists in MV only");
+
+        if (type == InfoType.RegionI)
+            Set(1, VxAceRegion);
     }
 
     public DesignationType Designation

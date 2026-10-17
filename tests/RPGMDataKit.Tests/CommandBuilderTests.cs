@@ -244,6 +244,40 @@ public sealed class CommandBuilderTests
 
     [Theory]
     [MemberData(nameof(Versions))]
+    public void AShopIsTheFirstThingAndTheLinesAfterIt(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.Shop(s => s.Item(1).Weapon(4, price: 70).Armor(6), purchaseOnly: true));
+
+        Expect("302@0 605@0 605@0 0@0", container); // a shop is not a block: no empty command between the lines
+        var first = container.NamedCommands.OfType<ShopProcessingCommand>().Single();
+        Assert.Equal((ShopProcessingCommand.ItemType.Item, 1, false, true), (first.Type, first.ItemId, first.HasCustomPrice, first.PurchaseOnly));
+        Assert.Equal(5, first.Raw.Parameters!.Count);
+
+        var lines = container.NamedCommands.OfType<ShopProcessingLineCommand>().ToList();
+        Assert.Equal((ShopProcessingCommand.ItemType.Weapon, 4, true, 70), (lines[0].Type, lines[0].ItemId, lines[0].HasCustomPrice, lines[0].CustomPrice));
+        Assert.Equal((ShopProcessingCommand.ItemType.Armor, 6, false, 0), (lines[1].Type, lines[1].ItemId, lines[1].HasCustomPrice, lines[1].CustomPrice));
+        Assert.All(lines, line => Assert.Equal(4, line.Raw.Parameters!.Count));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void AShopWithOneThingIsJustTheFirstCommand(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.Shop(s => s.Item(9)));
+
+        Expect("302@0 0@0", container);
+        Assert.False(container.NamedCommands.OfType<ShopProcessingCommand>().Single().PurchaseOnly);
+    }
+
+    [Fact]
+    public void AShopNeedsSomethingToSell() => Assert.Throws<ArgumentException>(() => new CommandBuilder().Shop(_ => { }));
+
+    [Theory]
+    [MemberData(nameof(Versions))]
     public void LoopWithBreak(Version v)
     {
         var container = Empty(v);

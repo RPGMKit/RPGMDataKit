@@ -51,6 +51,22 @@ public class IfButtonCommand : IfCommand
         [Buttons.R] = "pagedown",
     };
 
+    /// <summary>
+    /// The name of the button in MV (<c>Input.isPressed</c>), or null for a button that MV has no name for (X, Y and Z of VX Ace are the keys A,
+    /// S and D of the keyboard there, which a condition of MV cannot ask about: it takes a script).
+    /// </summary>
+    public string? MvName => ButtonIdToMvName.GetValueOrDefault(Button);
+
+    // a command made in code holds the button (the neutral form); it is the name in MV when the command is put into a list of MV
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (version == StorageVersion.MV && Raw.Parameters?.Get(1) is not string)
+        {
+            var button = Get<Buttons>(1);
+            Set(1, ButtonIdToMvName.GetValueOrDefault(button) ?? ButtonIdToName[button]);
+        }
+    }
+
     // a name in MV, a number in VXAce
     public Buttons Button
     {

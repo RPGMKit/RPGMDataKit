@@ -143,6 +143,7 @@ page.AppendCommands(b => b
 - `If(condition, then, @else)` takes a condition command; `IfSwitch`, `IfVariable`, `IfVariableWithVariable`, `IfSelfSwitch`, `IfScript`, `IfGold` and `IfItem` make the common ones. The Else branch is there when the function is given, even an empty one.
 - `Choices` takes the choices together with their branches, so there is no branch without a choice. Without `Cancel()` the cancel is not allowed. The command with the position and the background can be given as the second argument.
 - `Battle(troopId, win, escape, lose)`: the branches that are given decide what the battle can do (`escape` sets "Can Escape", `lose` sets "Continue Even When Loser"). The Win branch is there whenever there is another one.
+- `Shop(s => s.Item(1).Weapon(4, price: 70).Armor(6), purchaseOnly: false)`: the goods in the order they are sold, the first one is the shop command and the others are the lines after it; without a price a thing is sold at the price of the database.
 - `AppendCommands` puts the commands at the end of the list (before the empty command that ends it), `InsertCommands(index, ...)` before the command with the index (at the end of a block, into that block), `ReplaceCommands` instead of all of them. They set the empty commands and the indents of the whole list afterwards, so the list is as the editor makes it.
 - The commands of the builder have the parameters that the editors write for the maker of the list: for example Cancel of `Show Choices` is `-1`/`-2` in MV and `0`/`5` in VX Ace, and `When Cancel` has `[6, null]` in MV and nothing in VX Ace.
 
@@ -159,6 +160,24 @@ IndentHelper.ValidateStructure(page);              // throws if the blocks are n
 ```
 
 The checks throw `CommandIndentException`, `EmptyCommandException` and `CommandStructureException`. All of them derive from `CommandListException` and say which command is the first wrong one (`CommandIndex`, `CommandCode`). Loading does not check or change the commands; the text dump (`DumpHelper.Dump`) checks the indents.
+
+#### Commands that differ between VX Ace and MV
+
+The makers write some parameters differently. For these commands a property says what the parameter means in both, and the raw parameter is the one of the maker of the list the command is in (a command that is made in code and is not in a list yet has no maker, and gets the raw value when it is put into one):
+
+| Command | Property | The raw parameter |
+|---|---|---|
+| Show Choices | `Cancel` (`Disallow`, `Choice`, `Branch`) and `CancelChoice` (from 0) | VX Ace: 0, n+1, 5; MV: -1, n, -2 (`CancelChoiceIndex`) |
+| Change Equipment | `SlotIndex` (from 0) | VX Ace counts the slots from 0, MV from 1 (`TypeId`) |
+| Get Location Info | `Type` (`InfoType.RegionI` for the region) | the region is 5 in VX Ace and 6 in MV |
+| If, a button | `Button`, and `MvName` (null for the buttons X, Y and Z, which MV has no name for) | a number in VX Ace, a name in MV |
+
+Some parameters exist in one maker only: the position, the background and the default choice of Show Choices, the type of Select Item and "Save Level" of Change Class (`SaveLevel`) are MV only, and the parameter "purchase only" belongs to the first line of a shop. In the other maker such a property throws `DoesNotExistInVersionException`; a command with it that is put into a list of VX Ace loses the parameter, so `Clone()` of a command of one maker into a list of the other keeps what the command means:
+
+```csharp
+var choices = vxPage.NamedCommands.OfType<ShowChoicesCommand>().First();
+mvPage.AppendCommands(b => b.Add(choices.Clone()));   // Cancel, the choices... as MV writes them; the window gets what the editor of MV gives
+```
 
 ### Your own entity classes
 

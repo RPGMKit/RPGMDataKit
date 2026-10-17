@@ -26,10 +26,47 @@ public class ChangeEquipmentCommand : NamedCommand
         set => Set(0, value);
     }
 
+    /// <summary>
+    /// The raw number of the slot, which depends on the maker: VX Ace counts the slots from 0, MV from 1 (it is the type of the equipment there).
+    /// Use <see cref="SlotIndex"/> for a number that means the same in both.
+    /// </summary>
+    [RawValue]
     public int TypeId
     {
         get => Get<int>(1);
         set => Set(1, value);
+    }
+
+    // set while the command is made in code: the slot is told by SlotIndex and has to be changed into the number of the maker
+    private bool _slotIsNeutral;
+
+    /// <summary>
+    /// The slot of the actor counted from 0, the same for both makers (the raw number of MV is one more, see <see cref="TypeId"/>). With two
+    /// weapons the slot 1 is the second weapon. Can be set before the command is put into a list, it then gets the number of the maker of the list.
+    /// </summary>
+    public int SlotIndex
+    {
+        get => IsDetached || Version != StorageVersion.MV ? Get<int>(1) : Get<int>(1) - 1;
+        set
+        {
+            if (IsDetached)
+            {
+                _slotIsNeutral = true;
+                Set(1, value);
+            }
+            else
+            {
+                Set(1, Version == StorageVersion.MV ? value + 1 : value);
+            }
+        }
+    }
+
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (_slotIsNeutral && version == StorageVersion.MV)
+            Set(1, Get<int>(1) + 1);
+
+        _slotIsNeutral = false;
     }
 
     public int ItemId

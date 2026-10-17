@@ -246,6 +246,65 @@ public sealed class CommandBuilder
         return Add(new BattleProcessingEndCommand());
     }
 
+    // ---- Shop Processing ----
+
+    /// <summary>
+    /// Shop Processing: the goods are given in the order they are sold (<see cref="ShopBuilder.Item"/>, <see cref="ShopBuilder.Weapon"/>,
+    /// <see cref="ShopBuilder.Armor"/>). The first one is the command of the shop and the others are the lines after it. A shop is not a block, so
+    /// nothing follows the lines.
+    /// </summary>
+    /// <param name="define">Makes the goods; there has to be at least one.</param>
+    /// <param name="purchaseOnly">The shop buys nothing.</param>
+    public CommandBuilder Shop(Action<ShopBuilder> define, bool purchaseOnly = false)
+    {
+        var shop = new ShopBuilder();
+        define(shop);
+        if (shop.Goods.Count == 0)
+            throw new ArgumentException("A shop needs at least one thing to sell.", nameof(define));
+
+        var first = shop.Goods[0];
+        Add(new ShopProcessingCommand
+        {
+            Type = first.Type,
+            ItemId = first.Id,
+            HasCustomPrice = first.Price != null,
+            CustomPrice = first.Price ?? 0,
+            PurchaseOnly = purchaseOnly,
+        });
+        foreach (var goods in shop.Goods.Skip(1))
+        {
+            Add(new ShopProcessingLineCommand
+            {
+                Type = goods.Type,
+                ItemId = goods.Id,
+                HasCustomPrice = goods.Price != null,
+                CustomPrice = goods.Price ?? 0,
+            });
+        }
+
+        return this;
+    }
+
+    /// <summary>The goods of <see cref="Shop"/>.</summary>
+    public sealed class ShopBuilder
+    {
+        internal List<(ShopProcessingCommand.ItemType Type, int Id, int? Price)> Goods { get; } = [];
+
+        /// <summary>An item. Without a price it is sold at the price in the database.</summary>
+        public ShopBuilder Item(int itemId, int? price = null) => Add(ShopProcessingCommand.ItemType.Item, itemId, price);
+
+        public ShopBuilder Weapon(int weaponId, int? price = null) => Add(ShopProcessingCommand.ItemType.Weapon, weaponId, price);
+
+        public ShopBuilder Armor(int armorId, int? price = null) => Add(ShopProcessingCommand.ItemType.Armor, armorId, price);
+
+        private ShopBuilder Add(ShopProcessingCommand.ItemType type, int id, int? price)
+        {
+            Goods.Add((type, id, price));
+
+            return this;
+        }
+    }
+
     /// <summary>The choices of <see cref="Choices"/> with what each of them does.</summary>
     public sealed class ChoicesBuilder
     {
