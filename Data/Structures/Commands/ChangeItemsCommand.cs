@@ -50,6 +50,15 @@ public class ChangeItemsCommand : NamedCommand
         set => Set(3, value);
     }
 
+    // a new command is for the item and the count 1 in the editors
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (!IsParameterSet(0))
+            Set(0, 1);
+        if (!IsParameterSet(3))
+            Set(3, 1);
+    }
+
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
         var str = context.NameFormatter.FormatItem(ItemId);

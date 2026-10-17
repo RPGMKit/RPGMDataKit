@@ -44,10 +44,20 @@ public class ChangeWeaponsCommand : NamedCommand
         set => Set(3, value);
     }
 
+    /// <summary>Counts the weapon that is equipped too. It is used only when the weapon is taken: with <c>Add</c> it is always false (the editors turn it off).</summary>
     public bool IncludeEquipment
     {
-        get => Get<bool>(4);
+        get => Operator == OperatorType.Take && Get<bool>(4);
         set => Set(4, value);
+    }
+
+    // a new command is for the weapon and the count 1 in the editors
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (!IsParameterSet(0))
+            Set(0, 1);
+        if (!IsParameterSet(3))
+            Set(3, 1);
     }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)

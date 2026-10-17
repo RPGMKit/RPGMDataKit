@@ -298,6 +298,43 @@ public sealed class CommandMeaningTests
             Assert.Null(command.Raw.Parameters![1]);
     }
 
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ANewCommandAboutAnItemIsForTheFirstOneAndTheCountOne(Version v)
+    {
+        var item = InList(v, new ChangeItemsCommand());
+        var weapon = InList(v, new ChangeWeaponsCommand());
+        var armor = InList(v, new ChangeArmorsCommand());
+
+        Assert.Equal([1, 0, 0, 1], item.Raw.Parameters!.Select(Convert.ToInt32));
+        Assert.Equal([1, 0, 0, 1, 0], weapon.Raw.Parameters!.Select(Convert.ToInt32));
+        Assert.Equal([1, 0, 0, 1, 0], armor.Raw.Parameters!.Select(Convert.ToInt32));
+
+        // what is set stays, zero too
+        var zero = InList(v, new ChangeArmorsCommand { ArmorId = 0, Value = 0 });
+        Assert.Equal([0, 0, 0, 0, 0], zero.Raw.Parameters!.Select(Convert.ToInt32));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void IncludingTheEquipmentIsOnlyForTakingWeaponsAndArmors(Version v)
+    {
+        var take = InList(v, new ChangeArmorsCommand { Operator = ChangeArmorsCommand.OperatorType.Take, IncludeEquipment = true });
+        var add = InList(v, new ChangeArmorsCommand { Operator = ChangeArmorsCommand.OperatorType.Add, IncludeEquipment = true });
+        var weapon = InList(v, new ChangeWeaponsCommand { IncludeEquipment = true, Operator = ChangeWeaponsCommand.OperatorType.Add });
+
+        Assert.True(take.IncludeEquipment);
+        Assert.Equal(1, Convert.ToInt32(take.Raw.Parameters![4]));
+        Assert.False(add.IncludeEquipment);
+        Assert.Equal(0, Convert.ToInt32(add.Raw.Parameters![4]));   // written as the editors write it
+        Assert.False(weapon.IncludeEquipment);
+        Assert.Equal(0, Convert.ToInt32(weapon.Raw.Parameters![4]));
+
+        // the order of the properties does not matter
+        var ordered = InList(v, new ChangeWeaponsCommand { IncludeEquipment = true, Operator = ChangeWeaponsCommand.OperatorType.Take });
+        Assert.True(ordered.IncludeEquipment);
+    }
+
     [Fact]
     public void TheTypeMapKnowsItsMaker()
     {
