@@ -364,12 +364,65 @@ public sealed class CommandBuilderTests
 
         container.ReplaceCommands(b => b.MoveRoute(r => r.Down(2).Wait(30).TurnLeft()));
 
-        Expect("205@0 0@0", container); // the steps are in the route, not in the list of the event
+        Expect("205@0 505@0 505@0 505@0 505@0 0@0", container); // the route, and a line after it for each step
         var command = container.NamedCommands.OfType<SetMovementRouteCommand>().Single();
         Assert.Equal(SetMovementRouteCommand.PlayerEventId, command.EventId);
         Assert.Equal([1, 1, 15, 17, 0], RouteCodes(container));
         Assert.Equal(30, command.Route.NamedCommands.OfType<MoveWaitCommand>().Single().Frames);
         Assert.Equal((false, false, true), (command.Route.Repeat, command.Route.Skippable, command.Route.Wait)); // what the editors give
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void EachStepOfARouteHasALineAfterTheCommandAsTheEditorsWriteIt(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.MoveRoute(r => r.Down().Jump(2, -1).Wait(30).Script("x = 1").Speed(MoveChangeSpeedCommand.SpeedType.Fasterx2)));
+
+        var steps = container.NamedCommands.OfType<SetMovementRouteCommand>().Single().Route.NamedCommands.Where(c => c.Code != 0).ToList();
+        var lines = container.NamedCommands.OfType<MovementRouteCommand>().ToList();
+
+        Assert.Equal(5, lines.Count);
+        Assert.Equal(steps.Select(s => s.Code), lines.Select(l => l.MoveCommand.Code));
+        // the line holds the same step, but its own: changing the route does not change the line
+        for (var i = 0; i < steps.Count; i++)
+        {
+            Assert.NotSame(steps[i], lines[i].MoveCommand);
+            Assert.Equal(
+                (steps[i].Raw.Parameters ?? []).Select(p => p is Enum e ? Convert.ToInt32(e) : p is IAudioFile ? "sound" : p),
+                (lines[i].MoveCommand.Raw.Parameters ?? []).Select(p => p is Enum e ? Convert.ToInt32(e) : p is IAudioFile ? "sound" : p));
+        }
+
+        Assert.Equal(30, ((MoveWaitCommand)lines[2].MoveCommand).Frames);
+        Assert.Equal((2, -1), (((MoveJumpCommand)lines[1].MoveCommand).XDelta, ((MoveJumpCommand)lines[1].MoveCommand).YDelta));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ARouteWithNoStepsHasNoLines(Version v)
+    {
+        var container = Empty(v);
+
+        container.ReplaceCommands(b => b.MoveRoute(_ => { }));
+
+        Expect("205@0 0@0", container);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ALineOfARouteHoldsTheStepUntilItIsPutIntoAListAndThenTheRawStepOfTheMaker(Version v)
+    {
+        var step = new MoveWaitCommand { Frames = 12 };
+        var line = new MovementRouteCommand { MoveCommand = step };
+
+        Assert.Same(step, line.MoveCommand); // it has no maker yet
+
+        EmptyCommandTests.EventOf(v).AppendCommands(b => b.Add(line));
+
+        Assert.IsAssignableFrom<IMoveCommand>(line.Raw.Parameters![0]);
+        Assert.Equal(15, line.MoveCommand.Code);
+        Assert.Equal(12, ((MoveWaitCommand)line.MoveCommand).Frames);
     }
 
     [Theory]
@@ -474,7 +527,7 @@ public sealed class CommandBuilderTests
 
         container.ReplaceCommands(b => b.IfSwitch(1, then: t => t.MoveRoute(r => r.Up())));
 
-        Expect("111@0 205@1 0@1 412@0 0@0", container);
+        Expect("111@0 205@1 505@1 0@1 412@0 0@0", container);
     }
 
     [Theory]

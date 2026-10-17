@@ -5,31 +5,37 @@ using RPGMDataKit.Data.Structures.Internal;
 
 namespace RPGMDataKit.Data.Structures.Commands;
 
+/// <summary>
+/// A step of a movement route as the list of commands of an event shows it (the command 505): the editors write one after Set Movement Route for
+/// each step of its route, and show the route from them.
+/// </summary>
 public class MovementRouteCommand : NamedCommand
 {
     public override int Code => CommandCodes.MovementRouteCommand;
     public override string GetCommandName(StorageVersion version) => "                  ";
-        
+
     public MovementRouteCommand()
     {
         IsSecondary = true;
     }
-        
-    private NamedCommand? _pendingMoveCommand; // set in code, before this command has a container
+
     private NamedCommand? _moveCommand;
     private IMoveCommand? _moveCommandRaw;
 
-    // a view over the movement command stored in the raw command
+    /// <summary>
+    /// A view over the movement command stored in the raw command. A command that is not in a list yet has no maker, and holds the command that was
+    /// set as it is; it becomes the raw command of the maker when this one is put into a list.
+    /// </summary>
     public NamedCommand MoveCommand
     {
         get
         {
-            if (IsDetached && _pendingMoveCommand != null)
-                return _pendingMoveCommand;
+            if (IsDetached)
+                return Get<NamedCommand>(0)!;
 
             var raw = GetEntity<IMoveCommand>(0);
             if (raw == null)
-                return _pendingMoveCommand!;
+                return null!;
 
             if (_moveCommand == null || !ReferenceEquals(_moveCommandRaw, raw) || !_moveCommand.MatchesRaw())
             {
@@ -44,30 +50,41 @@ public class MovementRouteCommand : NamedCommand
         {
             if (IsDetached)
             {
-                _pendingMoveCommand = value;
+                Set(0, value);
+
                 return;
             }
 
-            if (value == null)
-                return;
-
-            IMoveCommand raw;
-            if (value.IsDetached)
-            {
-                raw = Map.Factory<IMoveCommand>()();
-                value.Types = Types;
-                value.Bind(raw, Version);
-            }
-            else
-            {
-                raw = (IMoveCommand)value.Raw;
-            }
-
-            Set(0, raw);
-            _moveCommand = value;
-            _moveCommandRaw = raw;
-            _pendingMoveCommand = null;
+            if (value != null)
+                Attach(value);
         }
+    }
+
+    // OnBinding is before the parameters are completed, which read this property: the command is the raw command of the maker by then
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (Raw.Parameters?.Count > 0 && Raw.Parameters[0] is NamedCommand held)
+            Attach(held);
+    }
+
+    /// <summary>Stores the movement command as the parameter: the raw command of the maker of this command.</summary>
+    private void Attach(NamedCommand value)
+    {
+        IMoveCommand raw;
+        if (value.IsDetached)
+        {
+            raw = Map.Factory<IMoveCommand>()();
+            value.Types = Types;
+            value.Bind(raw, Version);
+        }
+        else
+        {
+            raw = (IMoveCommand)value.Raw;
+        }
+
+        Set(0, raw);
+        _moveCommand = value;
+        _moveCommandRaw = raw;
     }
 
     internal override void Materialize()

@@ -38,8 +38,7 @@ public class ChangeEquipmentCommand : NamedCommand
         set => Set(1, value);
     }
 
-    // set while the command is made in code: the slot is told by SlotIndex and has to be changed into the number of the maker
-    private bool _slotIsNeutral;
+    private bool IsInMv => !IsDetached && Version == StorageVersion.MV;
 
     /// <summary>
     /// The slot of the actor counted from 0, the same for both makers (the raw number of MV is one more, see <see cref="TypeId"/>). With two
@@ -47,27 +46,15 @@ public class ChangeEquipmentCommand : NamedCommand
     /// </summary>
     public int SlotIndex
     {
-        get => IsDetached || Version != StorageVersion.MV ? Get<int>(1) : Get<int>(1) - 1;
-        set
-        {
-            if (IsDetached)
-            {
-                _slotIsNeutral = true;
-                Set(1, value);
-            }
-            else
-            {
-                Set(1, Version == StorageVersion.MV ? value + 1 : value);
-            }
-        }
+        get => IsInMv ? Get<int>(1) - 1 : Get<int>(1);
+        set => Set(1, IsInMv ? value + 1 : value);
     }
 
     protected override void OnBinding(StorageVersion version)
     {
-        if (_slotIsNeutral && version == StorageVersion.MV)
-            Set(1, Get<int>(1) + 1);
-
-        _slotIsNeutral = false;
+        // until the command has a maker the parameter holds the slot counted from 0 (the number of VX Ace); a slot that was not told is the first one
+        if (version == StorageVersion.MV)
+            Set(1, (IsParameterSet(1) ? Get<int>(1) : 0) + 1);
     }
 
     public int ItemId

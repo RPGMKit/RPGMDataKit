@@ -18,4 +18,8 @@ public class MoveCommand : JsonEntity, IMoveCommand
 
     [JsonIgnore]
     public IParameterProvider ParameterProvider => new JsonParameterProvider(this);
+
+    // the empty command that ends a route has no "indent" in the files of the editor ({"code":0}, or {"code":0,"parameters":[]} in the route of a
+    // page of a map); the other steps have "indent": null
+    public bool ShouldSerializeIndent() => Code != 0 || Indent != null;
 }

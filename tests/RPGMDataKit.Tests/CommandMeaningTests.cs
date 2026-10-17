@@ -142,13 +142,24 @@ public sealed class CommandMeaningTests
     }
 
     [Fact]
-    public void TheRawNumberOfTheSlotIsKeptWhenItIsSetAsRaw()
+    public void TheRawNumberOfTheSlotIsKeptWhenItIsSetInAList()
     {
-        // the number as it is written, for a command made from the numbers of a file
-        var mv = InList(Version.Mv, new ChangeEquipmentCommand { ActorId = 1, TypeId = 2, ItemId = 5 });
+        // the number as it is written, for a command whose maker is known
+        var mv = InList(Version.Mv, new ChangeEquipmentCommand { ActorId = 1, ItemId = 5 });
+        mv.TypeId = 2;
 
         Assert.Equal(2, RawInt(mv, 1));
         Assert.Equal(1, mv.SlotIndex);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ASlotThatIsNotToldIsTheFirstOne(Version v)
+    {
+        var command = InList(v, new ChangeEquipmentCommand { ActorId = 1, ItemId = 5 });
+
+        Assert.Equal(0, command.SlotIndex);
+        Assert.Equal(IsMv(v) ? 1 : 0, RawInt(command, 1));
     }
 
     // ---- 111 If, a button ----

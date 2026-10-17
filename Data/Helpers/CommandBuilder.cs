@@ -370,7 +370,14 @@ public sealed class CommandBuilder
         route.Wait = wait;
         route.NamedCommands = [.. steps.Steps, new MoveEmptyCommand()];
 
-        return Add(new SetMovementRouteCommand { EventId = eventId, Route = route });
+        Add(new SetMovementRouteCommand { EventId = eventId, Route = route });
+
+        // the editors write a line of the list of the event for each step of the route (none for the empty command that ends it) and show
+        // the route from them
+        foreach (var step in steps.Steps)
+            Add(new MovementRouteCommand { MoveCommand = step.Clone() });
+
+        return this;
     }
 
     /// <summary>The steps of <see cref="MoveRoute"/>.</summary>
