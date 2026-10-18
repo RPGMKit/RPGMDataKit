@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -21,6 +22,7 @@ public class IfVariableCommand : IfCommand
         Variable = 1,
     }
     
+    [EditorDefault(1)]
     public int VariableId
     {
         get => Get<int>(1);

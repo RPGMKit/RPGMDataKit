@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -5,6 +6,7 @@ namespace RPGMDataKit.Data.Structures.Commands.IfCommands;
 
 public class IfScriptCommand : IfCommand
 {
+    [EditorDefault("")]
     public string Script
     {
         get => Get<string>(1);

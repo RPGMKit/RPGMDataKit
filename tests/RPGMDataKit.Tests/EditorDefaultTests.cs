@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
+using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Helpers;
 using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Structures.Commands;
+using RPGMDataKit.Data.Structures.Commands.IfCommands;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using Xunit;
@@ -112,6 +114,31 @@ public sealed class EditorDefaultTests
         var variable = InList(v, new ControlVariableCommand { Operand = ControlVariableCommand.OperandType.GameData });
         Assert.Equal([0, 0, 0], new[] { variable.Value1, variable.Value2, variable.Value3 }.Select(Convert.ToInt32));
         Assert.Equal(7, variable.Raw.Parameters!.Count);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void ANewConditionIsTheOneTheEditorOpensWith(Version v)
+    {
+        // ids of the editors are the first ones, a self switch is A, the character is the player facing down
+        Assert.Equal(1, InList(v, new IfSwitchCommand()).SwitchId);
+        Assert.Equal(1, InList(v, new IfVariableCommand()).VariableId);
+        Assert.Equal("A", InList(v, new IfSelfSwitchCommand()).Switch);
+        Assert.Equal(1, InList(v, new IfItemCommand()).ItemId);
+        Assert.Equal(1, InList(v, new IfWeaponCommand()).WeaponId);
+        Assert.Equal(1, InList(v, new IfArmorCommand()).ArmorId);
+        Assert.Equal("", InList(v, new IfScriptCommand()).Script);
+
+        var player = InList(v, new IfEventCommand());
+        Assert.Equal((-1, Direction.Down), (player.EventId, player.Direction));
+
+        // the button of a new condition: Down in VX Ace, OK in MV
+        var button = InList(v, new IfButtonCommand());
+        Assert.Equal(IsMv(v) ? IfButtonCommand.Buttons.C : IfButtonCommand.Buttons.Down, button.Button);
+        if (IsMv(v))
+            Assert.Equal("ok", button.Raw.Parameters![1]);
+        else
+            Assert.Equal(2, Convert.ToInt32(button.Raw.Parameters![1]));
     }
 
     [Theory]

@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -68,6 +69,8 @@ public class IfButtonCommand : IfCommand
     }
 
     // a name in MV, a number in VXAce
+    [EditorDefault(Buttons.Down, StorageVersion.VXAce)]
+    [EditorDefault(Buttons.C, StorageVersion.MV)]   // OK
     public Buttons Button
     {
         get => Version == StorageVersion.MV && Raw.Parameters?.Get(1) is string name

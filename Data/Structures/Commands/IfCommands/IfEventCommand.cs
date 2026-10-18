@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -5,12 +6,14 @@ namespace RPGMDataKit.Data.Structures.Commands.IfCommands;
 
 public class IfEventCommand : IfCommand
 {
+    [EditorDefault(-1)]   // the player
     public int EventId
     {
         get => Get<int>(1);
         set => Set(1, value);
     }
 
+    [EditorDefault(Direction.Down)]
     public Direction Direction
     {
         get => Get<Direction>(2);

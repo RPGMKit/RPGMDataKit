@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -5,6 +6,7 @@ namespace RPGMDataKit.Data.Structures.Commands.IfCommands;
 
 public class IfWeaponCommand : IfCommand
 {
+    [EditorDefault(1)]
     public int WeaponId
     {
         get => Get<int>(1);
