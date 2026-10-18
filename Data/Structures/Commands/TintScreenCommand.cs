@@ -18,14 +18,14 @@ public class TintScreenCommand : NamedCommand
         set => Set(0, value);
     }
 
-    [EditorDefault(60, StorageVersion.VXAce)]
+    [EditorDefault(60)]
     public int Duration
     {
         get => Get<int>(1);
         set => Set(1, value);
     }
 
-    [EditorDefault(true, StorageVersion.VXAce)]
+    [EditorDefault(true)]
     public bool WaitForCompletion
     {
         get => Get<bool>(2);

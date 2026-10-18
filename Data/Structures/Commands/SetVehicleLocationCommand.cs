@@ -27,7 +27,7 @@ public class SetVehicleLocationCommand : NamedCommand
         set => Set(1, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int Param1
     {
         get => Get<int>(2);

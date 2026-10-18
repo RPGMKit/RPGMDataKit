@@ -10,21 +10,22 @@ public class FlashScreenCommand : NamedCommand
     public override int Code => CommandCodes.FlashScreen;
     public override string GetCommandName(StorageVersion version) => "Flash Screen";
 
-    [EditorDefaultColor(255, 255, 255, 255)]
+    [EditorDefaultColor(255, 255, 255, 255, StorageVersion.VXAce)]
+    [EditorDefaultColor(255, 255, 255, 170, StorageVersion.MV)]
     public IColor Color
     {
         get => GetEntity<IColor>(0);
         set => Set(0, value);
     }
 
-    [EditorDefault(60, StorageVersion.VXAce)]
+    [EditorDefault(60)]
     public int Duration
     {
         get => Get<int>(1);
         set => Set(1, value);
     }
 
-    [EditorDefault(true, StorageVersion.VXAce)]
+    [EditorDefault(true)]
     public bool WaitForCompletion
     {
         get => Get<bool>(2);

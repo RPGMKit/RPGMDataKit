@@ -57,7 +57,7 @@ public class ChangeExperienceCommand : NamedCommand
         set => Set(3, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int Value
     {
         get => Get<int>(4);

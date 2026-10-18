@@ -16,7 +16,7 @@ public class ChangeActorImagesCommand : NamedCommand
             return "Change Actor Graphic";
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int ActorId
     {
         get => Get<int>(0);
@@ -50,6 +50,7 @@ public class ChangeActorImagesCommand : NamedCommand
     }
 
     // exists only in MV; a command made in code keeps it until it is put into a VXAce list
+    [EditorDefault("", StorageVersion.MV)]
     public string SwBattler
     {
         get => Get<string>(5);

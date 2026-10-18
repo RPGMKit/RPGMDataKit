@@ -9,7 +9,7 @@ public class ErasePictureCommand : NamedCommand
     public override int Code => CommandCodes.ErasePicture;
     public override string GetCommandName(StorageVersion version) => "Erase Picture";
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int Layer
     {
         get => Get<int>(0);

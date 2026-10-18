@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -20,6 +21,7 @@ public class ChangeEnemyTpCommand : NamedCommand
         Variable = 1,
     }
 
+    [EditorDefault(-1)]
     public int TroopId
     {
         get => Get<int>(0);
@@ -38,6 +40,7 @@ public class ChangeEnemyTpCommand : NamedCommand
         set => Set(2, value);
     }
 
+    [EditorDefault(1)]
     public int Value
     {
         get => Get<int>(3);

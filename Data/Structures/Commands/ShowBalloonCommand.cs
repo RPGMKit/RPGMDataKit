@@ -28,14 +28,14 @@ public class ShowBalloonCommand : NamedCommand
         UserDefined5 = 15,
     }
 
-    [EditorDefault(-1, StorageVersion.VXAce)]
+    [EditorDefault(-1)]
     public int EventId
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public IconType Icon
     {
         get => Get<IconType>(1);

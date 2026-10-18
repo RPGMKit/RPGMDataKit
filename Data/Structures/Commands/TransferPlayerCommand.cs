@@ -29,7 +29,7 @@ public class TransferPlayerCommand : NamedCommand
         set => Set(0, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int Param1
     {
         get => Get<int>(1);

@@ -9,14 +9,14 @@ public class RotatePictureCommand : NamedCommand
     public override int Code => CommandCodes.RotatePicture;
     public override string GetCommandName(StorageVersion version) => "Rotate Picture";
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int Layer
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
-    [EditorDefault(5, StorageVersion.VXAce)]
+    [EditorDefault(5, StorageVersion.VXAce)]   // the editor of MV opens with 0
     public int Speed
     {
         get => Get<int>(1);

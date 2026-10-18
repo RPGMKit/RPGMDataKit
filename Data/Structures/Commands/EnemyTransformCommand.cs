@@ -15,7 +15,7 @@ public class EnemyTransformCommand : NamedCommand
         set => Set(0, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int EnemyId
     {
         get => Get<int>(1);

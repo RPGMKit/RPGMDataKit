@@ -9,7 +9,7 @@ public class EnemyRecoverAllCommand : NamedCommand
     public override int Code => CommandCodes.EnemyRecoverAll;
     public override string GetCommandName(StorageVersion version) => "Enemy Recover All";
 
-    [EditorDefault(-1, StorageVersion.VXAce)]
+    [EditorDefault(-1)]
     public int TroopId
     {
         get => Get<int>(0);

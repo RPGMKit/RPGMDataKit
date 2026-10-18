@@ -9,14 +9,14 @@ public class ShowBattleAnimationCommand : NamedCommand
     public override int Code => CommandCodes.ShowBattleAnimation;
     public override string GetCommandName(StorageVersion version) => "Show Battle Animation";
     
-    [EditorDefault(-1, StorageVersion.VXAce)]
+    [EditorDefault(-1, StorageVersion.VXAce)]   // the editor of MV opens with the first enemy (0)
     public int TroopId
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int AnimationId
     {
         get => Get<int>(1);
@@ -25,6 +25,7 @@ public class ShowBattleAnimationCommand : NamedCommand
 
     // exists only in MV 1.3.5 and later (a command of an older file has two parameters, and it reads as false); when it is set,
     // the enemy of the first parameter is ignored. A command made in code keeps it until it is put into a VXAce list
+    [EditorDefault(false, StorageVersion.MV)]
     public bool EntireTroop
     {
         get => Get<bool>(2);

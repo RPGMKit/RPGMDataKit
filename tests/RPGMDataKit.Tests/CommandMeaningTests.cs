@@ -40,7 +40,7 @@ public sealed class CommandMeaningTests
         Assert.Equal(15, command.VariableId);
         Assert.Equal(IsMv(v) ? 2 : 1, command.Raw.Parameters!.Count);
         if (IsMv(v))
-            Assert.Equal(SelectItemCommand.KeyItemType.Regular, command.Type); // what the editor gives to a new command
+            Assert.Equal(SelectItemCommand.KeyItemType.Key, command.Type); // what the editor gives to a new command
         else
             Assert.Throws<DoesNotExistInVersionException>(() => command.Type);
     }

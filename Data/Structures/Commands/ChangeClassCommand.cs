@@ -10,14 +10,14 @@ public class ChangeClassCommand : NamedCommand
     public override int Code => CommandCodes.ChangeClass;
     public override string GetCommandName(StorageVersion version) => "Change Class";
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int ActorId
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int ClassId
     {
         get => Get<int>(1);

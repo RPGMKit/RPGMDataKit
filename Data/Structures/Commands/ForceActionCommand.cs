@@ -41,14 +41,15 @@ public class ForceActionCommand : NamedCommand
         set => Set(1, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int SkillId
     {
         get => Get<int>(2);
         set => Set(2, value);
     }
 
-    [EditorDefault(-1, StorageVersion.VXAce)]
+    [EditorDefault(-1, StorageVersion.VXAce)]   // Random
+    [EditorDefault(-2, StorageVersion.MV)]      // Last Target
     public TargetType Target
     {
         get => Get<TargetType>(3);

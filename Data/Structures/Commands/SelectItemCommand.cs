@@ -32,7 +32,7 @@ public class SelectItemCommand : NamedCommand
         [KeyItemType.HiddenB] = "Hidden Item B",
     };
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int VariableId
     {
         get => Get<int>(0);
@@ -41,20 +41,14 @@ public class SelectItemCommand : NamedCommand
 
     /// <summary>
     /// The kind of the items to select. MV only: VX Ace selects key items and has no such parameter, so it throws
-    /// <c>DoesNotExistInVersionException</c>. A new command of MV selects regular items, as the editor makes it.
+    /// <c>DoesNotExistInVersionException</c>. A new command of MV selects key items, as the editor makes it.
     /// </summary>
     [DoesNotExistInVersion(StorageVersion.VXAce)]
+    [EditorDefault(KeyItemType.Key, StorageVersion.MV)]
     public KeyItemType Type
     {
         get => Get<KeyItemType>(1);
         set => Set(1, value);
-    }
-
-    protected override void OnBinding(StorageVersion version)
-    {
-        // a new command of MV selects regular items
-        if (version == StorageVersion.MV && !IsParameterSet(1))
-            Set(1, KeyItemType.Regular);
     }
 
     protected override void OnMadeInCodeBound(StorageVersion version)

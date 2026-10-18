@@ -21,7 +21,7 @@ public class ChangeEnemyMpCommand : NamedCommand
         Variable = 1,
     }
         
-    [EditorDefault(-1, StorageVersion.VXAce)]
+    [EditorDefault(-1)]
     public int TroopId
     {
         get => Get<int>(0);
@@ -40,7 +40,7 @@ public class ChangeEnemyMpCommand : NamedCommand
         set => Set(2, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int Value
     {
         get => Get<int>(3);

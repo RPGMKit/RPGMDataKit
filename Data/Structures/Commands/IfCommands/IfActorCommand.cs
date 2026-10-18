@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -16,6 +17,7 @@ public class IfActorCommand : IfCommand
         State = 6,
     }
 
+    [EditorDefault(1)]
     public int ActorId
     {
         get => Get<int>(1);

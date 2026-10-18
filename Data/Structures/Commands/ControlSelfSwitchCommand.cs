@@ -9,7 +9,7 @@ public class ControlSelfSwitchCommand : NamedCommand
     public override int Code => CommandCodes.ControlSelfSwitch;
     public override string GetCommandName(StorageVersion version) => "Control Self Switch";
         
-    [EditorDefault("A", StorageVersion.VXAce)]
+    [EditorDefault("A")]
     public string Switch
     {
         get => Get<string>(0);

@@ -11,7 +11,7 @@ public class TintPictureCommand : NamedCommand
     public override int Code => CommandCodes.TintPicture;
     public override string GetCommandName(StorageVersion version) => "Tint Picture";
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int Layer
     {
         get => Get<int>(0);
@@ -25,14 +25,14 @@ public class TintPictureCommand : NamedCommand
         set => Set(1, value);
     }
 
-    [EditorDefault(60, StorageVersion.VXAce)]
+    [EditorDefault(60)]
     public int Duration
     {
         get => Get<int>(2);
         set => Set(2, value);
     }
 
-    [EditorDefault(true, StorageVersion.VXAce)]
+    [EditorDefault(true)]
     public bool WaitForCompletion
     {
         get => Get<bool>(3);

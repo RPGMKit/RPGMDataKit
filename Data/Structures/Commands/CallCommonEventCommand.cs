@@ -12,7 +12,7 @@ public class CallCommonEventCommand : NamedCommand
         return version == StorageVersion.MV ? "Common Event" : "Call Common Event";
     }
         
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int EventId
     {
         get => Get<int>(0);

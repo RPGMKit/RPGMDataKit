@@ -9,21 +9,21 @@ public class ScrollMapCommand : NamedCommand
     public override int Code => CommandCodes.ScrollMap;
     public override string GetCommandName(StorageVersion version) => "Scroll Map";
 
-    [EditorDefault(2, StorageVersion.VXAce)]
+    [EditorDefault(2)]
     public Direction Direction
     {
         get => Get<Direction>(0);
         set => Set(0, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int Distance
     {
         get => Get<int>(1);
         set => Set(1, value);
     }
 
-    [EditorDefault(4, StorageVersion.VXAce)]
+    [EditorDefault(4)]
     public int Speed
     {
         get => Get<int>(2);

@@ -15,7 +15,7 @@ public class ChangeEnemyStateCommand : NamedCommand
         Remove = 1,
     }
 
-    [EditorDefault(-1, StorageVersion.VXAce)]
+    [EditorDefault(-1)]
     public int TroopId
     {
         get => Get<int>(0);
@@ -28,7 +28,7 @@ public class ChangeEnemyStateCommand : NamedCommand
         set => Set(1, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int StateId
     {
         get => Get<int>(2);

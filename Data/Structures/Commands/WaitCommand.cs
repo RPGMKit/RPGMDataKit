@@ -9,7 +9,7 @@ public class WaitCommand : NamedCommand
     public override int Code => CommandCodes.Wait;
     public override string GetCommandName(StorageVersion version) => "Wait";
 
-    [EditorDefault(60, StorageVersion.VXAce)]
+    [EditorDefault(60)]
     public int FrameCount
     {
         get => Get<int>(0);

@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -12,12 +13,14 @@ public class ChangeActorProfileCommand : NamedCommand
         return "Change Profile";
     }
 
+    [EditorDefault(1)]
     public int ActorId
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault("")]
     public string Text
     {
         get => Get<string>(1);

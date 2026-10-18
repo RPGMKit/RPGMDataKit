@@ -64,7 +64,7 @@ public class ChangeParameterCommand : NamedCommand
         set => Set(0, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1, StorageVersion.VXAce)]   // the editor of MV opens with the entire party (0)
     public int SourceId
     {
         get => Get<int>(1);
@@ -89,7 +89,7 @@ public class ChangeParameterCommand : NamedCommand
         set => Set(4, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int Value
     {
         get => Get<int>(5);

@@ -9,7 +9,7 @@ public class NameInputProcessingCommand : NamedCommand
     public override int Code => CommandCodes.NameInputProcessing;
     public override string GetCommandName(StorageVersion version) => "Name Input Processing";
         
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int ActorId
     {
         get => Get<int>(0);
@@ -17,6 +17,7 @@ public class NameInputProcessingCommand : NamedCommand
     }
 
     [EditorDefault(6, StorageVersion.VXAce)]
+    [EditorDefault(8, StorageVersion.MV)]
     public int MaxCharacters
     {
         get => Get<int>(1);

@@ -9,9 +9,10 @@ using Xunit;
 namespace RPGMDataKit.Tests;
 
 /// <summary>
-/// What the editors give to a new command (<see cref="EditorDefaultAttribute"/>). The values were read from the files that the editor of VX Ace
-/// wrote for a command made with the dialog as it opens; for MV only what was seen there (the ids and counts of items, weapons, armors, and the
-/// Show Choices) is given, and what is certainly wrong (a parameter that is null) is not left.
+/// What the editors give to a new command (<see cref="EditorDefaultAttribute"/>). The values were read from the files that the editors of VX Ace
+/// and MV wrote for a command made with the dialog as it opens (every command that has a dialog was made in both); where a maker has no value
+/// it takes the one that is certainly not wrong (a parameter that is null is not left), and what the editor takes from the project (the map,
+/// the music, the graphics) is not given.
 /// </summary>
 public sealed class EditorDefaultTests
 {
@@ -72,15 +73,31 @@ public sealed class EditorDefaultTests
 
         Assert.Equal((0, 0, 0, 0), (screen.Red, screen.Green, screen.Blue, screen.Gray));
         Assert.Equal((0, 0, 0, 0), (picture.Red, picture.Green, picture.Blue, picture.Gray));
-        Assert.Equal((255, 255, 255, 255), (flash.Red, flash.Green, flash.Blue, flash.Alpha));
+        Assert.Equal((255, 255, 255, IsMv(v) ? 170 : 255), (flash.Red, flash.Green, flash.Blue, flash.Alpha));   // the editor of MV flashes at 170
         Assert.NotSame(screen, picture);   // each command has its own object
     }
 
     [Fact]
-    public void WhatIsNotSeenInTheEditorOfMvIsNotGivenToMv()
+    public void ANewCommandOfMvHasTheValuesOfTheEditorOfMv()
     {
-        Assert.Equal(0, InList(Version.Mv, new WaitCommand()).FrameCount);
-        Assert.Equal(0, InList(Version.Mv, new ChangeEnemyHpCommand()).Value);
+        var v = Version.Mv;
+
+        Assert.Equal(60, InList(v, new WaitCommand()).FrameCount);
+        Assert.Equal([-1, 0, 0, 1, 0], InList(v, new ChangeEnemyHpCommand()).Raw.Parameters!.Select(Convert.ToInt32));
+
+        // where the editor of MV differs from the editor of VX Ace
+        Assert.Equal(-2, (int)InList(v, new ForceActionCommand()).Target);   // Last Target
+        Assert.Equal((5, 60), (InList(v, new SetWeatherEffectCommand()).Power, InList(v, new SetWeatherEffectCommand()).Duration));
+        Assert.Equal(8, InList(v, new NameInputProcessingCommand()).MaxCharacters);
+        Assert.Equal(0, InList(v, new RotatePictureCommand()).Speed);
+        Assert.Equal(0, InList(v, new ChangeSkillCommand()).SourceId);        // the entire party
+        Assert.Equal(SelectItemCommand.KeyItemType.Key, InList(v, new SelectItemCommand()).Type);
+        Assert.Equal(1, InList(v, new ChangeActorProfileCommand()).ActorId);
+        Assert.Equal("", InList(v, new PluginCommand()).Command);
+
+        // MV 1.6.3 writes the entire-troop flag as the third parameter, the first enemy as 0
+        var animation = InList(v, new ShowBattleAnimationCommand());
+        Assert.Equal([0, 1, 0], animation.Raw.Parameters!.Select(Convert.ToInt32));
     }
 
     [Theory]

@@ -9,7 +9,7 @@ public class FadeoutBGMCommand : NamedCommand
     public override int Code => CommandCodes.FadeoutBgm;
     public override string GetCommandName(StorageVersion version) => "Fadeout BGM";
 
-    [EditorDefault(10, StorageVersion.VXAce)]
+    [EditorDefault(10)]
     public int Seconds
     {
         get => Get<int>(0);

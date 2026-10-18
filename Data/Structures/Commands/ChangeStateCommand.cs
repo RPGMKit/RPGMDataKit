@@ -39,7 +39,7 @@ public class ChangeStateCommand : NamedCommand
         set => Set(2, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int StateId
     {
         get => Get<int>(3);

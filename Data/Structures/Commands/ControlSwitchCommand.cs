@@ -9,14 +9,14 @@ public class ControlSwitchCommand : NamedCommand
     public override int Code => CommandCodes.ControlSwitches;
     public override string GetCommandName(StorageVersion version) => "Control Switches";
         
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int StartSwitchId
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int EndSwitchId
     {
         get => Get<int>(1);

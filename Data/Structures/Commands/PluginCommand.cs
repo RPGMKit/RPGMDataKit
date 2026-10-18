@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,6 +9,7 @@ public class PluginCommand : NamedCommand
     public override int Code => CommandCodes.PluginCommand;
     public override string GetCommandName(StorageVersion version) => "Plugin Command";
 
+    [EditorDefault("")]
     public string Command
     {
         get => Get<string>(0);

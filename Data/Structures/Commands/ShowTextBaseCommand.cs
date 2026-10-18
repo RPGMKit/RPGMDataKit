@@ -35,7 +35,7 @@ public class ShowTextBaseCommand : NamedCommand
         set => Set(2, value);
     }
 
-    [EditorDefault(2, StorageVersion.VXAce)]
+    [EditorDefault(2)]
     public PositionType Position
     {
         get => Get<PositionType>(3);

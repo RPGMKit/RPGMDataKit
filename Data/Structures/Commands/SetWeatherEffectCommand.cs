@@ -18,7 +18,7 @@ public class SetWeatherEffectCommand : NamedCommand
     
     protected const string TypeNone = "none";
 
-    [EditorDefault(TypeNone, StorageVersion.VXAce)]
+    [EditorDefault(TypeNone)]
     public string EffectType
     {
         get => Get<string>(0);
@@ -26,19 +26,21 @@ public class SetWeatherEffectCommand : NamedCommand
     }
 
     [EditorDefault(9, StorageVersion.VXAce)]
+    [EditorDefault(5, StorageVersion.MV)]
     public int Power
     {
         get => Get<int>(1);
         set => Set(1, value);
     }
 
+    [EditorDefault(60, StorageVersion.MV)]   // VX Ace opens with 0
     public int Duration
     {
         get => Get<int>(2);
         set => Set(2, value);
     }
 
-    [EditorDefault(true, StorageVersion.VXAce)]
+    [EditorDefault(true)]
     public bool WaitForCompletion
     {
         get => Get<bool>(3);

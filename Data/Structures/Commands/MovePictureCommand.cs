@@ -24,7 +24,7 @@ public class MovePictureCommand : NamedCommand
         
     // parameter 1 is always 0
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int Layer
     {
         get => Get<int>(0);
@@ -55,21 +55,21 @@ public class MovePictureCommand : NamedCommand
         set => Set(5, value);
     }
 
-    [EditorDefault(100, StorageVersion.VXAce)]
+    [EditorDefault(100)]
     public int Width
     {
         get => Get<int>(6);
         set => Set(6, value);
     }
 
-    [EditorDefault(100, StorageVersion.VXAce)]
+    [EditorDefault(100)]
     public int Height
     {
         get => Get<int>(7);
         set => Set(7, value);
     }
 
-    [EditorDefault(255, StorageVersion.VXAce)]
+    [EditorDefault(255)]
     public int Transparency
     {
         get => Get<int>(8);
@@ -88,14 +88,14 @@ public class MovePictureCommand : NamedCommand
         }
     }
 
-    [EditorDefault(60, StorageVersion.VXAce)]
+    [EditorDefault(60)]
     public int Frames
     {
         get => Get<int>(10);
         set => Set(10, value);
     }
 
-    [EditorDefault(true, StorageVersion.VXAce)]
+    [EditorDefault(true)]
     public bool WaitCompletion
     {
         get => Get<bool>(11);

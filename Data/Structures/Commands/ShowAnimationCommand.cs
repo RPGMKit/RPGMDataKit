@@ -9,14 +9,14 @@ public class ShowAnimationCommand : NamedCommand
     public override int Code => CommandCodes.ShowAnimation;
     public override string GetCommandName(StorageVersion version) => "Show Animation";
 
-    [EditorDefault(-1, StorageVersion.VXAce)]
+    [EditorDefault(-1)]
     public int EventId
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int AnimationId
     {
         get => Get<int>(1);

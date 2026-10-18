@@ -146,14 +146,14 @@ public class ControlVariableCommand : NamedCommand
         [OtherParameters.EscapeCount] = new("Escape Count", ""),
     };
         
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int StartVariable
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int EndVariable
     {
         get => Get<int>(1);

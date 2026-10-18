@@ -42,7 +42,7 @@ public class GetLocationInfoCommand : NamedCommand
         [InfoType.Region] = new("Region ID", "Region ID"),
     };
         
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int VariableId
     {
         get => Get<int>(0);

@@ -9,7 +9,7 @@ public class ChangeTilesetCommand : NamedCommand
     public override int Code => CommandCodes.ChangeTileset;
     public override string GetCommandName(StorageVersion version) => "Change Tileset";
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int TileSetId
     {
         get => Get<int>(0);

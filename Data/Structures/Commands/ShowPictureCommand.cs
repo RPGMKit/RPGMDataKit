@@ -22,7 +22,7 @@ public class ShowPictureCommand : NamedCommand
         ByVariable = 1,
     }
         
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int Layer
     {
         get => Get<int>(0);
@@ -60,21 +60,21 @@ public class ShowPictureCommand : NamedCommand
         set => Set(5, value);
     }
 
-    [EditorDefault(100, StorageVersion.VXAce)]
+    [EditorDefault(100)]
     public int Width
     {
         get => Get<int>(6);
         set => Set(6, value);
     }
 
-    [EditorDefault(100, StorageVersion.VXAce)]
+    [EditorDefault(100)]
     public int Height
     {
         get => Get<int>(7);
         set => Set(7, value);
     }
 
-    [EditorDefault(255, StorageVersion.VXAce)]
+    [EditorDefault(255)]
     public int Transparency
     {
         get => Get<int>(8);

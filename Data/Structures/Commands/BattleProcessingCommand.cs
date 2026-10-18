@@ -23,7 +23,7 @@ public class BattleProcessingCommand : NamedCommand
         set => Set(0, value);
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int SourceId
     {
         get => Get<int>(1);

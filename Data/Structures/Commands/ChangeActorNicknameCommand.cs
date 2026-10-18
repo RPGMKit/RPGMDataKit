@@ -16,7 +16,7 @@ public class ChangeActorNicknameCommand : NamedCommand
             return "Change Actor Nickname";
     }
 
-    [EditorDefault(1, StorageVersion.VXAce)]
+    [EditorDefault(1)]
     public int ActorId
     {
         get => Get<int>(0);
