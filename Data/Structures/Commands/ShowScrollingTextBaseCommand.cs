@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,6 +9,7 @@ public class ShowScrollingTextBaseCommand : NamedCommand
     public override int Code => CommandCodes.ShowScrollingTextBase;
     public override string GetCommandName(StorageVersion version) => "Text(S)";
 
+    [EditorDefault(2, StorageVersion.VXAce)]
     public int Speed
     {
         get => Get<int>(0);

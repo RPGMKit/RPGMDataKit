@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -21,6 +22,7 @@ public class ChangeVehicleImageCommand : NamedCommand
         set => Set(0, value);
     }
 
+    [EditorDefault("")]
     public string Image
     {
         get => Get<string>(1);

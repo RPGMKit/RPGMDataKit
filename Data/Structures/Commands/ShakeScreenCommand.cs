@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,24 +9,28 @@ public class ShakeScreenCommand : NamedCommand
     public override int Code => CommandCodes.ShakeScreen;
     public override string GetCommandName(StorageVersion version) => "Shake Screen";
 
+    [EditorDefault(5, StorageVersion.VXAce)]
     public int Power
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault(5, StorageVersion.VXAce)]
     public int Speed
     {
         get => Get<int>(1);
         set => Set(1, value);
     }
 
+    [EditorDefault(60, StorageVersion.VXAce)]
     public int Duration
     {
         get => Get<int>(2);
         set => Set(2, value);
     }
 
+    [EditorDefault(true, StorageVersion.VXAce)]
     public bool WaitForCompletion
     {
         get => Get<bool>(3);

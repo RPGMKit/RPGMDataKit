@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Exceptions;
 using RPGMDataKit.Data.Structures.Internal;
@@ -23,6 +24,7 @@ public class MovePictureCommand : NamedCommand
         
     // parameter 1 is always 0
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int Layer
     {
         get => Get<int>(0);
@@ -53,18 +55,21 @@ public class MovePictureCommand : NamedCommand
         set => Set(5, value);
     }
 
+    [EditorDefault(100, StorageVersion.VXAce)]
     public int Width
     {
         get => Get<int>(6);
         set => Set(6, value);
     }
 
+    [EditorDefault(100, StorageVersion.VXAce)]
     public int Height
     {
         get => Get<int>(7);
         set => Set(7, value);
     }
 
+    [EditorDefault(255, StorageVersion.VXAce)]
     public int Transparency
     {
         get => Get<int>(8);
@@ -83,12 +88,14 @@ public class MovePictureCommand : NamedCommand
         }
     }
 
+    [EditorDefault(60, StorageVersion.VXAce)]
     public int Frames
     {
         get => Get<int>(10);
         set => Set(10, value);
     }
 
+    [EditorDefault(true, StorageVersion.VXAce)]
     public bool WaitCompletion
     {
         get => Get<bool>(11);

@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -27,12 +28,14 @@ public class ShowBalloonCommand : NamedCommand
         UserDefined5 = 15,
     }
 
+    [EditorDefault(-1, StorageVersion.VXAce)]
     public int EventId
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public IconType Icon
     {
         get => Get<IconType>(1);

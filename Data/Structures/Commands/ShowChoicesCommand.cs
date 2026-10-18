@@ -41,6 +41,7 @@ public class ShowChoicesCommand : NamedCommand
     }
 
     // the list stored in the raw command, so changing it changes the command
+    [EditorDefaultList("Yes", "No")]
     public List<string> Choices
     {
         get => GetEntity<List<string>>(0);
@@ -73,6 +74,9 @@ public class ShowChoicesCommand : NamedCommand
 
     public bool IsCancelChoiceBranch => Cancel == CancelType.Branch;
 
+    /// <summary>True if what Cancel does was set in code (a new command that was not told gets the choice of the editors).</summary>
+    internal bool IsCancelSet => IsParameterSet(1);
+
     private static int ToVxAce(CancelType cancel) => cancel switch
     {
         CancelType.Disallow => 0,
@@ -90,9 +94,10 @@ public class ShowChoicesCommand : NamedCommand
 
     protected override void OnBinding(StorageVersion version)
     {
-        // a command that was not told what Cancel does does not allow it
+        // a new command of the editors has Cancel at the second choice (the choices Yes and No are the default of Choices); not by an attribute
+        // because the property of Cancel converts what it is given by the maker of the list, and here the value is the one of MV until then
         if (!IsParameterSet(1))
-            Set(1, (int)CancelType.Disallow);
+            Set(1, (int)CancelType.Choice2);
 
         // what was set in code is the number of MV until the command has a maker
         if (version == StorageVersion.VXAce)

@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -14,6 +15,7 @@ public class ChangePartyMemberCommand : NamedCommand
         Remove = 1,
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int ActorId
     {
         get => Get<int>(0);

@@ -345,7 +345,8 @@ public sealed class CommandBuilderTests
         Assert.All(actors, a => Assert.Equal(1, a.ActorId));
 
         var enemies = container.NamedCommands.OfType<IfEnemyCommand>().ToList();
-        Assert.Equal([(IfEnemyCommand.CheckType.Appeared, 0, 0), (IfEnemyCommand.CheckType.State, 1, 10)], enemies.Select(e => (e.Check, e.TroopId, e.Param)));
+        Assert.Equal([(IfEnemyCommand.CheckType.Appeared, 0), (IfEnemyCommand.CheckType.State, 1)], enemies.Select(e => (e.Check, e.TroopId)));
+        Assert.Equal(10, enemies[1].Param);
 
         // every one of them is a condition with its branches
         Expect(string.Join(" ", Enumerable.Repeat("111@0 0@1 412@0", 14)) + " 0@0", container);

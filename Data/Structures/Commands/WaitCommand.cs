@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,6 +9,7 @@ public class WaitCommand : NamedCommand
     public override int Code => CommandCodes.Wait;
     public override string GetCommandName(StorageVersion version) => "Wait";
 
+    [EditorDefault(60, StorageVersion.VXAce)]
     public int FrameCount
     {
         get => Get<int>(0);

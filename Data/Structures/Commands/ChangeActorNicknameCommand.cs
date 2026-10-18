@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -15,12 +16,14 @@ public class ChangeActorNicknameCommand : NamedCommand
             return "Change Actor Nickname";
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int ActorId
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault("")]
     public string NickName
     {
         get => Get<string>(1);

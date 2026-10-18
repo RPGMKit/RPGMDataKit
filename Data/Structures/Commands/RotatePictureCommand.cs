@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,12 +9,14 @@ public class RotatePictureCommand : NamedCommand
     public override int Code => CommandCodes.RotatePicture;
     public override string GetCommandName(StorageVersion version) => "Rotate Picture";
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int Layer
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault(5, StorageVersion.VXAce)]
     public int Speed
     {
         get => Get<int>(1);

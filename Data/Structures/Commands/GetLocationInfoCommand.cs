@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Exceptions;
 using RPGMDataKit.Data.Structures.Internal;
@@ -41,6 +42,7 @@ public class GetLocationInfoCommand : NamedCommand
         [InfoType.Region] = new("Region ID", "Region ID"),
     };
         
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int VariableId
     {
         get => Get<int>(0);

@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
@@ -10,18 +11,21 @@ public class TintScreenCommand : NamedCommand
     public override int Code => CommandCodes.TintScreen;
     public override string GetCommandName(StorageVersion version) => "Tint Screen";
 
+    [EditorDefaultTone(0, 0, 0, 0)]
     public ITone Tone
     {
         get => GetEntity<ITone>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault(60, StorageVersion.VXAce)]
     public int Duration
     {
         get => Get<int>(1);
         set => Set(1, value);
     }
 
+    [EditorDefault(true, StorageVersion.VXAce)]
     public bool WaitForCompletion
     {
         get => Get<bool>(2);

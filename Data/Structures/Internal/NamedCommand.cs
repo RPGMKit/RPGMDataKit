@@ -17,8 +17,12 @@ namespace RPGMDataKit.Data.Structures.Internal;
 public abstract class NamedCommand : IHasOptionalProperties
 {
     private static readonly ConcurrentDictionary<Type, PropertyInfo[]> ParameterProperties = new();
+    private static readonly ConcurrentDictionary<Type, (PropertyInfo Property, EditorDefaultBaseAttribute[] Defaults)[]> EditorDefaults = new();
+    private static readonly MethodInfo NewEntityMethod = typeof(TypeMap).GetMethod(nameof(TypeMap.New))!;
 
     private ICommand? _raw;
+    private bool _copy;
+    private int _lastIndex = -1;
     private IParameterProvider? _parameters;
     private StorageVersion _version = StorageVersion.VXAce;
     private TypeMap? _types;
@@ -50,6 +54,7 @@ public abstract class NamedCommand : IHasOptionalProperties
     public NamedCommand Clone()
     {
         var copy = CreateBlank();
+        copy._copy = true;   // it has what the original has, not what the editor gives to a new command
         copy.Indent = Indent;
         copy.IsSecondary = IsSecondary;
 
@@ -132,6 +137,7 @@ public abstract class NamedCommand : IHasOptionalProperties
     protected T? Get<T>(int index, [System.Runtime.CompilerServices.CallerMemberName] string? property = null)
     {
         ThrowIfMissing(property);
+        _lastIndex = index;
 
         return Parameters.GetParameter<T>(index);
     }
@@ -149,6 +155,7 @@ public abstract class NamedCommand : IHasOptionalProperties
     protected void Set<T>(int index, T? value, [System.Runtime.CompilerServices.CallerMemberName] string? property = null)
     {
         ThrowIfMissing(property);
+        _lastIndex = index;
 
         if (typeof(T).IsInterface && value != null && !IsDetached)
             value = (T)InMap(typeof(T), value);
@@ -176,6 +183,7 @@ public abstract class NamedCommand : IHasOptionalProperties
     protected T? GetEntity<T, TJson>(int index, [System.Runtime.CompilerServices.CallerMemberName] string? property = null) where T : class where TJson : class, T
     {
         ThrowIfMissing(property);
+        _lastIndex = index;
 
         var value = Raw.Parameters?.Get(index);
         if (value is T entity)
@@ -219,11 +227,38 @@ public abstract class NamedCommand : IHasOptionalProperties
 
         if (madeInCode)
         {
+            if (!_copy)
+                ApplyEditorDefaults(version);
+
             OnBinding(version);
             CompleteMadeInCode();
             OnMadeInCodeBound(version);
+            _copy = false;
         }
     }
+
+    /// <summary>What the editor gives to a new command (<see cref="EditorDefaultAttribute"/>), for the parameters that were not set in code.</summary>
+    private void ApplyEditorDefaults(StorageVersion version)
+    {
+        foreach (var (property, defaults) in EditorDefaults.GetOrAdd(GetType(), FindEditorDefaults))
+        {
+            var attribute = defaults.FirstOrDefault(d => d.Versions.Contains(version)) ?? defaults.FirstOrDefault(d => d.Versions.Count == 0);
+            if (attribute == null || !HasProperty(property.Name))
+                continue;
+
+            property.GetValue(this);   // the property reads its parameter, which tells which one it is
+            if (IsParameterSet(_lastIndex))
+                continue;
+
+            property.SetValue(this, attribute.CreateValue(Map, property.PropertyType));
+        }
+    }
+
+    private static (PropertyInfo, EditorDefaultBaseAttribute[])[] FindEditorDefaults(Type type) => ParameterProperties.GetOrAdd(type, FindParameterProperties)
+        .Select(p => (Property: p, Defaults: p.GetCustomAttributes<EditorDefaultBaseAttribute>().ToArray()))
+        .Where(p => p.Defaults.Length > 0)
+        .Select(p => (p.Property, p.Defaults))
+        .ToArray();
 
     /// <summary>
     /// Called when a command made in code gets its raw command, before its parameters are completed. A command that is not in a list has no maker and
@@ -250,8 +285,16 @@ public abstract class NamedCommand : IHasOptionalProperties
     {
         foreach (var property in ParameterProperties.GetOrAdd(GetType(), FindParameterProperties))
         {
-            if (HasProperty(property.Name))
-                property.SetValue(this, property.GetValue(this));
+            if (!HasProperty(property.Name))
+                continue;
+
+            var value = property.GetValue(this);
+
+            // a new command that plays a sound has an empty sound of the maker, as the editors give (not nothing)
+            if (value == null && typeof(IAudioFile).IsAssignableFrom(property.PropertyType))
+                value = NewEntityMethod.MakeGenericMethod(property.PropertyType).Invoke(Map, null);
+
+            property.SetValue(this, value);
         }
 
         if (Raw.Parameters == null && (Raw.Code == 0 || Raw.Indent != null))

@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,6 +9,7 @@ public class PlayMovieCommand : NamedCommand
     public override int Code => CommandCodes.PlayMovie;
     public override string GetCommandName(StorageVersion version) => "Play Movie";
 
+    [EditorDefault("")]
     public string Movie
     {
         get => Get<string>(0);

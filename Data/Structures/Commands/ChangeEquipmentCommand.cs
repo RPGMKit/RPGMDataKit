@@ -21,6 +21,7 @@ public class ChangeEquipmentCommand : NamedCommand
         Accessory = 4,
     }
         
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int ActorId
     {
         get => Get<int>(0);

@@ -4,6 +4,7 @@ using RPGMDataKit.Data.Helpers;
 using RPGMDataKit.Data.Structures.Commands;
 using RPGMDataKit.Data.Structures.Commands.IfCommands;
 using RPGMDataKit.Data.Structures.Exceptions;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using Xunit;
 
@@ -246,7 +247,10 @@ public sealed class CommandMeaningTests
         var appeared = InList(v, new IfEnemyCommand { TroopId = 1, Check = IfEnemyCommand.CheckType.Appeared });
         var state = InList(v, new IfEnemyCommand { TroopId = 1, Check = IfEnemyCommand.CheckType.State, Param = 5 });
 
-        Assert.Equal(3, appeared.Raw.Parameters!.Count);
+        // VX Ace (looked at in the editor): [5, 0, 0, 1], the state 1 is the one of the disabled list; MV (not looked at): no fourth parameter
+        Assert.Equal(IsMv(v) ? 3 : 4, appeared.Raw.Parameters!.Count);
+        if (!IsMv(v))
+            Assert.Equal(1, Convert.ToInt32(appeared.Raw.Parameters[3]));
         Assert.Equal(4, state.Raw.Parameters!.Count);
     }
 
@@ -333,6 +337,26 @@ public sealed class CommandMeaningTests
         // the order of the properties does not matter
         var ordered = InList(v, new ChangeWeaponsCommand { IncludeEquipment = true, Operator = ChangeWeaponsCommand.OperatorType.Take });
         Assert.True(ordered.IncludeEquipment);
+    }
+
+    [Fact]
+    public void ANewSoundOfVxAceHasTheVolumeTheEditorGives()
+    {
+        // read from the files that the editor of VX Ace wrote: BGM and ME 100, SE and BGS 80, the pitch 100
+        var se = InList(Version.VXAce, new PlaySECommand());
+        var bgs = InList(Version.VXAce, new PlayBGSCommand());
+        var bgm = InList(Version.VXAce, new PlayBGMCommand());
+        var me = InList(Version.VXAce, new PlayMECommand());
+
+        Assert.Equal((80, 100), (se.SoundData.Volume, se.SoundData.Pitch));
+        Assert.Equal((80, 100), (bgs.SoundData.Volume, bgs.SoundData.Pitch));
+        Assert.Equal((100, 100), (bgm.SoundData.Volume, bgm.SoundData.Pitch));
+        Assert.Equal((100, 100), (me.SoundData.Volume, me.SoundData.Pitch));
+
+        // what is set stays
+        var own = Version.VXAce.New<ISE>();
+        own.Volume = 55;
+        Assert.Equal(55, InList(Version.VXAce, new PlaySECommand { SoundData = own }).SoundData.Volume);
     }
 
     [Fact]

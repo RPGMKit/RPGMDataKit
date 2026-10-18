@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,6 +9,7 @@ public class EnemyRecoverAllCommand : NamedCommand
     public override int Code => CommandCodes.EnemyRecoverAll;
     public override string GetCommandName(StorageVersion version) => "Enemy Recover All";
 
+    [EditorDefault(-1, StorageVersion.VXAce)]
     public int TroopId
     {
         get => Get<int>(0);

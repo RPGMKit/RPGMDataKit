@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,6 +9,7 @@ public class CommentCommand : NamedCommand
     public override int Code => CommandCodes.Comment;
     public override string GetCommandName(StorageVersion version) => "Comment";
 
+    [EditorDefault("")]
     public string Comment
     {
         get => Get<string>(0);

@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using System.Security.Cryptography;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
@@ -22,6 +23,7 @@ public class BattleProcessingCommand : NamedCommand
         set => Set(0, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int SourceId
     {
         get => Get<int>(1);

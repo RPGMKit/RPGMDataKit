@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,6 +9,7 @@ public class ErasePictureCommand : NamedCommand
     public override int Code => CommandCodes.ErasePicture;
     public override string GetCommandName(StorageVersion version) => "Erase Picture";
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int Layer
     {
         get => Get<int>(0);

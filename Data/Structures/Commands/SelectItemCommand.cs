@@ -32,6 +32,7 @@ public class SelectItemCommand : NamedCommand
         [KeyItemType.HiddenB] = "Hidden Item B",
     };
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int VariableId
     {
         get => Get<int>(0);

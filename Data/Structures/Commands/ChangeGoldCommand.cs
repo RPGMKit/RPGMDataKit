@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -32,6 +33,7 @@ public class ChangeGoldCommand : NamedCommand
         set => Set(1, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int Value
     {
         get => Get<int>(2);

@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,6 +9,7 @@ public class FadeoutBGMCommand : NamedCommand
     public override int Code => CommandCodes.FadeoutBgm;
     public override string GetCommandName(StorageVersion version) => "Fadeout BGM";
 
+    [EditorDefault(10, StorageVersion.VXAce)]
     public int Seconds
     {
         get => Get<int>(0);

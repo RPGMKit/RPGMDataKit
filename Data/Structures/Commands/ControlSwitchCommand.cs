@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,12 +9,14 @@ public class ControlSwitchCommand : NamedCommand
     public override int Code => CommandCodes.ControlSwitches;
     public override string GetCommandName(StorageVersion version) => "Control Switches";
         
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int StartSwitchId
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int EndSwitchId
     {
         get => Get<int>(1);

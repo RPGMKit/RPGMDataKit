@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -15,12 +16,14 @@ public class ChangeActorImagesCommand : NamedCommand
             return "Change Actor Graphic";
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int ActorId
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault("")]
     public string CharacterImage
     {
         get => Get<string>(1);
@@ -33,6 +36,7 @@ public class ChangeActorImagesCommand : NamedCommand
         set => Set(2, value);
     }
 
+    [EditorDefault("")]
     public string FaceImage
     {
         get => Get<string>(3);

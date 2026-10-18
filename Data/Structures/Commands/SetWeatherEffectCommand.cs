@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -17,12 +18,14 @@ public class SetWeatherEffectCommand : NamedCommand
     
     protected const string TypeNone = "none";
 
+    [EditorDefault(TypeNone, StorageVersion.VXAce)]
     public string EffectType
     {
         get => Get<string>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault(9, StorageVersion.VXAce)]
     public int Power
     {
         get => Get<int>(1);
@@ -35,6 +38,7 @@ public class SetWeatherEffectCommand : NamedCommand
         set => Set(2, value);
     }
 
+    [EditorDefault(true, StorageVersion.VXAce)]
     public bool WaitForCompletion
     {
         get => Get<bool>(3);

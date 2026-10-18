@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -56,6 +57,7 @@ public class ChangeExperienceCommand : NamedCommand
         set => Set(3, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int Value
     {
         get => Get<int>(4);

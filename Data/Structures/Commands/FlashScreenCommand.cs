@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
@@ -9,18 +10,21 @@ public class FlashScreenCommand : NamedCommand
     public override int Code => CommandCodes.FlashScreen;
     public override string GetCommandName(StorageVersion version) => "Flash Screen";
 
+    [EditorDefaultColor(255, 255, 255, 255)]
     public IColor Color
     {
         get => GetEntity<IColor>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault(60, StorageVersion.VXAce)]
     public int Duration
     {
         get => Get<int>(1);
         set => Set(1, value);
     }
 
+    [EditorDefault(true, StorageVersion.VXAce)]
     public bool WaitForCompletion
     {
         get => Get<bool>(2);

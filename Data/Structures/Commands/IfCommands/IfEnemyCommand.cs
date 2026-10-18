@@ -23,16 +23,23 @@ public class IfEnemyCommand : IfCommand
         set
         {
             Set(2, value);
-            if (value == CheckType.Appeared && !IsDetached)
+            if (value == CheckType.Appeared && !IsDetached && Version == StorageVersion.MV)
                 DropParam();
         }
     }
 
-    // "has appeared" has no fourth parameter, the state has the state (the parameter is dropped for the kind that has none, as in the files of the editors)
+    // VX Ace writes the fourth parameter for "has appeared" too: the state that the disabled list of the editor has (the first one). For MV the editor
+    // was not looked at: "has appeared" has no fourth parameter there, as for an actor "in the party" (not checked)
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (version == StorageVersion.VXAce && !IsParameterSet(3))
+            Set(3, 1);
+    }
+
     protected override void OnMadeInCodeBound(StorageVersion version)
     {
         base.OnMadeInCodeBound(version);
-        if (Check == CheckType.Appeared)
+        if (Check == CheckType.Appeared && version == StorageVersion.MV)
             DropParam();
     }
 

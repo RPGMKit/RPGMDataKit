@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -15,6 +16,7 @@ public class ShowTextBaseCommand : NamedCommand
         Bottom = 2,
     }
         
+    [EditorDefault("")]
     public string Face
     {
         get => Get<string>(0);
@@ -33,6 +35,7 @@ public class ShowTextBaseCommand : NamedCommand
         set => Set(2, value);
     }
 
+    [EditorDefault(2, StorageVersion.VXAce)]
     public PositionType Position
     {
         get => Get<PositionType>(3);

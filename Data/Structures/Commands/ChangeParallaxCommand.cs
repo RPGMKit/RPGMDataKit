@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -15,6 +16,7 @@ public class ChangeParallaxCommand : NamedCommand
             return "Change Parallax Back";
     }
         
+    [EditorDefault("")]
     public string Image
     {
         get => Get<string>(0);

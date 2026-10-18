@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -38,6 +39,7 @@ public class ChangeStateCommand : NamedCommand
         set => Set(2, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int StateId
     {
         get => Get<int>(3);

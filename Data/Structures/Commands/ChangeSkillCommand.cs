@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -33,6 +34,7 @@ public class ChangeSkillCommand : NamedCommand
         set => Set(0, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int SourceId
     {
         get => Get<int>(1);
@@ -45,6 +47,7 @@ public class ChangeSkillCommand : NamedCommand
         set => Set(2, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int SkillId
     {
         get => Get<int>(3);

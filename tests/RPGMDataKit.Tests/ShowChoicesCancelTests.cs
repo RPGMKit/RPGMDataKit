@@ -67,10 +67,23 @@ public sealed class ShowChoicesCancelTests
 
     [Theory]
     [MemberData(nameof(Versions))]
-    public void ACommandThatIsNotToldAnythingDoesNotAllowCancel(Version v)
+    public void ANewCommandHasTheChoicesAndTheCancelOfTheEditors(Version v)
     {
-        var command = InList(v, new ShowChoicesCommand { Choices = ["A"] });
+        // looked at in both editors: Yes and No, and Cancel is the second choice (MV 1, VX Ace 2)
+        var command = InList(v, new ShowChoicesCommand());
 
+        Assert.Equal(["Yes", "No"], command.Choices);
+        Assert.Equal(CancelType.Choice2, command.Cancel);
+        Assert.Equal(v.Name == "MV" ? 1 : 2, command.CancelChoiceIndex);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void WhatIsToldIsNotGivenTheEditorsValue(Version v)
+    {
+        var command = InList(v, new ShowChoicesCommand { Choices = ["A", "B", "C"], Cancel = CancelType.Disallow });
+
+        Assert.Equal(["A", "B", "C"], command.Choices);
         Assert.Equal(CancelType.Disallow, command.Cancel);
         Assert.Equal(Raw(v, CancelType.Disallow), command.CancelChoiceIndex);
     }
@@ -190,7 +203,7 @@ public sealed class ShowChoicesCancelTests
     [Fact]
     public void TheDumpOfVxAceHasTheChoicesAndTheCancelOnly()
     {
-        var command = InList(Version.VXAce, new ShowChoicesCommand { Choices = ["Yes", "No", "Maybe"] });
+        var command = InList(Version.VXAce, new ShowChoicesCommand { Choices = ["Yes", "No", "Maybe"], Cancel = CancelType.Disallow });
         Assert.Equal("Yes, No, Maybe, (-)", Describe(Version.VXAce, command));
 
         command.Cancel = CancelType.Choice3;
@@ -203,7 +216,7 @@ public sealed class ShowChoicesCancelTests
     [Fact]
     public void TheDumpOfMvHasTheWindowTheDefaultChoiceAndTheCancel()
     {
-        var command = InList(Version.Mv, new ShowChoicesCommand { Choices = ["Yes", "No"] });
+        var command = InList(Version.Mv, new ShowChoicesCommand { Choices = ["Yes", "No"], Cancel = CancelType.Disallow });
         Assert.Equal("Yes, No, (Window, Right, #1, -)", Describe(Version.Mv, command));
 
         command.Cancel = CancelType.Choice2;

@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Exceptions;
 using RPGMDataKit.Data.Structures.Internal;
@@ -21,12 +22,14 @@ public class ShowPictureCommand : NamedCommand
         ByVariable = 1,
     }
         
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int Layer
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault("")]
     public string Picture
     {
         get => Get<string>(1);
@@ -57,18 +60,21 @@ public class ShowPictureCommand : NamedCommand
         set => Set(5, value);
     }
 
+    [EditorDefault(100, StorageVersion.VXAce)]
     public int Width
     {
         get => Get<int>(6);
         set => Set(6, value);
     }
 
+    [EditorDefault(100, StorageVersion.VXAce)]
     public int Height
     {
         get => Get<int>(7);
         set => Set(7, value);
     }
 
+    [EditorDefault(255, StorageVersion.VXAce)]
     public int Transparency
     {
         get => Get<int>(8);

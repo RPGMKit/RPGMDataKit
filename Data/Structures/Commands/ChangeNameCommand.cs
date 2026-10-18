@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,12 +9,14 @@ public class ChangeNameCommand : NamedCommand
     public override int Code => CommandCodes.ChangeName;
     public override string GetCommandName(StorageVersion version) => "Change Name";
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int ActorId
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault("")]
     public string Name
     {
         get => Get<string>(1);

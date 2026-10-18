@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -40,12 +41,14 @@ public class ForceActionCommand : NamedCommand
         set => Set(1, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int SkillId
     {
         get => Get<int>(2);
         set => Set(2, value);
     }
 
+    [EditorDefault(-1, StorageVersion.VXAce)]
     public TargetType Target
     {
         get => Get<TargetType>(3);

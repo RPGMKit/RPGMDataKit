@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -14,6 +15,7 @@ public class EnemyTransformCommand : NamedCommand
         set => Set(0, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int EnemyId
     {
         get => Get<int>(1);

@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -145,12 +146,14 @@ public class ControlVariableCommand : NamedCommand
         [OtherParameters.EscapeCount] = new("Escape Count", ""),
     };
         
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int StartVariable
     {
         get => Get<int>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int EndVariable
     {
         get => Get<int>(1);
@@ -169,38 +172,28 @@ public class ControlVariableCommand : NamedCommand
         set => Set(3, value);
     }
 
+    [EditorDefault(0)]
     public object Value1
     {
         get => Get<object>(4);
         set => Set(4, value);
     }
 
+    [EditorDefault(0)]
     public object Value2
     {
         get => Get<object>(5);
         set => Set(5, value);
     }
 
+    [EditorDefault(0)]
     public object Value3
     {
         get => Get<object>(6);
         set => Set(6, value);
     }
 
-    // game data has seven parameters in the files of the editors for every kind of it (the last two are 0 when the kind needs less)
-    protected override void OnBinding(StorageVersion version)
-    {
-        if (Operand != OperandType.GameData)
-            return;
-
-        for (var i = 5; i <= 6; i++)
-        {
-            if (!IsParameterSet(i))
-                Set(i, 0);
-        }
-    }
-
-    // a command made in code gets, like in the files, only the parameters its operand uses
+    // a command made in code gets, like in the files, only the parameters its operand uses (what is not told is 0, the values of the properties)
     protected override void OnMadeInCodeBound(StorageVersion version)
     {
         var count = Operand switch

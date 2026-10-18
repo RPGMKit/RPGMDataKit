@@ -249,7 +249,7 @@ public sealed class CommandBuilder
 
     /// <summary>The enemy of the troop has appeared; <paramref name="enemyIndex"/> is its place in the troop counted from 0 (the editors show it from 1).</summary>
     public CommandBuilder IfEnemyAppeared(int enemyIndex, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
-        If(new IfEnemyCommand { TroopId = enemyIndex, Check = IfEnemyCommand.CheckType.Appeared, Param = 0 }, then, @else);
+        If(new IfEnemyCommand { TroopId = enemyIndex, Check = IfEnemyCommand.CheckType.Appeared }, then, @else);
 
     public CommandBuilder IfEnemyState(int enemyIndex, int stateId, Action<CommandBuilder>? then = null, Action<CommandBuilder>? @else = null) =>
         If(new IfEnemyCommand { TroopId = enemyIndex, Check = IfEnemyCommand.CheckType.State, Param = stateId }, then, @else);
@@ -287,6 +287,8 @@ public sealed class CommandBuilder
             header.Cancel = ShowChoicesCommand.CancelType.Branch;
         else if (header.IsCancelChoiceBranch)
             throw new ArgumentException("Cancel of the command is a branch, but the choices have no Cancel.", nameof(header));
+        else if (!header.IsCancelSet)
+            header.Cancel = ShowChoicesCommand.CancelType.Disallow;   // the choices are given here, and what Cancel does is told by calling Cancel
 
         Add(header);
         for (var i = 0; i < choices.Options.Count; i++)

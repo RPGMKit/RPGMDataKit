@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,12 +9,14 @@ public class ChangeBattleBackground : NamedCommand
     public override int Code => CommandCodes.ChangeBattleBackground;
     public override string GetCommandName(StorageVersion version) => "Change Battle Back";
 
+    [EditorDefault("")]
     public string Image1
     {
         get => Get<string>(0);
         set => Set(0, value);
     }
 
+    [EditorDefault("")]
     public string Image2
     {
         get => Get<string>(1);

@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -8,6 +9,7 @@ public class ScriptCommand : NamedCommand
     public override int Code => CommandCodes.Script;
     public override string GetCommandName(StorageVersion version) => "Script";
 
+    [EditorDefault("")]
     public string Script
     {
         get => Get<string>(0);

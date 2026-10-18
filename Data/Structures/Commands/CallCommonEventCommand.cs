@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -11,6 +12,7 @@ public class CallCommonEventCommand : NamedCommand
         return version == StorageVersion.MV ? "Common Event" : "Call Common Event";
     }
         
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int EventId
     {
         get => Get<int>(0);

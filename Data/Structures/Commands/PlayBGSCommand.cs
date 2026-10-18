@@ -15,7 +15,17 @@ public class PlayBGSCommand : NamedCommand
         set => Set(0, value);
     }
 
-        
+    // the editor of VX Ace gives a new BGS the volume 80 (the factory of that maker gives 100)
+    protected override void OnBinding(StorageVersion version)
+    {
+        if (version != StorageVersion.VXAce || IsParameterSet(0))
+            return;
+
+        var sound = Map.New<IBGS>();
+        sound.Volume = 80;
+        Set(0, sound);
+    }
+
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
         return context.NameFormatter.FormatSoundData(SoundData);

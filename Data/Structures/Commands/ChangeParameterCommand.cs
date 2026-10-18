@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -63,6 +64,7 @@ public class ChangeParameterCommand : NamedCommand
         set => Set(0, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int SourceId
     {
         get => Get<int>(1);
@@ -87,6 +89,7 @@ public class ChangeParameterCommand : NamedCommand
         set => Set(4, value);
     }
 
+    [EditorDefault(1, StorageVersion.VXAce)]
     public int Value
     {
         get => Get<int>(5);

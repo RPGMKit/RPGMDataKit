@@ -1,3 +1,4 @@
+using RPGMDataKit.Data.Structures.Attributes;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -24,6 +25,7 @@ public class ChangeArmorsCommand : NamedCommand
         Variable = 1,
     }
         
+    [EditorDefault(1)]
     public int ArmorId
     {
         get => Get<int>(0);
@@ -42,6 +44,7 @@ public class ChangeArmorsCommand : NamedCommand
         set => Set(2, value);
     }
 
+    [EditorDefault(1)]
     public int Value
     {
         get => Get<int>(3);
@@ -55,14 +58,6 @@ public class ChangeArmorsCommand : NamedCommand
         set => Set(4, value);
     }
 
-    // a new command is for the armor and the count 1 in the editors
-    protected override void OnBinding(StorageVersion version)
-    {
-        if (!IsParameterSet(0))
-            Set(0, 1);
-        if (!IsParameterSet(3))
-            Set(3, 1);
-    }
 
     public override string GetParametersDescription(EntityContext context, DumpOptions options)
     {
