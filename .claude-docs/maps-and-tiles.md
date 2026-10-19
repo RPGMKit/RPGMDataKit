@@ -39,7 +39,7 @@ The number of layers is **not** the same:
   layer 2: B-E). What the editors forbid was not checked.
 - In MV the engine draws every tile layer the same way: a tile whose flag has the star bit (`0x10`, "above characters") goes to the layer that is
   drawn over characters, any other goes under them. Layers 0-3 differ only in the order of drawing (and in the order of the passage check).
-- **Shadows**: four bits, one per quarter of the tile: bit 0 top left, bit 1 top right, bit 2 bottom left, bit 3 bottom right. The engine of MV reads only
+- **Shadows**: four bits, one per quarter of the tile: bit 0 top left, bit 1 top right, bit 2 bottom left, bit 3 bottom right (`ShadowFlag`). The engine of MV reads only
   `value & 0x0F` (`Tilemap._drawShadow`).
 - **Region ids**: MV `regionId = data[x, y, 5]`; VX Ace `regionId = data[x, y, 3] >> 8` (`Game_Map#region_id`). In that data the
   regions are 0, 1 and 2. The editors limit them (VX Ace 0-63, MV 0-255; not checked here). The `rvdata2` table keeps signed
@@ -157,11 +157,17 @@ the sheets are 1024 wide with a 64 px tile).
 
 ## What the library gives, and what it does not
 
-- The raw table and the maps' other fields (`TilesetId`, `ParallaxName`, battlebacks, `Note`, encounters, BGM/BGS in the classes).
+- The raw table and the maps' other fields (`TilesetId`, `ParallaxName`, battlebacks, `Note`, encounters, BGM/BGS in the classes). `Table`: `this[x, y, z]`, `TryGet`, `Reshape`, `FromCells`; an index outside the dimensions throws.
 - `TileFlags` (the bits above; the vehicle bits are `NoBoat`, `NoShip`, `NoAirshipLand`: a set bit means NOT allowed, see [gotchas](gotchas.md)) and `TilesetMode`.
-- `Table`: `this[x, y, z]`, `TryGet`, `Reshape`, `FromCells`. An index outside the dimensions throws.
-- **No** layer enum, no tile id helpers (is it an autotile, which sheet, which kind), no way to ask "which tiles are on the square", no region/shadow
-  accessors, no creation of a map in a `Storage` (id and the entry in `MapInfos` are made by hand). The code that needs this (the converter) uses the raw numbers.
+- **`TileIds`** (`Data/Helpers/TileIds.cs`): the meaning of a tile id, the same functions as `Tilemap` of MV (checked against the engine for every id 0-8191): the ranges (`B`, `C`, `D`, `E`, `A5`, `A1`-`A4`, `Max`),
+  `IsVisible`, `IsAutotile`, `Kind`, `Shape`, `MakeAutotile(kind, shape)`, `SheetOf(id)` (`TileSheet`, whose number is the place of the sheet in `TilesetNames`), `NormalTileCell(id)`
+  (the column and row on the sheet), and the classes `IsA1`-`IsA5`, `IsWater`, `IsWaterfall`, `IsGround`, `IsShadowing`, `IsRoof`, `IsWallTop`, `IsWallSide`, `IsWall`, `IsFloorTypeAutotile`, `IsWallTypeAutotile`.
+- **`MapTileExtensions`** (on `IMap`): `TileLayerCount()` (3 in VX Ace, 4 in MV), `GetTile` / `SetTile(x, y, layer, id)`, `LayeredTiles(x, y)` (top layer first, as the engine looks), `GetShadow` / `SetShadow` (0-15, or the quarters as `ShadowFlag`: `GetShadowFlags`, `SetShadow(x, y, ShadowFlag.TopLeft | ShadowFlag.BottomRight)`) and
+  `GetRegion` / `SetRegion`. They hide where the shadow and the region are (one cell in VX Ace, two layers in MV). The maker is told by the class of the map. A VX Ace region is 0-127 (the cell is a signed 16-bit number).
+- **`TilesetExtensions`** (on `ITileSet`): `SheetName` / `SetSheetName(TileSheet)`, `SheetNameOf(tileId)`, `GetFlags` / `SetFlags(tileId)` (a short table, as MV's editor writes for a new tileset, reads 0 past its end and
+  grows when written), `HasFlags`, `GetTerrainTag` / `SetTerrainTag` (0-7), `BlocksDirection`.
+- **Not there**: choosing the shape of an autotile from the neighbours (what the editors do while painting), a passage check over tile events and layers (`check_passage`), creating a map in a `Storage`
+  (its id and its `MapInfos` entry are made by hand), resizing a map.
 
 ## Facts observed in the data of one full VX Ace game
 

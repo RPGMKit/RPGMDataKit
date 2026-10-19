@@ -188,6 +188,33 @@ mvPage.Append(b => b.Add(choices.Clone()));   // Cancel, the choices... as MV wr
 
 A command that is made in code and put into a list has the values that the editor of that maker gives a new command, not zeros and nulls: `new ChangeItemsCommand()` is for the item 1 and the count 1, `new WaitCommand()` waits for 60 frames, a Show Choices has the choices Yes and No and its Cancel is the second of them, a sound has the volume of the editor (80 for an SE and a BGS in VX Ace), a Tint Screen has a tone, a text is `""`. What is set in code stays, a zero too. Such a value is marked on the property: `[EditorDefault(60, StorageVersion.VXAce)]`; an attribute makes the value itself, so there are the ones for a tone (`[EditorDefaultTone(-34, 0, 68, 0, StorageVersion.VXAce)]`), a color and a list of texts (`[EditorDefaultList("Yes", "No")]`), and your own is a class of `EditorDefaultBaseAttribute` (the value was read from the files that the editors of both makers wrote; without the makers it is the same for both, and where they differ there is an attribute for each: the flash of Flash Screen has the alpha 255 in VX Ace and 170 in MV, the target of Force Action is Random in VX Ace and Last Target in MV). A copy made with `Clone()` has what the original has, not these values. What the editor takes from the project (the map and the music of a new Transfer Player or Change Battle BGM, the graphic of an actor) is not known to the library: set it in code.
 
+### Tiles of a map
+
+`IMap.Data` is a table of the maker's layout (4 layers in VX Ace, 6 in MV). The helpers in `RPGMDataKit.Data.Helpers` hide the difference:
+
+```csharp
+using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Helpers;
+
+var map = vx.Maps.Get(1)!;
+var tileset = vx.Tilesets.Get(map.TilesetId)!;
+
+int layers = map.TileLayerCount();                       // 3 in VX Ace, 4 in MV
+map.SetTile(3, 2, 0, TileIds.MakeAutotile(16, 0));       // a tile of A2 on the lowest layer
+map.SetRegion(3, 2, 5);                                  // the region, wherever the maker keeps it
+map.SetShadow(3, 2, ShadowFlag.TopLeft | ShadowFlag.BottomRight);   // the dark quarters (or a number 0-15)
+
+foreach (var id in map.LayeredTiles(3, 2))               // from the top layer down
+{
+    var sheet = TileIds.SheetOf(id);                     // TileSheet.A2, ... or null
+    var flags = tileset.GetFlags(id);                    // the flags of the tile
+    var name = tileset.SheetNameOf(id);                  // the file of the sheet it is cut from
+}
+```
+
+`TileIds` tells what a tile id is (the sheet, an autotile and its kind and shape, water, a wall, a roof...); the tileset helpers read and write the flags, the terrain tag and the names of the sheets.
+What is behind them is in `.claude-docs/maps-and-tiles.md`.
+
 ### Your own entity classes
 
 ```csharp
