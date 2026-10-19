@@ -5,6 +5,12 @@ behind one set of interfaces. User documentation: [README.md](README.md). Deeper
 
 ## Documentation index
 - [.claude-docs/index.md](.claude-docs/index.md) - what to read for which task
+- [.claude-docs/commands.md](.claude-docs/commands.md) - how an event command works (views over raw commands, the life of a command made in code), adding a command
+- [.claude-docs/command-formats.md](.claude-docs/command-formats.md) - the parameters of every command in VX Ace and MV, and the differences
+- [.claude-docs/editor-defaults.md](.claude-docs/editor-defaults.md) - what a new command is given, per maker, and how it was found
+- [.claude-docs/storage.md](.claude-docs/storage.md) - storages, holders, ids, type map, entities, serialization
+- [.claude-docs/events.md](.claude-docs/events.md) - map events, pages, conditions, common events, troops
+- [.claude-docs/testing.md](.claude-docs/testing.md) - tests, fixtures, checking a change on real projects
 - [.claude-docs/maps-and-tiles.md](.claude-docs/maps-and-tiles.md) - map layers, tile ids, tilesets, flags, regions; VX Ace vs MV
 - [.claude-docs/gotchas.md](.claude-docs/gotchas.md) - traps
 

@@ -28,8 +28,8 @@ public class IfEnemyCommand : IfCommand
         }
     }
 
-    // VX Ace writes the fourth parameter for "has appeared" too: the state that the disabled list of the editor has (the first one). For MV the editor
-    // was not looked at: "has appeared" has no fourth parameter there, as for an actor "in the party" (not checked)
+    // VX Ace writes the fourth parameter for "has appeared" too: the state that the disabled list of the editor has (the first one). MV does not:
+    // its editor writes [5, 0, 0] for "has appeared", as it writes [4, 1, 0] for an actor "in the party"
     protected override void OnBinding(StorageVersion version)
     {
         if (version == StorageVersion.VXAce && !IsParameterSet(3))

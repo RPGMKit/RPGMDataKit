@@ -6,6 +6,12 @@ these files hold what the README does not: how the game formats work, and the tr
 | You need to... | Read |
 |---|---|
 | work with maps, tiles, tilesets, layers, regions, tile flags; know how a tile id is built | [maps-and-tiles.md](maps-and-tiles.md) |
+| understand how an event command works, what happens when it is put into a list, or add a command | [commands.md](commands.md) |
+| know what every command holds (parameters of VX Ace and MV) and where the makers differ | [command-formats.md](command-formats.md) |
+| know or change what a new command is given (the values of the editors), and how they were found | [editor-defaults.md](editor-defaults.md) |
+| understand storages, holders, ids, the type map, entities, unknown members and how files are read and written | [storage.md](storage.md) |
+| work with map events, pages, conditions, graphics, common events, troops and their conditions | [events.md](events.md) |
+| run or write tests, use the fixtures, check a change on real projects | [testing.md](testing.md) |
 | avoid a known trap (names that mean the opposite, formats that differ between VX Ace and MV) | [gotchas.md](gotchas.md) |
 
 Where a fact comes from is written next to it (the engine file, the stock script, or the data of a real game that was looked at). A statement that was not checked

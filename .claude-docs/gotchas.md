@@ -20,3 +20,29 @@ Things in the library or the formats that look wrong or surprising. Add a line w
 - **`MapInfos`: the id is the key in VX Ace and a field in MV** (`IMapInfo.Id`). For VX Ace it is not saved with the entry.
 - **Tileset `Mode` 0 is the field (world) type**, 1 the area type; it matters only for the battle backgrounds of a map that has none of its own.
 - **Ids 1024-1535 and the tail of the A5 range (1664-2047) are unused**, but the `Flags` table of a tileset still has a cell for every id up to 8191.
+
+## Commands (details in [commands.md](commands.md))
+
+- **A default is applied before `OnBinding`.** In `OnBinding` the value of a defaulted property is already there, in the neutral form. A property that converts by
+  maker (`ShowChoicesCommand.Cancel`) must get its default in `OnBinding`, not from an attribute, or it is converted twice.
+- **"Set in code" means "non-null".** `IsParameterSet(i)` is `Parameters[i] != null`. A property of a reference type left at `null` is taken as not set; `0`, `false` and `""` are set.
+- **A loaded command is never touched** by defaults, `OnBinding` or completion; only a command made in code is. So a file can hold what the library would not write (the 2-parameter Show
+  Battle Animation of an old MV editor reads as `EntireTroop = false`, a clone of it has 3 parameters).
+- **A `Clone()` has no editor defaults**; it has what the original has. Put into a list of the other maker, the parameters that maker does not have are dropped (`HasProperty`).
+- **Getters are called by the machinery** (completion, copy, `Materialize`): a getter must not change data. `IncludeEquipment` of Change Weapons / Armors answers `false` unless the operator is Take, while its setter writes the value as it is.
+- **`When Cancel` (403)** is written with `[6, null]` for MV and with no parameters for VX Ace. The engines ignore the parameters (another tool's output had an empty list for MV and played the same).
+- **A command that the other maker does not have throws on binding** (`ChangeDefeatME`, `ChangeVehicleBGM` in VX Ace), as a blend mode `Screen` does in a VX Ace list. The command is made fine while it is detached.
+
+## Storage and files (details in [storage.md](storage.md))
+
+- **The data folder of VX Ace is `Data`, the constructors default to `"data"`.** On a case-sensitive file system `new VXAceStorage(path)` looks in the wrong folder; pass `"Data"`.
+- **Only loaded holders are saved.** A table that was never read is not rewritten; after `Unload()` a `Save()` writes nothing.
+- **The id of an entity is its place** (index or key), not the `id` written in it. A mismatch raises `Storage.IdMismatched`; the place wins.
+- **`Preload()` reads every map.** Use `PreloadAsync()` on a big project.
+- **MV files are written as one line**; the editor writes one entity per line. MV reads both, but a text diff against an editor-saved file shows every line changed.
+- **A new map or event needs its place made by hand**: `Maps.Set(id, map)` does not add a `MapInfos` entry, and `IMap.Events` has no `NextId`.
+
+## Events (details in [events.md](events.md))
+
+- **The active page of a map event is the last one whose conditions hold**, not the first. A troop page with no condition set never starts.
+- **A tile event is an event with a tile *and* priority "below characters"**; the same tile with another priority is just an event that is drawn as a tile.

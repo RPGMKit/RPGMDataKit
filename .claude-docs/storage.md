@@ -1,0 +1,91 @@
+# Storage, holders, entities and serialization
+
+How a project is opened, how its files become objects and back, which class stands for what, and the rules that keep a file the way the editor wrote it.
+User-facing examples are in the [README](../README.md) (Usage); this page is the machinery behind them.
+
+## The pieces
+
+| Piece | What it is | Where |
+|---|---|---|
+| `Storage` | one project: the paths, one holder per data file, `New<T>()`, `Preload`, `SaveAll`, the YAML dump, the search over commands | `Storages/Abstraction/Storage.cs` |
+| `VXAceStorage`, `MVStorage` | the two kinds; each lists its files in `Init()` and picks its serializer | `Storages/` |
+| `TypeMap` | which class stands for each entity interface (`IActor` -> `Data/VXAce/Classes/Actor` or `Data/MV/Classes/Actor`); makes new entities | `Storages/TypeMap.cs` |
+| `IDataSerializer` | reads and writes one file: `RubyMarshalDataSerializer` (`.rvdata2`), `JsonDataSerializer` (`.json`) | `Storages/Serialization` |
+| a **holder** | one data file held in memory: `DataHolder<T>` (one object), `DataLookupHolder<T>` (a table by id), `MapsHolder` (the map files) | `Data/` , `MapsHolder.cs` |
+| an **entity** | a record of the data: an interface in `Data/Structures/Interfaces` and one class per maker (`Data/VXAce/Classes`, `Data/MV/Classes`) | |
+
+User code works with the **interfaces** (`IActor`, `IMap`, `ITileSet`, ...), not with the maker's classes.
+
+## Opening a project
+
+```csharp
+var vx = new VXAceStorage(@"C:\Games\Game", dataDirectory: "Data");
+var mv = new MVStorage(@"C:\Games\GameMV");   // data directory "data"
+```
+
+- The data directory is relative to the project path. **VX Ace's folder is `Data`, MV's is `data`** (the constructor's default is `"data"` for both): on a
+  case-sensitive file system `new VXAceStorage(path)` looks for the wrong folder, so pass `"Data"` for VX Ace.
+- Nothing is read in the constructor. A holder reads its file **the first time it is used** (`Get()`), and keeps the data; the lists are not re-read.
+- The files per maker (the same names, the extension is `.rvdata2` / `.json`): `Actors`, `Animations`, `Armors`, `Classes`, `CommonEvents`, `Enemies`, `Items`,
+  `MapInfos`, `Skills`, `States`, `System`, `Tilesets`, `Troops`, `Weapons`, and the maps `Map001` ...; VX Ace also has `Scripts` (`VXAceStorage.Scripts`).
+- `Preload()` / `PreloadAsync()` read everything at once (the tables in parallel, then every map listed in `MapInfos`: the map numbers are the keys of the map infos, so those come first).
+  `SaveAll()` / `SaveAllAsync()` write; `Unload()` drops what was read.
+- **Only loaded holders are saved.** `Save()` of a holder that was never read does nothing (the file is not rewritten); `Maps.Save()` writes the loaded maps only.
+  `Unload()` followed by `Save()` writes nothing.
+
+## Holders and ids
+
+- `DataHolder<T>`: `Get()`, `GetAsync()`, `Set(value)`, `Load()`, `Save()`, `Unload()`. `System` is one.
+- `DataLookupHolder<T>`: a `Dictionary<int, T?>`. `Get(id)`, `Add(value)` (the next free id, from 1: slot 0 is not used), `Set(id, value)` (the entity gets the id),
+  `Remove(id)` (other ids do not shift; the slot is saved as null), `NextId()`, `Clear()` (empties without reading the file).
+- **The id of an entity is its place**: the index in a JSON array (MV) or in the Ruby array, the key in the Ruby hash (VX Ace `MapInfos`). The engines look an entity up
+  by its place and take `entity.id` back from it, so the two must be equal. When a list is loaded and an entity's own `Id` differs from its place, `Storage.IdMismatched`
+  is raised (subscribe before the table is first read, or call `Preload()` afterwards); the entity is left as it is, the place wins.
+- A list is **saved** as an array as long as its highest id + 1, with `null` in the gaps; a dictionary as it is.
+- VX Ace `MapInfos` is a hash whose entries do not keep their id: when it is loaded the key is put into the entity's `Id` (`idIsStored: false`). MV's `MapInfos` is a list
+  whose entries have `id`.
+- `MapsHolder`: `Get(id)` returns `IMap?` (null when the file does not exist), caches, and is safe from several tasks; `Set(id, map)` puts a map in (a new map has no
+  entry in `MapInfos` until you add one); `Save(id)` writes one loaded map.
+- Holders of your own (MV): `AddList<T>`, `AddDictionary<T>`, `AddEntity<T>` (README); the class must derive from `JsonEntity`, otherwise the members it does not describe are lost on save.
+  `HolderNames`, `GetHolder<T>(name)` find any holder by the name of its file.
+
+## Entities and the type map
+
+- `TypeMap.VXAce` and `TypeMap.Mv` are built from the classes in `RPGMDataKit.Data.VXAce.Classes` / `...MV.Classes`: an interface is mapped to the **only** class that declares it
+  there. Two classes for one interface make the entry ambiguous (an error when it is resolved). The built-in maps are read-only; `Clone().Add<IActor, MyActor>()` makes your own.
+- `storage.New<T>()` (= `TypeMap.New<T>()`) makes an entity with **the values the editor gives to a new one**: the class is built by a compiled parameterless constructor, then `INewEntity.InitializeNew()`
+  is called. A loaded entity is never initialized: the constructor leaves fields as they are (null when absent from the file), so the file keeps its shape.
+- `TypeMap.Factory<T>()` gives the constructor only (used for raw commands, sounds, ...). `JsonSerializer` of the map creates the entities when MV files are read.
+- The classes of the makers are the only place where the format is written down:
+  - **VX Ace**: `RubySerializationEntity` with `[RubyObject("RPG::Actor")]` on the class and `[RubyProperty("@name")]` on properties. `Table`, `Color`, `Tone` have user serializers
+    (`Data/VXAce/Serializers`); `Table` cells are 16-bit signed (see [maps-and-tiles.md](maps-and-tiles.md)).
+  - **MV**: `JsonEntity` with `[JsonProperty("name")]` (`MemberSerialization.OptIn`: only marked members are written). Lists that the engine keeps as arrays with a leading `null` (database lists)
+    are handled by the holder, `Table`s that are flat JSON arrays by `FlatTableJsonConverter`, a list of events by `ListToDictionaryJsonConverter`.
+- `HasProperty(name)` (`IHasOptionalProperties`) is false for a property that one maker's class does not have (`[DoesNotExistInVersion]` without makers on an entity property:
+  the pan of a sound in VX Ace). Properties that exist in only one maker are on the shared interface and throw `DoesNotExistInVersionException` when used on the other.
+
+## Unknown members are kept
+
+- **MV**: `JsonEntity` has `[JsonExtensionData]`: any member of the file that the class does not describe is kept and written back. (The editors and the plugins add members.)
+- **VX Ace**: `RubySerializationEntity` has `[RubyExtensionData]` and the serializer's settings store unknown members and unknown user objects instead of failing
+  (`MissingMember` / `UndefinedUserObject` -> `Store`, `UndefinedObject` -> `Ignore`). `RubyMarshalDataSerializer.Log` (null by default) receives a note for each.
+- So a project read and written without changes comes back with the same members. Writing is **not byte-identical** in general (see the strings below), but it is the same data.
+
+## Strings and encodings
+
+- The editor of VX Ace writes a string as a Ruby string **without an encoding flag**; the library writes a .NET string as a Ruby string **with the UTF-8 flag**. Both read the same in the engine.
+  This was looked at and left as it is.
+- MV's JSON: the editor writes one entity per line (`[`, `null,`, `{...},` ..., and a map with its top-level members on separate lines); the library writes each file as **one line**
+  (Newtonsoft's defaults, no indentation). MV reads both. The order of the members of an object follows the class, not the editor's file.
+
+## Dump and comparison (short)
+
+`storage.CreateYamlStorage().Dump(folder)` writes every holder of the storage as YAML (`Storages/Dump`), `Load(folder)` fills them back; commands are written as the lines the editor shows
+(`GetParametersDescription`). `Differ` (`Differ.cs`, `Diff/`) compares two projects. Both are described in the README.
+
+## Traps
+
+- A holder that was not read is not saved: if you edit through `LoadData<T>(file)` yourself, you save yourself.
+- `Preload()` reads **all** maps; on a big project it takes a while, prefer `PreloadAsync()`.
+- `DataLookupHolder.Get(id)` returns `null` both for an id that is absent and for a slot that is saved as null; `Get()` (the dictionary) tells them apart.
+- The Ruby marshal library is the submodule `external/RubyMarshalCS`; the project does not build without it (`git submodule update --init`).

@@ -51,8 +51,9 @@ The number of layers is **not** the same:
 
 ### Tile events
 
-An event whose page shows a tile (its graphic has a `TileId`) is drawn as a tile, and takes part in the passage checks as one more tile on top
-of the layers (`Game_Map#all_tiles` = tile events + layered tiles). `Graphic.TileId` is the same id as in the layers.
+An event whose current page shows a tile (`Graphic.TileId > 0`) **and has the priority "below characters"** (`PriorityType == 0`) is a *tile event*
+(`Game_CharacterBase#tile?` / `isTile`). It is drawn as a tile and takes part in the passage checks as one more tile on top of the layers
+(`Game_Map#all_tiles` = tile events + layered tiles). `Graphic.TileId` is the same id as in the layers. More about events in [events.md](events.md).
 
 ## Tile ids (the same in VX Ace and MV)
 
