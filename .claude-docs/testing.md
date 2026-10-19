@@ -42,7 +42,7 @@ the values of a new entity (`INewEntity`).
 | `MapCreationTests` | `Storage.CreateMap`: the number, the order, the size, the values of a new map, saving and loading it |
 | `MapTreeTests` | the tree of maps: `GetChildMaps`, `SetMapParent` (and the loop it refuses), `ReorderMap`, `GetMapsAtLevel`, `GetMapPositionAtLevel`, `ExpandMap` / `CollapseMap` |
 | `ResourceTests` | the folders of every `ResourceType` per maker, the table of names, access by name in any case, registering / unregistering kinds, the paths, the extensions, finding a file in any case, replacing the folder of a kind |
-| `MapRendererTests` (+ `TileScenario`) | the picture of a map (`Imaging`): equal to the hash of the picture the engine draws (see [imaging.md](imaging.md)), a part of the map, the layers, shadows, frames of the water, sheets in the project |
+| `MapRendererTests` (+ `TileScenario`) | the picture of a map (`Imaging`): equal to the hash of the picture the engine draws (see [imaging.md](imaging.md)), a part of the map, the layers, shadows, frames of the water, sheets in the project, the grid (lines pixel by pixel; the texts: where they are written; those tests return early on a machine with no system font) |
 
 Tests of lists write them as strings of codes (`"101@0 401@0 102@0 ..."` = code and indent), which is the readable form of a flat list of commands.
 

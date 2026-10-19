@@ -33,6 +33,9 @@ public static class MapRenderer
         if (size < 4 || size % 4 != 0)
             throw new ArgumentOutOfRangeException(nameof(options), size, "The tile size must be a multiple of 4");
 
+        if (options.Grid is { } grid)
+            GridPainter.CheckLineWidth(grid, size);
+
         var canvas = new PixelCanvas(region.Width * size, region.Height * size, options.Background);
         var drawer = new Drawer(map, tileset, sheets, size, options.AnimationFrame, canvas);
 
@@ -54,7 +57,15 @@ public static class MapRenderer
             }
         }
 
-        return canvas.ToImage();
+        if (options.Grid is not { } gridOptions)
+            return canvas.ToImage();
+
+        canvas.DrawGrid(size, gridOptions.LineWidth, gridOptions.Color, gridOptions.ShadowColor);
+        var image = canvas.ToImage();
+        if (gridOptions.HasLabels)
+            GridPainter.DrawLabels(image, map, region, size, gridOptions);
+
+        return image;
     }
 
     private static void CheckRegion(IMap map, MapRegion region)

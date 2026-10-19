@@ -53,6 +53,8 @@ Things in the library or the formats that look wrong or surprising. Add a line w
 - **A kind is found by name, the case ignored** (`"tileset"` = `ResourceType.Tileset`); an unknown name is an `ArgumentException`, but a built-in name the maker lacks is a `DoesNotExistInVersionException`.
 - **`Imaging` is a separate project** (an image library lives there only); the data library excludes the folder (`Compile Remove="Imaging\\**"`), so a new file there is not compiled into the core. Do not move a type used by the core into it.
 - **ImageSharp**: the project uses 3.1.12 like the converter, and NuGet warns about advisories (NU1902, NU1903). Version 4 builds without warnings in Debug but a Release build wants a Six Labors licence key.
+- **The texts of the grid need a font of the system** (`SixLabors.ImageSharp.Drawing`); a container with no fonts (`fc-list` empty) must give `MapGridOptions.FontFamily`. The lines need none. `ImageSharp.Drawing` 2.1.7 is pinned
+  because 2.2.0 wants ImageSharp 3.2.0 and 3.x wants ImageSharp 4 (a licence key).
 - **A picture of a map has no events**; the engine draws the lower and the upper layers around the characters, which is why `Layers` can draw them apart.
 
 ## Events (details in [events.md](events.md))

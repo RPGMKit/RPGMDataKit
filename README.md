@@ -283,9 +283,12 @@ using RPGMDataKit.Imaging;
 using var whole = vx.RenderMap(3);                                                              // the whole map 3
 whole.SaveAsPng("map3.png");
 using var part = vx.RenderMap(3, new MapImageOptions { Region = new MapRegion(10, 4, 20, 15) }); // only the squares x 10-29, y 4-18
+
+// a grid with the coordinates of the squares (the tile ids: GridLabels.TileId, the regions: GridLabels.Region, or Label = (x, y) => "text")
+using var grid = vx.RenderMap(3, new MapImageOptions { Grid = new MapGridOptions { Labels = GridLabels.Coordinates } });
 ```
 
-The events and characters are not drawn. Details and how the picture was checked against the engine: `.claude-docs/imaging.md`.
+The texts of the grid need a font of the system (or `MapGridOptions.FontFamily`). The events and characters are not drawn. Details and how the picture was checked against the engine: `.claude-docs/imaging.md`.
 
 ### Your own entity classes
 

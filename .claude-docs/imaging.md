@@ -27,8 +27,29 @@ The size of the picture is the size of the part in squares times the size of a t
 | `Layers` (`MapImageLayers`) | `Lower`, `Upper` or `Both` (default) |
 | `Shadows` | draw the shadows (default true) |
 | `AnimationFrame` | the frame of the water and waterfalls of A1 (default 0): the water goes 0, 1, 2, 1, a waterfall 0, 1, 2 |
+| `Grid` (`MapGridOptions`) | lines between the squares and, if asked, a text in each square; none by default (see below) |
 | `Background` | the colour under the tiles; transparent by default |
 | `TileSize` | the size of a tile when it cannot be taken from the sheets (a tileset with no sheet); a multiple of 4 |
+
+### The grid (`MapGridOptions`)
+
+```csharp
+new MapImageOptions { Grid = new MapGridOptions { Labels = GridLabels.Coordinates } }
+new MapImageOptions { Grid = new MapGridOptions { Labels = GridLabels.TileId, TileLayer = 1, LabelPosition = GridLabelPosition.Center } }
+new MapImageOptions { Grid = new MapGridOptions { Label = (x, y) => events.Contains((x, y)) ? "E" : null } }
+```
+
+The grid is drawn over all the layers, after them. It is **two lines side by side** so that it is seen on a light map and on a dark one: a light line (`Color`, white with half of the alpha) of `LineWidth` pixels
+(1 to a quarter of a tile) at the left and the top of every square, and a dark one of the same width (`ShadowColor`, black with half of the alpha) next to it, inside of the square. The light line also closes the picture at the
+right and the bottom, so the size of the picture does not change. Where a light line and a dark one cross, the light one is on top. A transparent `ShadowColor` gives a line of one colour. Both are laid over the tiles by their alpha.
+
+What a square says: `Labels` is `Coordinates` (`x,y` in the map, also when `Region` cuts a part), `Region` (the region id; 0 is not written) or `TileId` (the id on `TileLayer`; 0 and a layer the map does not have are not written).
+`Label` (x, y) -> text or null is a function of your own that replaces `Labels`; its x and y are the map's too. A null or empty text writes nothing. The text is white with a dark outline of one pixel all round (`LabelColor`, `LabelOutline`; the outline is the text drawn eight times in the outline colour, one pixel off in each direction) at the top left of the
+square or in its middle (`LabelPosition`), so that it reads on light tiles and on dark ones; its size is 0.28 of a tile, made smaller when the text is wider than the square.
+
+The texts are drawn with `SixLabors.ImageSharp.Drawing` 2.1.7 (the newest one that works with ImageSharp 3.1.x; its 2.2.0 wants ImageSharp 3.2.0 and 3.x wants ImageSharp 4). The font is `FontFamily` or, when it is not given,
+the first of Arial, Segoe UI, DejaVu Sans, Liberation Sans, or any font of the system; a machine with no font at all throws `InvalidOperationException` (the lines need no font).
+The lines are made by whole numbers like the tiles and are tested pixel by pixel; the texts are anti-aliased by the library and are tested only for where they are written, not for how.
 
 ## Where the sheets come from
 
@@ -69,5 +90,6 @@ If a rule of the engine changes (a new version of MV), run the harness again on 
 - The events and characters, the parallax picture, the weather, the screen tone, the battle backgrounds.
 - The drawing of VX Ace itself is native code (RGSS3): it is assumed to draw the same tiles the same way (the ids, the flags and the sheets are the same); there is no VX Ace engine to compare with.
 - The animation: a picture is one frame (`AnimationFrame`).
+- The look of the grid texts on every font and platform: they were looked at on real maps of both makers with one font (Liberation Sans), on a normal map and on a white and a black background; the outline keeps the text readable on both, but a very small tile (a small font) makes it crowded.
 - ImageSharp 3.1.12 has advisories on NuGet (moderate and high; the converter uses the same version); loading a picture that somebody else made is the risk, and the pictures of a project are the user's own.
   ImageSharp 4 asks for a licence key in a Release build, and ImageSharp 3.2.0 has the same advisories.

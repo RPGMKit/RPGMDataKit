@@ -153,6 +153,235 @@ public sealed class MapRendererTests : IDisposable
         Assert.All(Enumerable.Range(0, a.Length), i => Assert.True(a[i].R <= b[i].R || a[i].A != b[i].A));
     }
 
+    private static readonly Rgba32 White = new(255, 255, 255, 255);
+
+    private static readonly Rgba32 Black = new(0, 0, 0, 255);
+
+    // a light line at the left and the top of a square and at the far edges of the picture, a dark one of the same width next to it; the light one is on top where they cross
+    private static int LineKind(int x, int y, int width, int height, int cell, int lineWidth)
+    {
+        static int Axis(int offset, int fromEnd, int lineWidth) =>
+            offset < lineWidth || fromEnd < lineWidth ? 2 : offset < 2 * lineWidth || fromEnd < 2 * lineWidth ? 1 : 0;
+
+        return Math.Max(Axis(x % cell, width - 1 - x, lineWidth), Axis(y % cell, height - 1 - y, lineWidth));
+    }
+
+    private static Rgba32 AfterTheGrid(Rgba32 before, int kind, Rgba32 light, Rgba32 dark) => kind switch
+    {
+        2 => light,
+        1 => dark,
+        _ => before,
+    };
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void TheGridIsALightLineAndADarkOneBetweenTheSquaresAndTheRestOfThePictureStays(int lineWidth)
+    {
+        var scenario = TileScenario.Create(1);
+        using var plain = Render(scenario, Version.Mv);
+        using var gridded = Render(scenario, Version.Mv, new MapImageOptions { Grid = new MapGridOptions { Color = White, ShadowColor = Black, LineWidth = lineWidth } });
+
+        Assert.Equal((plain.Width, plain.Height), (gridded.Width, gridded.Height));
+        var before = Pixels(plain);
+        var after = Pixels(gridded);
+        for (var i = 0; i < after.Length; i++)
+        {
+            var (x, y) = (i % plain.Width, i / plain.Width);
+            var expected = AfterTheGrid(before[i], LineKind(x, y, plain.Width, plain.Height, TileScenario.TileSize, lineWidth), White, Black);
+            Assert.True(expected == after[i], $"pixel {x},{y}: {after[i]} instead of {expected}");
+        }
+    }
+
+    [Fact]
+    public void ATransparentShadowColourMakesALineOfOneColour()
+    {
+        var scenario = TileScenario.Create(1);
+        using var plain = Render(scenario, Version.Mv);
+        using var gridded = Render(scenario, Version.Mv, new MapImageOptions { Grid = new MapGridOptions { Color = White, ShadowColor = default } });
+
+        var before = Pixels(plain);
+        var after = Pixels(gridded);
+        for (var i = 0; i < after.Length; i++)
+        {
+            var (x, y) = (i % plain.Width, i / plain.Width);
+            var kind = LineKind(x, y, plain.Width, plain.Height, TileScenario.TileSize, 1);
+            Assert.Equal(kind == 2 ? White : before[i], after[i]);
+        }
+    }
+
+    [Fact]
+    public void AGridCanBeSeenOnALightAndOnADarkMap()
+    {
+        // the default lines: whatever the colour under them, one of the two lines is not the colour of the map
+        var scenario = TileScenario.Create(1);
+        foreach (var background in new[] { new Rgba32(255, 255, 255, 255), new Rgba32(0, 0, 0, 255) })
+        {
+            var map = scenario.ToMap(Version.Mv);
+            var tileset = scenario.ToTileset(Version.Mv);
+            var empty = new InMemoryTilesetSheets(new Dictionary<TileSheet, TilesetSheet>());
+            using var plain = MapRenderer.Render(map, tileset, empty, new MapImageOptions { TileSize = TileScenario.TileSize, Background = background });
+            using var gridded = MapRenderer.Render(map, tileset, empty, new MapImageOptions { TileSize = TileScenario.TileSize, Background = background, Grid = new MapGridOptions() });
+
+            var before = Pixels(plain);
+            var after = Pixels(gridded);
+            var lightLine = after[0];
+            var darkLine = after[plain.Width + 1];   // the first dark pixel: inside of the first square, one line in from the corner
+            Assert.True(before[0] != lightLine || before[0] != darkLine, $"the lines are not seen on {background}");
+            Assert.NotEqual(lightLine, darkLine);
+        }
+    }
+
+    [Fact]
+    public void TheLinesOfTheGridAreLaidOverTheTilesByTheirAlpha()
+    {
+        var scenario = TileScenario.Create(1);
+        using var plain = Render(scenario, Version.Mv);
+        using var gridded = Render(scenario, Version.Mv, new MapImageOptions { Grid = new MapGridOptions { Color = new Rgba32(0, 0, 0, 128) } });
+
+        // the first pixel of the scenario is a whole one: black with the alpha of a half over it keeps 127/255 of each channel
+        var before = Pixels(plain)[0];
+        var after = Pixels(gridded)[0];
+
+        Assert.Equal(255, before.A);
+        Assert.Equal(255, after.A);
+        Assert.InRange(after.R, before.R * 127 / 255 - 1, before.R * 127 / 255 + 1);
+        Assert.InRange(after.G, before.G * 127 / 255 - 1, before.G * 127 / 255 + 1);
+        Assert.InRange(after.B, before.B * 127 / 255 - 1, before.B * 127 / 255 + 1);
+    }
+
+    [Fact]
+    public void TheGridOfAPartStartsAtTheCornerOfThePart()
+    {
+        var scenario = TileScenario.Create(1);
+        var region = new MapRegion(2, 1, 3, 2);
+        using var gridded = Render(scenario, Version.Mv, new MapImageOptions { Region = region, Grid = new MapGridOptions { Color = White, ShadowColor = Black } });
+        using var plain = Render(scenario, Version.Mv, new MapImageOptions { Region = region });
+
+        var after = Pixels(gridded);
+        var before = Pixels(plain);
+        for (var i = 0; i < after.Length; i++)
+        {
+            var (x, y) = (i % plain.Width, i / plain.Width);
+            Assert.Equal(AfterTheGrid(before[i], LineKind(x, y, plain.Width, plain.Height, TileScenario.TileSize, 1), White, Black), after[i]);
+        }
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(TileScenario.TileSize / 4 + 1)]
+    public void ALineThatIsNotFromOnePixelToAQuarterOfATileIsRefused(int lineWidth)
+    {
+        var scenario = TileScenario.Create(1);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => Render(scenario, Version.Mv, new MapImageOptions { Grid = new MapGridOptions { LineWidth = lineWidth } }));
+    }
+
+    // the texts need a font of the system; a machine that has none cannot run these
+    private static MapGridOptions? Labelled(Func<int, int, string?>? label = null, GridLabels labels = GridLabels.None, int layer = 0)
+    {
+        var family = SixLabors.Fonts.SystemFonts.Families.FirstOrDefault();
+        if (family.Name == null)
+            return null;
+
+        return new MapGridOptions { Color = White, FontFamily = family, Label = label, Labels = labels, TileLayer = layer };
+    }
+
+    [Fact]
+    public void ATextIsWrittenInItsSquareOnly()
+    {
+        var lines = new MapGridOptions { Color = White };
+        var labelled = Labelled((x, y) => x == 1 && y == 2 ? "7" : null);
+        if (labelled == null)
+            return;
+
+        var scenario = TileScenario.Create(1);
+        using var withLines = Render(scenario, Version.Mv, new MapImageOptions { Grid = lines });
+        using var withText = Render(scenario, Version.Mv, new MapImageOptions { Grid = labelled });
+
+        var size = TileScenario.TileSize;
+        var before = Pixels(withLines);
+        var after = Pixels(withText);
+        var changed = 0;
+        for (var i = 0; i < after.Length; i++)
+        {
+            if (before[i] == after[i])
+                continue;
+
+            changed++;
+            var (x, y) = (i % withLines.Width, i / withLines.Width);
+            Assert.True(x / size == 1 && y / size == 2, $"pixel {x},{y} is not in the square 1,2");
+        }
+
+        Assert.True(changed > 0, "nothing was written");
+    }
+
+    [Fact]
+    public void ANoTextOrAnEmptyOneWritesNothing()
+    {
+        var labelled = Labelled((x, y) => y == 0 ? "" : null);
+        if (labelled == null)
+            return;
+
+        var scenario = TileScenario.Create(1);
+        using var withLines = Render(scenario, Version.Mv, new MapImageOptions { Grid = new MapGridOptions { Color = White } });
+        using var withText = Render(scenario, Version.Mv, new MapImageOptions { Grid = labelled });
+
+        Assert.Equal(Pixels(withLines), Pixels(withText));
+    }
+
+    [Fact]
+    public void TheTextOfASquareIsAskedForWithThePlaceInTheMapAlsoWhenAPartIsDrawn()
+    {
+        var asked = new List<(int, int)>();
+        var labelled = Labelled((x, y) =>
+        {
+            asked.Add((x, y));
+
+            return null;
+        });
+        if (labelled == null)
+            return;
+
+        using var image = Render(TileScenario.Create(1), Version.Mv, new MapImageOptions { Region = new MapRegion(2, 1, 3, 2), Grid = labelled });
+
+        Assert.Equal([(2, 1), (3, 1), (4, 1), (2, 2), (3, 2), (4, 2)], asked);
+    }
+
+    [Theory]
+    [InlineData(GridLabels.Coordinates, 0, true)]
+    [InlineData(GridLabels.TileId, 0, true)]
+    [InlineData(GridLabels.TileId, 9, false)]   // a layer the map does not have: no tile, nothing written
+    [InlineData(GridLabels.None, 0, false)]
+    public void TheReadyTextsAreWrittenWhereThereIsSomethingToSay(GridLabels labels, int layer, bool writes)
+    {
+        var labelled = Labelled(null, labels, layer);
+        if (labelled == null)
+            return;
+
+        var scenario = TileScenario.Create(1);
+        using var withLines = Render(scenario, Version.Mv, new MapImageOptions { Grid = new MapGridOptions { Color = White } });
+        using var withText = Render(scenario, Version.Mv, new MapImageOptions { Grid = labelled });
+
+        Assert.Equal(writes, !Pixels(withLines).SequenceEqual(Pixels(withText)));
+    }
+
+    [Fact]
+    public void TheTextCanStandInTheMiddleOfTheSquare()
+    {
+        var family = SixLabors.Fonts.SystemFonts.Families.FirstOrDefault();
+        if (family.Name == null)
+            return;
+
+        var scenario = TileScenario.Create(1);
+        Func<int, int, string?> one = (x, y) => x == 0 && y == 0 ? "5" : null;
+        using var corner = Render(scenario, Version.Mv, new MapImageOptions { Grid = new MapGridOptions { FontFamily = family, Label = one } });
+        using var middle = Render(scenario, Version.Mv, new MapImageOptions { Grid = new MapGridOptions { FontFamily = family, Label = one, LabelPosition = GridLabelPosition.Center } });
+
+        Assert.NotEqual(Pixels(corner), Pixels(middle));
+    }
+
     [Fact]
     public void TheBackgroundShowsWhereThereIsNoTile()
     {

@@ -34,6 +34,9 @@ public sealed class MapImageOptions
     /// </summary>
     public int AnimationFrame { get; init; }
 
+    /// <summary>A grid over the picture (lines between the squares, and a text in them if asked for); none by default. It is over all the layers.</summary>
+    public MapGridOptions? Grid { get; init; }
+
     /// <summary>The colour under the tiles; transparent by default.</summary>
     public Rgba32 Background { get; init; }
 
