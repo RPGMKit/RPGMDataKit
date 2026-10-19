@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\RPGMDataKit.csproj" />
+    <ProjectReference Include="..\..\Imaging\RPGMDataKit.Imaging.csproj" />
   </ItemGroup>
 
 </Project>

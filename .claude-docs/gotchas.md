@@ -43,6 +43,18 @@ Things in the library or the formats that look wrong or surprising. Add a line w
 - **`MapInfo.Expanded` is the state of the editor's tree** (is the branch open); nothing in the game reads it. `CreateMap` and `SetMapParent` do not change it, `ExpandMap` / `CollapseMap` do.
 - **`Maps.Set(id, map)` does not add a `MapInfos` entry** (the tree of maps would not show the map): use `Storage.CreateMap`, which makes both. `IMap.Events` has no `NextId`: take the id yourself.
 
+## Resources and pictures (details in [storage.md](storage.md#resources-pictures-sounds-movies), [imaging.md](imaging.md))
+
+- **A resource folder is not the same name in both makers** and a resource is found by `Storage.FindResourceFile`, not by `File.Exists(folder + name + ".png")`: the extensions differ (VX Ace reads jpg and bmp, MV png only) and the case of a name is
+  not the case of the file on a file system that tells them apart.
+- **`SetResourceFolder` is for one storage**; the converter's scaled sheets (`img/tilesets_game`) are found only after `storage.SetResourceFolder(ResourceType.Tileset, "img/tilesets_game")`.
+- **`SetResourceFolder` does not add a kind.** A kind the project lacks (`SideViewActor` in VX Ace, or a name of your own) must be added with `RegisterResource` first; `SetResourceFolder` on it throws. `ResetResourceFolder` goes back to the folder the
+  kind started with, and `UnregisterResource` works on registered kinds only.
+- **A kind is found by name, the case ignored** (`"tileset"` = `ResourceType.Tileset`); an unknown name is an `ArgumentException`, but a built-in name the maker lacks is a `DoesNotExistInVersionException`.
+- **`Imaging` is a separate project** (an image library lives there only); the data library excludes the folder (`Compile Remove="Imaging\\**"`), so a new file there is not compiled into the core. Do not move a type used by the core into it.
+- **ImageSharp**: the project uses 3.1.12 like the converter, and NuGet warns about advisories (NU1902, NU1903). Version 4 builds without warnings in Debug but a Release build wants a Six Labors licence key.
+- **A picture of a map has no events**; the engine draws the lower and the upper layers around the characters, which is why `Layers` can draw them apart.
+
 ## Events (details in [events.md](events.md))
 
 - **The active page of a map event is the last one whose conditions hold**, not the first. A troop page with no condition set never starts.

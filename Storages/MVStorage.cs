@@ -32,6 +32,30 @@ public class MVStorage : Storage
 
     public override AbstractYamlStorage CreateYamlStorage() => new MvYamlStorage(this);
 
+    protected override string? ResourceFolderName(ResourceType type) => type switch
+    {
+        ResourceType.Animation => "img/animations",
+        ResourceType.Battleback1 => "img/battlebacks1",
+        ResourceType.Battleback2 => "img/battlebacks2",
+        ResourceType.Battler => "img/enemies",
+        ResourceType.Character => "img/characters",
+        ResourceType.Face => "img/faces",
+        ResourceType.Parallax => "img/parallaxes",
+        ResourceType.Picture => "img/pictures",
+        ResourceType.SideViewActor => "img/sv_actors",
+        ResourceType.SideViewEnemy => "img/sv_enemies",
+        ResourceType.System => "img/system",
+        ResourceType.Tileset => "img/tilesets",
+        ResourceType.Title1 => "img/titles1",
+        ResourceType.Title2 => "img/titles2",
+        ResourceType.Bgm => "audio/bgm",
+        ResourceType.Bgs => "audio/bgs",
+        ResourceType.Me => "audio/me",
+        ResourceType.Se => "audio/se",
+        ResourceType.Movie => "movies",
+        _ => null,
+    };
+
     protected override void Init()
     {
         LoadListHolder(out Actors, FileName("Actors"));

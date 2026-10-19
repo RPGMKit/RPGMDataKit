@@ -16,6 +16,10 @@
       <Compile Remove="tests\**" />
       <EmbeddedResource Remove="tests\**" />
       <None Remove="tests\**" />
+      <!-- the pictures of maps have their own project (it needs an image library, which the data library does not) -->
+      <Compile Remove="Imaging\**" />
+      <EmbeddedResource Remove="Imaging\**" />
+      <None Remove="Imaging\**" />
     </ItemGroup>
 
     <ItemGroup>

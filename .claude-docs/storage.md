@@ -83,6 +83,33 @@ var mv = new MVStorage(@"C:\Games\GameMV");   // data directory "data"
 `storage.CreateYamlStorage().Dump(folder)` writes every holder of the storage as YAML (`Storages/Dump`), `Load(folder)` fills them back; commands are written as the lines the editor shows
 (`GetParametersDescription`). `Differ` (`Differ.cs`, `Diff/`) compares two projects. Both are described in the README.
 
+## Resources (pictures, sounds, movies)
+
+The files of a project that are not data are kept in a folder for each kind, named by the maker. `Storage` knows the names, so no code needs `Graphics/Tilesets` or `img/tilesets` written in it.
+The kinds are `ResourceType` (`Data/Enums/ResourceType.cs`): `Animation`, `Battleback1`, `Battleback2`, `Battler`, `Character`, `Face`, `Parallax`, `Picture`, `SideViewActor` and `SideViewEnemy` (MV only),
+`System`, `Tileset`, `Title1`, `Title2`, `Bgm`, `Bgs`, `Me`, `Se`, `Movie`.
+
+A kind is **known by its name**, not case sensitive. `ResourceTypes.Names` (`Data/Enums/ResourceTypes.cs`) is the table enum member -> name (`Picture` -> `"Picture"`), `type.NameOf()` reads it and
+`ResourceTypes.TryParse(name, out type)` goes back. Each storage keeps a list of the kinds it has: the ones the maker has (`ResourceFolderName`, an abstract method of `MVStorage` / `VXAceStorage`), then the ones
+added by `RegisterResource`. Every method below has an overload for the enum (which only calls the one for the name), so the enum stays the way to name a built-in kind and a string is the way to name any.
+
+| Method | What it gives |
+|---|---|
+| `HasResource(name)` / `HasResourceType(type)` | the project has the kind (the maker has it, or it was registered) |
+| `ResourceNames` | the names of the kinds: the maker's in the order of `ResourceType`, then the registered ones in the order of registration |
+| `GetResourceFolder(kind)` | the folder under `ProjectPath` (`Graphics/Tilesets`, `img/tilesets`, `Audio/BGM`, `audio/bgm`, `Movies`, `movies`...); not checked to exist |
+| `GetResourcePath(kind, name, extension = "")` | the folder + the name as the data writes it (`Outside_A2`; it may have a folder in it: `Monsters/Slime`) + the extension; a name that is empty, rooted or leads out with `..` is refused |
+| `GetResourceExtensions(kind)` | what the maker reads: pictures png, jpg, jpeg, bmp (VX Ace) / png (MV); sounds ogg, wav, mp3, wma, mid, midi (VX Ace) / ogg, m4a (MV); movies ogv / webm, mp4; for a registered kind the ones given to it |
+| `FindResourceFile(kind, name)` | the file that exists (the first extension that has one), the case of the name not mattering, or null |
+| `SetResourceFolder(kind, folder)` / `ResetResourceFolder(kind)` | put another folder (under the project, either separator, or a whole path) in place of the current one for one kind, for this storage only; Reset gives back the folder the kind started with (the maker's, or the one it was registered with) |
+| `RegisterResource(name, folder, extensions = null)` / `RegisterResource(type, folder, extensions = null)` | add a kind of your own, or a built-in one the maker lacks (`SideViewActor` in VX Ace). Without extensions the files are pictures of the maker. For this storage only |
+| `UnregisterResource(name)` | take away a registered kind; a kind of the maker cannot be taken away |
+
+What a bad name does: a name that is not a kind at all is an `ArgumentException` (it lists the kinds there are); a name of a built-in kind that the maker lacks is a `DoesNotExistInVersionException`.
+`SetResourceFolder` on a kind that does not exist throws too: it does not add one, `RegisterResource` does. A registered name may not be empty, have a separator, or repeat (in any case) a kind the project has already.
+
+The folders were checked against the stock projects of both editors (the same names are in `ResourceTests`). A project that is encrypted or packed (`Game.rgss3a`, `.rpgmvp`) has no files to find.
+
 ## Traps
 
 - A holder that was not read is not saved: if you edit through `LoadData<T>(file)` yourself, you save yourself.

@@ -244,6 +244,49 @@ foreach (var id in map.LayeredTiles(3, 2))               // from the top layer d
 `TileIds` tells what a tile id is (the sheet, an autotile and its kind and shape, water, a wall, a roof...); the tileset helpers read and write the flags, the terrain tag and the names of the sheets.
 What is behind them is in `.claude-docs/maps-and-tiles.md`.
 
+### Pictures, sounds and movies of a project
+
+`Storage` knows the folder of each kind of resource of the maker, so the code does not write `Graphics/Tilesets` or `img/tilesets` itself:
+
+```csharp
+using RPGMDataKit.Data.Enums;
+
+var folder = vx.GetResourceFolder(ResourceType.Tileset);                       // <project>/Graphics/Tilesets  (MV: <project>/img/tilesets)
+var path   = vx.GetResourcePath(ResourceType.Face, "Actor1", ".png");          // <project>/Graphics/Faces/Actor1.png
+var file   = vx.FindResourceFile(ResourceType.Bgm, "Town");                    // the file that exists (any extension the maker reads, any case), or null
+
+mv.SetResourceFolder(ResourceType.Tileset, "img/tilesets_game");               // another folder for one kind, for this storage
+```
+
+The built-in kinds are `ResourceType` (`Animation`, `Character`, `Face`, `Picture`, `Tileset`, `Bgm`, `Se`, `Movie`, ...); the sprites of the sideview battle exist in MV only.
+A kind is also known by its name (`ResourceTypes.Names` maps each member to it; the case does not matter), and you can add kinds of your own:
+
+```csharp
+var same = vx.GetResourceFolder("tileset");                                    // the same as with ResourceType.Tileset
+
+mv.RegisterResource("Portrait", "img/portraits");                              // a kind of your own (pictures of the maker unless extensions are given)
+mv.RegisterResource("Voice", "audio/voice", [".ogg", ".m4a"]);
+var voice = mv.FindResourceFile("VOICE", "Hero01");
+
+vx.RegisterResource(ResourceType.SideViewActor, "Graphics/SV Actors");        // a built-in kind the maker lacks
+foreach (var name in mv.ResourceNames) { /* Animation, Battleback1, ..., Portrait, Voice */ }
+```
+
+### A picture of a map
+
+The project `Imaging` (`RPGMDataKit.Imaging`, which needs ImageSharp) draws the tiles of a map into a picture exactly as the engine does: the lower and the upper layers, the shadows, the autotiles, the edges of tables.
+The sheets are taken from the project through the resource methods above.
+
+```csharp
+using RPGMDataKit.Imaging;
+
+using var whole = vx.RenderMap(3);                                                              // the whole map 3
+whole.SaveAsPng("map3.png");
+using var part = vx.RenderMap(3, new MapImageOptions { Region = new MapRegion(10, 4, 20, 15) }); // only the squares x 10-29, y 4-18
+```
+
+The events and characters are not drawn. Details and how the picture was checked against the engine: `.claude-docs/imaging.md`.
+
 ### Your own entity classes
 
 ```csharp

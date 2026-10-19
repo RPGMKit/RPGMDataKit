@@ -3,6 +3,7 @@ using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Enums.Internal;
 using RPGMDataKit.Data.Helpers;
 using RPGMDataKit.Data.Helpers.Dump;
+using RPGMDataKit.Data.Structures.Exceptions;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using System.Reflection;
@@ -12,7 +13,7 @@ using RPGMDataKit.Storages.Serialization;
 
 namespace RPGMDataKit.Storages.Abstraction;
 
-public abstract class Storage
+public abstract partial class Storage
 {
     public string ProjectPath { get; private set; }
 

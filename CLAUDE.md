@@ -13,11 +13,12 @@ behind one set of interfaces. User documentation: [README.md](README.md). Deeper
 - [.claude-docs/events.md](.claude-docs/events.md) - map events, pages, conditions, common events, troops
 - [.claude-docs/testing.md](.claude-docs/testing.md) - tests, fixtures, checking a change on real projects
 - [.claude-docs/maps-and-tiles.md](.claude-docs/maps-and-tiles.md) - map layers, tile ids, tilesets, flags, regions; VX Ace vs MV
+- [.claude-docs/imaging.md](.claude-docs/imaging.md) - the picture of a map (`Imaging` project), how it is drawn and checked against the engine
 - [.claude-docs/gotchas.md](.claude-docs/gotchas.md) - traps
 
 ## Commands
 - `dotnet build`
-- `dotnet test tests/RPGMDataKit.Tests`
+- `dotnet test tests/RPGMDataKit.Tests` (it covers the `Imaging` project too, which is separate: `Imaging/RPGMDataKit.Imaging.csproj`, an image library lives there only)
 - The Ruby Marshal reader is the submodule `external/RubyMarshalCS`: `git submodule update --init`.
 
 ## Boundaries

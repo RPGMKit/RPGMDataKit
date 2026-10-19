@@ -6,6 +6,7 @@ these files hold what the README does not: how the game formats work, and the tr
 | You need to... | Read |
 |---|---|
 | work with maps, tiles, tilesets, layers, regions, tile flags; know how a tile id is built | [maps-and-tiles.md](maps-and-tiles.md) |
+| draw a map into a picture (PNG), cut a part of it, know how it was checked against the engine | [imaging.md](imaging.md) |
 | understand how an event command works, what happens when it is put into a list, or add a command | [commands.md](commands.md) |
 | know what every command holds (parameters of VX Ace and MV) and where the makers differ | [command-formats.md](command-formats.md) |
 | know or change what a new command is given (the values of the editors), and how they were found | [editor-defaults.md](editor-defaults.md) |

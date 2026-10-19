@@ -25,6 +25,28 @@ public class VXAceStorage : Storage
 
     public override AbstractYamlStorage CreateYamlStorage() => new VxAceYamlStorage(this);
 
+    protected override string? ResourceFolderName(ResourceType type) => type switch
+    {
+        ResourceType.Animation => "Graphics/Animations",
+        ResourceType.Battleback1 => "Graphics/Battlebacks1",
+        ResourceType.Battleback2 => "Graphics/Battlebacks2",
+        ResourceType.Battler => "Graphics/Battlers",
+        ResourceType.Character => "Graphics/Characters",
+        ResourceType.Face => "Graphics/Faces",
+        ResourceType.Parallax => "Graphics/Parallaxes",
+        ResourceType.Picture => "Graphics/Pictures",
+        ResourceType.System => "Graphics/System",
+        ResourceType.Tileset => "Graphics/Tilesets",
+        ResourceType.Title1 => "Graphics/Titles1",
+        ResourceType.Title2 => "Graphics/Titles2",
+        ResourceType.Bgm => "Audio/BGM",
+        ResourceType.Bgs => "Audio/BGS",
+        ResourceType.Me => "Audio/ME",
+        ResourceType.Se => "Audio/SE",
+        ResourceType.Movie => "Movies",
+        _ => null,
+    };
+
     protected override void Init()
     {
         LoadListHolder(out Actors, FileName("Actors"));

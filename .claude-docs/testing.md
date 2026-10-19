@@ -38,12 +38,17 @@ the values of a new entity (`INewEntity`).
 | `CommandBuilderTests` | `CommandBuilder`: what it makes, as lists of `code@indent`; the blocks |
 | `CommandPlaceTests`, `CommandReplaceRemoveTests` | `InsertAt`, `ReplaceAt`, `RemoveAt`: where commands go, the lines of a command with several lines, a block goes with all it holds |
 | `IndentTests`, `EmptyCommandTests`, `CommandStructureTests`, `RouteLinesTests` | `IndentHelper`, `EmptyCommandHelper`, block structure checks and their typed exceptions, the lines (505) after Set Movement Route |
+| `TileTests` | `TileIds` (the ranges, kinds and shapes of autotiles, the classes of tiles), the layers, shadows (`ShadowFlag`) and regions of a map of either maker, the sheets and flags of a tileset |
+| `MapCreationTests` | `Storage.CreateMap`: the number, the order, the size, the values of a new map, saving and loading it |
+| `MapTreeTests` | the tree of maps: `GetChildMaps`, `SetMapParent` (and the loop it refuses), `ReorderMap`, `GetMapsAtLevel`, `GetMapPositionAtLevel`, `ExpandMap` / `CollapseMap` |
+| `ResourceTests` | the folders of every `ResourceType` per maker, the table of names, access by name in any case, registering / unregistering kinds, the paths, the extensions, finding a file in any case, replacing the folder of a kind |
+| `MapRendererTests` (+ `TileScenario`) | the picture of a map (`Imaging`): equal to the hash of the picture the engine draws (see [imaging.md](imaging.md)), a part of the map, the layers, shadows, frames of the water, sheets in the project |
 
 Tests of lists write them as strings of codes (`"101@0 401@0 102@0 ..."` = code and indent), which is the readable form of a flat list of commands.
 
 ## What is not tested here
 
-- The graphics, audio, scripts and anything else that is not data (the library does not read them).
+- The audio and scripts, and the graphics beyond the tiles of a map (`Imaging` draws those from made-up sheets and, once, from real ones; see [imaging.md](imaging.md)).
 - Real games: there are none in the repository. Use the checks below.
 - The UI of the editors: the defaults are read from the files the editors wrote ([editor-defaults.md](editor-defaults.md)).
 
