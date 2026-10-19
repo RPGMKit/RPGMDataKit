@@ -10,6 +10,7 @@ these files hold what the README does not: how the game formats work, and the tr
 | know what every command holds (parameters of VX Ace and MV) and where the makers differ | [command-formats.md](command-formats.md) |
 | know or change what a new command is given (the values of the editors), and how they were found | [editor-defaults.md](editor-defaults.md) |
 | understand storages, holders, ids, the type map, entities, unknown members and how files are read and written | [storage.md](storage.md) |
+| know the database records (actors, classes, skills, items, equipment, enemies, states, animations, system), their fields in both makers, features/traits and effects | [database.md](database.md) |
 | work with map events, pages, conditions, graphics, common events, troops and their conditions | [events.md](events.md) |
 | run or write tests, use the fixtures, check a change on real projects | [testing.md](testing.md) |
 | avoid a known trap (names that mean the opposite, formats that differ between VX Ace and MV) | [gotchas.md](gotchas.md) |

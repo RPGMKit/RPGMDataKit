@@ -9,6 +9,7 @@ behind one set of interfaces. User documentation: [README.md](README.md). Deeper
 - [.claude-docs/command-formats.md](.claude-docs/command-formats.md) - the parameters of every command in VX Ace and MV, and the differences
 - [.claude-docs/editor-defaults.md](.claude-docs/editor-defaults.md) - what a new command is given, per maker, and how it was found
 - [.claude-docs/storage.md](.claude-docs/storage.md) - storages, holders, ids, type map, entities, serialization
+- [.claude-docs/database.md](.claude-docs/database.md) - database records, fields per maker, features, effects, damage
 - [.claude-docs/events.md](.claude-docs/events.md) - map events, pages, conditions, common events, troops
 - [.claude-docs/testing.md](.claude-docs/testing.md) - tests, fixtures, checking a change on real projects
 - [.claude-docs/maps-and-tiles.md](.claude-docs/maps-and-tiles.md) - map layers, tile ids, tilesets, flags, regions; VX Ace vs MV

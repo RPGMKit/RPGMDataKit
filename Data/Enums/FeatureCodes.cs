@@ -69,13 +69,13 @@ public static class FeatureCodes
     /// <summary>Extra action: Value is the chance.</summary>
     public const int ActionPlus = 61;
 
-    /// <summary>Special flag (auto battle, guard, substitute, preserve TP): DataId is 0..3.</summary>
+    /// <summary>Special flag: DataId is 0 auto battle, 1 guard, 2 substitute, 3 preserve TP.</summary>
     public const int SpecialFlag = 62;
 
-    /// <summary>The way a battler collapses: DataId is 0..3.</summary>
+    /// <summary>The way a battler collapses: DataId is 0 normal, 1 boss, 2 instant, 3 none (the largest of the features counts).</summary>
     public const int CollapseType = 63;
 
-    /// <summary>Ability of the party (encounter half, no surprise, double gold, double drops): DataId is 0..4.</summary>
+    /// <summary>Ability of the party: DataId is 0 encounter half, 1 no encounters, 2 cancel surprise, 3 raise preemptive, 4 double gold, 5 double drops.</summary>
     public const int PartyAbility = 64;
 }
 

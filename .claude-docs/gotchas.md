@@ -46,3 +46,12 @@ Things in the library or the formats that look wrong or surprising. Add a line w
 
 - **The active page of a map event is the last one whose conditions hold**, not the first. A troop page with no condition set never starts.
 - **A tile event is an event with a tile *and* priority "below characters"**; the same tile with another priority is just an event that is drawn as a tile.
+
+## Database (details in [database.md](database.md))
+
+- **Features (VX Ace) and traits (MV) are the same record under two names**; `IHasFeatures.Features` is read-only, edit the list of the maker's class (`Features` / `Traits`).
+- **Equipment type ids**: VX Ace counts from 0 (weapon), MV from 1. A weapon with `ETypeId` 0 is fine in VX Ace and means "nothing" in MV.
+- **Damage formulas are code**: JavaScript in MV, Ruby in VX Ace; they are not converted by the library.
+- **The actor's profile** is `Profile` in MV and `Description` in VX Ace; `IconIndex` and `Description` exist in VX Ace's base class for every entity but the editor uses them for some only.
+- **Class parameters**: a list of 8 lists in MV, a `Table` of 8 x 100 in VX Ace; index 0 of the level axis is a placeholder.
+- **Party ability ids are 0-5** (six abilities), not 0-4 as the comment of `FeatureCodes.PartyAbility` used to say.
