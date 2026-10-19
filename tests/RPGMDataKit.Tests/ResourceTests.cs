@@ -163,7 +163,7 @@ public sealed class ResourceTests : IDisposable
         Assert.Equal([".png"], mv.GetResourceExtensions(ResourceType.Face));
         Assert.Equal([".ogg", ".wav", ".mp3", ".wma", ".mid", ".midi"], vx.GetResourceExtensions(ResourceType.Bgm));
         Assert.Equal([".ogg", ".m4a"], mv.GetResourceExtensions(ResourceType.Se));
-        Assert.Equal([".ogv"], vx.GetResourceExtensions(ResourceType.Movie));
+        Assert.Equal([".ogv", ".ogg"], vx.GetResourceExtensions(ResourceType.Movie));
         Assert.Equal([".webm", ".mp4"], mv.GetResourceExtensions(ResourceType.Movie));
     }
 

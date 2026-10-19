@@ -47,14 +47,14 @@ public abstract partial class Storage
         return kinds;
     }
 
-    // what the maker reads: the pictures of VX Ace are png, jpg and bmp, those of MV png; the sounds of VX Ace are ogg, wav, mp3, wma and midi, those of MV ogg and m4a; the movies of VX Ace are ogv, those of MV webm and mp4
+    // what the maker reads: the pictures of VX Ace are png, jpg, jpeg and bmp, those of MV png; the sounds of VX Ace are ogg, wav, mp3, wma, mid and midi, those of MV ogg and m4a; the movies of VX Ace are Ogg Theora as ogv or ogg, those of MV webm and mp4
     private IReadOnlyList<string> BuiltInExtensions(ResourceType type)
     {
         var mv = Version == StorageVersion.MV;
         if (type is ResourceType.Bgm or ResourceType.Bgs or ResourceType.Me or ResourceType.Se)
             return mv ? [".ogg", ".m4a"] : [".ogg", ".wav", ".mp3", ".wma", ".mid", ".midi"];
         if (type == ResourceType.Movie)
-            return mv ? [".webm", ".mp4"] : [".ogv"];
+            return mv ? [".webm", ".mp4"] : [".ogv", ".ogg"];
 
         return mv ? [".png"] : [".png", ".jpg", ".jpeg", ".bmp"];
     }

@@ -99,7 +99,7 @@ added by `RegisterResource`. Every method below has an overload for the enum (wh
 | `ResourceNames` | the names of the kinds: the maker's in the order of `ResourceType`, then the registered ones in the order of registration |
 | `GetResourceFolder(kind)` | the folder under `ProjectPath` (`Graphics/Tilesets`, `img/tilesets`, `Audio/BGM`, `audio/bgm`, `Movies`, `movies`...); not checked to exist |
 | `GetResourcePath(kind, name, extension = "")` | the folder + the name as the data writes it (`Outside_A2`; it may have a folder in it: `Monsters/Slime`) + the extension; a name that is empty, rooted or leads out with `..` is refused |
-| `GetResourceExtensions(kind)` | what the maker reads: pictures png, jpg, jpeg, bmp (VX Ace) / png (MV); sounds ogg, wav, mp3, wma, mid, midi (VX Ace) / ogg, m4a (MV); movies ogv / webm, mp4; for a registered kind the ones given to it |
+| `GetResourceExtensions(kind)` | what the maker reads: pictures png, jpg, jpeg, bmp (VX Ace) / png (MV); sounds ogg, wav, mp3, wma, mid, midi (VX Ace) / ogg, m4a (MV); movies ogv, ogg (Ogg Theora) / webm, mp4; for a registered kind the ones given to it |
 | `FindResourceFile(kind, name)` | the file that exists (the first extension that has one), the case of the name not mattering, or null |
 | `SetResourceFolder(kind, folder)` / `ResetResourceFolder(kind)` | put another folder (under the project, either separator, or a whole path) in place of the current one for one kind, for this storage only; Reset gives back the folder the kind started with (the maker's, or the one it was registered with) |
 | `RegisterResource(name, folder, extensions = null)` / `RegisterResource(type, folder, extensions = null)` | add a kind of your own, or a built-in one the maker lacks (`SideViewActor` in VX Ace). Without extensions the files are pictures of the maker. For this storage only |
@@ -109,6 +109,15 @@ What a bad name does: a name that is not a kind at all is an `ArgumentException`
 `SetResourceFolder` on a kind that does not exist throws too: it does not add one, `RegisterResource` does. A registered name may not be empty, have a separator, or repeat (in any case) a kind the project has already.
 
 The folders were checked against the stock projects of both editors (the same names are in `ResourceTests`). A project that is encrypted or packed (`Game.rgss3a`, `.rpgmvp`) has no files to find.
+
+Where the extensions come from:
+- MV: read from the engine scripts of an MV project (pictures `.png` in `ImageManager`; sounds `.ogg`, `.m4a` in `AudioManager.audioFileExt`; movies `.webm`, `.mp4` in `Game_Interpreter.videoFileExt`).
+- VX Ace pictures (`.png .jpg .jpeg .bmp`): checked by the maintainer in the editor.
+- VX Ace sounds: a test tone in each of ogg, wav, mp3, wma, mid, midi played in the editor's resource manager; `.m4a` and `.flac` did not, so they are not in the list.
+
+- VX Ace movies: a 3-second test video in each of Theora/Vorbis as `.ogv`, the same as `.ogg`, VP8/Vorbis `.webm` and H.264/AAC `.mp4` was played in the game: `.ogv` and `.ogg` played, `.webm` and `.mp4` crashed the game. So the container and codec count (Ogg Theora), and `.ogg` is read as a movie too. Theora must be 4:2:0 (`-pix_fmt yuv420p` in ffmpeg): the default 4:4:4 played with broken colours.
+
+Not checked: whether the game player reads every sound and picture extension the editor accepts (the sounds and pictures were tried in the editor), and how an MV movie that has the other extension behaves (the engine script only picks `.webm`, else `.mp4`).
 
 ## Traps
 

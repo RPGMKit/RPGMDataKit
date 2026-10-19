@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="RPGMDataKit.csproj" />
+  <Project Path="Imaging/RPGMDataKit.Imaging.csproj" />
+  <Project Path="tests/RPGMDataKit.Tests/RPGMDataKit.Tests.csproj" />
+  <Folder Name="/external/">
+    <Project Path="external/RubyMarshalCS/RubyMarshalCS/RubyMarshalCS.csproj" />
+  </Folder>
+</Solution>

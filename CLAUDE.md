@@ -17,7 +17,7 @@ behind one set of interfaces. User documentation: [README.md](README.md). Deeper
 - [.claude-docs/gotchas.md](.claude-docs/gotchas.md) - traps
 
 ## Commands
-- `dotnet build`
+- `dotnet build RPGMDataKit.slnx` (the solution holds the library, `Imaging`, the tests and the `RubyMarshalCS` submodule project)
 - `dotnet test tests/RPGMDataKit.Tests` (it covers the `Imaging` project too, which is separate: `Imaging/RPGMDataKit.Imaging.csproj`, an image library lives there only)
 - The Ruby Marshal reader is the submodule `external/RubyMarshalCS`: `git submodule update --init`.
 
