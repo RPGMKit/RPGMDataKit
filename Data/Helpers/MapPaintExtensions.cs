@@ -19,6 +19,13 @@ namespace RPGMDataKit.Data.Helpers;
 public static class MapPaintExtensions
 {
     /// <summary>
+    /// Paints an autotile of the kind (0-127: A1 0-15, A2 16-47, A3 48-79, A4 80-127; the kinds are on <c>TilesetSheetImage.Blocks</c> and on the pictures of the sheets) the way <see cref="PaintTileAuto"/> does;
+    /// the shape is chosen from the neighbours.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">The kind is not 0-127, or the square is outside of the map.</exception>
+    public static void PaintAutotileAuto(this IMap map, int x, int y, int kind) => map.PaintTileAuto(x, y, TileIds.MakeAutotile(kind, 0));
+
+    /// <summary>
     /// Puts a tile on the square on the layer the editors choose for it (see <see cref="MapPaintExtensions"/>), and reshapes the autotiles round it.
     /// Use <see cref="MapAutotileExtensions.PaintTile"/> to paint on a layer you choose.
     /// </summary>

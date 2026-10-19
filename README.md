@@ -251,6 +251,7 @@ for (var y = 2; y < 7; y++)
 
 map.PaintTile(5, 4, 0, 0);                               // erase: the tiles round it are reshaped too
 map.PaintTileAuto(3, 2, TileIds.MakeAutotile(20, 0));    // the layer is chosen as the editor does: a bush (an overlay) goes over the ground on layer 1
+map.PaintAutotileAuto(3, 2, 20);                          // the same by the kind of the autotile (A1-A4: 0-127, see TilesetSheetImage.Blocks); the shape is chosen
 map.PaintTileAuto(3, 2, 88);                              // a tile of B-E goes to the top layer; a second one moves it down (MV)
 map.SetTile(4, 2, 0, TileIds.MakeAutotile(80, 0));       // a wall (A3, A4): the shadow beside it is put as the editor does (the left half of the square to its right)
                                                          // (like the editor: putting a tile of A reworks the shadows of the square and the five squares round it, those drawn by hand there are lost)
@@ -304,6 +305,15 @@ using var part = vx.RenderMap(3, new MapImageOptions { Region = new MapRegion(10
 
 // a grid with the coordinates of the squares (the tile ids: GridLabels.TileId, the regions: GridLabels.Region, or Label = (x, y) => "text")
 using var grid = vx.RenderMap(3, new MapImageOptions { Grid = new MapGridOptions { Labels = GridLabels.Coordinates } });
+```
+
+A sheet of a tileset with the numbers of its tiles, to find the id of a tile (B, C, D, E, A5: the id of every tile) or the kind of an autotile (A1-A4: the kind and the id of the first shape of every block):
+
+```csharp
+using var sheet = mv.RenderTilesetSheet(2, TileSheet.B);      // the sheet B of the tileset 2 of the project, every tile with its id
+sheet.SaveAsPng("b_ids.png");
+var blocks = TilesetSheetImage.Blocks(TileSheet.A2);          // where the block of every kind is on the sheet, in tiles
+int id = TilesetSheetImage.NormalTileId(TileSheet.B, 5, 11);  // the id of the tile in the column 5, row 11 of a sheet: 93
 ```
 
 The texts of the grid need a font of the system (or `MapGridOptions.FontFamily`). The events and characters are not drawn. Details and how the picture was checked against the engine: `.claude-docs/imaging.md`.

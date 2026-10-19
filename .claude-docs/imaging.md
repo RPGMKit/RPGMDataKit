@@ -51,6 +51,21 @@ The texts are drawn with `SixLabors.ImageSharp.Drawing` 2.1.7 (the newest one th
 the first of Arial, Segoe UI, DejaVu Sans, Liberation Sans, or any font of the system; a machine with no font at all throws `InvalidOperationException` (the lines need no font).
 The lines are made by whole numbers like the tiles and are tested pixel by pixel; the texts are anti-aliased by the library and are tested only for where they are written, not for how.
 
+## A sheet with the numbers of its tiles (`TilesetSheetImage`)
+
+To find the id of a tile to paint with (`PaintTile`) or the kind of an autotile, `storage.RenderTilesetSheet(tilesetId, TileSheet.B)` gives the picture of one sheet of a tileset of the project with the numbers on it
+(`TilesetSheetImage.Render(pixels, sheet)` for a sheet you have in memory):
+- **B, C, D, E, A5**: the id of every tile, in its top left corner. The ids of a sheet go down the rows of its left half (8 tiles wide: 0-127 on B), then its right half (128-255); A5 has 8 columns (1536-1663).
+  `NormalTileId(sheet, column, row)` is the same number without a picture (the other way round is `TileIds.NormalTileCell`).
+- **A1-A4**: a frame round each block (the picture of one kind of autotile) with its **kind** and the **id of its first shape** (`TileIds.MakeAutotile(kind, 0)`); `Blocks(sheet)` lists the blocks (kind, column, row, width, height in tiles):
+  where the engine takes them from (`Tilemap._drawAutotile`): A2 blocks 2 x 3 in 8 columns and 4 rows (the kind is `16 + row * 8 + column`), A3 2 x 2 (from 48), A4 alternating 2 x 3 tops and 2 x 2 sides (from 80),
+  A1 the sea (kind 0, the deep sea 1: three frames side by side, the first is the block), the two still waters, then water and waterfalls in pairs.
+- Options (`TilesetSheetImageOptions`): `Labels`, `Grid` (both on), `Background` (grey, so that the transparent parts are seen) and `FontFamily`. The numbers need a font like the grid of a map.
+  The frame of a tile or block is two lines: a light one (`GridColor`, white, alpha 230) on its edge and a dark one (`GridShadowColor`, black, alpha 230) just inside, each `GridLineWidth` pixels wide (1 to a quarter of a tile), so it is seen on light and
+  on dark pictures; the frames of two neighbours give a light band between two dark ones.
+
+Checked on the sheets of a real tileset (all of A1-A4, B and A5 were looked at: the blocks and the ids sit where the pictures are); the tests keep the positions of the blocks and the ids.
+
 ## Where the sheets come from
 
 `storage.RenderMap` finds the sheets through the storage: `StorageTilesetSheets` asks `storage.FindResourceFile(ResourceType.Tileset, name)` for every name of the tileset, so the folder of the maker

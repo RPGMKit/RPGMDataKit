@@ -273,6 +273,35 @@ public sealed class MapPaintTests
         Assert.Equal([K(17), 0, 0], Layers(map, 1));
     }
 
+    // ---- an autotile by its kind ----
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public void AnAutotileByItsKindIsPaintedAsItsFirstShapeIs(Version v)
+    {
+        var byKind = v.New<IMap>();
+        var byId = v.New<IMap>();
+        foreach (var (x, kind) in new[] { (0, Grass), (1, Grass), (2, Bush), (3, 24), (4, WallSide), (5, Roof) })
+        {
+            byKind.PaintAutotileAuto(x, 0, kind);
+            byId.PaintTileAuto(x, 0, Kind(kind));
+        }
+
+        for (var x = 0; x < 6; x++)
+            Assert.Equal(Layers(byId, x), Layers(byKind, x));
+        Assert.Equal(K(Bush), Layers(byKind, 2)[1]);    // a bush (an overlay) is on the layer 1, as with the id
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(128)]
+    public void AKindThatIsNotAKindIsRefused(int kind)
+    {
+        var map = Mv();
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => map.PaintAutotileAuto(0, 0, kind));
+    }
+
     // ---- what is refused ----
 
     [Theory]

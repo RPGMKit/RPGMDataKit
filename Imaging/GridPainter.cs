@@ -105,7 +105,7 @@ internal static class GridPainter
         return new Font(font, Math.Max(MinTextSize, font.Size * width / measured));
     }
 
-    private static FontFamily DefaultFamily()
+    internal static FontFamily DefaultFamily()
     {
         foreach (var name in PreferredFonts)
         {

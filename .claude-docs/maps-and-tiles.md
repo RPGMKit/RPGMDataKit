@@ -177,7 +177,8 @@ the sheets are 1024 wide with a 64 px tile).
 - **Autotile shapes** (`AutotileShapes`, `MapAutotileExtensions`): the shape that the editors give an autotile from what is round it (the engines only read it from the id). `AutotileShapes.Floor(up, down, left, right, upLeft, upRight, downLeft, downRight)`
   (0-46), `.Wall(up, down, left, right)` (0-15), `.Waterfall(left, right)` (0-3) are the pure functions; on a map: `AutotileShapeAt(x, y, layer)`, `UpdateAutotile(x, y, layer)`, `UpdateAutotiles()` / `UpdateAutotiles(x, y, width, height)`
   (the number of tiles that changed) and `PaintTile(x, y, layer, tileId)` (puts the tile, takes the shape for an autotile from its neighbours, and reshapes the 8 squares round it on the same layer; use it in place of `SetTile` when drawing).
-- **Painting on the layer the editors choose** (`MapPaintExtensions.PaintTileAuto(x, y, tileId)`): see "Which layer a tile goes to" below. `PaintTile(x, y, layer, tileId)` paints on a layer you give.
+- **Painting on the layer the editors choose** (`MapPaintExtensions.PaintTileAuto(x, y, tileId)`): see "Which layer a tile goes to" below. `PaintAutotileAuto(x, y, kind)` is the same for an autotile of A1-A4 by its kind
+  (the shape in an id is not used anyway); everything else (B-E, A5) goes through `PaintTileAuto` with its id. `PaintTile(x, y, layer, tileId)` paints on a layer you give.
 - **Not there**: a passage check over tile events and layers (`check_passage`), resizing a map that has tiles and events.
 
 ### The shadow beside walls
