@@ -174,7 +174,89 @@ the sheets are 1024 wide with a 64 px tile).
   0 is the first, `^1` the last: the parameter is a `System.Index`, a number converts to it; the map and the maps it passes exchange the `Order` numbers they already have, so the other levels
   are untouched; a level whose numbers are not all different gets new ones above all), `ExpandMap` / `CollapseMap(mapId, recursive)` (the `Expanded` field of the editor's tree; it is separate from `CreateMap` and from `SetMapParent`).
   `Order` is one number for the whole tree: the maps of a level go by it, and a map put last gets the highest number of all.
-- **Not there**: choosing the shape of an autotile from the neighbours (what the editors do while painting), a passage check over tile events and layers (`check_passage`), resizing a map that has tiles and events.
+- **Autotile shapes** (`AutotileShapes`, `MapAutotileExtensions`): the shape that the editors give an autotile from what is round it (the engines only read it from the id). `AutotileShapes.Floor(up, down, left, right, upLeft, upRight, downLeft, downRight)`
+  (0-46), `.Wall(up, down, left, right)` (0-15), `.Waterfall(left, right)` (0-3) are the pure functions; on a map: `AutotileShapeAt(x, y, layer)`, `UpdateAutotile(x, y, layer)`, `UpdateAutotiles()` / `UpdateAutotiles(x, y, width, height)`
+  (the number of tiles that changed) and `PaintTile(x, y, layer, tileId)` (puts the tile, takes the shape for an autotile from its neighbours, and reshapes the 8 squares round it on the same layer; use it in place of `SetTile` when drawing).
+- **Painting on the layer the editors choose** (`MapPaintExtensions.PaintTileAuto(x, y, tileId)`): see "Which layer a tile goes to" below. `PaintTile(x, y, layer, tileId)` paints on a layer you give.
+- **Not there**: a passage check over tile events and layers (`check_passage`), resizing a map that has tiles and events.
+
+### The shadow beside walls
+
+Tiles of A3 and A4 (roofs, house walls, tops and sides of walls: all of them alike) cast a shadow on the ground beside them, and the editors put it into the shadow layer themselves when the tile is painted.
+`MapShadowExtensions` does the same: `HasWall(x, y)` (a tile of A3 or A4 on any layer), `WallShadowAt(x, y)`, `UpdateWallShadow(x, y)`, `UpdateWallShadows()` / `UpdateWallShadows(x, y, width, height)`.
+**`SetTile` keeps the shadows itself, as the editor does** (so `PaintTile` and `PaintTileAuto`, which use it, do too). What the editor of MV does when a tile of A (A1-A5) is put on a square, as the maintainer found: the shadows of
+**six squares** (the square itself, the ones above and below it, to its right, to its upper right and to its lower right) are cleared completely and worked out again from the wall rule alone; a shadow drawn by hand on any of them is lost.
+`SetTile` does the same for a tile of A, and also when a tile that is not of A takes a wall away (the walls round those squares are not what they were). A tile of B-E that takes no wall away changes no shadow.
+Writing to `IMap.Data` directly skips all this.
+
+**The explicit methods are gentler.** `UpdateWallShadow(x, y)` / `UpdateWallShadows()` (the whole map, or a part) change only an empty shadow and the wall shadow itself (the value 5); a shadow of another shape drawn by hand
+(a quarter, the right half, the whole square) is left alone, also where the rule would put a wall shadow. Use them after writing to `Data`; they cannot tell a left half drawn by hand from a wall's.
+
+**The rule** (written by the maintainer from the editor of MV, and checked: a map painted in it with 13 shadowed squares and walls in every arrangement got the same shadows from the rule in all 13 squares and none in the others):
+- the shadow is always the **left half of the square** (the top left and the bottom left quarters: the value 5; never one quarter, never the right ones);
+- a square that has a tile of A3 or A4 on any layer gets none;
+- any other square gets it when the square to its **left** and the square to its **up-left** (the diagonal) both have a tile of A3 or A4 on some layer. So the top row of a wall casts nothing beside it: the shadow starts one row lower.
+
+The maintainer says that the editor of VX Ace has the same rules (the shadow, and the six squares recalculated when a tile of A is put).
+
+Against the maps of two finished games (all the squares with the shadow 5): VX Ace 89.5 % of the squares that the rule shadows really have the shadow, and the rule finds 83 % of the squares that have it; MV 41 % and 82 %.
+The rest are shadows drawn by hand with the shadow pen (the value 5 and others) and, in MV, walls that have no shadow beside them in the saved map (the author's choice, or the editor of an earlier version).
+The shadows of other shapes (a single quarter, the right half, 15, ...) are not made by this rule; `SetShadow` writes them.
+
+### Which layer a tile goes to
+
+The editors do not leave this to the painter: with the layer on Auto the layer is chosen from the tile (and from what is on the square). `IsOverlay(id)` (`TileIds`) tells the two kinds of A tiles apart: **the ground** (A1, the left half of A2
+(columns 0-3 of the sheet, kinds 16-19, 24-27, 32-35, 40-43), A3, A4, A5) and **overlays** (the right half of A2: columns 4-7, kinds 20-23, 28-31, 36-39, 44-47, bushes, tall grass, cloth; and the deep sea, A1 kind 1).
+How the kinds are counted: see "The kinds" above; the number of a block of the A2 sheet is `16 + row * 8 + column`.
+
+| tile | MV (4 layers) | VX Ace (3 layers) |
+|---|---|---|
+| ground (A1-A5; a wall of A4, a roof of A3 and A5 as well) | layer 0, and **everything else on the square is removed** (the overlay and the B-E tiles) | layer 0, the same |
+| overlay | layer 1, in place of the overlay that was there; the ground under it stays (and it is on layer 1 even when layer 0 is empty); **the B-E tiles are removed** | layer 1, the same |
+| B-E | the top layer (3); the tile that was on it moves down to layer 2, the one that was on layer 2 is lost; the same tile as the one on top is not added again | layer 2, in place of the one that was there |
+
+Where it comes from:
+- **MV** was painted in the editor of MV 1.6 with the layer on Auto, in cases like these (the second tile was painted on the square of the first one, and so on): grass; grass twice; bush (an overlay); bush twice; grass then bush; bush then grass
+  (the bush is gone); a bush and then another overlay; a B tile on an empty square, on grass, on grass with a bush; two and three B tiles one after another; a wall of A4 on grass; A4 on A4; a roof of A3 on grass; A5 on grass, and a B tile on it.
+  The saved maps were read, and painting the same cases with `PaintTileAuto` gives the same layers and the same shapes, cell by cell (`MapPaintTests` keeps the cases).
+- **VX Ace**: the maintainer, who works with both editors, says that the behaviour is the same as in MV, with one difference: there are not two layers for B-E but one, so two B tiles cannot be put on one square
+  (the new one replaces the old). The layers agree with what a saved game of that editor shows: every A2 tile of the columns 0-3 is on layer 0 and every one of the columns 4-7 on layer 1 (100 % of 79 000 and 20 000 tiles),
+  the deep sea on layer 1, B-E only on layer 2 (40 000 tiles). The cases above were painted in the editor of MV only; for VX Ace there is the maintainer's word and the saved game, not a map painted for the purpose.
+- In **older MV maps** the same tiles are not always on these layers (a game of MV had B-E tiles on layer 1 and overlays on layer 2): the editor of an earlier version, or the layer set by hand. Read a layer with care.
+
+A second round in the MV editor gave the removal: the sand (kind 24) painted over grass and a B tile, over grass + bush + B tile, over grass + two B tiles; B tiles alone and then grass; and an A4 wall, an A3 roof and an A5 tile over grass + bush + B tile:
+each time only the new tile was left, on layer 0. The same B tile painted twice stayed one tile on the top layer. A bush painted over grass and two B tiles left the grass and the bush (the B tiles are gone), and another overlay painted over grass, bush and a B tile
+replaced the bush and removed the B tile. So **a tile of A removes everything above its own layer**: the ground the whole square but itself, an overlay the B-E tiles (and the overlay that was there), B-E nothing but the tile under the one it moves.
+
+Not tried: the eraser (the editor of MV has none: there is no empty tile to paint with).
+
+### How the shape of an autotile is chosen
+
+**The numbers** are read from the tables of the engine (`FLOOR_AUTOTILE_TABLE`: which quarter of the picture goes where). Each quarter of a floor-type tile is an inner part, an edge, an outer corner or a notch (an inner corner),
+and the 47 different shapes follow from the 4 sides and the 4 corners; the order of the table is: 0-15 every side connected and a notch at any of the 4 corners (bits 1 top left, 2 top right, 4 bottom right, 8 bottom left), 16-19 only the left
+not connected (notches at the right corners), 20-23 only the top, 24-27 the right, 28-31 the bottom, 32 left and right, 33 top and bottom, 34-41 two neighbouring sides (top and left 34-35, top and right 36-37, bottom and right 38-39, bottom
+and left 40-41; one possible notch), 42-45 three sides (only the bottom connected 42, only the right 43, only the top 44, only the left 45), 46 none. A corner counts only when both sides of it are connected. **Shape 47** (the picture
+of a tile with nothing round it, drawn from the first tile of the block) is in the table, but no map of the real projects below has it: the editors give 46. A wall type has one bit for each side that is not connected (1 left, 2 top, 4 right, 8 bottom), a waterfall
+two (1 left, 2 right).
+
+**What is connected** (found by comparing with the shapes saved in real maps, same layer only): a neighbour of the same kind; water (A1, not a waterfall) to a waterfall; the side of a wall (A3 or A4) to the top of any A4 wall at its left and right.
+The edge of the map: connected for water, ground, wall tops and waterfalls; for roofs and wall sides it is connected to the left and right in **VX Ace** and not connected anywhere in **MV**; above and below it is never connected.
+Everything else (empty, a normal tile, another kind) is not connected.
+
+How well this rule reproduces what the editors saved (the share of the autotiles whose saved shape equals the rule's), on one game made with each editor (about 180 000 autotiles each; a second VX Ace game gave 94 % for ground and 94 % for wall tops):
+
+| tiles | MV editor, one game | VX Ace editor, one game |
+|---|---|---|
+| water and A1 ground | 99.9 % | 96 % |
+| waterfalls | 100 % | |
+| A2 ground | 99.7 % | 97 % |
+| tops of A4 walls | 99.3 % | 96 % |
+| roofs, walls of A3 | 99.5 % | 89-90 % |
+| sides of A4 walls | 90 % | 89 % |
+
+The rest are tiles the editors left as they were when something next to them changed (a neighbour erased or replaced, a block pasted), so a saved map has shapes that the rule would reshape (`UpdateAutotiles()` does it).
+For the sides of A4 walls the editors also differ from the rule for a wall side joined to other kinds of wall side and to the wall top below it (about a third of them are saved as connected): not reproduced.
+Water kinds 0 and 1 (the sea and the deep sea) and the other A1 kinds were seen connected to their own kind only; the editors' rule for the sea next to the deep sea was not seen in the data.
 
 ## Facts observed in the data of one full VX Ace game
 
@@ -185,6 +267,7 @@ the sheets are 1024 wide with a 64 px tile).
 ## Not checked
 
 - How the real VX Ace draws the layers (its `Tilemap` is native code): the ids and flags are the same as in MV, the layer order is assumed to be the same.
+- The rules of painting in the editor of VX Ace (the layer of a tile, what a tile removes, the shadows round it): from the maintainer's word and a saved game, not from cases painted for the purpose as for MV.
 - Which tiles the editors let a layer take (the numbers above only say what the editors did in one game).
 - The range of the regions in the editors (VX Ace 0-63, MV 0-255, from memory) and of the terrain tags (0-7), and how the editors label the tileset modes.
 - The meaning of A1 kinds 2 and 3 in the editor's terms (only what the engine does with them is known).

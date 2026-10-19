@@ -241,6 +241,24 @@ foreach (var id in map.LayeredTiles(3, 2))               // from the top layer d
 }
 ```
 
+An autotile has a shape (which of its neighbours are of the same kind) that the editors choose while a tile is painted. `PaintTile` does the same, so a map can be drawn by code:
+
+```csharp
+var grass = TileIds.MakeAutotile(16, 0);                 // the kind is what counts, the shape is chosen
+for (var y = 2; y < 7; y++)
+    for (var x = 3; x < 10; x++)
+        map.PaintTile(x, y, 0, grass);                   // the tile, and the tiles round it are reshaped
+
+map.PaintTile(5, 4, 0, 0);                               // erase: the tiles round it are reshaped too
+map.PaintTileAuto(3, 2, TileIds.MakeAutotile(20, 0));    // the layer is chosen as the editor does: a bush (an overlay) goes over the ground on layer 1
+map.PaintTileAuto(3, 2, 88);                              // a tile of B-E goes to the top layer; a second one moves it down (MV)
+map.SetTile(4, 2, 0, TileIds.MakeAutotile(80, 0));       // a wall (A3, A4): the shadow beside it is put as the editor does (the left half of the square to its right)
+                                                         // (like the editor: putting a tile of A reworks the shadows of the square and the five squares round it, those drawn by hand there are lost)
+int shadows = map.UpdateWallShadows();                   // all the shadows beside walls at once (after writing to Data); shadows drawn by hand of other shapes are not touched
+int shape = map.AutotileShapeAt(3, 2, 0);                // the shape that a tile should have
+int changed = map.UpdateAutotiles();                     // reshape every autotile of the map (after SetTile, or a map made by other code)
+```
+
 `TileIds` tells what a tile id is (the sheet, an autotile and its kind and shape, water, a wall, a roof...); the tileset helpers read and write the flags, the terrain tag and the names of the sheets.
 What is behind them is in `.claude-docs/maps-and-tiles.md`.
 

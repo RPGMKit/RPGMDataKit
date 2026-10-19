@@ -38,6 +38,9 @@ public static class MapTileExtensions
         };
     }
 
+    /// <summary>The map is laid out as VX Ace keeps it (told by its class, else by the number of layers).</summary>
+    internal static bool IsVxAceLayout(IMap map) => LayoutOf(map) == Layout.VxAce;
+
     /// <summary>The number of layers of tiles: 3 in VX Ace, 4 in MV.</summary>
     public static int TileLayerCount(this IMap map) => LayoutOf(map) == Layout.VxAce ? 3 : 4;
 
@@ -51,7 +54,12 @@ public static class MapTileExtensions
         return map.Data[x, y, layer];
     }
 
-    /// <summary>Puts a tile on the layer at the square. The id is 0 (nothing) or a tile id below <see cref="TileIds.Max"/>.</summary>
+    /// <summary>
+    /// Puts a tile on the layer at the square. The id is 0 (nothing) or a tile id below <see cref="TileIds.Max"/>. The shape of an autotile is not chosen (see <see cref="MapAutotileExtensions.PaintTile"/>), but the
+    /// shadows beside walls are kept the way the editors do it: when the tile is of A (A1-A5), or the square became a wall or stopped being one, the shadows of the square and of the squares above, below, to the right,
+    /// to the upper right and to the lower right of it are cleared and worked out again from the walls (<see cref="MapShadowExtensions"/>), which also removes a shadow drawn by hand on any of them.
+    /// Writing to <c>Data</c> directly skips this.
+    /// </summary>
     public static void SetTile(this IMap map, int x, int y, int layer, int tileId)
     {
         CheckSquare(map, x, y);
@@ -59,7 +67,11 @@ public static class MapTileExtensions
         if ((uint)tileId >= TileIds.Max)
             throw new ArgumentOutOfRangeException(nameof(tileId), tileId, $"A tile id is 0-{TileIds.Max - 1}");
 
+        var wasWall = map.HasWall(x, y);
         map.Data[x, y, layer] = tileId;
+
+        if (MapShadowExtensions.IsTileOfA(tileId) || map.HasWall(x, y) != wasWall)
+            MapShadowExtensions.TilePlaced(map, x, y);
     }
 
     /// <summary>The tiles at the square from the highest layer down, as the engine looks at them (the passage, the terrain tag): 3 ids in VX Ace, 4 in MV.</summary>

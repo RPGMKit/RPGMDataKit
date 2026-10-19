@@ -118,6 +118,12 @@ public static class TileIds
     /// <summary>Ground: A1, A2 and A5.</summary>
     public static bool IsGround(int tileId) => IsA1(tileId) || IsA2(tileId) || IsA5(tileId);
 
+    /// <summary>
+    /// An autotile that the editors lay over the ground, on the second layer of tiles: the right half of A2 (the columns 4-7 of the sheet: bushes, tall grass, cloth) and the deep sea (A1, kind 1).
+    /// The other tiles of A1-A5 are the ground itself, on the first layer. Found in the maps the editors saved (see <c>.claude-docs/maps-and-tiles.md</c>), the sheet does not say it.
+    /// </summary>
+    public static bool IsOverlay(int tileId) => (IsA2(tileId) && (Kind(tileId) - 16) % 8 >= 4) || (IsA1(tileId) && Kind(tileId) == 1);
+
     /// <summary>A3 and A4: the shadow of a tile on the layer below is not drawn over them.</summary>
     public static bool IsShadowing(int tileId) => IsA3(tileId) || IsA4(tileId);
 

@@ -18,6 +18,13 @@ Things in the library or the formats that look wrong or surprising. Add a line w
 - **`rvdata2` tables hold signed 16-bit cells.** A value outside -32768..32767 makes saving throw. VX Ace region ids are small (`region << 8`
   fits), but never write an MV region of 128 or more into a VX Ace map.
 - **`MapInfos`: the id is the key in VX Ace and a field in MV** (`IMapInfo.Id`). For VX Ace it is not saved with the entry.
+- **`SetTile` does not reshape autotiles; `PaintTile` does.** A tile put with `SetTile` keeps the shape you gave it, and the tiles next to it keep theirs. The editors do not always reshape either, so a saved map has some shapes
+  that `UpdateAutotiles()` would change (about 0.3 % of ground in an MV map, 3-4 % in a VX Ace one, 10 % of A4 wall sides).
+- **A bush on layer 0 is not what the editor makes.** An overlay (the right half of A2: kinds 20-23, 28-31, 36-39, 44-47, and the deep sea) belongs on layer 1 over a ground on layer 0; put on layer 0 it replaces the ground and its transparent
+  edges show nothing. `PaintTile(x, y, layer, id)` paints where you say, `PaintTileAuto(x, y, id)` chooses the layer as the editors do.
+- **`SetTile` of a tile of A (A1-A5) clears the shadows of six squares and works them out again from the walls**, as the editor does: the square, above, below, to the right, upper right and lower right of it. A shadow drawn by hand
+  on any of them is lost. Writing to `IMap.Data` directly does not do it; `UpdateWallShadows()` is the gentle one (it changes only an empty shadow and the wall shadow, 5, and leaves shadows of other shapes alone).
+- **Autotile shape 47 is never made** (the editors use 46 for a tile with nothing round it), and the edge of the map is not the same for roofs and walls in the two makers (VX Ace joins the left and right, MV does not).
 - **Tileset `Mode` 0 is the field (world) type**, 1 the area type; it matters only for the battle backgrounds of a map that has none of its own.
 - **Ids 1024-1535 and the tail of the A5 range (1664-2047) are unused**, but the `Flags` table of a tileset still has a cell for every id up to 8191.
 
