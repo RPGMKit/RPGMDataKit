@@ -129,7 +129,7 @@ public class Map : JsonEntity, IMap, INewEntity
     [JsonProperty(PropertyName = "specifyBattleback")]
     public bool SpecifyBattleback { get; set; }
 
-    // ground 1 => ground 2? => bottom object => top object => shadow flags => region id
+    // 6 layers: lower layer 1, lower layer 2, upper layer 1, upper layer 2, the shadows (the low four bits), the regions
     [JsonProperty(PropertyName = "data")]
     [JsonConverter(typeof(FlatTableJsonConverter))]
     public Table Data { get; set; } = new();

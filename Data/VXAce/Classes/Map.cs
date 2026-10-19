@@ -128,6 +128,7 @@ public class Map : RubySerializationEntity, IMap, INewEntity
     [RubyProperty("@note")]
     public string Note { get; set; }
 
+    // 4 layers: three of tiles, then the shadows (the low four bits) and the regions (from the 9th bit) in one cell
     [RubyProperty("@data")]
     public Table Data { get; set; } = new();
 

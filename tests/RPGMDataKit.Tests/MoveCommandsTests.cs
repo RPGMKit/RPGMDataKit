@@ -9,8 +9,8 @@ using Xunit;
 namespace RPGMDataKit.Tests;
 
 /// <summary>
-/// The commands of a movement route. The expected parameters are what the editors of VX Ace and MV write for a new command (the common event
-/// "MoveCommands" of the test projects has every command of the route, made with the values the editors give).
+/// The commands of a movement route. The expected parameters are what the editors of VX Ace and MV write for a new command: they were read from a common
+/// event "MoveCommands" with every command of the route, made in a project of each editor with the values the editors give (that project is not in <c>Projects</c>).
 /// </summary>
 public sealed class MoveCommandsTests
 {

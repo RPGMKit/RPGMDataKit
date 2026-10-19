@@ -188,6 +188,35 @@ mvPage.Append(b => b.Add(choices.Clone()));   // Cancel, the choices... as MV wr
 
 A command that is made in code and put into a list has the values that the editor of that maker gives a new command, not zeros and nulls: `new ChangeItemsCommand()` is for the item 1 and the count 1, `new WaitCommand()` waits for 60 frames, a Show Choices has the choices Yes and No and its Cancel is the second of them, a sound has the volume of the editor (80 for an SE and a BGS in VX Ace), a Tint Screen has a tone, a text is `""`. What is set in code stays, a zero too. Such a value is marked on the property: `[EditorDefault(60, StorageVersion.VXAce)]`; an attribute makes the value itself, so there are the ones for a tone (`[EditorDefaultTone(-34, 0, 68, 0, StorageVersion.VXAce)]`), a color and a list of texts (`[EditorDefaultList("Yes", "No")]`), and your own is a class of `EditorDefaultBaseAttribute` (the value was read from the files that the editors of both makers wrote; without the makers it is the same for both, and where they differ there is an attribute for each: the flash of Flash Screen has the alpha 255 in VX Ace and 170 in MV, the target of Force Action is Random in VX Ace and Last Target in MV). A copy made with `Clone()` has what the original has, not these values. What the editor takes from the project (the map and the music of a new Transfer Player or Change Battle BGM, the graphic of an actor) is not known to the library: set it in code.
 
+### Create a map
+
+```csharp
+using RPGMDataKit.Data.Helpers;
+
+var cave = vx.CreateMap("Cave", width: 30, height: 20, tilesetId: 2, parentId: 1);
+cave.Map.SetTile(0, 0, 0, TileIds.MakeAutotile(16, 0));
+vx.SaveAll();                                        // writes the new Map003 and the list of maps
+// cave.Id is the number of the map, cave.Info its entry in the tree
+```
+
+`CreateMap` makes an empty map with the values that the editor gives to a new one, takes the next number and order after the other maps, and puts the map and its entry into the storage; `parentId` puts it under another map
+of the tree (0 is the root). The tileset and the parent must exist.
+
+The tree of maps has its own methods (`RPGMDataKit.Data.Helpers`):
+
+```csharp
+vx.GetChildMaps(1);                    // the numbers of the maps right under the map 1, in the order of the tree (0 is the root)
+vx.SetMapParent(3, 5);                 // the map 3 with its children goes under the map 5, after the maps that are there (0 = to the root)
+vx.GetMapsAtLevel(5);                  // the maps on the level of the map 5 (under the same parent), in order, the map 5 among them
+vx.GetMapPositionAtLevel(5);           // (Index, Count): where the map 5 is on its level and how many places the level has (0 to Count - 1)
+vx.ReorderMap(5, 0);                   // the map 5 becomes the first among the maps of its level (the place it has afterwards)
+vx.ReorderMap(5, ^1);                  // ... the last one (^1 counts from the end, so the number of places need not be known)
+vx.ExpandMap(1);                       // opens the map 1 in the editor's tree; recursive: true opens everything under it too
+vx.CollapseMap(1, recursive: true);
+```
+
+`SetMapParent` refuses a move that would make a loop (a map under itself or under one of its own children) and does not open or close anything; opening a branch (`Expanded`) is a field of the editor and has no effect in the game.
+
 ### Tiles of a map
 
 `IMap.Data` is a table of the maker's layout (4 layers in VX Ace, 6 in MV). The helpers in `RPGMDataKit.Data.Helpers` hide the difference:

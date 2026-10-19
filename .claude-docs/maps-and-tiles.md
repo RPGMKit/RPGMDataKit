@@ -166,8 +166,15 @@ the sheets are 1024 wide with a 64 px tile).
   `GetRegion` / `SetRegion`. They hide where the shadow and the region are (one cell in VX Ace, two layers in MV). The maker is told by the class of the map. A VX Ace region is 0-127 (the cell is a signed 16-bit number).
 - **`TilesetExtensions`** (on `ITileSet`): `SheetName` / `SetSheetName(TileSheet)`, `SheetNameOf(tileId)`, `GetFlags` / `SetFlags(tileId)` (a short table, as MV's editor writes for a new tileset, reads 0 past its end and
   grows when written), `HasFlags`, `GetTerrainTag` / `SetTerrainTag` (0-7), `BlocksDirection`.
-- **Not there**: choosing the shape of an autotile from the neighbours (what the editors do while painting), a passage check over tile events and layers (`check_passage`), creating a map in a `Storage`
-  (its id and its `MapInfos` entry are made by hand), resizing a map.
+- **`CreateMap`** (`MapCreationExtensions`, on `Storage`): a new map and its `MapInfos` entry, with the next number and order, the size and the tileset you give, a place in the tree (`parentId`), and the other values of a
+  new map of the maker. The numbers were checked against the maps that the editors made in the test projects: the next number, the order after the others, 17 x 13, the first tileset, and the view of the editor
+  (`ScrollX`, `ScrollY`) in the middle of the map (VX Ace: 272, 208 = 17 x 13 tiles of 32 px, halved; the same rule with 48 px is used for MV, it is a field of the editor and has no effect in the game).
+- **The tree of maps** (`MapTreeExtensions`, on `Storage`): `GetChildMaps(parentId)` (the order of the tree: `Order`, then the number), `SetMapParent(mapId, newParentId)` (under another map or the root, after the maps there, with its
+  children; refuses a loop; it does nothing when the map is already under that map), `GetMapsAtLevel(mapId)` (the maps of its level in order, itself among them) and `GetMapPositionAtLevel(mapId)` (`Index` and `Count`: the places are `0` to `Count - 1`), `ReorderMap(mapId, index)` (the place among the maps of its level,
+  0 is the first, `^1` the last: the parameter is a `System.Index`, a number converts to it; the map and the maps it passes exchange the `Order` numbers they already have, so the other levels
+  are untouched; a level whose numbers are not all different gets new ones above all), `ExpandMap` / `CollapseMap(mapId, recursive)` (the `Expanded` field of the editor's tree; it is separate from `CreateMap` and from `SetMapParent`).
+  `Order` is one number for the whole tree: the maps of a level go by it, and a map put last gets the highest number of all.
+- **Not there**: choosing the shape of an autotile from the neighbours (what the editors do while painting), a passage check over tile events and layers (`check_passage`), resizing a map that has tiles and events.
 
 ## Facts observed in the data of one full VX Ace game
 

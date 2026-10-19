@@ -44,8 +44,8 @@ var mv = new MVStorage(@"C:\Games\GameMV");   // data directory "data"
 - A list is **saved** as an array as long as its highest id + 1, with `null` in the gaps; a dictionary as it is.
 - VX Ace `MapInfos` is a hash whose entries do not keep their id: when it is loaded the key is put into the entity's `Id` (`idIsStored: false`). MV's `MapInfos` is a list
   whose entries have `id`.
-- `MapsHolder`: `Get(id)` returns `IMap?` (null when the file does not exist), caches, and is safe from several tasks; `Set(id, map)` puts a map in (a new map has no
-  entry in `MapInfos` until you add one); `Save(id)` writes one loaded map.
+- `MapsHolder`: `Get(id)` returns `IMap?` (null when the file does not exist), caches, and is safe from several tasks; `Set(id, map)` puts a map in (the entry in
+  `MapInfos` is made by `Storage.CreateMap`, which does both); `Save(id)` writes one loaded map.
 - Holders of your own (MV): `AddList<T>`, `AddDictionary<T>`, `AddEntity<T>` (README); the class must derive from `JsonEntity`, otherwise the members it does not describe are lost on save.
   `HolderNames`, `GetHolder<T>(name)` find any holder by the name of its file.
 

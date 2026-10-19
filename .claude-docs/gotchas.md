@@ -13,8 +13,8 @@ Things in the library or the formats that look wrong or surprising. Add a line w
 - **`TileFlags.PassNo*` (`0x1` down, `0x2` left, `0x4` right, `0x8` up)**: 1 = blocked.
 - **One number holds two things in VX Ace.** Layer 3 of a VX Ace map is the shadow (low bits, `& 0x0F` is what MV reads) *and* the region
   (`value >> 8`). MV keeps them in layers 4 and 5. Code that copies "the last layer" between makers copies the region into the shadow layer
-  too; MV does not mind (it reads `& 0x0F`), but the numbers look odd (256, 512...).
-- **The number of layers depends on the maker** (VX Ace 4, MV 6). The comment on `IMap.Data` describes the MV layout. Read `Data.SizeZ`.
+  too; MV does not mind (it reads `& 0x0F`), but the numbers look odd (256, 512...). The converter used to do that and masks the shadows now; use `GetShadow` / `GetRegion`.
+- **The number of layers depends on the maker** (VX Ace 4, MV 6; `IMap.Data` says so). Use `TileLayerCount()` or read `Data.SizeZ`.
 - **`rvdata2` tables hold signed 16-bit cells.** A value outside -32768..32767 makes saving throw. VX Ace region ids are small (`region << 8`
   fits), but never write an MV region of 128 or more into a VX Ace map.
 - **`MapInfos`: the id is the key in VX Ace and a field in MV** (`IMapInfo.Id`). For VX Ace it is not saved with the entry.
@@ -40,7 +40,8 @@ Things in the library or the formats that look wrong or surprising. Add a line w
 - **The id of an entity is its place** (index or key), not the `id` written in it. A mismatch raises `Storage.IdMismatched`; the place wins.
 - **`Preload()` reads every map.** Use `PreloadAsync()` on a big project.
 - **MV files are written as one line**; the editor writes one entity per line. MV reads both, but a text diff against an editor-saved file shows every line changed.
-- **A new map or event needs its place made by hand**: `Maps.Set(id, map)` does not add a `MapInfos` entry, and `IMap.Events` has no `NextId`.
+- **`MapInfo.Expanded` is the state of the editor's tree** (is the branch open); nothing in the game reads it. `CreateMap` and `SetMapParent` do not change it, `ExpandMap` / `CollapseMap` do.
+- **`Maps.Set(id, map)` does not add a `MapInfos` entry** (the tree of maps would not show the map): use `Storage.CreateMap`, which makes both. `IMap.Events` has no `NextId`: take the id yourself.
 
 ## Events (details in [events.md](events.md))
 

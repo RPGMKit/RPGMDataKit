@@ -130,6 +130,18 @@ public static class MapTileExtensions
         }
     }
 
+    /// <summary>
+    /// Sets the size of a map and makes the tiles empty: the table has the layers of the maker and every cell is 0. (A new map has no events to move.)
+    /// </summary>
+    internal static void Resize(this IMap map, int width, int height)
+    {
+        var layers = map.Data.SizeZ;
+        map.Width = width;
+        map.Height = height;
+        map.Data.Elements = new List<int>(new int[width * height * layers]);
+        map.Data.Reshape(width, height, layers);
+    }
+
     private static int ShadowLayer(IMap map) => LayoutOf(map) == Layout.VxAce ? 3 : 4;
 
     private static int ShadowCell(IMap map, int x, int y) => map.Data[x, y, ShadowLayer(map)];
