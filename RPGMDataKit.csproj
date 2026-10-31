@@ -23,6 +23,11 @@
     </ItemGroup>
 
     <ItemGroup>
+      <!-- the style and the script of the html dump, read by HtmlDumpWriter -->
+      <EmbeddedResource Include="Data\Helpers\Dump\Html\*" LogicalName="html-dump/%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="YamlDotNet" Version="16.3.0" />
     </ItemGroup>

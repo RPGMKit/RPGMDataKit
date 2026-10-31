@@ -1,0 +1,41 @@
+body{font:13px/1.45 Consolas,monospace;margin:0;background:#fff;color:#222}
+.bar{position:sticky;top:0;background:#eee;padding:6px 10px;border-bottom:1px solid #bbb;z-index:2}
+.head{margin:0;padding:8px 10px;background:#f6f6f6;border-bottom:1px solid #ddd}
+.cmds{padding:4px 0}
+.cmd{white-space:pre-wrap;padding:0 10px}
+.cmd:hover{background:#eef4ff}
+.no{display:inline-block;min-width:3.2em;color:#888;text-align:right;margin-right:.8em;user-select:none}
+.code{display:inline-block;min-width:3em;color:#aaa;margin-right:.6em;user-select:none}
+.name{font-weight:bold}
+.sec .name{font-weight:normal}
+.cmd[data-pics] .params{color:#0a5;text-decoration:underline dotted}
+.fold{display:inline-block;width:1.3em;color:#888;user-select:none}
+.ind{display:inline-block}
+.call .name,.call .params{color:#0b6fa8}
+.exit .name{color:#c0392b}
+details.ce>summary .cmd{border-left:3px solid #6a9fd8}
+.recursion{cursor:pointer;color:#a60}
+.rec{margin-left:1em;font-size:11px}
+.flash{animation:flash 1.5s}
+@keyframes flash{from{background:#ffd54f}to{background:transparent}}
+body.no-ce details.ce>summary .fold::before{content:""}
+body.no-ce details.ce>:not(summary){display:none}
+body.no-ce .rec{display:none}
+body.no-ce .recursion{cursor:default}
+summary{cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary .fold::before{content:"\25B6"}
+details[open]>summary .fold::before{content:"\25BC"}
+.acts{margin-left:1em;user-select:none}
+.act{margin-left:.6em;padding:0 .5em;border:1px solid #9ab;border-radius:9px;font-size:11px;color:#06c;cursor:pointer;text-decoration:none}
+.act:hover{background:#06c;color:#fff}
+.snd{color:#a05a00;border-color:#c9a063}
+.snd:hover{background:#a05a00;color:#fff}
+.snd.playing{background:#a05a00;color:#fff}
+#tip{position:fixed;display:none;z-index:9;pointer-events:none;background:#fff;border:1px solid #888;border-radius:6px;padding:4px;box-shadow:0 4px 16px #0006}
+#tip .item{display:inline-block;vertical-align:top;margin:2px;text-align:center;font-size:11px}
+#tip canvas,#tip img{display:block;max-width:320px;max-height:320px;image-rendering:pixelated;background:repeating-conic-gradient(#8884 0% 25%,transparent 0% 50%) 50%/14px 14px}
+@media (prefers-color-scheme:dark){
+body{background:#1e1e1e;color:#ddd}.bar{background:#2b2b2b;border-color:#444}.head{background:#252526;border-color:#444}
+.call .name,.call .params{color:#5ab4ea}.exit .name{color:#ff7b72}
+.cmd:hover{background:#2a3445}#tip{background:#222;border-color:#666}}
