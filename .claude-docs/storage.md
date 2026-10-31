@@ -93,6 +93,12 @@ An option that a writer cannot honour is refused by the writer (`ExpandCommonEve
 `HtmlDumpWriter` builds the blocks from the `Indent` of the commands, takes the text of a line from `NamedCommand.GetTextParts` (the pieces `AsString` joins), and finds the images and sounds of a command in `ImagesOf` /
 `SoundsOf`, which switch on the type of the command: the commands do not know about html. The style and the script are the files `Data/Helpers/Dump/Html/dump.css` and `dump.js`, packed into the dll as the resources
 `html-dump/<file>` (see `RPGMDataKit.csproj`). The header of the page is text, so html shows it as it is, in a `<pre>`.
+A called common event is written once as `<template id="ce-N">` after the page, and a call is an empty closed `<details class="ce" data-ce="N">` that the script fills from the template when it is opened; the chain of
+the open calls (and `data-top-ce`, the dumped event) is read from the DOM, and a call of an event that is in the chain becomes a recursion line. Writing the calls out as a tree ran out of memory on a real project
+(one common event of a real project: 71 different events with 10 648 lines, but 12.6 million lines as a tree). The lines hold the indent as `--lvl`; the copied list is in a `.ce-body` that is padded so that its line numbers start where the name of the call starts (the width of the number, arrow and code columns, 8.9em, plus the indent of the call, `--pad`); its lines are indented one step more (`--shift:1`). The widths of the columns are in `dump.css` and must be kept in step with that number. Labels and jumps are found by their index
+**inside the nearest `.list`**, because a list can be on the page many times.
+Which switches and variables a line uses comes from `NameFormatter.OnReference`: the writer sets it while a command builds its description, and every `FormatSwitch`, `FormatVariable` and the span methods report the ids
+(so no command needs to be listed). A command that writes an id without the formatter is not seen; the `\V[n]` of a text line is read from its text.
 
 Not checked (the html dump): the playing of the sounds and the choice of the frame of a sprite sheet (the middle frame of the top row, facing down) were not compared with the engine; the browser
 cannot play `.mid` and `.wma`, which VX Ace projects have. The tooltip of the images was looked at in Chrome only.

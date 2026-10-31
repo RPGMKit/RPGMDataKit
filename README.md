@@ -383,14 +383,20 @@ itself: `await page.Dump(writer, new EntityContext(storage), options)`; in html 
 
 The html file is self-contained (the style and the script are inside it):
 
+- the title of the page is `CE1 name` for a common event, `TE1 name` for a troop page and `M1 E2 P3 name` for a page of a map event (the name of the event);
 - a block (`If`, `Else`, a choice, a loop, a battle) folds; the lines are numbered by the order of the commands, with the number at the left edge and the arrow after it; "Open all" and "Close all" are on the top bar;
 - the images of a command show in a tooltip, cut by the index in the sheet (the face of `Show Text`, the sprite and the face of `Change Actor Images`, the image step of a movement route, `Show Picture`, a vehicle,
   a parallax). A pill after the text of the command opens an image in a new tab;
 - a command that plays a sound (BGM, BGS, ME, SE, the music of a battle, of a vehicle, the victory and defeat ME, the SE step of a route) has a pill that plays and stops it, with the volume and the pitch of the command;
 - the top bar has the path of the project, which the pictures and sounds are taken from. It is the path the dump was made for and can be changed on the page ("Reset" brings it back); the change is kept by the browser;
+- a `Jump to Label` links to the first label of its name in its own list (as the engine looks for it), and a label shows the lines that jump to it. A click goes to the other line and opens the blocks that hide it;
+  while the mouse is over a jump its label is lit, and over a label all the jumps to it. A jump to a label that does not exist is struck out;
+- while the mouse is over a command, the other lines that use the same switch or variable are lit (a range of switches or variables counts each of its ids; `\V[n]` in a text counts too);
 - `Call Common Event` and `Exit Event Processing` have their own colors.
 
 `DumpOptions.ExpandCommonEvents` (html only; the text format throws `NotSupportedException`) puts the called common events into the page, under the call, closed. Their lines are numbered from 000 as in their own dump.
+The list of each called event is written into the file **once** (a `<template>`), and the page copies it under a call the first time the call is opened, so the size follows the number of different events,
+not of the calls (a tree of calls can hold millions of lines: one common event of a real project reaches 71 different events with 10 648 lines, and 12.6 million lines when every call is written out). "Open all" does not open the calls.
 The page then has the checkbox "Expand common events" (the browser remembers it); when it is off a call is a plain line. A call of an event that is open already (the one that is dumped, or one that calls it on the way)
 is not expanded; it is marked, and a click goes to the line where the chain began.
 

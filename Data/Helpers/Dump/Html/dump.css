@@ -8,13 +8,25 @@ body{font:13px/1.45 Consolas,monospace;margin:0;background:#fff;color:#222}
 .code{display:inline-block;min-width:3em;color:#aaa;margin-right:.6em;user-select:none}
 .name{font-weight:bold}
 .sec .name{font-weight:normal}
-.cmd[data-pics] .params{color:#0a5;text-decoration:underline dotted}
+.cmd[data-pics] .params{color:#a8269a;text-decoration:underline dotted}
 .fold{display:inline-block;width:1.3em;color:#888;user-select:none}
-.ind{display:inline-block}
+.ind{display:inline-block;width:calc((var(--lvl,0) + var(--shift,0)) * 1.4em)}
+/* the lines of an opened call start where the name of the call starts, their numbers included: after the columns of the number (4em), the arrow (1.3em) and the code (3.6em)
+   and the indent of the call; their own indent is one step in */
+.ce-body{--shift:1;padding-left:calc(8.9em + var(--pad,0) * 1.4em)}
 .call .name,.call .params{color:#0b6fa8}
 .exit .name{color:#c0392b}
-details.ce>summary .cmd{border-left:3px solid #6a9fd8}
+.comment .name,.comment .params{color:#1b6b2f}
+/* the stripe is a shadow, so that it takes no room and the columns of the line stay where they are */
+details.ce>summary .cmd{box-shadow:inset 3px 0 0 #6a9fd8}
 .recursion{cursor:pointer;color:#a60}
+.jump{cursor:pointer}
+.jump .name,.jump .params{color:#7b3fc4}
+.broken-jump .params{color:#c0392b;text-decoration:line-through}
+.refs{margin-left:1em;font-size:11px;color:#888}
+.ref{margin-left:.3em;color:#06c;cursor:pointer;text-decoration:underline}
+.cmd.hl{background:#ffe08a;outline:1px solid #d9a400}
+.cmd.same{background:#d6f0e0;outline:1px solid #4aa36c}
 .rec{margin-left:1em;font-size:11px}
 .flash{animation:flash 1.5s}
 @keyframes flash{from{background:#ffd54f}to{background:transparent}}
@@ -37,5 +49,5 @@ details[open]>summary .fold::before{content:"\25BC"}
 #tip canvas,#tip img{display:block;max-width:320px;max-height:320px;image-rendering:pixelated;background:repeating-conic-gradient(#8884 0% 25%,transparent 0% 50%) 50%/14px 14px}
 @media (prefers-color-scheme:dark){
 body{background:#1e1e1e;color:#ddd}.bar{background:#2b2b2b;border-color:#444}.head{background:#252526;border-color:#444}
-.call .name,.call .params{color:#5ab4ea}.exit .name{color:#ff7b72}
-.cmd:hover{background:#2a3445}#tip{background:#222;border-color:#666}}
+.call .name,.call .params{color:#5ab4ea}.exit .name{color:#ff7b72}.cmd[data-pics] .params{color:#e08bd8}.comment .name,.comment .params{color:#4fa866}
+.cmd:hover{background:#2a3445}.jump .name,.jump .params{color:#b794f4}.cmd.hl{background:#5a4a14;outline-color:#d9a400}.cmd.same{background:#1f4a35;outline-color:#4aa36c}#tip{background:#222;border-color:#666}}

@@ -28,9 +28,9 @@ public static class DumpHelper
         };
 
         reporter.SetStage(DumpStage.Progress);
-        await reporter.DoReport().For(async () => await CommonEventHelper.DumpCommonEventCommands(storage, path, options, reporter));
-        await reporter.DoReport().For(async () => await MapEventHelper.DumpMapEventCommands(storage, path, options, reporter));
-        await reporter.DoReport().For(async () => await TroopHelper.DumpTroopCommands(storage, path, options, reporter));
+        await reporter.DoReport().For(async () => await CommonEventHelper.DumpCommonEventCommands(storage, Path.Combine(path, "CE"), options, reporter));
+        await reporter.DoReport().For(async () => await MapEventHelper.DumpMapEventCommands(storage, Path.Combine(path, "ME"), options, reporter));
+        await reporter.DoReport().For(async () => await TroopHelper.DumpTroopCommands(storage, Path.Combine(path, "TE"), options, reporter));
         
         reporter.SetStage(DumpStage.Finished);
         

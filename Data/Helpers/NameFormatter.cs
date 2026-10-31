@@ -15,6 +15,21 @@ public class NameFormatter
         _extendedFormat = extendedFormat;
     }
 
+    /// <summary>
+    /// Called with the kind (a switch or a variable) and the id of each switch and variable that is formatted; a span reports every id of it.
+    /// It tells which switches and variables a command uses, whatever the command is.
+    /// </summary>
+    public Action<ReferenceKind, int>? OnReference { get; set; }
+
+    private void Report(ReferenceKind kind, int start, int end)
+    {
+        if (OnReference == null)
+            return;
+
+        for (var id = start; id <= end; id++)
+            OnReference(kind, id);
+    }
+
     private BracketType BracketsForVersion =>
         _context.Version == StorageVersion.MV ? BracketType.None : BracketType.Square;
 
@@ -186,6 +201,7 @@ public class NameFormatter
         options.SkipId ??= _context.Version == StorageVersion.MV;
         options.IdLength ??= 4;
 
+        Report(ReferenceKind.Switch, switchId, switchId);
         var sw = _context.Storage.GetSwitch(switchId);
 
         var str = FormatSimple(switchId, sw, options);
@@ -197,6 +213,8 @@ public class NameFormatter
 
     public string FormatSwitchSpan(int switchStart, int switchEnd, FormatOptions? options = null)
     {
+        Report(ReferenceKind.Switch, switchStart, switchEnd);
+
         if (_context.Version == StorageVersion.MV)
             return string.Format($"#{switchStart:D4}..{switchEnd:D4}");
         else
@@ -256,6 +274,7 @@ public class NameFormatter
         if (_context.Version == StorageVersion.MV)
             options.BracketType ??= BracketType.Figure;
 
+        Report(ReferenceKind.Variable, variableId, variableId);
         var v = _context.Storage.GetVariable(variableId);
 
         var str = FormatSimple(variableId, v, options);
@@ -268,6 +287,8 @@ public class NameFormatter
     
     public string FormatVariableSpan(int variableStart, int variableEnd, FormatOptions? options = null)
     {
+        Report(ReferenceKind.Variable, variableStart, variableEnd);
+
         if (_context.Version == StorageVersion.MV)
             return string.Format($"#{variableStart:D4}..{variableEnd:D4}");
         else

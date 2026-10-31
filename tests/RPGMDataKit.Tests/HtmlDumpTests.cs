@@ -1,5 +1,6 @@
 ﻿using RPGMDataKit.Data.Helpers;
 using RPGMDataKit.Data.Structures.Commands;
+using RPGMDataKit.Data.Structures.Commands.IfCommands;
 using RPGMDataKit.Data.Structures.Commands.MovementCommands;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
@@ -195,40 +196,43 @@ public sealed class HtmlDumpTests
 
     [Theory]
     [MemberData(nameof(Versions))]
-    public async Task ACallIsABlockThatIsClosedAndTheCalledListHasItsOwnNumbers(Version v)
+    public async Task ACallIsAnEmptyClosedBlockAndTheListOfItsEventIsInATemplateWithItsOwnNumbers(Version v)
     {
         var storage = Open(v);
         Calling(v, 2, storage);
         var html = await DumpExpanded(storage, Calling(v, 1, storage, 2));
 
-        Assert.Contains("<body data-expand-common-events>", html);
+        Assert.Contains("<body data-expand-common-events data-top-ce=\"1\">", html);
         Assert.Contains("id=\"expand\" checked", html);
-        Assert.Contains("<details class=\"ce\"><summary>", html);
-        Assert.DoesNotContain("<details class=\"ce\" open", html);
-        // the list of the called event starts from 000 again, and the line after the call goes on the numbers of the outer list
-        Assert.Matches("</summary><div class=\"cmd\"><span class=\"no\">000</span>", html);
+        Assert.Contains("<details class=\"ce\" data-ce=\"2\"><summary>", html);
+        Assert.DoesNotContain("<details class=\"ce\" data-ce=\"2\" open", html);
+        Assert.Contains("</summary></details>", html);
+        // the list of the called event starts from 000 again
+        Assert.Contains("<template id=\"ce-2\"><div class=\"list\"><div class=\"cmd", html);
+        Assert.Contains("<span class=\"no\">000</span>", html.Substring(html.IndexOf("<template id=\"ce-2\"", StringComparison.Ordinal)));
         Assert.Contains("in 2", html);
     }
 
     [Theory]
     [MemberData(nameof(Versions))]
-    public async Task ACallOfAnEventOfTheChainIsNotExpandedAndLeadsToWhereTheChainBegan(Version v)
+    public async Task TheListOfACalledEventIsWrittenOnceWhoeverCallsIt(Version v)
     {
         var storage = Open(v);
-        var one = Calling(v, 1, storage, 2);
-        Calling(v, 2, storage, 1);
-        Calling(v, 3, storage, 1);
+        // A calls B twice and C; B and C call D; D calls A (the page of A)
+        Calling(v, 4, storage, 1);
+        Calling(v, 3, storage, 4);
+        Calling(v, 2, storage, 4);
+        var a = Calling(v, 1, storage, 2, 2, 3);
 
-        // the dumped event is the begin of its own chain
-        var own = await DumpExpanded(storage, one);
-        Assert.Contains("data-goto=\"top\"", own);
-        Assert.Equal(1, own.Split("<details class=\"ce\"").Length - 1);
+        var html = await DumpExpanded(storage, a);
 
-        // a call from outside begins the chain at the line of the call: 3 -> 1 -> 2 -> 1 (the last is not expanded)
-        var outside = await DumpExpanded(storage, storage.CommonEvents.Get(3)!);
-        Assert.Contains("id=\"ce-0\"", outside);
-        Assert.Contains("data-goto=\"ce-0\"", outside);
-        Assert.Equal(2, outside.Split("<details class=\"ce\"").Length - 1);
+        foreach (var id in new[] { 2, 3, 4 })
+            Assert.Equal(1, html.Split($"<template id=\"ce-{id}\"").Length - 1);
+        // the dumped event is the start of every chain: its own list is not written again
+        Assert.DoesNotContain("<template id=\"ce-1\"", html);
+        // the calls are there for the page to open (3 on the page, 1 in the list of 2, 1 in 3, 1 in 4 that calls the event of the page)
+        Assert.Equal(3, html.Split("<details class=\"ce\" data-ce=\"2\"").Length - 1 + html.Split("<details class=\"ce\" data-ce=\"3\"").Length - 1);
+        Assert.Contains("<details class=\"ce\" data-ce=\"1\"", html);
     }
 
     [Theory]
@@ -247,6 +251,19 @@ public sealed class HtmlDumpTests
 
     [Theory]
     [MemberData(nameof(Versions))]
+    public async Task EveryLineOfACommentHasTheCommentClass(Version v)
+    {
+        var commonEvent = EmptyCommandTests.EventOf(v);
+        commonEvent.Replace(b => b.Comment("first", "second", "third"));
+
+        var html = await DumpExpanded(Open(v), commonEvent, expand: false);
+
+        // the first line is the comment, the others are its continuation (a secondary line has its class too)
+        Assert.Equal(3, html.Split("comment\" style=").Length - 1);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
     public async Task ASoundHasAPillWithItsPathVolumeAndPitch(Version v)
     {
         var commonEvent = EmptyCommandTests.EventOf(v);
@@ -259,8 +276,8 @@ public sealed class HtmlDumpTests
         var bgm = v.Name == "MV" ? "audio/bgm/Theme" : "Audio/BGM/Theme";
 
         Assert.Contains($"data-p=\"{bgm}\" data-k=\"bgm\" data-v=\"80\" data-pt=\"110\"", html);
-        Assert.Contains(">\u25B6 se Hit</a>", html);
-        Assert.Contains(">\u25B6 se Step</a>", html);
+        Assert.Contains(">\u25B6 Hit</a>", html);
+        Assert.Contains(">\u25B6 Step</a>", html);
     }
 
     private static T SoundOf<T>(Version v, string name, int volume, int pitch) where T : class, IAudioFile
@@ -271,5 +288,135 @@ public sealed class HtmlDumpTests
         sound.Pitch = pitch;
 
         return sound;
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task AJumpAndItsLabelLeadToEachOther(Version v)
+    {
+        var commonEvent = EmptyCommandTests.EventOf(v);
+        commonEvent.Replace(b => b
+            .Add(new JumpToLabelCommand { Label = "A" })
+            .Add(new JumpToLabelCommand { Label = "Nowhere" })
+            .Add(new LabelCommand { Label = "A" })
+            .Add(new JumpToLabelCommand { Label = "A" })
+            .Add(new LabelCommand { Label = "A" }));
+
+        var html = await DumpExpanded(Open(v), commonEvent, expand: false);
+
+        // the jumps 0 and 3 go to the first label (2); the second label of the name is never the target
+        Assert.Contains("data-jmp=\"0\" data-to=\"2\"", html);
+        Assert.Contains("data-jmp=\"3\" data-to=\"2\"", html);
+        Assert.Contains("data-lbl=\"2\" data-from=\"0 3\"", html);
+        Assert.DoesNotContain("data-lbl=\"4\"", html);
+        Assert.Contains("cmd broken-jump", html);
+        Assert.Contains("data-kind=\"jmp\" data-n=\"3\"", html);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task TheLabelsOfACalledListAreItsOwn(Version v)
+    {
+        var storage = Open(v);
+        var called = EmptyCommandTests.EventOf(v);
+        called.Replace(b => b.Add(new LabelCommand { Label = "A" }).Add(new JumpToLabelCommand { Label = "A" }));
+        storage.CommonEvents.Set(2, called);
+        var commonEvent = EmptyCommandTests.EventOf(v);
+        commonEvent.Replace(b => b.Add(new JumpToLabelCommand { Label = "A" }).Add(new CallCommonEventCommand { EventId = 2 }));
+
+        var html = await DumpExpanded(storage, commonEvent);
+        var page = html[..html.IndexOf("<template", StringComparison.Ordinal)];
+        var template = html[html.IndexOf("<template", StringComparison.Ordinal)..];
+
+        // a jump does not go to a label of another list: the outer one has no label, the called one has its own
+        Assert.Contains("cmd broken-jump", page);
+        Assert.Contains("data-lbl=\"0\" data-from=\"1\"", template);
+        Assert.DoesNotContain("data-lbl", page);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task EveryLineHasTheSwitchesAndVariablesItNames(Version v)
+    {
+        var commonEvent = EmptyCommandTests.EventOf(v);
+        commonEvent.Replace(b => b
+            .IfSwitch(5)
+            .IfVariableWithVariable(7, IfVariableCommand.OperatorType.Gte, 9)
+            .Add(new ControlSwitchCommand { StartSwitchId = 3, EndSwitchId = 4 })
+            .Text("hp \\V[12] and \\v[13]"));
+
+        var html = await DumpExpanded(Open(v), commonEvent, expand: false);
+
+        Assert.Contains("data-refs=\"s5\"", html);
+        Assert.Contains("data-refs=\"v7 v9\"", html);
+        Assert.Contains("data-refs=\"s3 s4\"", html);
+        Assert.Contains("data-refs=\"v12 v13\"", html);
+    }
+
+    private static string TitleOfDump(string html) =>
+        html.Split("<title>")[1].Split("</title>")[0];
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task TheTitleOfACommonEventIsCeNumberName(Version v)
+    {
+        var storage = Open(v);
+        var commonEvent = Calling(v, 7, storage);
+        commonEvent.Name = "Chat";
+
+        Assert.Equal("CE7 Chat", TitleOfDump(await DumpExpanded(storage, commonEvent)));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task TheTitleOfATroopPageIsTeNumberName(Version v)
+    {
+        var storage = Open(v);
+        var troop = v.New<ITroop>();
+        troop.Name = "Bats";
+        storage.Troops.Set(5, troop);
+        var page = troop.Pages.First()!;
+        var writer = new StringWriter();
+
+        await ((IDumpable)page).Dump(writer, new EntityContext(storage, new TroopContext { Troop = troop, PageId = 0, EventPage = page }),
+            new DumpOptions { Format = DumpFormat.Html });
+
+        Assert.Equal("TE5 Bats", TitleOfDump(writer.ToString()));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task TheTitleOfAMapEventPageIsMapEventPageName(Version v)
+    {
+        var storage = Open(v);
+        var map = v.New<IMap>();
+        var mapEvent = v.New<IEvent>();
+        mapEvent.Id = 12;
+        mapEvent.Name = "Door";
+        var page = mapEvent.Pages.First()!;
+        var writer = new StringWriter();
+
+        await ((IDumpable)page).Dump(writer,
+            new EntityContext(storage, new MapEventContext { MapId = 3, Map = map, Event = mapEvent, PageId = 1, EventPage = page }),
+            new DumpOptions { Format = DumpFormat.Html });
+
+        Assert.Equal("M3 E12 P1 Door", TitleOfDump(writer.ToString()));
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task TheKindOfAnImageIsInThePillOnlyWhereACommandHoldsSeveralImages(Version v)
+    {
+        var commonEvent = EmptyCommandTests.EventOf(v);
+        commonEvent.Replace(b => b
+            .Add(new ShowPictureCommand { Layer = 1, Picture = "Pic" })
+            // only the sprite is set, the face is empty: the pill has the kind all the same
+            .Add(new ChangeActorImagesCommand { ActorId = 1, CharacterImage = "Hero", FaceImage = "" }));
+
+        var html = await DumpExpanded(Open(v), commonEvent, expand: false);
+
+        Assert.Contains(">Pic</a>", html);
+        Assert.DoesNotContain(">picture Pic</a>", html);
+        Assert.Contains(">sprite Hero</a>", html);
     }
 }

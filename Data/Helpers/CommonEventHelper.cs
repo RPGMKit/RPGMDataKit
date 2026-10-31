@@ -54,7 +54,7 @@ public static class CommonEventHelper
             using var _2 = reporter?.DoReport("Common Event " + entityContext.NameFormatter.FormatCommonEvent(context.CommonEvent.Id));
             IndentHelper.ValidateIndents(context.CommonEvent, storage.Version);
 
-            var filePath = Path.Combine(path, $"CommonEvent_{context.CommonEvent.Id:D3}.{options.FileExtension}");
+            var filePath = Path.Combine(path, $"CE_{context.CommonEvent.Id:D3}.{options.FileExtension}");
             await using var file = File.Open(filePath, FileMode.Create);
 
             await using var writer = new StreamWriter(file);
