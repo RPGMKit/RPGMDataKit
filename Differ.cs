@@ -125,12 +125,12 @@ namespace RPGMDataKit
 
                 var (diffType, diffs) = CalculateTextDiff(bA.ToString(), bB.ToString());
                 if (diffType == DiffType.Equal)
-                    return true;
+                    return;
 
                 d.Add(new()
                     { Type = diffType, MapEventPage = patchData, Patches = diffs });
 
-                return true;
+                return;
             });
 
             await MapEventHelper.WalkMapEventPages(right, async context =>
@@ -170,7 +170,7 @@ namespace RPGMDataKit
                     var diff = CalculateTextDiff("", sA.ToString());
                     
                     if (diff.Item1 == DiffType.Equal)
-                        return true;
+                        return;
 
                     d.Add(new()
                     {
@@ -184,7 +184,7 @@ namespace RPGMDataKit
                     });
                 }
 
-                return true;
+                return;
             });
 
             return d;

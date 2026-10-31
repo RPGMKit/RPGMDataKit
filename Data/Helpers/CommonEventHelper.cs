@@ -6,7 +6,8 @@ namespace RPGMDataKit.Data.Helpers;
 
 public static class CommonEventHelper
 {
-    public delegate Task<bool> CommonEventWalker(CommonEventContext context);
+    /// <summary>Called for each common event; set <see cref="CommonEventContext.StopWalking"/> to stop the walk after it.</summary>
+    public delegate Task CommonEventWalker(CommonEventContext context);
 
     public static async Task WalkCommonEvents(Storage storage, CommonEventWalker walker, ProgressReporter? reporter = null)
     {
@@ -18,7 +19,9 @@ public static class CommonEventHelper
                 continue;
 
             using var _2 = reporter?.DoReport();
-            if (!await walker(new() { CommonEvent = c }))
+            var context = new CommonEventContext { CommonEvent = c };
+            await walker(context);
+            if (context.StopWalking)
                 break;
         }
     }
@@ -46,7 +49,8 @@ public static class CommonEventHelper
             
             reporter?.CustomReport(filePath);
 
-            return !(reporter?.NeedCancel ?? false);
+            if (reporter?.NeedCancel ?? false)
+                context.StopWalking = true;
         });
     }
 }

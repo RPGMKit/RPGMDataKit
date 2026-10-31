@@ -28,6 +28,12 @@ foreach (var (id, ev) in map.Events)
 `IEvent`: `Id`, `Name`, `X`, `Y`, `Pages`. (MV events also have a `note`; it is kept, but it is not on the interface.) `storage.New<IEvent>()` makes an event with one page; the
 dictionary has no `NextId`, take the id yourself (the highest key + 1) and set `Id`.
 
+**`map.CreateEvent(x, y, name = null, build = null)`** (`MapEventExtensions`, on `IMap`) does that and puts the event on the map: the id is the highest key (an empty slot counts) + 1, `Id` is set,
+the name is `EV001`... by the id when none is given (checked: the MV editor named the event of map 2 of the test project `EV001`; the VX Ace editor, with all events of a map deleted, opened a new event as `ID:001`, named `EV001`, and with event 001 present as `ID:002` / `EV002`), the first page is a new page whose commands the optional
+`build` (a `CommandBuilder` function, as in `Append`) makes. A square outside of the map, or one with an event on it, is refused (in the editors a second event cannot be put on a square either: the double click opens the first one) (`ArgumentOutOfRangeException`, `InvalidOperationException`).
+The maker is told by the class of the map. **`map.ClearEvents()`** removes every event (the empty slots too; it returns how many events there were), and the next `CreateEvent` numbers from 1.
+Further pages: `ev.Pages.Add(storage.New<IEventPage>())`.
+
 ### Pages (`IEventPage`)
 
 | Property | MV key / VX Ace ivar | Meaning |
@@ -104,11 +110,14 @@ All of the valid ones must hold, **and at least one must be set** (a page with n
 ## Reaching them from code
 
 - `MapEventHelper.WalkMapEventPages(storage, walker)`, `TroopHelper.WalkTroopPages`, `CommonEventHelper.WalkCommonEvents`: walk every place that holds commands. The walker gets a context
-  (`MapEventContext`: `MapId`, `Map`, `Event`, `PageId`, `EventPage`; `TroopContext`; `CommonEventContext`) and returns `false` to stop. They load what they need and report progress.
+  (`MapEventContext`: `MapId`, `Map`, `Event`, `PageId`, `EventPage`; `TroopContext`; `CommonEventContext`). A walker returns nothing (a `Task`) and sets `context.StopWalking = true` to stop the walk after the current place.
+  They load what they need and report progress.
 - `Storage.SearchCommands(walker)` walks the commands of the common events, the map events and the troops with their `EntityContext`.
 - `EntityContext` (storage + the context of the place) is what `GetParametersDescription` and `NameFormatter` use to print `[0005: Name]`-style references; the dump needs one.
 
 ## Not checked
+
+- `CreateEvent`: that the VX Ace editor numbers a new event after the highest id (and not into a free gap) was not tried; the MV editor's numbering was not tried (the project owner says it is the same as in VX Ace).
 
 - Anything about the VX Ace page conditions that the stock scripts do not show (the check is in `Game_Event`; the table above is the MV engine's and the data fields are the same).
 - The battle screen position of troop members in pixels of VX Ace: the numbers are copied by the converter and scaled with the screen, but the origin was not looked at here.

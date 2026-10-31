@@ -7,7 +7,8 @@ namespace RPGMDataKit.Data.Helpers;
 
 public static class TroopHelper
 {
-    public delegate Task<bool> TroopWalker(TroopContext context);
+    /// <summary>Called for each page; set <see cref="TroopContext.StopWalking"/> to stop the walk after it.</summary>
+    public delegate Task TroopWalker(TroopContext context);
 
     public static async Task WalkTroopPages(Storage storage, TroopWalker walker, ProgressReporter? reporter = null)
     {
@@ -25,12 +26,15 @@ public static class TroopHelper
                 if (p == null)
                     continue;
 
-                await walker(new()
+                var context = new TroopContext
                 {
                     Troop = troop,
                     PageId = i,
                     EventPage = p,
-                });
+                };
+                await walker(context);
+                if (context.StopWalking)
+                    return;
 
                 ++i;
             }
@@ -60,7 +64,8 @@ public static class TroopHelper
 
             reporter?.CustomReport(filePath);
             
-            return !(reporter?.NeedCancel ?? false);
+            if (reporter?.NeedCancel ?? false)
+                context.StopWalking = true;
         });
     }
     

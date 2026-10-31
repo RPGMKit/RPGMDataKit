@@ -510,7 +510,8 @@ public abstract partial class Storage
         {
             using var _ = reporter?.DoReport("", 0);
 
-            return await WalkCommands(context.CommonEvent.NamedCommands, () => new(this, context));
+            if (!await WalkCommands(context.CommonEvent.NamedCommands, () => new(this, context)))
+                context.StopWalking = true;
         }, reporter);
 
         var lastMapId = -1;
@@ -522,14 +523,16 @@ public abstract partial class Storage
                 reporter?.DoReport("", 0).Finish();
             }
 
-            return await WalkCommands(context.EventPage.NamedCommands, () => new(this, context));
+            if (!await WalkCommands(context.EventPage.NamedCommands, () => new(this, context)))
+                context.StopWalking = true;
         }, reporter);
 
         await TroopHelper.WalkTroopPages(this, async (context) =>
         {
             using var _ = reporter?.DoReport("", 0);
 
-            return await WalkCommands(context.EventPage.NamedCommands, () => new(this, context));
+            if (!await WalkCommands(context.EventPage.NamedCommands, () => new(this, context)))
+                context.StopWalking = true;
         }, reporter);
 
         reporter?.SetStage(reporter.NeedCancel ? DumpStage.Cancelled : DumpStage.Finished);

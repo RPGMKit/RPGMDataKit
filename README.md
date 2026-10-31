@@ -202,6 +202,16 @@ vx.SaveAll();                                        // writes the new Map003 an
 `CreateMap` makes an empty map with the values that the editor gives to a new one, takes the next number and order after the other maps, and puts the map and its entry into the storage; `parentId` puts it under another map
 of the tree (0 is the root). The tileset and the parent must exist.
 
+A new event on a map:
+
+```csharp
+var door = cave.Map.CreateEvent(3, 4, "Door", b => b.Text("It is locked.").IfSwitch(5, then: t => t.Text("Open")));
+var empty = cave.Map.CreateEvent(5, 6);              // EV002, one page that holds only the empty command
+```
+
+`CreateEvent` takes the number after the highest one on the map, sets `Id`, and names the event `EV001`, `EV002`... by it unless a name is given. The first page has the values of a new page of the maker; the optional
+builder (see "Building commands with blocks") makes its commands. A square outside of the map, or one that has an event already, is refused. `map.ClearEvents()` removes all the events of the map (and numbering starts from 1 again). Further pages: `ev.Pages.Add(storage.New<IEventPage>())`.
+
 The tree of maps has its own methods (`RPGMDataKit.Data.Helpers`):
 
 ```csharp

@@ -8,7 +8,8 @@ namespace RPGMDataKit.Data.Helpers;
 
 public static class MapEventHelper
 {
-    public delegate Task<bool> MapEventPageWalker(MapEventContext context);
+    /// <summary>Called for each page; set <see cref="MapEventContext.StopWalking"/> to stop the walk after it.</summary>
+    public delegate Task MapEventPageWalker(MapEventContext context);
 
     public static async Task WalkMapEventPages(Storage storage, MapEventPageWalker pageWalker,
         ProgressReporter? reporter = null)
@@ -33,15 +34,18 @@ public static class MapEventHelper
                     if (p == null)
                         continue;
 
-                    if (!await pageWalker(new()
-                        {
-                            MapId = id,
-                            Map = m,
-                            Event = e,
-                            PageId = i,
-                            EventPage = p,
-                        }))
+                    var context = new MapEventContext
+                    {
+                        MapId = id,
+                        Map = m,
+                        Event = e,
+                        PageId = i,
+                        EventPage = p,
+                    };
+                    await pageWalker(context);
+                    if (context.StopWalking)
                         return;
+
                     ++i;
                 }
             }
@@ -76,7 +80,8 @@ public static class MapEventHelper
             
             reporter?.CustomReport(filePath);
 
-            return !(reporter?.NeedCancel ?? false);
+            if (reporter?.NeedCancel ?? false)
+                context.StopWalking = true;
         });
     }
 

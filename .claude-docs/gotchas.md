@@ -48,7 +48,7 @@ Things in the library or the formats that look wrong or surprising. Add a line w
 - **`Preload()` reads every map.** Use `PreloadAsync()` on a big project.
 - **MV files are written as one line**; the editor writes one entity per line. MV reads both, but a text diff against an editor-saved file shows every line changed.
 - **`MapInfo.Expanded` is the state of the editor's tree** (is the branch open); nothing in the game reads it. `CreateMap` and `SetMapParent` do not change it, `ExpandMap` / `CollapseMap` do.
-- **`Maps.Set(id, map)` does not add a `MapInfos` entry** (the tree of maps would not show the map): use `Storage.CreateMap`, which makes both. `IMap.Events` has no `NextId`: take the id yourself.
+- **`Maps.Set(id, map)` does not add a `MapInfos` entry** (the tree of maps would not show the map): use `Storage.CreateMap`, which makes both. `IMap.Events` has no `NextId`: use `map.CreateEvent(x, y)` (it takes the id) or take the id yourself.
 
 ## Resources and pictures (details in [storage.md](storage.md#resources-pictures-sounds-movies), [imaging.md](imaging.md))
 
