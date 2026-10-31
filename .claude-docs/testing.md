@@ -34,6 +34,7 @@ the values of a new entity (`INewEntity`).
 | `EditorDefaultTests` | the defaults of new commands per maker, by values and by reflection over every attribute (see [editor-defaults.md](editor-defaults.md)) |
 | `CommandMeaningTests` | commands that the makers write differently: the property says the meaning, the raw parameter is the maker's |
 | `ShowChoicesCancelTests` | Show Choices: the cancel, the MV-only parameters, the defaults |
+| `HtmlDumpTests` | the html dump: folding, numbers of lines, escaping, images and sounds of commands, the common events expanded and the recursion, the text dump left as it was |
 | `ChangeClassCommandTests`, `ChangeEquipmentDescriptionTests`, `MoveCommandsTests` | single commands: parameters per maker, how they read in the dump |
 | `CommandBuilderTests` | `CommandBuilder`: what it makes, as lists of `code@indent`; the blocks |
 | `CommandPlaceTests`, `CommandReplaceRemoveTests` | `InsertAt`, `ReplaceAt`, `RemoveAt`: where commands go, the lines of a command with several lines, a block goes with all it holds |

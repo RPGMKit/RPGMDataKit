@@ -83,6 +83,20 @@ var mv = new MVStorage(@"C:\Games\GameMV");   // data directory "data"
 `storage.CreateYamlStorage().Dump(folder)` writes every holder of the storage as YAML (`Storages/Dump`), `Load(folder)` fills them back; commands are written as the lines the editor shows
 (`GetParametersDescription`). `Differ` (`Differ.cs`, `Diff/`) compares two projects. Both are described in the README.
 
+### The dump of commands (text, html)
+
+`DumpHelper.Dump` and `IDumpable.Dump` write the commands of common events, map event pages and troop pages. The entity writes only its own header (`CommonEventHelper.DumpCommonEventInfo`,
+`MapEventHelper.DumpPageInfo`, `TroopHelper.DumpPageInfo`) into a `StringWriter`, and hands it with the command list to `DumpWriters.For(options.Format).Write(...)` (`Data/Helpers/Dump`). A format is an `IDumpWriter`:
+`TextDumpWriter` and `HtmlDumpWriter`; a format with no writer (`PatchFormat` is only a name) throws `NotSupportedException`. A new format is a class, a member of `DumpFormat` and a line in `DumpWriters`.
+An option that a writer cannot honour is refused by the writer (`ExpandCommonEvents` in `TextDumpWriter`).
+
+`HtmlDumpWriter` builds the blocks from the `Indent` of the commands, takes the text of a line from `NamedCommand.GetTextParts` (the pieces `AsString` joins), and finds the images and sounds of a command in `ImagesOf` /
+`SoundsOf`, which switch on the type of the command: the commands do not know about html. The style and the script are the files `Data/Helpers/Dump/Html/dump.css` and `dump.js`, packed into the dll as the resources
+`html-dump/<file>` (see `RPGMDataKit.csproj`). The header of the page is text, so html shows it as it is, in a `<pre>`.
+
+Not checked (the html dump): the playing of the sounds and the choice of the frame of a sprite sheet (the middle frame of the top row, facing down) were not compared with the engine; the browser
+cannot play `.mid` and `.wma`, which VX Ace projects have. The tooltip of the images was looked at in Chrome only.
+
 ## Resources (pictures, sounds, movies)
 
 The files of a project that are not data are kept in a folder for each kind, named by the maker. `Storage` knows the names, so no code needs `Graphics/Tilesets` or `img/tilesets` written in it.

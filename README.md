@@ -370,7 +370,29 @@ await Differ.DumpPatchesAsync(path, patches);
 var patches = await Differ.CalculatePatches(left, right, new DumpOptions());
 ```
 
-`DumpOptions` selects the text format of the commands: indents, command codes, extended format and the line numbers.
+`DumpOptions` selects the format of the commands: indents, command codes, extended format and the line numbers.
+
+### Dump the commands as text or html
+
+```csharp
+await DumpHelper.Dump(@"C:\dump", storage, new DumpOptions { Format = DumpFormat.Html, ExpandCommonEvents = true });
+```
+
+`DumpHelper.Dump` writes a file for each common event, each page of a map event and each page of a troop (`.txt` for `DumpFormat.Text`, `.html` for `DumpFormat.Html`). An entity can also write
+itself: `await page.Dump(writer, new EntityContext(storage), options)`; in html that is a whole document, not a part of one.
+
+The html file is self-contained (the style and the script are inside it):
+
+- a block (`If`, `Else`, a choice, a loop, a battle) folds; the lines are numbered by the order of the commands, with the number at the left edge and the arrow after it; "Open all" and "Close all" are on the top bar;
+- the images of a command show in a tooltip, cut by the index in the sheet (the face of `Show Text`, the sprite and the face of `Change Actor Images`, the image step of a movement route, `Show Picture`, a vehicle,
+  a parallax). A pill after the text of the command opens an image in a new tab;
+- a command that plays a sound (BGM, BGS, ME, SE, the music of a battle, of a vehicle, the victory and defeat ME, the SE step of a route) has a pill that plays and stops it, with the volume and the pitch of the command;
+- the top bar has the path of the project, which the pictures and sounds are taken from. It is the path the dump was made for and can be changed on the page ("Reset" brings it back); the change is kept by the browser;
+- `Call Common Event` and `Exit Event Processing` have their own colors.
+
+`DumpOptions.ExpandCommonEvents` (html only; the text format throws `NotSupportedException`) puts the called common events into the page, under the call, closed. Their lines are numbered from 000 as in their own dump.
+The page then has the checkbox "Expand common events" (the browser remembers it); when it is off a call is a plain line. A call of an event that is open already (the one that is dumped, or one that calls it on the way)
+is not expanded; it is marked, and a click goes to the line where the chain began.
 
 ## Project layout
 

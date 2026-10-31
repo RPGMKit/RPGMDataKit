@@ -73,7 +73,7 @@ maker will not have, and marks the copy `_copy` so step 2 is skipped: **a copy h
 - **`Materialize()`** reads every property once, so the objects in the parameters are objects of their classes and not the JSON objects of the file
   (used before a dump or a comparison).
 - **`GetParametersDescription`** gives the text the editor shows for the command; the YAML/text dump is built from it and from `GetCommandName(version)`
-  (the name can differ by maker).
+  (the name can differ by maker). `GetTextParts` returns the pieces of the line (code label, indent, prefix, name, separator, parameters) and `AsString` joins them; the html dump takes the pieces it needs.
 
 ## Adding a command
 
