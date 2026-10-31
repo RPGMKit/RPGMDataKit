@@ -383,6 +383,8 @@ itself: `await page.Dump(writer, new EntityContext(storage), options)`; in html 
 
 The html file is self-contained (the style and the script are inside it):
 
+- the colors follow the system (light or dark); the button "Theme" on the top bar makes it Auto, Light or Dark, and the browser remembers it;
+- every second line is a little darker; the stripes follow the lines that can be seen, so folding a block does not break their sequence;
 - the title of the page is `CE1 name` for a common event, `TE1 name` for a troop page and `M1 E2 P3 name` for a page of a map event (the name of the event);
 - a block (`If`, `Else`, a choice, a loop, a battle) folds; the lines are numbered by the order of the commands, with the number at the left edge and the arrow after it; "Open all" and "Close all" are on the top bar;
 - the images of a command show in a tooltip, cut by the index in the sheet (the face of `Show Text`, the sprite and the face of `Change Actor Images`, the image step of a movement route, `Show Picture`, a vehicle,

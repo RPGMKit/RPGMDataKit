@@ -28,7 +28,8 @@ public sealed class HtmlDumpWriter : IDumpWriter
         await writer.WriteLineAsync("<div class=\"bar\"><label>Project path: <input id=\"root\" size=\"60\" value=\""
                                     + Encode(root) + "\"></label> <button id=\"reset\">Reset</button> <button id=\"open\">Open all</button> <button id=\"close\">Close all</button>"
                                     + (options.ExpandCommonEvents ? " <label><input type=\"checkbox\" id=\"expand\" checked> Expand common events</label>" : "")
-                                    + "</div>");
+                                    // (last: the bar pushes it to the right edge)
+                                    + " <button id=\"theme\" title=\"Colors: follow the system, light or dark\">Theme: Auto</button></div>");
     }
 
     private static async Task EndDocument(TextWriter writer)
@@ -189,6 +190,9 @@ public sealed class HtmlDumpWriter : IDumpWriter
         var sb = new StringBuilder("<div class=\"cmd");
         if (command.IsSecondary)
             sb.Append(" sec");
+        // every second line of a list is a little darker (the number of the line in its own list decides, so a list that is copied into the page keeps its stripes)
+        if (index % 2 == 1)
+            sb.Append(" alt");
         if (command is CallCommonEventCommand)
             sb.Append(" call");
         else if (command is ExitEventProcessingCommand)

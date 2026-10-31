@@ -5,8 +5,30 @@ var initial=rootInput.value,key='rpgmdump-root:'+initial;
 try{var saved=localStorage.getItem(key);if(saved)rootInput.value=saved;}catch(e){}
 rootInput.addEventListener('change',function(){try{localStorage.setItem(key,rootInput.value);}catch(e){}});
 document.getElementById('reset').onclick=function(){rootInput.value=initial;try{localStorage.removeItem(key);}catch(e){}};
+// the theme follows the system (the @media rule of the style); the button makes that rule always or never true
+var themeRule=null;
+for(var s=0;s<document.styleSheets.length&&!themeRule;s++){
+  try{
+    var rules=document.styleSheets[s].cssRules;
+    for(var r=0;r<rules.length;r++)if(rules[r].type===CSSRule.MEDIA_RULE&&/prefers-color-scheme/.test(rules[r].media.mediaText)){themeRule=rules[r];break;}
+  }catch(e){}
+}
+var autoMedia=themeRule?themeRule.media.mediaText:'',themeModes=['auto','light','dark'],themeButton=document.getElementById('theme');
+function applyTheme(mode){
+  if(themeRule)themeRule.media.mediaText=mode==='dark'?'all':mode==='light'?'not all':autoMedia;
+  themeButton.textContent='Theme: '+mode.charAt(0).toUpperCase()+mode.slice(1);
+}
+var theme='auto';
+try{theme=localStorage.getItem('rpgmdump-theme')||'auto';}catch(e){}
+if(themeModes.indexOf(theme)<0)theme='auto';
+applyTheme(theme);
+themeButton.onclick=function(){
+  theme=themeModes[(themeModes.indexOf(theme)+1)%themeModes.length];
+  try{localStorage.setItem('rpgmdump-theme',theme);}catch(e){}
+  applyTheme(theme);
+};
 var expand=document.getElementById('expand');
-function applyExpand(){document.body.classList.toggle('no-ce',!!expand&&!expand.checked);}
+function applyExpand(){document.body.classList.toggle('no-ce',!!expand&&!expand.checked);if(typeof scheduleRestripe==='function')scheduleRestripe();}
 if(expand){
   // one setting for all the files, it is a habit of the reader
   try{var was=localStorage.getItem('rpgmdump-expand');if(was!==null)expand.checked=was==='1';}catch(e){}
@@ -52,6 +74,26 @@ function recursionTarget(line,id){
   return document.getElementById('top');
 }
 markRecursions(document,chainOf(document.body));
+restripe();
+// the stripes go by the lines that can be seen: folding a block, opening a call or the checkbox of the calls does not break the sequence.
+// (the page comes with the stripes of the numbers of the lines in their lists, which is what shows without the script)
+function shown(el){
+  var noCalls=document.body.classList.contains('no-ce');
+  for(var p=el.parentElement;p;p=p.parentElement){
+    if(p.tagName!=='DETAILS')continue;
+    var inSummary=p.firstElementChild&&p.firstElementChild.contains(el);
+    if(inSummary)continue;
+    if(!p.open||(noCalls&&p.classList.contains('ce')))return false;
+  }
+  return true;
+}
+function restripe(){
+  var n=0;
+  document.querySelectorAll('.cmd').forEach(function(el){if(shown(el))el.classList.toggle('alt',n++%2===1);});
+}
+var stripeTimer=0;
+function scheduleRestripe(){clearTimeout(stripeTimer);stripeTimer=setTimeout(restripe,0);}
+document.addEventListener('toggle',scheduleRestripe,true);
 // a call is filled from the list of its event when it is opened the first time
 document.addEventListener('toggle',function(ev){
   var d=ev.target;

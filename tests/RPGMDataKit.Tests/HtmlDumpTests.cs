@@ -67,6 +67,7 @@ public sealed class HtmlDumpTests
         Assert.StartsWith("<!DOCTYPE html>", html);
         Assert.Contains("<script>", html);
         Assert.Contains("<details open><summary>", html);
+        Assert.Contains("<div class=\"cmd alt", html);
         Assert.Contains("<span class=\"no\">000</span>", html);
         Assert.Contains("<span class=\"no\">003</span>", html);
         Assert.Equal(html.Split("<details").Length, html.Split("</details>").Length);
@@ -245,8 +246,8 @@ public sealed class HtmlDumpTests
 
         var html = await DumpExpanded(storage, commonEvent, expand: false);
 
-        Assert.Equal(1, html.Split("<div class=\"cmd call\"").Length - 1);
-        Assert.Equal(1, html.Split("<div class=\"cmd exit\"").Length - 1);
+        Assert.Equal(1, Lines(html, "call"));
+        Assert.Equal(1, Lines(html, "exit"));
     }
 
     [Theory]
@@ -259,7 +260,7 @@ public sealed class HtmlDumpTests
         var html = await DumpExpanded(Open(v), commonEvent, expand: false);
 
         // the first line is the comment, the others are its continuation (a secondary line has its class too)
-        Assert.Equal(3, html.Split("comment\" style=").Length - 1);
+        Assert.Equal(3, Lines(html, "comment"));
     }
 
     [Theory]
@@ -309,7 +310,7 @@ public sealed class HtmlDumpTests
         Assert.Contains("data-jmp=\"3\" data-to=\"2\"", html);
         Assert.Contains("data-lbl=\"2\" data-from=\"0 3\"", html);
         Assert.DoesNotContain("data-lbl=\"4\"", html);
-        Assert.Contains("cmd broken-jump", html);
+        Assert.Equal(1, Lines(html, "broken-jump"));
         Assert.Contains("data-kind=\"jmp\" data-n=\"3\"", html);
     }
 
@@ -329,7 +330,7 @@ public sealed class HtmlDumpTests
         var template = html[html.IndexOf("<template", StringComparison.Ordinal)..];
 
         // a jump does not go to a label of another list: the outer one has no label, the called one has its own
-        Assert.Contains("cmd broken-jump", page);
+        Assert.Equal(1, Lines(page, "broken-jump"));
         Assert.Contains("data-lbl=\"0\" data-from=\"1\"", template);
         Assert.DoesNotContain("data-lbl", page);
     }
@@ -352,6 +353,10 @@ public sealed class HtmlDumpTests
         Assert.Contains("data-refs=\"s3 s4\"", html);
         Assert.Contains("data-refs=\"v12 v13\"", html);
     }
+
+    /// <summary>How many lines have the class (the stripes and the kind of a line are classes of the same attribute, in no fixed order).</summary>
+    private static int Lines(string html, string cssClass) =>
+        System.Text.RegularExpressions.Regex.Matches(html, "class=\"cmd[^\"]*\\b" + cssClass + "\\b[^\"]*\"").Count;
 
     private static string TitleOfDump(string html) =>
         html.Split("<title>")[1].Split("</title>")[0];
