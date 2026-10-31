@@ -72,7 +72,7 @@ public static class MapEventHelper
 
             IndentHelper.ValidateIndents(context.EventPage, storage.Version);
 
-            var filePath = Path.Combine(path, $"Map_{context.MapId:D3}_Event_{context.Event.Id:D3}_Page_{context.PageId}.txt");
+            var filePath = Path.Combine(path, $"Map_{context.MapId:D3}_Event_{context.Event.Id:D3}_Page_{context.PageId}.{options.FileExtension}");
             await using var file = File.Open(filePath, FileMode.Create);
             await using var writer = new StreamWriter(file);
 

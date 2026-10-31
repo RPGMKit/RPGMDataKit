@@ -346,38 +346,39 @@ public abstract class NamedCommand : IHasOptionalProperties
         return !IsSecondary ? GetPrefixSymbol(version) : GetSecondaryPrefixSymbol(version);
     }
 
-    public string AsString(EntityContext context, DumpOptions options)
+    /// <summary>The pieces a command line is made of; <see cref="AsString"/> joins them.</summary>
+    public readonly record struct CommandTextParts(
+        string CodeLabel, string Indent, string Prefix, string Name, string Separator, string Parameters)
     {
-        string str = "";
+        public override string ToString() => CodeLabel + Indent + Prefix + Name + Separator + Parameters;
+    }
+
+    public CommandTextParts GetTextParts(EntityContext context, DumpOptions options)
+    {
+        var indent = "";
         if (options.WithIndent && Indent > 0)
         {
             var whiteSpace = context.Version == StorageVersion.MV ? " " : "  ";
 
-            str = string.Concat(Enumerable.Repeat(whiteSpace, (int)Indent));
+            indent = string.Concat(Enumerable.Repeat(whiteSpace, (int)Indent));
         }
 
-        str += GetStringPrefix(context.Version);
-
         var name = GetCommandName(context.Version);
-        str += name;
-
         var paramDesc = GetParametersDescription(context, options);
 
+        var separator = "";
         if (!string.IsNullOrEmpty(paramDesc))
         {
             if (string.IsNullOrWhiteSpace(name) || !IsSecondary)
-                str += context.Version == StorageVersion.MV ? " : " : ": ";
+                separator = context.Version == StorageVersion.MV ? " : " : ": ";
             else
-                str += " ";
-
-            str += paramDesc;
+                separator = " ";
         }
 
-        if (options.AppendCommandCode)
-            str = $"({Code:D3}) {str}";
+        var codeLabel = options.AppendCommandCode ? $"({Code:D3}) " : "";
 
-        // str += $"Indent: " + (Indent != null ? Indent : "null");
-
-        return str;
+        return new CommandTextParts(codeLabel, indent, GetStringPrefix(context.Version), name, separator, paramDesc);
     }
+
+    public string AsString(EntityContext context, DumpOptions options) => GetTextParts(context, options).ToString();
 }

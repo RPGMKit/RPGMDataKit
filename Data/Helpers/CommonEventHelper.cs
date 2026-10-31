@@ -1,4 +1,6 @@
-﻿using RPGMDataKit.Data.Helpers.Dump;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Helpers.Dump;
+using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using RPGMDataKit.Storages.Abstraction;
 
@@ -26,6 +28,17 @@ public static class CommonEventHelper
         }
     }
 
+    public static async Task DumpCommonEventInfo(ICommonEvent commonEvent, TextWriter writer, EntityContext context)
+    {
+        // a common event that starts by a call has no switch, the makers write it differently
+        var none = context.Version == StorageVersion.MV ? "-" : "None";
+
+        await writer.WriteLineAsync($"Name: [{commonEvent.Id:D3}] {commonEvent.Name}");
+        await writer.WriteLineAsync($"Trigger: {commonEvent.Trigger}");
+        await writer.WriteLineAsync("SwitchId: " +
+                                    (commonEvent.Trigger > 0 ? context.NameFormatter.FormatSwitch(commonEvent.SwitchId) : none));
+    }
+
     public static async Task DumpCommonEventCommands(Storage storage, string path, DumpOptions options,
         ProgressReporter? reporter = null)
     {
@@ -41,7 +54,7 @@ public static class CommonEventHelper
             using var _2 = reporter?.DoReport("Common Event " + entityContext.NameFormatter.FormatCommonEvent(context.CommonEvent.Id));
             IndentHelper.ValidateIndents(context.CommonEvent, storage.Version);
 
-            var filePath = Path.Combine(path, $"CommonEvent_{context.CommonEvent.Id:D3}.txt");
+            var filePath = Path.Combine(path, $"CommonEvent_{context.CommonEvent.Id:D3}.{options.FileExtension}");
             await using var file = File.Open(filePath, FileMode.Create);
 
             await using var writer = new StreamWriter(file);

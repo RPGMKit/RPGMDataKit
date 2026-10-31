@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Helpers;
+using RPGMDataKit.Data.Helpers.Dump;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 
@@ -118,14 +119,9 @@ public class Troop : JsonEntity, ITroop, INewEntity
 
         public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
         {
-            if (options.Format == DumpFormat.Text)
-            {
-                await TroopHelper.DumpPageInfo(this, writer, context, options);
-                await writer.WriteLineAsync("Commands:");
-                foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
-                    await writer.WriteLineAsync(line);
-                return;
-            }
+            var head = new StringWriter();
+            await TroopHelper.DumpPageInfo(this, head, context, options);
+            await DumpWriters.For(options.Format).Write(writer, head.ToString(), this, context, options);
         }
     }
 

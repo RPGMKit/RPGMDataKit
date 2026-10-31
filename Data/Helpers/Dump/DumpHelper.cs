@@ -19,7 +19,7 @@ public static class DumpHelper
         reporter.SetStage(DumpStage.Init);
         reporter.ResetTotal(3);
 
-        var existingFiles = Directory.GetFiles(path, "*.txt", SearchOption.AllDirectories);
+        var existingFiles = Directory.GetFiles(path, "*." + options.FileExtension, SearchOption.AllDirectories);
         List<string> createdFiles = [];
         reporter.Report += (stage, message, level, index, total) =>
         {

@@ -1,5 +1,6 @@
 ﻿using RPGMDataKit.Data.Enums;
 using RPGMDataKit.Data.Helpers;
+using RPGMDataKit.Data.Helpers.Dump;
 using RPGMDataKit.Data.Structures.Interfaces;
 using RPGMDataKit.Data.Structures.Internal;
 using RubyMarshalCS.Serialization.Attributes;
@@ -32,17 +33,8 @@ public class CommonEvent : VxCommandContainer, ICommonEvent, INewEntity
 
     public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
     {
-        if (options.Format == DumpFormat.Text)
-        {
-            await writer.WriteLineAsync($"Name: [{Id:D3}] {Name}");
-            await writer.WriteLineAsync($"Trigger: {Trigger}");
-            await writer.WriteLineAsync("SwitchId: " + (Trigger > 0 ? context.NameFormatter.FormatSwitch(SwitchId) : "None"));
-            await writer.WriteLineAsync("Commands:");
-            foreach (var line in CommandContainerHelper.CommandsAsText(this, context, options))
-                await writer.WriteLineAsync(line);
-            return;
-        }
-
-        throw new NotImplementedException($"{options.Format} not supported");
+        var head = new StringWriter();
+        await CommonEventHelper.DumpCommonEventInfo(this, head, context);
+        await DumpWriters.For(options.Format).Write(writer, head.ToString(), this, context, options);
     }
 }

@@ -56,11 +56,11 @@ public static class TroopHelper
             
             IndentHelper.ValidateIndents(context.EventPage, storage.Version);
 
-            var filePath = Path.Combine(path, $"Troop_{context.Troop.Id:D3}_Page_{context.PageId}.txt");
+            var filePath = Path.Combine(path, $"Troop_{context.Troop.Id:D3}_Page_{context.PageId}.{options.FileExtension}");
             await using var file = File.Open(filePath, FileMode.Create);
             await using var writer = new StreamWriter(file);
 
-            await context.EventPage.Dump(writer, new(storage, context, options.ExtendedFormat), options);
+            await context.EventPage.Dump(writer, entityContext, options);
 
             reporter?.CustomReport(filePath);
             
