@@ -52,7 +52,8 @@ public static class MapEventHelper
         }
     }
 
-    public static async Task DumpMapEventCommands(Storage storage, string path, DumpOptions options, ProgressReporter? reporter = null)
+    public static async Task DumpMapEventCommands(Storage storage, string path, DumpOptions options, ProgressReporter? reporter = null,
+        DumpIndex? index = null)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
@@ -78,6 +79,8 @@ public static class MapEventHelper
 
             await context.EventPage.Dump(writer, entityContext, options);
             
+            index?.AddMapPage(context.MapId, context.Event.Id, context.Event.Name, context.Event.X, context.Event.Y, context.PageId, filePath,
+                PageImages.GraphicOf(context.EventPage.Graphic, storage, context.Map.TilesetId));
             reporter?.CustomReport(filePath);
 
             if (reporter?.NeedCancel ?? false)
@@ -98,9 +101,27 @@ public static class MapEventHelper
 
         await writer.WriteLineAsync("Character: " + (!string.IsNullOrWhiteSpace(page.Graphic.CharacterName) ? $"{page.Graphic.CharacterName}, {page.Graphic.CharacterIndex}" : ""));
         await writer.WriteLineAsync($"Tile Id: {page.Graphic.TileId}");
-        await writer.WriteLineAsync($"Trigger: {page.Trigger}");
+        await writer.WriteLineAsync("Options: " + OptionsText(page));
+        await writer.WriteLineAsync("Priority: " + page.PriorityType);
+        await writer.WriteLineAsync("Trigger: " + page.Trigger);
         await writer.WriteLineAsync("Condition:");
         await DumpConditionInfo(page.Condition, writer, context, options);
+    }
+
+    // the checkboxes of the editor: Walking, Stepping, Direction Fix, Through
+    private static string OptionsText(IEventPage page)
+    {
+        var options = new List<string>();
+        if (page.WalkAnime)
+            options.Add("Walking");
+        if (page.StepAnime)
+            options.Add("Stepping");
+        if (page.DirectionFix)
+            options.Add("Direction Fix");
+        if (page.Through)
+            options.Add("Through");
+
+        return options.Count > 0 ? string.Join(", ", options) : "-";
     }
 
     private static async Task DumpConditionInfo(IEventPageCondition condition, TextWriter writer, EntityContext context,

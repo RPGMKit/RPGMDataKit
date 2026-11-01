@@ -36,11 +36,11 @@ public static class CommonEventHelper
         await writer.WriteLineAsync($"Name: [{commonEvent.Id:D3}] {commonEvent.Name}");
         await writer.WriteLineAsync($"Trigger: {commonEvent.Trigger}");
         await writer.WriteLineAsync("SwitchId: " +
-                                    (commonEvent.Trigger > 0 ? context.NameFormatter.FormatSwitch(commonEvent.SwitchId) : none));
+                                    (commonEvent.Trigger != CommonEventTriggerType.None ? context.NameFormatter.FormatSwitch(commonEvent.SwitchId) : none));
     }
 
     public static async Task DumpCommonEventCommands(Storage storage, string path, DumpOptions options,
-        ProgressReporter? reporter = null)
+        ProgressReporter? reporter = null, DumpIndex? index = null)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
@@ -60,6 +60,7 @@ public static class CommonEventHelper
             await using var writer = new StreamWriter(file);
             await context.CommonEvent.Dump(writer, entityContext, options);
             
+            index?.AddCommonEvent(context.CommonEvent.Id, context.CommonEvent.Name, filePath);
             reporter?.CustomReport(filePath);
 
             if (reporter?.NeedCancel ?? false)

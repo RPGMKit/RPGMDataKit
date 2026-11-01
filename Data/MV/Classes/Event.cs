@@ -164,10 +164,10 @@ namespace RPGMDataKit.Data.MV.Classes
             public bool Through { get; set; }
 
             [JsonProperty("priorityType")]
-            public int PriorityType { get; set; }
+            public EventPriority PriorityType { get; set; }
 
             [JsonProperty("trigger")]
-            public int Trigger { get; set; }
+            public EventTriggerType Trigger { get; set; }
 
             public async Task Dump(TextWriter writer, EntityContext context, DumpOptions options)
             {

@@ -41,7 +41,8 @@ public static class TroopHelper
         }
     }
 
-    public static async Task DumpTroopCommands(Storage storage, string path, DumpOptions options, ProgressReporter? reporter = null)
+    public static async Task DumpTroopCommands(Storage storage, string path, DumpOptions options, ProgressReporter? reporter = null,
+        DumpIndex? index = null)
     {
         if (!Directory.Exists(path))
             throw new Exception($"Directory {path} does not exist.");
@@ -62,6 +63,7 @@ public static class TroopHelper
 
             await context.EventPage.Dump(writer, entityContext, options);
 
+            index?.AddTroopPage(context.Troop.Id, context.Troop.Name, context.PageId, filePath);
             reporter?.CustomReport(filePath);
             
             if (reporter?.NeedCancel ?? false)

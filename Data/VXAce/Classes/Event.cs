@@ -165,10 +165,10 @@ public class Event : RubySerializationEntity, IEvent, INewEntity
         public bool Through { get; set; }
 
         [RubyProperty("@priority_type")]
-        public int PriorityType { get; set; }
+        public EventPriority PriorityType { get; set; }
 
         [RubyProperty("@trigger")]
-        public int Trigger { get; set; }
+        public EventTriggerType Trigger { get; set; }
 
         [RubyProperty("@features", CandidateFlags.In | CandidateFlags.Dynamic)]
         public object _1;

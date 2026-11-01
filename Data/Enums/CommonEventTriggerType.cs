@@ -1,8 +1,9 @@
 ﻿namespace RPGMDataKit.Data.Enums;
 
-public static class CommonEventTriggerType
+/// <summary>How a common event starts (<c>Trigger</c> of a common event). The same numbers in VX Ace and MV.</summary>
+public enum CommonEventTriggerType
 {
-    public const int None = 0;
-    public const int Autorun = 1;
-    public const int Parallel = 2;
+    None = 0,
+    Autorun = 1,
+    Parallel = 2,
 }

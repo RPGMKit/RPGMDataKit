@@ -1,4 +1,6 @@
-﻿namespace RPGMDataKit.Data.Structures.Interfaces;
+﻿using RPGMDataKit.Data.Enums;
+
+namespace RPGMDataKit.Data.Structures.Interfaces;
 
 public interface IEventPage : IPage
 {
@@ -22,7 +24,7 @@ public interface IEventPage : IPage
 
     public bool Through { get; set; }
 
-    public int PriorityType { get; set; }
+    public EventPriority PriorityType { get; set; }
 
-    public int Trigger { get; set; }
+    public EventTriggerType Trigger { get; set; }
 }

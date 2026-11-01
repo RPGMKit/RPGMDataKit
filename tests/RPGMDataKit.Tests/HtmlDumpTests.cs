@@ -1,4 +1,5 @@
-﻿using RPGMDataKit.Data.Helpers;
+﻿using RPGMDataKit.Data.Enums;
+using RPGMDataKit.Data.Helpers;
 using RPGMDataKit.Data.Structures.Commands;
 using RPGMDataKit.Data.Structures.Commands.IfCommands;
 using RPGMDataKit.Data.Structures.Commands.MovementCommands;
@@ -423,5 +424,128 @@ public sealed class HtmlDumpTests
         Assert.Contains(">Pic</a>", html);
         Assert.DoesNotContain(">picture Pic</a>", html);
         Assert.Contains(">sprite Hero</a>", html);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task TheHeaderOfAMapEventPageHasTheCharacterOfThePage(Version v)
+    {
+        var storage = Open(v);
+        var mapEvent = v.New<IEvent>();
+        mapEvent.Id = 1;
+        var page = mapEvent.Pages.First()!;
+        page.Graphic.CharacterName = "Hero";
+        page.Graphic.CharacterIndex = 3;
+        page.Graphic.Direction = 4;
+        page.Graphic.Pattern = 2;
+        var writer = new StringWriter();
+
+        await ((IDumpable)page).Dump(writer,
+            new EntityContext(storage, new MapEventContext { MapId = 1, Map = v.New<IMap>(), Event = mapEvent, PageId = 0, EventPage = page }),
+            new DumpOptions { Format = DumpFormat.Html });
+        var html = writer.ToString();
+        var folder = v.Name == "MV" ? "img/characters/" : "Graphics/Characters/";
+
+        Assert.Contains($"class=\"headpic\" data-pics=\"[{{&quot;k&quot;:&quot;char&quot;,&quot;p&quot;:&quot;{folder}Hero&quot;,&quot;i&quot;:3,&quot;d&quot;:4,&quot;n&quot;:2}}]\"", html);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task APageWithoutACharacterHasNoPictureInTheHeader(Version v)
+    {
+        var storage = Open(v);
+        var mapEvent = v.New<IEvent>();
+        var page = mapEvent.Pages.First()!;
+        var writer = new StringWriter();
+
+        await ((IDumpable)page).Dump(writer,
+            new EntityContext(storage, new MapEventContext { MapId = 1, Map = v.New<IMap>(), Event = mapEvent, PageId = 0, EventPage = page }),
+            new DumpOptions { Format = DumpFormat.Html });
+
+        // it says so instead
+        Assert.DoesNotContain("class=\"headpic\" data-pics", writer.ToString());
+        Assert.Contains("<div class=\"headpic none\">No image</div>", writer.ToString());
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task ATilePageWithoutASheetSaysSo(Version v)
+    {
+        var storage = Open(v);
+        // a tile of a tileset that the project does not have has no sheet to draw
+        var map = v.New<IMap>();
+        map.TilesetId = 999;
+        var mapEvent = v.New<IEvent>();
+        var page = mapEvent.Pages.First()!;
+        page.Graphic.CharacterName = "";
+        page.Graphic.TileId = 17;
+        var writer = new StringWriter();
+
+        await ((IDumpable)page).Dump(writer,
+            new EntityContext(storage, new MapEventContext { MapId = 1, Map = map, Event = mapEvent, PageId = 0, EventPage = page }),
+            new DumpOptions { Format = DumpFormat.Html });
+
+        Assert.Contains("<div class=\"headpic none\">Tile 17</div>", writer.ToString());
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task ATilePageHasTheSheetOfTheTilesetOfItsMap(Version v)
+    {
+        var storage = Open(v);
+        var tileset = storage.Tilesets.Get(1)!;
+        while (tileset.TilesetNames.Count < 9)
+            tileset.TilesetNames.Add("");
+        tileset.TilesetNames[6] = "Outside_C";
+        var map = v.New<IMap>();
+        map.TilesetId = 1;
+        var mapEvent = v.New<IEvent>();
+        var page = mapEvent.Pages.First()!;
+        page.Graphic.CharacterName = "";
+        // the tiles 256..511 are on the 7th sheet of the tileset (the sheet C)
+        page.Graphic.TileId = 300;
+        var writer = new StringWriter();
+
+        await ((IDumpable)page).Dump(writer,
+            new EntityContext(storage, new MapEventContext { MapId = 1, Map = map, Event = mapEvent, PageId = 0, EventPage = page }),
+            new DumpOptions { Format = DumpFormat.Html });
+        var folder = v.Name == "MV" ? "img/tilesets/" : "Graphics/Tilesets/";
+
+        Assert.Contains($"&quot;k&quot;:&quot;tile&quot;,&quot;p&quot;:&quot;{folder}Outside_C&quot;,&quot;i&quot;:300", writer.ToString());
+        Assert.DoesNotContain("headpic none", writer.ToString().Split("</style>")[1]);
+    }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task ThePageInfoHasTheOptionsThePriorityAndTheTrigger(Version v)
+    {
+        var storage = Open(v);
+        var mapEvent = v.New<IEvent>();
+        var page = mapEvent.Pages.First()!;
+        page.WalkAnime = true;
+        page.StepAnime = false;
+        page.DirectionFix = false;
+        page.Through = true;
+        page.PriorityType = EventPriority.SameAsCharacters;
+        page.Trigger = EventTriggerType.PlayerTouch;
+        var writer = new StringWriter();
+
+        await ((IDumpable)page).Dump(writer,
+            new EntityContext(storage, new MapEventContext { MapId = 1, Map = v.New<IMap>(), Event = mapEvent, PageId = 0, EventPage = page }),
+            new DumpOptions { Format = DumpFormat.Text });
+        var text = writer.ToString();
+
+        Assert.Contains("Options: Walking, Through", text);
+        Assert.Contains("Priority: SameAsCharacters", text);
+        Assert.Contains("Trigger: PlayerTouch", text);
+
+        page.WalkAnime = false;
+        page.Through = false;
+        writer = new StringWriter();
+        await ((IDumpable)page).Dump(writer,
+            new EntityContext(storage, new MapEventContext { MapId = 1, Map = v.New<IMap>(), Event = mapEvent, PageId = 0, EventPage = page }),
+            new DumpOptions { Format = DumpFormat.Text });
+
+        Assert.Contains("Options: -", writer.ToString());
     }
 }

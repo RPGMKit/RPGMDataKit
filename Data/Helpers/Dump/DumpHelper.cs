@@ -27,10 +27,23 @@ public static class DumpHelper
                 createdFiles.Add(Path.GetFullPath(message));
         };
 
+        // an html dump has an index in the folder, and each page has a link to it (the pages are one folder down)
+        var html = options.Format == DumpFormat.Html;
+        var index = html ? new DumpIndex(path) : null;
+        var pageOptions = options;
+        if (html)
+        {
+            pageOptions = options.Clone();
+            pageOptions.IndexLink = "../" + HtmlIndexWriter.FileName;
+        }
+
         reporter.SetStage(DumpStage.Progress);
-        await reporter.DoReport().For(async () => await CommonEventHelper.DumpCommonEventCommands(storage, Path.Combine(path, "CE"), options, reporter));
-        await reporter.DoReport().For(async () => await MapEventHelper.DumpMapEventCommands(storage, Path.Combine(path, "ME"), options, reporter));
-        await reporter.DoReport().For(async () => await TroopHelper.DumpTroopCommands(storage, Path.Combine(path, "TE"), options, reporter));
+        await reporter.DoReport().For(async () => await CommonEventHelper.DumpCommonEventCommands(storage, Path.Combine(path, "CE"), pageOptions, reporter, index));
+        await reporter.DoReport().For(async () => await MapEventHelper.DumpMapEventCommands(storage, Path.Combine(path, "ME"), pageOptions, reporter, index));
+        await reporter.DoReport().For(async () => await TroopHelper.DumpTroopCommands(storage, Path.Combine(path, "TE"), pageOptions, reporter, index));
+
+        if (index != null && !reporter.NeedCancel)
+            reporter.CustomReport(await HtmlIndexWriter.Write(path, storage, index));
         
         reporter.SetStage(DumpStage.Finished);
         

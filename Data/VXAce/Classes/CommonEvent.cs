@@ -26,7 +26,7 @@ public class CommonEvent : VxCommandContainer, ICommonEvent, INewEntity
     public string Name { get; set; }
 
     [RubyProperty("@trigger")]
-    public int Trigger { get; set; }
+    public CommonEventTriggerType Trigger { get; set; }
 
     [RubyProperty("@switch_id")]
     public int SwitchId { get; set; }

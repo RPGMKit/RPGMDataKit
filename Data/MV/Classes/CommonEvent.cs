@@ -25,7 +25,7 @@ public class CommonEvent : MvCommandContainer, ICommonEvent, INewEntity
     public string Name { get; set; }
 
     [JsonProperty(PropertyName = "trigger")]
-    public int Trigger { get; set; }
+    public CommonEventTriggerType Trigger { get; set; }
         
     [JsonProperty(PropertyName = "switchId")]
     public int SwitchId { get; set; }

@@ -1,11 +1,11 @@
 ﻿namespace RPGMDataKit.Data.Enums;
 
 /// <summary>How an event starts (<c>Trigger</c> of a page). The same numbers in VX Ace and MV.</summary>
-public class EventTriggerType
+public enum EventTriggerType
 {
-    public const int ActionButton = 0;
-    public const int PlayerTouch = 1;
-    public const int EventTouch = 2;
-    public const int Autorun = 3;
-    public const int Parallel = 4;
+    ActionButton = 0,
+    PlayerTouch = 1,
+    EventTouch = 2,
+    Autorun = 3,
+    Parallel = 4,
 }

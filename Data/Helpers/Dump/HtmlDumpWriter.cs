@@ -25,7 +25,7 @@ public sealed class HtmlDumpWriter : IDumpWriter
         await writer.WriteLineAsync(options.ExpandCommonEvents
             ? "<body data-expand-common-events" + (topEvent != null ? $" data-top-ce=\"{topEvent}\"" : "") + ">"
             : "<body>");
-        await writer.WriteLineAsync("<div class=\"bar\"><label>Project path: <input id=\"root\" size=\"60\" value=\""
+        await writer.WriteLineAsync("<div class=\"bar\">" + (options.IndexLink != null ? $"<a href=\"{Encode(options.IndexLink)}\">Index</a>" : "") + "<label>Project path: <input id=\"root\" size=\"60\" value=\""
                                     + Encode(root) + "\"></label> <button id=\"reset\">Reset</button> <button id=\"open\">Open all</button> <button id=\"close\">Close all</button>"
                                     + (options.ExpandCommonEvents ? " <label><input type=\"checkbox\" id=\"expand\" checked> Expand common events</label>" : "")
                                     // (last: the bar pushes it to the right edge)
@@ -44,7 +44,18 @@ public sealed class HtmlDumpWriter : IDumpWriter
         var title = TitleOf(container, context, header);
         var state = new RenderState(context, options) { TopEvent = (container as ICommonEvent)?.Id };
         await BeginDocument(writer, context, options, title, state.TopEvent);
-        await writer.WriteLineAsync($"<pre class=\"head\" id=\"top\">{Encode(header.TrimEnd())}</pre>");
+        // the picture of the page (its character) is in the corner of the header
+        // (a page of a map event says so when it has none: its graphic is a tile, which is not drawn, or is empty)
+        var corner = "";
+        if (context.MapEventContext?.EventPage.Graphic is { } graphic)
+        {
+            var picture = PageImages.GraphicOf(graphic, context.Storage, context.MapEventContext.Map.TilesetId);
+            corner = picture != null
+                ? $"<div class=\"headpic\" data-pics=\"{Encode(picture)}\"></div>"
+                : $"<div class=\"headpic none\">{(graphic.TileId > 0 ? $"Tile {graphic.TileId}" : "No image")}</div>";
+        }
+
+        await writer.WriteLineAsync($"<div class=\"headbox\"><pre class=\"head\" id=\"top\">{Encode(header.TrimEnd())}</pre>{corner}</div>");
         await writer.WriteLineAsync("<div class=\"cmds list\">");
 
         var lines = new StringBuilder();
@@ -231,7 +242,7 @@ public sealed class HtmlDumpWriter : IDumpWriter
 
         var images = ImagesOf(command, context);
         if (images.Count > 0)
-            sb.Append(" data-pics=\"").Append(Encode(JsonSerializer.Serialize(images, JsonOptions))).Append('"');
+            sb.Append(" data-pics=\"").Append(Encode(PageImages.Serialize(images))).Append('"');
 
         sb.Append('>');
         sb.Append("<span class=\"no\">").Append(index.ToString(NumberFormat(options))).Append("</span>");
@@ -269,11 +280,6 @@ public sealed class HtmlDumpWriter : IDumpWriter
 
     private static string NumberFormat(DumpOptions options) =>
         string.IsNullOrWhiteSpace(options.LineNumberFormat) ? "D3" : options.LineNumberFormat;
-
-    /// <summary>The images a command shows: the kind (how the sheet is cut), the path without an extension, the index in the sheet.</summary>
-    private record ImageRef(string K, string P, int I);
-
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     /// <summary>A sound a command plays: its kind (bgm, bgs, me, se), the path without an extension, and the volume and pitch of the command.</summary>
     private record SoundRef(string K, string P, int V, int Pt);
@@ -347,19 +353,9 @@ public sealed class HtmlDumpWriter : IDumpWriter
         ["pic"] = "picture", ["face"] = "face", ["char"] = "sprite", ["sv"] = "battler",
     };
 
-    private static string Css => Resource("dump.css");
+    private static string Css => HtmlResources.Get("dump.css");
 
-    private static string Script => Resource("dump.js");
-
-    // the style and the script of the page are files of the project (Html/), packed into the dll
-    private static string Resource(string name)
-    {
-        using var stream = typeof(HtmlDumpWriter).Assembly.GetManifestResourceStream("html-dump/" + name)
-                           ?? throw new InvalidOperationException($"The resource html-dump/{name} is missing");
-        using var reader = new StreamReader(stream);
-
-        return reader.ReadToEnd();
-    }
+    private static string Script => HtmlResources.Get("theme.js") + HtmlResources.Get("images.js") + HtmlResources.Get("dump.js");
 
     private static string Encode(string text) => WebUtility.HtmlEncode(text);
 

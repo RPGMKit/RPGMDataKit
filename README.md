@@ -381,10 +381,21 @@ await DumpHelper.Dump(@"C:\dump", storage, new DumpOptions { Format = DumpFormat
 `DumpHelper.Dump` writes a file for each common event, each page of a map event and each page of a troop (`.txt` for `DumpFormat.Text`, `.html` for `DumpFormat.Html`). An entity can also write
 itself: `await page.Dump(writer, new EntityContext(storage), options)`; in html that is a whole document, not a part of one.
 
+The header of a page of a map event has the map, the event, its coordinates, the graphic, the options (Walking, Stepping, Direction Fix, Through, as the editor names them), the priority and the trigger (the names of the enum members: `SameAsCharacters`, `PlayerTouch`) and the conditions of the page.
+
+`DumpHelper.Dump` writes the pages into the folders `CE` (common events), `ME` (events of maps: `M001_E002_P0.html`) and `TE` (troops), which must exist. An html dump also gets
+`index.html` in the folder of the dump, and each page a link "Index" to it. The index has three tabs. **Common events** is a list of links. **Maps** has the maps on the left, as a tree in the order of the
+editor or (the checkbox "Map tree", on by default and remembered by the browser) a list by the numbers, and on the right the events of the map that is chosen: a flat list, each event with its number, name and
+coordinates and the links to all of its pages. **Troops** is a flat list the same way (a troop and the links to its pages). The filter at the top keeps what has all the words you type (`m3 door`): the maps whose name
+or whose events have them (the parents that lead to them stay, pale), the events of the chosen map, the common events and the troops. A map without events is there too, dimmed, because it can be the parent of maps
+that have some. The page remembers the tab, the chosen map, the open branches, the filter and the scroll of the lists, so the way back from a page leads to the same place.
+
 The html file is self-contained (the style and the script are inside it):
 
 - the colors follow the system (light or dark); the button "Theme" on the top bar makes it Auto, Light or Dark, and the browser remembers it;
 - every second line is a little darker; the stripes follow the lines that can be seen, so folding a block does not break their sequence;
+- the page of a map event shows its character (the sprite of the page, cut by its index, direction and pattern) in the top right corner of the header; a page whose graphic is a tile gets the tile, cut from the sheet of the tileset of its map (if the tileset has no such sheet, the corner says "Tile N"), and a page with no graphic says "No image". The index shows
+  the same character in a tooltip over the link of the page (so it has the path of the project too);
 - the title of the page is `CE1 name` for a common event, `TE1 name` for a troop page and `M1 E2 P3 name` for a page of a map event (the name of the event);
 - a block (`If`, `Else`, a choice, a loop, a battle) folds; the lines are numbered by the order of the commands, with the number at the left edge and the arrow after it; "Open all" and "Close all" are on the top bar;
 - the images of a command show in a tooltip, cut by the index in the sheet (the face of `Show Text`, the sprite and the face of `Change Actor Images`, the image step of a movement route, `Show Picture`, a vehicle,

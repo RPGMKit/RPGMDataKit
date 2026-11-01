@@ -46,8 +46,8 @@ Further pages: `ev.Pages.Add(storage.New<IEventPage>())`.
 | `MoveRoute` | `moveRoute` | the route that a custom move type walks (`Repeat`, `Skippable`, `Wait`, route commands) |
 | `WalkAnime`, `StepAnime` | `walkAnime`, `stepAnime` | walking / stepping animation; new page: true / false |
 | `DirectionFix`, `Through` | | |
-| `PriorityType` | `priorityType` | 0 below characters, 1 same as characters, 2 above (`EventPriority`) |
-| `Trigger` | `trigger` | 0 action button, 1 player touch, 2 event touch, 3 autorun, 4 parallel (`EventTriggerType`) |
+| `PriorityType` | `priorityType` | 0 below characters, 1 same as characters, 2 above (enum `EventPriority`) |
+| `Trigger` | `trigger` | 0 action button, 1 player touch, 2 event touch, 3 autorun, 4 parallel (enum `EventTriggerType`; the trigger of a common event is `CommonEventTriggerType`: 0 none, 1 autorun, 2 parallel) |
 
 The numbers are the same in both makers. A new page (`New<IEvent>()`): no condition, no picture, a fixed event, speed 3, frequency 3, walking animation, below characters,
 action button, and a list that is the empty command only.

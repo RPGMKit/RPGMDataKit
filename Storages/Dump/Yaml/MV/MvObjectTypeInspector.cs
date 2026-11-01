@@ -13,18 +13,10 @@ class MvObjectTypeInspector : TypeInspectorSkeleton
         _innerInspector = innerInspector;
     }
 
-    public override string GetEnumName(Type enumType, string name)
-    {
-        throw new NotImplementedException();
-    }
+    // an enum of an entity is written as the number of the file (the data is the same as it was when the property was an int), and read from it
+    public override string GetEnumName(Type enumType, string name) => Enum.Format(enumType, Enum.Parse(enumType, name), "D");
 
-    public override string GetEnumValue(object enumValue)
-    {
-        throw new NotImplementedException();
-        var t = enumValue.GetType();
-
-        return Enum.Format(t, enumValue, "D");
-    }
+    public override string GetEnumValue(object enumValue) => Enum.Format(enumValue.GetType(), enumValue, "D");
 
     public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
     {
