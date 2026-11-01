@@ -103,7 +103,7 @@ the open calls (and `data-top-ce`, the dumped event) is read from the DOM, and a
 **inside the nearest `.list`**, because a list can be on the page many times.
 Lines can be marked from the address: every `.cmd` has `data-line` (its number in its own list), and the script reads `#lines=1,2,3` of the address (`pickedLines`, `pick` in `dump.js`; nothing about it is written into the file by an option;
 the script looks for the lines in the top `.cmds.list` only, with `inList`, so the lines of an opened call are never marked). The marked lines get `.pick` (it is before `.hl` and `.same` in `dump.css`, so a lit jump shows over it), the first one is
-scrolled to with `goTo`, and `#picked` of the bar gets a link for each. `history.scrollRestoration` is set to `manual` then, because a reload would put the page back where the reader had scrolled it.
+scrolled to with `goTo`, and `#picked` of the bar gets a link for each (a row of its own under the buttons, `order:1` and a full-width flex basis; the links are separated by spaces so that it wraps, and a long list scrolls inside a box of 7.5em). `history.scrollRestoration` is set to `manual` then, because a reload would put the page back where the reader had scrolled it.
 Which switches and variables a line uses comes from `NameFormatter.OnReference`: the writer sets it while a command builds its description, and every `FormatSwitch`, `FormatVariable` and the span methods report the ids
 (so no command needs to be listed). A command that writes an id without the formatter is not seen; the `\V[n]` of a text line is read from its text.
 

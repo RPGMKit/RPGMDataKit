@@ -37,7 +37,11 @@ details.ce>summary .cmd{box-shadow:inset 3px 0 0 #6a9fd8}
 .ref{margin-left:.3em;color:#06c;cursor:pointer;text-decoration:underline}
 /* the lines that the page was opened to mark (#lines= of the address): stay marked, unlike the flash of a jump; a lit jump or variable is over them */
 .cmd.pick{background:#ffd0a6;outline:2px solid #e07b00}
-#picked{margin-left:.6em}
+/* the marked lines are a row of their own under the buttons; the links wrap, and a long list scrolls inside its box */
+#picked{order:1;flex:0 0 100%;max-height:7.5em;overflow-y:auto}
+#picked:empty{display:none}
+/* the links are blocks that wrap as words do, a little apart */
+#picked .act{display:inline-block;margin:0 .25em .35em 0}
 .cmd.hl{background:#ffe08a;outline:1px solid #d9a400}
 .cmd.same{background:#d6f0e0;outline:1px solid #4aa36c}
 .rec{margin-left:1em;font-size:11px}
