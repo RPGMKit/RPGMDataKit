@@ -165,6 +165,34 @@ function setAll(open){
   if(open&&!document.body.classList.contains('no-ce'))openAllCalls();
   scheduleRestripe();
 }
+// the lines to mark are those of the address (page.html#lines=12,40,55); the numbers are those of the lines of the page itself, not of a call that is opened in it.
+// The page is scrolled to the first of them, and the bar has a link to each
+function pickedLines(){
+  var found=[],texts=[],hash=(location.hash||'').replace(/^#/,'');
+  hash.split('&').forEach(function(part){var eq=part.indexOf('=');if(part.slice(0,eq)==='lines')texts.push(decodeURIComponent(part.slice(eq+1)).replace(/,/g,' '));});
+  texts.join(' ').split(/\s+/).forEach(function(s){var n=parseInt(s,10);if(!isNaN(n)&&n>=0&&found.indexOf(n)<0&&/^\d+$/.test(s))found.push(n);});
+  return found;
+}
+function pick(){
+  var top=document.querySelector('.cmds.list'),bar=document.getElementById('picked');
+  document.querySelectorAll('.cmd.pick').forEach(function(el){el.classList.remove('pick');});
+  if(bar)bar.textContent='';
+  var targets=[];
+  pickedLines().forEach(function(n){var el=top&&inList(top,'data-line',n);if(el){el.classList.add('pick');targets.push({n:n,el:el});}});
+  if(!bar||!targets.length)return targets;
+  bar.appendChild(document.createTextNode('Marked: '));
+  targets.forEach(function(t){
+    var a=document.createElement('a');a.href='#';a.className='act';a.textContent=t.el.querySelector('.no').textContent.trim();
+    a.onclick=function(ev){ev.preventDefault();goTo(t.el);};
+    bar.appendChild(a);
+  });
+  return targets;
+}
+var picked=pick();
+// (opened at the first of them, in the middle of the window; the blocks around it are opened)
+// (a reload would put the page back where it was scrolled, not at the lines)
+if(picked.length){try{history.scrollRestoration='manual';}catch(e){}goTo(picked[0].el);}
+window.addEventListener('hashchange',function(){var again=pick();if(again.length)goTo(again[0].el);});
 document.getElementById('open').onclick=function(){setAll(true);};
 document.getElementById('close').onclick=function(){setAll(false);};
 })();

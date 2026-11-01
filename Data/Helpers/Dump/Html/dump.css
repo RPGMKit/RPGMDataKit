@@ -35,6 +35,9 @@ details.ce>summary .cmd{box-shadow:inset 3px 0 0 #6a9fd8}
 .broken-jump .params{color:#c0392b;text-decoration:line-through}
 .refs{margin-left:1em;font-size:11px;color:#888}
 .ref{margin-left:.3em;color:#06c;cursor:pointer;text-decoration:underline}
+/* the lines that the page was opened to mark (#lines= of the address): stay marked, unlike the flash of a jump; a lit jump or variable is over them */
+.cmd.pick{background:#ffd0a6;outline:2px solid #e07b00}
+#picked{margin-left:.6em}
 .cmd.hl{background:#ffe08a;outline:1px solid #d9a400}
 .cmd.same{background:#d6f0e0;outline:1px solid #4aa36c}
 .rec{margin-left:1em;font-size:11px}
@@ -60,4 +63,4 @@ details[open]>summary .fold::before{content:"\25BC"}
 @media (prefers-color-scheme:dark){
 body{background:#1e1e1e;color:#ddd}.bar{background:#2b2b2b;border-color:#444}.head{background:#252526;border-color:#444}
 .call .name,.call .params{color:#5ab4ea}.exit .name{color:#ff7b72}.cmd[data-pics] .params{color:#e08bd8}.comment .name,.comment .params{color:#4fa866}.transfer .name,.transfer .params{color:#4dd0e1}
-.cmd.alt{background:rgba(0,0,0,.18)}.bar a{color:#5ab4ea;border-color:#567}.bar a:hover{background:#5ab4ea;color:#1e1e1e}.cmd:hover{background:#2a3445}.jump .name,.jump .params{color:#b794f4}.cmd.hl{background:#5a4a14;outline-color:#d9a400}.cmd.same{background:#1f4a35;outline-color:#4aa36c}#tip{background:#222;border-color:#666}}
+.cmd.alt{background:rgba(0,0,0,.18)}.bar a{color:#5ab4ea;border-color:#567}.bar a:hover{background:#5ab4ea;color:#1e1e1e}.cmd:hover{background:#2a3445}.jump .name,.jump .params{color:#b794f4}.cmd.pick{background:#6b3d12;outline-color:#e07b00}.cmd.hl{background:#5a4a14;outline-color:#d9a400}.cmd.same{background:#1f4a35;outline-color:#4aa36c}#tip{background:#222;border-color:#666}}

@@ -560,4 +560,19 @@ public sealed class HtmlDumpTests
 
         Assert.Equal(1, Lines(html, "transfer"));
     }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task EveryLineKnowsItsNumberInItsList(Version v)
+    {
+        var commonEvent = EmptyCommandTests.EventOf(v);
+        commonEvent.Replace(b => b.Text("a").Text("b").Text("c"));
+
+        var html = await DumpExpanded(Open(v), commonEvent, expand: false);
+
+        var numbers = System.Text.RegularExpressions.Regex.Matches(html, "class=\"cmd[^\"]*\" style=\"--lvl:\\d+\" data-line=\"(\\d+)\"")
+            .Select(match => int.Parse(match.Groups[1].Value)).ToList();
+        Assert.Equal(Enumerable.Range(0, numbers.Count), numbers);
+        Assert.True(numbers.Count >= 3);
+    }
 }

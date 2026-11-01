@@ -101,10 +101,13 @@ A called common event is written once as `<template id="ce-N">` after the page, 
 the open calls (and `data-top-ce`, the dumped event) is read from the DOM, and a call of an event that is in the chain becomes a recursion line. Writing the calls out as a tree ran out of memory on a real project
 (one common event of a real project: 71 different events with 10 648 lines, but 12.6 million lines as a tree). The lines hold the indent as `--lvl`; the copied list is in a `.ce-body` that is padded so that its line numbers start where the name of the call starts (the width of the number, arrow and code columns, 8.9em, plus the indent of the call, `--pad`); its lines are indented one step more (`--shift:1`). The widths of the columns are in `dump.css` and must be kept in step with that number. Labels and jumps are found by their index
 **inside the nearest `.list`**, because a list can be on the page many times.
+Lines can be marked from the address: every `.cmd` has `data-line` (its number in its own list), and the script reads `#lines=1,2,3` of the address (`pickedLines`, `pick` in `dump.js`; nothing about it is written into the file by an option;
+the script looks for the lines in the top `.cmds.list` only, with `inList`, so the lines of an opened call are never marked). The marked lines get `.pick` (it is before `.hl` and `.same` in `dump.css`, so a lit jump shows over it), the first one is
+scrolled to with `goTo`, and `#picked` of the bar gets a link for each. `history.scrollRestoration` is set to `manual` then, because a reload would put the page back where the reader had scrolled it.
 Which switches and variables a line uses comes from `NameFormatter.OnReference`: the writer sets it while a command builds its description, and every `FormatSwitch`, `FormatVariable` and the span methods report the ids
 (so no command needs to be listed). A command that writes an id without the formatter is not seen; the `\V[n]` of a text line is read from its text.
 
-Not checked (the html dump): the script of the index (the tree, the filter) was run in no browser by me; the playing of the sounds and the choice of the frame of a sprite sheet (the middle frame of the top row, facing down) were not compared with the engine; the browser
+Not checked (the html dump): the marking of lines was run in the browser pane of the Claude app (Chromium): `#lines=`, a change of the address and the scroll to the first line were seen to work; the dark colors of `.pick`, Firefox and Safari were not looked at. The script of the index (the tree, the filter) was run in no browser by me; the playing of the sounds and the choice of the frame of a sprite sheet (the middle frame of the top row, facing down) were not compared with the engine; the browser
 cannot play `.mid` and `.wma`, which VX Ace projects have. The tooltip of the images was looked at in Chrome only.
 
 ## Resources (pictures, sounds, movies)

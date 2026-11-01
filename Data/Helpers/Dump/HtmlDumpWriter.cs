@@ -28,6 +28,8 @@ public sealed class HtmlDumpWriter : IDumpWriter
         await writer.WriteLineAsync("<div class=\"bar\">" + (options.IndexLink != null ? $"<a href=\"{Encode(options.IndexLink)}\">Index</a>" : "") + "<label>Project path: <input id=\"root\" size=\"60\" value=\""
                                     + Encode(root) + "\"></label> <button id=\"reset\">Reset</button> <button id=\"open\">Open all</button> <button id=\"close\">Close all</button>"
                                     + (options.ExpandCommonEvents ? " <label><input type=\"checkbox\" id=\"expand\" checked> Expand common events</label>" : "")
+                                    // (the lines that are marked: the script fills it, it is empty without them)
+                                    + " <span id=\"picked\"></span>"
                                     // (last: the bar pushes it to the right edge)
                                     + " <button id=\"theme\" title=\"Colors: follow the system, light or dark\">Theme: Auto</button></div>");
     }
@@ -238,6 +240,8 @@ public sealed class HtmlDumpWriter : IDumpWriter
 
         // (--lvl: the indent of the command; the page adds the indent of the call that the list is opened under)
         sb.Append("\" style=\"--lvl:").Append(IndentOf(command)).Append('"');
+        // (the number of the line in its list, which the page marks the lines by)
+        sb.Append(" data-line=\"").Append(index).Append('"');
         if (used.Count > 0)
             sb.Append(" data-refs=\"").Append(string.Join(' ', used)).Append('"');
         sb.Append(labelAttributes);

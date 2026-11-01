@@ -405,7 +405,9 @@ The html file is self-contained (the style and the script are inside it):
 - a `Jump to Label` links to the first label of its name in its own list (as the engine looks for it), and a label shows the lines that jump to it. A click goes to the other line and opens the blocks that hide it;
   while the mouse is over a jump its label is lit, and over a label all the jumps to it. A jump to a label that does not exist is struck out;
 - while the mouse is over a command, the other lines that use the same switch or variable are lit (a range of switches or variables counts each of its ids; `\V[n]` in a text counts too);
-- `Call Common Event` and `Exit Event Processing` have their own colors.
+- `Call Common Event` and `Exit Event Processing` have their own colors;
+- lines can be marked from the address: `page.html#lines=12,40,55` (the numbers of the lines, from 0, as the dump shows them). The marked lines stay marked, the page is scrolled to the first of them (put in the middle of the window,
+  the blocks around it open), and the top bar has a link to each; a change of `#lines=` in the address marks the new ones. The numbers are those of the page itself, not of a common event that is opened in it.
 
 `DumpOptions.ExpandCommonEvents` (html only; the text format throws `NotSupportedException`) puts the called common events into the page, under the call, closed. Their lines are numbered from 000 as in their own dump.
 The list of each called event is written into the file **once** (a `<template>`), and the page copies it under a call the first time the call is opened, so the size follows the number of different events,
