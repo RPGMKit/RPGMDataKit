@@ -67,17 +67,21 @@ var stripeTimer=0;
 function scheduleRestripe(){clearTimeout(stripeTimer);stripeTimer=setTimeout(restripe,0);}
 document.addEventListener('toggle',scheduleRestripe,true);
 // a call is filled from the list of its event when it is opened the first time
-document.addEventListener('toggle',function(ev){
-  var d=ev.target;
-  if(!d.classList||!d.classList.contains('ce')||!d.open||d.querySelector(':scope > .ce-body'))return;
+function fill(d){
+  if(d.querySelector(':scope > .ce-body'))return false;
   var tpl=document.getElementById('ce-'+d.getAttribute('data-ce'));
-  if(!tpl)return;
+  if(!tpl)return false;
   var call=d.querySelector('summary > .cmd');
   var body=document.createElement('div');body.className='ce-body';
   body.style.setProperty('--pad',parseFloat(call.style.getPropertyValue('--lvl'))||0);
   body.appendChild(tpl.content.cloneNode(true));
   d.appendChild(body);
   markRecursions(body,chainOf(d));
+  return true;
+}
+document.addEventListener('toggle',function(ev){
+  var d=ev.target;
+  if(d.classList&&d.classList.contains('ce')&&d.open)fill(d);
 },true);
 document.addEventListener('click',function(ev){
   var el=ev.target.closest?ev.target.closest('.ref,.jump,.recursion'):null;
@@ -135,8 +139,32 @@ document.addEventListener('click',function(ev){
   link.classList.add('playing');link.textContent=link.textContent.replace('\u25B6','\u25A0');
   audio.play().catch(function(){});
 });
-// the calls of common events are not opened by "Open all": together they hold many times the lines of the page
-function setAll(open){document.querySelectorAll(open?'details:not(.ce)':'details').forEach(function(d){d.open=open;});}
+// "Open all" opens the calls of common events too, all the way down. The calls together can hold many times the lines of the page (a tree of calls, written out, can run to millions),
+// so the lines that would be added are counted from the lists of the events first, and the reader is asked when there are many
+var openAllWarn=50000;
+function expandedLines(id,stack,sizes){
+  if(id in sizes)return sizes[id];
+  if(stack.indexOf(id)>=0)return 0;
+  var tpl=document.getElementById('ce-'+id);
+  if(!tpl)return 0;
+  var n=tpl.content.querySelectorAll('.cmd').length;
+  tpl.content.querySelectorAll('details.ce').forEach(function(d){n+=expandedLines(d.getAttribute('data-ce'),stack.concat([id]),sizes);});
+  return sizes[id]=n;
+}
+function closedCalls(){return [].slice.call(document.querySelectorAll('details.ce')).filter(function(d){return !d.querySelector(':scope > .ce-body')&&!d.hasAttribute('data-nolist');});}
+function openAllCalls(){
+  var sizes={},total=0;
+  closedCalls().forEach(function(d){total+=expandedLines(d.getAttribute('data-ce'),chainOf(d),sizes);});
+  if(total>openAllWarn&&!confirm('Opening all the calls of common events adds about '+total.toLocaleString()+' lines to the page, which can be very slow. Open them anyway?'))return;
+  // a pass opens the calls that are closed; what they hold is closed, and the next pass opens it (a recursion is not a call any more)
+  for(var pass=closedCalls();pass.length;pass=closedCalls())pass.forEach(function(d){d.open=true;if(!fill(d))d.setAttribute('data-nolist','');});
+  document.querySelectorAll('details.ce').forEach(function(d){d.open=true;});
+}
+function setAll(open){
+  document.querySelectorAll(open?'details:not(.ce)':'details').forEach(function(d){d.open=open;});
+  if(open&&!document.body.classList.contains('no-ce'))openAllCalls();
+  scheduleRestripe();
+}
 document.getElementById('open').onclick=function(){setAll(true);};
 document.getElementById('close').onclick=function(){setAll(false);};
 })();

@@ -26,6 +26,7 @@ body{font:13px/1.45 Consolas,monospace;margin:0;background:#fff;color:#222}
 .call .name,.call .params{color:#0b6fa8}
 .exit .name{color:#c0392b}
 .comment .name,.comment .params{color:#1b6b2f}
+.transfer .name,.transfer .params{color:#00838f}
 /* the stripe is a shadow, so that it takes no room and the columns of the line stay where they are */
 details.ce>summary .cmd{box-shadow:inset 3px 0 0 #6a9fd8}
 .recursion{cursor:pointer;color:#a60}
@@ -58,5 +59,5 @@ details[open]>summary .fold::before{content:"\25BC"}
 #tip canvas,#tip img{display:block;max-width:320px;max-height:320px;image-rendering:pixelated;background:repeating-conic-gradient(#8884 0% 25%,transparent 0% 50%) 50%/14px 14px}
 @media (prefers-color-scheme:dark){
 body{background:#1e1e1e;color:#ddd}.bar{background:#2b2b2b;border-color:#444}.head{background:#252526;border-color:#444}
-.call .name,.call .params{color:#5ab4ea}.exit .name{color:#ff7b72}.cmd[data-pics] .params{color:#e08bd8}.comment .name,.comment .params{color:#4fa866}
+.call .name,.call .params{color:#5ab4ea}.exit .name{color:#ff7b72}.cmd[data-pics] .params{color:#e08bd8}.comment .name,.comment .params{color:#4fa866}.transfer .name,.transfer .params{color:#4dd0e1}
 .cmd.alt{background:rgba(0,0,0,.18)}.bar a{color:#5ab4ea;border-color:#567}.bar a:hover{background:#5ab4ea;color:#1e1e1e}.cmd:hover{background:#2a3445}.jump .name,.jump .params{color:#b794f4}.cmd.hl{background:#5a4a14;outline-color:#d9a400}.cmd.same{background:#1f4a35;outline-color:#4aa36c}#tip{background:#222;border-color:#666}}

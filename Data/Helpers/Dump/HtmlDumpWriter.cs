@@ -210,6 +210,8 @@ public sealed class HtmlDumpWriter : IDumpWriter
             sb.Append(" exit");
         else if (command is CommentCommand or CommentContinueCommand)
             sb.Append(" comment");
+        else if (command is TransferPlayerCommand)
+            sb.Append(" transfer");
 
         // labels and jumps: where a jump goes, and from where a label is jumped to
         var number = NumberFormat(options);

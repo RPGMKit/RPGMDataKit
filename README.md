@@ -409,7 +409,7 @@ The html file is self-contained (the style and the script are inside it):
 
 `DumpOptions.ExpandCommonEvents` (html only; the text format throws `NotSupportedException`) puts the called common events into the page, under the call, closed. Their lines are numbered from 000 as in their own dump.
 The list of each called event is written into the file **once** (a `<template>`), and the page copies it under a call the first time the call is opened, so the size follows the number of different events,
-not of the calls (a tree of calls can hold millions of lines: one common event of a real project reaches 71 different events with 10 648 lines, and 12.6 million lines when every call is written out). "Open all" does not open the calls.
+not of the calls (a tree of calls can hold millions of lines: one common event of a real project reaches 71 different events with 10 648 lines, and 12.6 million lines when every call is written out). "Open all" opens the calls too, all the way down; when that would add more than 50 000 lines (counted from the lists of the events first) the page asks before it does.
 The page then has the checkbox "Expand common events" (the browser remembers it); when it is off a call is a plain line. A call of an event that is open already (the one that is dumped, or one that calls it on the way)
 is not expanded; it is marked, and a click goes to the line where the chain began.
 

@@ -548,4 +548,16 @@ public sealed class HtmlDumpTests
 
         Assert.Contains("Options: -", writer.ToString());
     }
+
+    [Theory]
+    [MemberData(nameof(Versions))]
+    public async Task ATransferOfThePlayerHasItsOwnClass(Version v)
+    {
+        var commonEvent = EmptyCommandTests.EventOf(v);
+        commonEvent.Replace(b => b.Add(new TransferPlayerCommand()));
+
+        var html = await DumpExpanded(Open(v), commonEvent, expand: false);
+
+        Assert.Equal(1, Lines(html, "transfer"));
+    }
 }
